@@ -1,0 +1,253 @@
+/**
+ * Admin CSS for WP Advanced Login Pro
+ *
+ * @since      1.0.0
+ * @package    WP_Advanced_Login_Pro
+ * @subpackage WP_Advanced_Login_Pro/admin/css
+ */
+
+/* Admin Wrapper */
+.wp-alp-admin-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    margin-right: -20px;
+}
+
+.wp-alp-admin-header {
+    flex: 0 0 100%;
+    margin-bottom: 20px;
+}
+
+.wp-alp-admin-content {
+    flex: 0 0 calc(75% - 20px);
+    margin-right: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.wp-alp-admin-sidebar {
+    flex: 0 0 25%;
+}
+
+@media (max-width: 782px) {
+    .wp-alp-admin-content,
+    .wp-alp-admin-sidebar {
+        flex: 0 0 100%;
+        margin-right: 0;
+    }
+    
+    .wp-alp-admin-sidebar {
+        margin-top: 20px;
+    }
+}
+
+/* Admin Boxes */
+.wp-alp-admin-box {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.wp-alp-admin-box h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.wp-alp-admin-box h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.wp-alp-admin-box ul,
+.wp-alp-admin-box ol {
+    margin-left: 20px;
+}
+
+.wp-alp-admin-box .button {
+    margin-top: 10px;
+}
+
+/* Social Provider Sections */
+.wp-alp-admin-content .form-table th {
+    width: 200px;
+}
+
+/* Provider Icons */
+.wp-alp-provider-icon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.wp-alp-provider-icon.google {
+    background-image: url('../images/google-icon.svg');
+}
+
+.wp-alp-provider-icon.facebook {
+    background-image: url('../images/facebook-icon.svg');
+}
+
+.wp-alp-provider-icon.apple {
+    background-image: url('../images/apple-icon.svg');
+}
+
+.wp-alp-provider-icon.linkedin {
+    background-image: url('../images/linkedin-icon.svg');
+}
+
+/* Admin Sections */
+.wp-alp-admin-section {
+    margin-bottom: 30px;
+}
+
+.wp-alp-admin-section h2 {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Admin Cards */
+.wp-alp-admin-card {
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #e5e5e5;
+}
+
+.wp-alp-admin-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+/* User Types Grid */
+.wp-alp-user-types-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.wp-alp-user-type-card {
+    flex: 0 0 calc(33.333% - 20px);
+    margin: 0 10px 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+}
+
+.wp-alp-user-type-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+@media (max-width: 782px) {
+    .wp-alp-user-type-card {
+        flex: 0 0 calc(50% - 20px);
+    }
+}
+
+@media (max-width: 600px) {
+    .wp-alp-user-type-card {
+        flex: 0 0 100%;
+    }
+}
+
+/* Stats Grid */
+.wp-alp-stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.wp-alp-stats-card {
+    flex: 0 0 calc(50% - 20px);
+    margin: 0 10px 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+}
+
+.wp-alp-stats-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+@media (max-width: 782px) {
+    .wp-alp-stats-card {
+        flex: 0 0 100%;
+    }
+}
+
+/* Admin Form */
+.wp-alp-admin-form {
+    margin-top: 15px;
+}
+
+.wp-alp-admin-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+/* Admin Notices */
+.wp-alp-admin-notice {
+    padding: 10px 15px;
+    margin: 15px 0;
+    border-radius: 3px;
+    border-left-width: 4px;
+    border-left-style: solid;
+}
+
+.wp-alp-admin-notice p {
+    margin: 0.5em 0;
+}
+
+.wp-alp-admin-notice-warning {
+    border-left-color: #ffb900;
+    background-color: #fff8e5;
+}
+
+.wp-alp-admin-notice-info {
+    border-left-color: #00a0d2;
+    background-color: #f0f8ff;
+}
+
+.wp-alp-admin-notice-success {
+    border-left-color: #46b450;
+    background-color: #ecf7ed;
+}
+
+/* Help Tips */
+.wp-alp-help-tip {
+    color: #666;
+    display: inline-block;
+    font-size: 1.1em;
+    font-style: normal;
+    height: 16px;
+    line-height: 16px;
+    position: relative;
+    vertical-align: middle;
+    width: 16px;
+}
+
+.wp-alp-help-tip::after {
+    font-family: Dashicons;
+    content: "\f223";
+    cursor: help;
+}
