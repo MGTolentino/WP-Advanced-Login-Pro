@@ -139,12 +139,12 @@ class WP_ALP_Admin {
      * @since    1.0.0
      */
     public function register_settings() {
-        // General settings
-        register_setting(
-            'wp_alp_general_settings',
-            'wp_alp_general_options',
-            array($this, 'sanitize_general_options')
-        );
+        // Social login settings
+register_setting(
+    'wp_alp_social_settings',
+    'wp_alp_social_options',
+    array($this, 'debug_sanitize_social_options')
+);
 
         add_settings_section(
             'wp_alp_general_section',
@@ -530,6 +530,25 @@ class WP_ALP_Admin {
 
         return $sanitized;
     }
+
+    /**
+ * Debug sanitize social options.
+ *
+ * @since    1.0.0
+ * @param    array    $input    The input options.
+ * @return   array              The sanitized options.
+ */
+public function debug_sanitize_social_options($input) {
+    // Log the input for debugging
+    error_log('Social Options Input: ' . print_r($input, true));
+    
+    $sanitized = $this->sanitize_social_options($input);
+    
+    // Log the sanitized output for debugging
+    error_log('Social Options Sanitized: ' . print_r($sanitized, true));
+    
+    return $sanitized;
+}
 
     /**
      * Render the settings page.

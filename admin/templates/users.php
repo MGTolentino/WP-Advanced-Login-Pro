@@ -142,11 +142,11 @@ $jetengine_active = function_exists('jet_engine');
                     if ($wpdb->get_var("SHOW TABLES LIKE '$eventos_table'") === $eventos_table) {
                         // Event types count
                         $event_types = $wpdb->get_results("
-                            SELECT `Tipo de Evento` as type, COUNT(*) as count 
-                            FROM $eventos_table 
-                            GROUP BY `Tipo de Evento` 
-                            ORDER BY count DESC
-                            LIMIT 5
+                        SELECT `tipo_de_evento` as type, COUNT(*) as count 
+                        FROM $eventos_table 
+                        GROUP BY `tipo_de_evento` 
+                        ORDER BY count DESC
+                        LIMIT 5
                         ");
                         
                         if (!empty($event_types)) {
@@ -167,10 +167,10 @@ $jetengine_active = function_exists('jet_engine');
                         
                         // Status count
                         $status_counts = $wpdb->get_results("
-                            SELECT status, COUNT(*) as count 
-                            FROM $eventos_table 
-                            GROUP BY status
-                        ");
+    SELECT evento_status as status, COUNT(*) as count 
+    FROM $eventos_table 
+    GROUP BY evento_status
+");
                         
                         if (!empty($status_counts)) {
                             ?>
