@@ -152,25 +152,54 @@
             processData: false,
             contentType: false,
             success: function(response) {
-                if (response.success) {
-                    // Display success message
-                    $messagesContainer.html(
-                        '<div class="wp-alp-message wp-alp-message-success">' + 
-                        response.data.message + 
-                        '</div>'
-                    );
-                    
-                    // Redirect if needed
-                    if (response.data.redirect) {
-                        setTimeout(function() {
-                            window.location.href = response.data.redirect;
-                        }, 1000);
+                try {
+                    // Asegurarse de que response es un objeto y no HTML
+                    if (typeof response === 'string' && response.trim().startsWith('<!DOCTYPE')) {
+                        throw new Error('Server returned HTML instead of JSON');
                     }
-                } else {
+                    
+                    if (response && response.success) {
+                        // Display success message
+                        var message = 'Operation completed successfully';
+                        if (response.data && response.data.message) {
+                            message = response.data.message;
+                        }
+                        
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-success">' + 
+                            message + 
+                            '</div>'
+                        );
+                        
+                        // Redirect if needed
+                        if (response.data && response.data.redirect) {
+                            setTimeout(function() {
+                                window.location.href = response.data.redirect;
+                            }, 1000);
+                        }
+                    } else {
+                        // Display error message
+                        var errorMessage = 'An error occurred';
+                        if (response && response.data && response.data.message) {
+                            errorMessage = response.data.message;
+                        }
+                        
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-error">' + 
+                            errorMessage + 
+                            '</div>'
+                        );
+                        
+                        // Re-enable submit button
+                        $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+                    }
+                } catch (e) {
+                    console.error('Error processing response:', e);
+                    
                     // Display error message
                     $messagesContainer.html(
                         '<div class="wp-alp-message wp-alp-message-error">' + 
-                        response.data.message + 
+                        'An unexpected error occurred. Please try again later.' + 
                         '</div>'
                     );
                     
