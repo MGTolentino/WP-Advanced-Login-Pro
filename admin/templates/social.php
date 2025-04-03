@@ -12,6 +12,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Include our custom save handler
+require_once WP_ALP_PLUGIN_DIR . 'save-social-options.php';
+
 // Get current options
 $options = get_option('wp_alp_social_options', array(
     'google' => array('enabled' => false, 'client_id' => '', 'client_secret' => ''),
@@ -19,6 +22,11 @@ $options = get_option('wp_alp_social_options', array(
     'apple' => array('enabled' => false, 'client_id' => '', 'client_secret' => ''),
     'linkedin' => array('enabled' => false, 'client_id' => '', 'client_secret' => '')
 ));
+
+// Show success message if settings were updated
+if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
+    echo '<div class="notice notice-success is-dismissible"><p>' . __('Social login settings saved successfully!', 'wp-alp') . '</p></div>';
+}
 ?>
 
 <div class="wrap">
@@ -35,15 +43,8 @@ $options = get_option('wp_alp_social_options', array(
         </div>
         
         <div class="wp-alp-admin-content">
-            <form method="post" action="options.php">
-                <?php
-                settings_fields('wp_alp_social_settings');
-                
-                // Optional: Mostrar secciones automáticas si están configuradas
-                do_settings_sections('wp_alp_social_settings');
-                
-                // Campos manuales en caso de que do_settings_sections no funcione
-                ?>
+            <form method="post" action="">
+                <?php wp_nonce_field('wp_alp_social_nonce'); ?>
                 
                 <h2><?php esc_html_e('Social Login Providers', 'wp-alp'); ?></h2>
                 <p><?php esc_html_e('Configure social login providers to allow users to sign in with their social accounts.', 'wp-alp'); ?></p>
@@ -59,7 +60,7 @@ $options = get_option('wp_alp_social_options', array(
                             <th scope="row"><?php esc_html_e('Enable Google Login', 'wp-alp'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="wp_alp_social_options[google][enabled]" value="1" <?php checked(isset($options['google']['enabled']) ? $options['google']['enabled'] : false); ?>>
+                                    <input type="checkbox" name="google_enabled" value="1" <?php checked(isset($options['google']['enabled']) ? $options['google']['enabled'] : false); ?>>
                                     <?php esc_html_e('Enabled', 'wp-alp'); ?>
                                 </label>
                             </td>
@@ -67,13 +68,13 @@ $options = get_option('wp_alp_social_options', array(
                         <tr>
                             <th scope="row"><?php esc_html_e('Client ID', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[google][client_id]" value="<?php echo esc_attr(isset($options['google']['client_id']) ? $options['google']['client_id'] : ''); ?>" class="regular-text">
+                                <input type="text" name="google_client_id" value="<?php echo esc_attr(isset($options['google']['client_id']) ? $options['google']['client_id'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><?php esc_html_e('Client Secret', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[google][client_secret]" value="<?php echo esc_attr(isset($options['google']['client_secret']) ? $options['google']['client_secret'] : ''); ?>" class="regular-text">
+                                <input type="text" name="google_client_secret" value="<?php echo esc_attr(isset($options['google']['client_secret']) ? $options['google']['client_secret'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                     </tbody>
@@ -90,7 +91,7 @@ $options = get_option('wp_alp_social_options', array(
                             <th scope="row"><?php esc_html_e('Enable Facebook Login', 'wp-alp'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="wp_alp_social_options[facebook][enabled]" value="1" <?php checked(isset($options['facebook']['enabled']) ? $options['facebook']['enabled'] : false); ?>>
+                                    <input type="checkbox" name="facebook_enabled" value="1" <?php checked(isset($options['facebook']['enabled']) ? $options['facebook']['enabled'] : false); ?>>
                                     <?php esc_html_e('Enabled', 'wp-alp'); ?>
                                 </label>
                             </td>
@@ -98,13 +99,13 @@ $options = get_option('wp_alp_social_options', array(
                         <tr>
                             <th scope="row"><?php esc_html_e('App ID', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[facebook][client_id]" value="<?php echo esc_attr(isset($options['facebook']['client_id']) ? $options['facebook']['client_id'] : ''); ?>" class="regular-text">
+                                <input type="text" name="facebook_client_id" value="<?php echo esc_attr(isset($options['facebook']['client_id']) ? $options['facebook']['client_id'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><?php esc_html_e('App Secret', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[facebook][client_secret]" value="<?php echo esc_attr(isset($options['facebook']['client_secret']) ? $options['facebook']['client_secret'] : ''); ?>" class="regular-text">
+                                <input type="text" name="facebook_client_secret" value="<?php echo esc_attr(isset($options['facebook']['client_secret']) ? $options['facebook']['client_secret'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                     </tbody>
@@ -121,7 +122,7 @@ $options = get_option('wp_alp_social_options', array(
                             <th scope="row"><?php esc_html_e('Enable LinkedIn Login', 'wp-alp'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="wp_alp_social_options[linkedin][enabled]" value="1" <?php checked(isset($options['linkedin']['enabled']) ? $options['linkedin']['enabled'] : false); ?>>
+                                    <input type="checkbox" name="linkedin_enabled" value="1" <?php checked(isset($options['linkedin']['enabled']) ? $options['linkedin']['enabled'] : false); ?>>
                                     <?php esc_html_e('Enabled', 'wp-alp'); ?>
                                 </label>
                             </td>
@@ -129,19 +130,19 @@ $options = get_option('wp_alp_social_options', array(
                         <tr>
                             <th scope="row"><?php esc_html_e('Client ID', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[linkedin][client_id]" value="<?php echo esc_attr(isset($options['linkedin']['client_id']) ? $options['linkedin']['client_id'] : ''); ?>" class="regular-text">
+                                <input type="text" name="linkedin_client_id" value="<?php echo esc_attr(isset($options['linkedin']['client_id']) ? $options['linkedin']['client_id'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><?php esc_html_e('Client Secret', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[linkedin][client_secret]" value="<?php echo esc_attr(isset($options['linkedin']['client_secret']) ? $options['linkedin']['client_secret'] : ''); ?>" class="regular-text">
+                                <input type="text" name="linkedin_client_secret" value="<?php echo esc_attr(isset($options['linkedin']['client_secret']) ? $options['linkedin']['client_secret'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 
-                <!-- Apple Settings (Opcional) -->
+                <!-- Apple Settings -->
                 <h3><?php esc_html_e('Apple', 'wp-alp'); ?></h3>
                 <p><?php esc_html_e('Configure Apple login integration.', 'wp-alp'); ?></p>
                 <p><strong><?php esc_html_e('Redirect URI:', 'wp-alp'); ?></strong> <code><?php echo esc_url(home_url('wp-json/wp-alp/v1/social/apple/callback')); ?></code></p>
@@ -152,7 +153,7 @@ $options = get_option('wp_alp_social_options', array(
                             <th scope="row"><?php esc_html_e('Enable Apple Login', 'wp-alp'); ?></th>
                             <td>
                                 <label>
-                                    <input type="checkbox" name="wp_alp_social_options[apple][enabled]" value="1" <?php checked(isset($options['apple']['enabled']) ? $options['apple']['enabled'] : false); ?>>
+                                    <input type="checkbox" name="apple_enabled" value="1" <?php checked(isset($options['apple']['enabled']) ? $options['apple']['enabled'] : false); ?>>
                                     <?php esc_html_e('Enabled', 'wp-alp'); ?>
                                 </label>
                             </td>
@@ -160,23 +161,25 @@ $options = get_option('wp_alp_social_options', array(
                         <tr>
                             <th scope="row"><?php esc_html_e('Service ID', 'wp-alp'); ?></th>
                             <td>
-                                <input type="text" name="wp_alp_social_options[apple][client_id]" value="<?php echo esc_attr(isset($options['apple']['client_id']) ? $options['apple']['client_id'] : ''); ?>" class="regular-text">
+                                <input type="text" name="apple_client_id" value="<?php echo esc_attr(isset($options['apple']['client_id']) ? $options['apple']['client_id'] : ''); ?>" class="regular-text">
                             </td>
                         </tr>
                         <tr>
                             <th scope="row"><?php esc_html_e('Private Key', 'wp-alp'); ?></th>
                             <td>
-                                <textarea name="wp_alp_social_options[apple][client_secret]" rows="5" class="large-text"><?php echo esc_textarea(isset($options['apple']['client_secret']) ? $options['apple']['client_secret'] : ''); ?></textarea>
+                                <textarea name="apple_client_secret" rows="5" class="large-text"><?php echo esc_textarea(isset($options['apple']['client_secret']) ? $options['apple']['client_secret'] : ''); ?></textarea>
                             </td>
                         </tr>
                     </tbody>
                 </table>
                 
-                <?php submit_button(); ?>
+                <input type="hidden" name="wp_alp_save_social_options" value="1">
+                <?php submit_button(__('Save Social Settings', 'wp-alp')); ?>
             </form>
         </div>
         
         <div class="wp-alp-admin-sidebar">
+            <!-- Contenido de la barra lateral (sin cambios) -->
             <div class="wp-alp-admin-box">
                 <h3><?php esc_html_e('Social Login Setup', 'wp-alp'); ?></h3>
                 <p><?php esc_html_e('For each social provider, you need to create an application in the respective developer console and configure OAuth settings.', 'wp-alp'); ?></p>
