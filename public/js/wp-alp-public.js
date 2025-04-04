@@ -24,6 +24,9 @@
         
         // Social login handlers
         initSocialLogin();
+        
+        // Modal login/register
+        initModalForms();
     }
 
     /**
@@ -72,6 +75,226 @@
             } else {
                 $input.attr('type', 'password');
                 $icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+            }
+        });
+    }
+
+    /**
+     * Initialize modal forms
+     */
+    function initModalForms() {
+        // Login trigger
+        $('.wp-alp-login-trigger').on('click', function(e) {
+            e.preventDefault();
+            loadModalForm('login');
+        });
+        
+        // Register trigger
+        $('.wp-alp-register-trigger').on('click', function(e) {
+            e.preventDefault();
+            loadModalForm('register');
+        });
+        
+        // Close modal
+        $(document).on('click', '.wp-alp-modal-close, .wp-alp-modal-overlay', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Tab switching
+        $(document).on('click', '.wp-alp-modal-tab', function(e) {
+            e.preventDefault();
+            var tab = $(this).data('tab');
+            loadModalForm(tab);
+        });
+        
+        // Handle ESC key
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape' && $('.wp-alp-modal').length) {
+                closeModal();
+            }
+        });
+        
+        // Handle form submission in modal
+        $(document).on('submit', '.wp-alp-modal .wp-alp-form', function(e) {
+            e.preventDefault();
+            handleModalFormSubmit($(this));
+        });
+    }
+
+    /**
+     * Load modal form via AJAX
+     */
+    function loadModalForm(type) {
+        // Create modal if it doesn't exist
+        if (!$('.wp-alp-modal').length) {
+            var modalHtml = '<div class="wp-alp-modal-overlay">' +
+                '<div class="wp-alp-modal">' +
+                '<a href="#" class="wp-alp-modal-close">&times;</a>' +
+                '<div class="wp-alp-modal-content"></div>' +
+                '</div>' +
+                '</div>';
+            $('body').append(modalHtml);
+        }
+        
+        var $modalContent = $('.wp-alp-modal-content');
+        
+        // Show loading spinner
+        $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
+        
+        // Load form via AJAX
+        $.ajax({
+            url: wp_alp_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wp_alp_get_form',
+                type: type,
+                security: wp_alp_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $modalContent.html(response.data.html);
+                    
+                    // Update active tab
+                    $('.wp-alp-modal-tab').removeClass('active');
+                    $('.wp-alp-modal-tab[data-tab="' + type + '"]').addClass('active');
+                } else {
+                    $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                        wp_alp_ajax.ajax_error + '</div>');
+                }
+            },
+            error: function() {
+                $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                    wp_alp_ajax.ajax_error + '</div>');
+            }
+        });
+        
+        // Add active class to modal
+        $('.wp-alp-modal-overlay').addClass('active');
+    }
+
+    /**
+     * Close modal
+     */
+    function closeModal() {
+        $('.wp-alp-modal-overlay').removeClass('active');
+        
+        // Optional: Remove modal from DOM after animation completes
+        setTimeout(function() {
+            if (!$('.wp-alp-modal-overlay').hasClass('active')) {
+                $('.wp-alp-modal-overlay').remove();
+            }
+        }, 300);
+    }
+
+    /**
+     * Handle modal form submission
+     */
+    function handleModalFormSubmit($form) {
+        var formType = $form.data('form-type');
+        var $messagesContainer = $('#wp-alp-modal-messages');
+        var $submitButton = $form.find('button[type="submit"]');
+        
+        // Clear previous messages
+        $messagesContainer.empty();
+        
+        // Disable submit button
+        $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
+        
+        // Get form action URL
+        var actionUrl = wp_alp_ajax.ajax_url;
+        
+        // Collect form data
+        var formData = new FormData($form.get(0));
+        
+        // Add AJAX flag
+        formData.append('is_ajax', 'true');
+        formData.append('is_modal', 'true');
+        
+        // Add security token if not already present
+        if (!formData.has('security')) {
+            formData.append('security', wp_alp_ajax.nonce);
+        }
+        
+        // Send AJAX request
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                try {
+                    // If response is a string (HTML), we have an issue
+                    if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                        console.error('Received HTML instead of JSON');
+                        throw new Error('Server returned HTML instead of JSON');
+                    }
+                    
+                    // Ensure response is an object
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+                    
+                    if (response.success) {
+                        // Display success message
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-success">' + 
+                            response.data.message + 
+                            '</div>'
+                        );
+                        
+                        // If profile completion is needed, handle it specifically
+                        if (response.data.needs_profile_completion) {
+                            // Redirect to profile completion page after a short delay
+                            setTimeout(function() {
+                                window.location.href = response.data.redirect;
+                            }, 1000);
+                        } else {
+                            // Normal redirect
+                            setTimeout(function() {
+                                window.location.href = response.data.redirect;
+                            }, 1000);
+                        }
+                    } else {
+                        // Display error message
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-error">' + 
+                            response.data.message + 
+                            '</div>'
+                        );
+                        
+                        // Re-enable submit button
+                        $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+                    }
+                } catch (e) {
+                    console.error('Error processing response:', e);
+                    
+                    // Display error message
+                    $messagesContainer.html(
+                        '<div class="wp-alp-message wp-alp-message-error">' + 
+                        'An unexpected error occurred. Try refreshing the page and attempting again.' + 
+                        '</div>'
+                    );
+                    
+                    // Re-enable submit button
+                    $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                console.log('Response Text:', xhr.responseText);
+                
+                // Display error message
+                $messagesContainer.html(
+                    '<div class="wp-alp-message wp-alp-message-error">' + 
+                    wp_alp_ajax.ajax_error + 
+                    '</div>'
+                );
+                
+                // Re-enable submit button
+                $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
             }
         });
     }
@@ -134,7 +357,7 @@
         // Add flag to indicate this is an AJAX request
         formData.append('is_ajax', 'true');
         
-        // Asegurarse de que tenemos el nonce de seguridad
+        // Ensure we have the security nonce
         if (!formData.has('security')) {
             formData.append('security', wp_alp_ajax.nonce);
         }
@@ -148,31 +371,22 @@
             contentType: false,
             success: function(response) {
                 try {
-                    // Log the raw response for debugging
-                    console.log("Raw response:", response);
+                    // If response is a string (HTML), we have an issue
+                    if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                        console.error('Received HTML instead of JSON');
+                        throw new Error('Server returned HTML instead of JSON');
+                    }
                     
-                    // If response is a string and starts with HTML doctype, it's an error
+                    // Ensure response is an object
                     if (typeof response === 'string') {
-                        if (response.trim().startsWith('<!DOCTYPE') || response.trim().startsWith('<html')) {
-                            console.error("Received HTML instead of JSON");
-                            throw new Error('Server returned HTML instead of JSON');
-                        }
-                        // Try to parse JSON string
                         response = JSON.parse(response);
                     }
                     
-                    if (response && response.success) {
+                    if (response.success) {
                         // Display success message
-                        var message = 'Operation completed successfully';
-                        if (response.data && response.data.message) {
-                            message = response.data.message;
-                        } else if (response.message) {
-                            message = response.message;
-                        }
-                        
                         $messagesContainer.html(
                             '<div class="wp-alp-message wp-alp-message-success">' + 
-                            message + 
+                            response.data.message + 
                             '</div>'
                         );
                         
@@ -190,10 +404,8 @@
                     } else {
                         // Display error message
                         var errorMessage = 'An error occurred';
-                        if (response && response.data && response.data.message) {
+                        if (response.data && response.data.message) {
                             errorMessage = response.data.message;
-                        } else if (response && response.message) {
-                            errorMessage = response.message;
                         }
                         
                         $messagesContainer.html(
@@ -207,12 +419,11 @@
                     }
                 } catch (e) {
                     console.error('Error processing response:', e);
-                    console.error('Response text:', response);
                     
                     // Display error message
                     $messagesContainer.html(
                         '<div class="wp-alp-message wp-alp-message-error">' + 
-                        'An unexpected error occurred. Please refresh the page and try again.' + 
+                        'An unexpected error occurred. Try refreshing the page and attempting again.' + 
                         '</div>'
                     );
                     
@@ -222,7 +433,6 @@
             },
             error: function(xhr, status, error) {
                 console.error('AJAX Error:', status, error);
-                console.error('Response Text:', xhr.responseText);
                 
                 // Display error message
                 $messagesContainer.html(
@@ -244,9 +454,8 @@
         // Handle social login button clicks
         $('.wp-alp-social-button').on('click', function(e) {
             // The actual redirection is handled by the href attribute
-            // This function can be used for tracking or additional functionality
             
-            // You could add analytics tracking here
+            // Add analytics tracking if available
             if (typeof gtag === 'function') {
                 var provider = $(this).data('provider');
                 gtag('event', 'social_login_click', {
@@ -292,27 +501,36 @@
                 is_ajax: 'true'
             },
             success: function(response) {
-                if (typeof response === 'string') {
-                    try {
+                try {
+                    // If response is a string (HTML), we have an issue
+                    if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                        console.error('Received HTML instead of JSON');
+                        throw new Error('Server returned HTML instead of JSON');
+                    }
+                    
+                    // Parse JSON if needed
+                    if (typeof response === 'string') {
                         response = JSON.parse(response);
-                    } catch (e) {
-                        console.error('Error parsing response:', e);
-                        alert(wp_alp_ajax.social_login_error);
+                    }
+                    
+                    if (response.success && response.data && response.data.redirect) {
+                        // Redirect to the specified URL
+                        window.location.href = response.data.redirect;
+                    } else {
+                        // Display error message
+                        var errorMessage = wp_alp_ajax.social_login_error;
+                        if (response.data && response.data.message) {
+                            errorMessage = response.data.message;
+                        }
+                        alert(errorMessage);
+                        
+                        // Redirect to login page
                         window.location.href = wp_alp_ajax.login_url;
-                        return;
                     }
-                }
-                
-                if (response.success && response.data && response.data.redirect) {
-                    // Redirect to the specified URL
-                    window.location.href = response.data.redirect;
-                } else {
-                    // Display error message
-                    var errorMessage = wp_alp_ajax.social_login_error;
-                    if (response.data && response.data.message) {
-                        errorMessage = response.data.message;
-                    }
-                    alert(errorMessage);
+                } catch (e) {
+                    console.error('Error processing response:', e);
+                    alert(wp_alp_ajax.social_login_error);
+                    
                     // Redirect to login page
                     window.location.href = wp_alp_ajax.login_url;
                 }
@@ -320,6 +538,7 @@
             error: function() {
                 // Display error message
                 alert(wp_alp_ajax.social_login_error);
+                
                 // Redirect to login page
                 window.location.href = wp_alp_ajax.login_url;
             }
@@ -360,28 +579,6 @@
         } else {
             $meter.addClass('strong').text(wp_alp_ajax.strong_password);
         }
-    }
-
-    /**
-     * Helper function to validate email
-     * 
-     * @param {string} email The email to validate
-     * @return {boolean} Whether the email is valid
-     */
-    function isValidEmail(email) {
-        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(String(email).toLowerCase());
-    }
-
-    /**
-     * Helper function to validate phone number
-     * 
-     * @param {string} phone The phone number to validate
-     * @return {boolean} Whether the phone number is valid
-     */
-    function isValidPhone(phone) {
-        var re = /^\+?[0-9]{10,15}$/;
-        return re.test(String(phone).replace(/[\s\-\(\)]/g, ''));
     }
 
     // Initialize when the DOM is ready
