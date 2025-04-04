@@ -390,10 +390,16 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_login() {
+        // Prevenir redirecciones durante AJAX
+        add_filter('wp_redirect', '__return_false', 999);
+        
         // Check AJAX referer
-        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');  // Cambiado de 'security' a '_wpnonce'
+        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');
         
         $response = $this->forms->process_login($_POST);
+        
+        // Eliminar el filtro para no afectar otras redirecciones
+        remove_filter('wp_redirect', '__return_false', 999);
         
         if (is_wp_error($response)) {
             wp_send_json_error(array(
@@ -413,10 +419,16 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_register_user() {
+        // Prevenir redirecciones durante AJAX
+        add_filter('wp_redirect', '__return_false', 999);
+        
         // Check AJAX referer
-        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');  // Cambiado de 'security' a '_wpnonce'
+        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');
         
         $response = $this->forms->process_user_registration($_POST, $this->user_manager);
+        
+        // Eliminar el filtro para no afectar otras redirecciones
+        remove_filter('wp_redirect', '__return_false', 999);
         
         if (is_wp_error($response)) {
             wp_send_json_error(array(
