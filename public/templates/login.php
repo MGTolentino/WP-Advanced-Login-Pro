@@ -37,9 +37,14 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
                 </div>
                 
                 <div class="wp-alp-form-field">
-                    <label for="wp-alp-password"><?php esc_html_e('Password', 'wp-alp'); ?></label>
-                    <input type="password" id="wp-alp-password" name="password" required>
-                </div>
+    <label for="wp-alp-password"><?php esc_html_e('Password', 'wp-alp'); ?></label>
+    <div class="wp-alp-password-wrapper">
+        <input type="password" id="wp-alp-password" name="password" required>
+        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
+            <span class="dashicons dashicons-visibility"></span>
+        </button>
+    </div>
+</div>
                 
                 <div class="wp-alp-form-field wp-alp-checkbox-field">
                     <input type="checkbox" id="wp-alp-remember" name="remember" value="1">
@@ -97,68 +102,3 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
     
     <div class="wp-alp-form-messages" id="wp-alp-login-messages"></div>
 </div>
-
-<script>
-    (function() {
-        document.getElementById('wp-alp-login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            var form = this;
-            var messagesContainer = document.getElementById('wp-alp-login-messages');
-            var submitButton = form.querySelector('button[type="submit"]');
-            
-            // Clear previous messages
-            messagesContainer.innerHTML = '';
-            
-            // Disable submit button
-            submitButton.disabled = true;
-            submitButton.classList.add('wp-alp-button-loading');
-            
-            // Collect form data
-            var formData = new FormData(form);
-            
-            // Send AJAX request
-            fetch(wp_alp_ajax.ajax_url, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                if (data.success) {
-                    // Display success message
-                    messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-success">' + 
-                        data.data.message + '</div>';
-                    
-                    // Redirect if needed
-                    if (data.data.redirect) {
-                        setTimeout(function() {
-                            window.location.href = data.data.redirect;
-                        }, 1000);
-                    }
-                } else {
-                    // Display error message
-                    messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-error">' + 
-                        data.data.message + '</div>';
-                    
-                    // Re-enable submit button
-                    submitButton.disabled = false;
-                    submitButton.classList.remove('wp-alp-button-loading');
-                }
-            })
-            .catch(function(error) {
-                // Display error message
-                messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-error">' + 
-                    '<?php esc_html_e('An error occurred. Please try again.', 'wp-alp'); ?>' + '</div>';
-                
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.classList.remove('wp-alp-button-loading');
-                
-                console.error('Error:', error);
-            });
-        });
-    })();
-</script>

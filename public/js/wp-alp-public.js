@@ -15,6 +15,9 @@
     function init() {
         // Password strength meter
         initPasswordStrengthMeter();
+
+        // Password visibility toggle
+        initPasswordToggle();
         
         // Form submissions
         initFormSubmissions();
@@ -22,6 +25,26 @@
         // Social login handlers
         initSocialLogin();
     }
+
+    /**
+ * Initialize password visibility toggle
+ */
+function initPasswordToggle() {
+    $('.wp-alp-toggle-password').on('click', function(e) {
+        e.preventDefault();
+        var $button = $(this);
+        var $icon = $button.find('.dashicons');
+        var $input = $button.closest('.wp-alp-password-wrapper').find('input');
+        
+        if ($input.attr('type') === 'password') {
+            $input.attr('type', 'text');
+            $icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+        } else {
+            $input.attr('type', 'password');
+            $icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+        }
+    });
+}
 
     /**
      * Initialize password strength meter
@@ -159,17 +182,20 @@
                     }
                     
                     if (response && response.success) {
-                        // Display success message
-                        var message = 'Operation completed successfully';
-                        if (response.data && response.data.message) {
-                            message = response.data.message;
-                        }
-                        
-                        $messagesContainer.html(
-                            '<div class="wp-alp-message wp-alp-message-success">' + 
-                            message + 
-                            '</div>'
-                        );
+                       // Display success message
+                    var message = 'Operation completed successfully';
+                    // Check different possible locations of the message
+                    if (response.data && response.data.message) {
+                        message = response.data.message;
+                    } else if (response.message) {
+                        message = response.message;
+                    }
+
+                    $messagesContainer.html(
+                        '<div class="wp-alp-message wp-alp-message-success">' + 
+                        message + 
+                        '</div>'
+                    );
                         
                         // Redirect if needed
                         if (response.data && response.data.redirect) {
@@ -182,8 +208,10 @@
                         var errorMessage = 'An error occurred';
                         if (response && response.data && response.data.message) {
                             errorMessage = response.data.message;
+                        } else if (response && response.message) {
+                            errorMessage = response.message;
                         }
-                        
+
                         $messagesContainer.html(
                             '<div class="wp-alp-message wp-alp-message-error">' + 
                             errorMessage + 

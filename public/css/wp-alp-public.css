@@ -446,3 +446,28 @@
         width: 100%;
     }
 }
+
+.wp-alp-password-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.wp-alp-password-wrapper input {
+    flex: 1;
+}
+
+.wp-alp-toggle-password {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #666;
+}
+
+.wp-alp-toggle-password:hover {
+    color: #333;
+}
