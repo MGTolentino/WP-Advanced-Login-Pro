@@ -167,9 +167,6 @@ function initPasswordToggle() {
         // Collect form data
         var formData = new FormData($form.get(0));
         
-        // Añade el nonce como 'security' - AÑADE ESTA LÍNEA
-        formData.append('security', wp_alp_ajax.nonce);
-        
         // Send AJAX request
         $.ajax({
             url: wp_alp_ajax.ajax_url,

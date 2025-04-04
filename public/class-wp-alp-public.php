@@ -391,7 +391,7 @@ class WP_ALP_Public {
      */
     public function ajax_login() {
         // Check AJAX referer
-        check_ajax_referer('wp_alp_public_nonce', 'security');
+        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');  // Cambiado de 'security' a '_wpnonce'
         
         $response = $this->forms->process_login($_POST);
         
@@ -414,7 +414,7 @@ class WP_ALP_Public {
      */
     public function ajax_register_user() {
         // Check AJAX referer
-        check_ajax_referer('wp_alp_public_nonce', 'security');
+        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');  // Cambiado de 'security' a '_wpnonce'
         
         $response = $this->forms->process_user_registration($_POST, $this->user_manager);
         
