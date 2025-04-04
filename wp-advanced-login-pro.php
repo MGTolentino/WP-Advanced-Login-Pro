@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WP Advanced Login Pro
- * Plugin URI: https://yourwebsite.com/wp-advanced-login-pro
+ * Plugin URI: 
  * Description: Advanced login and registration system with separate flows for normal users and vendors, social login integration, and enhanced security.
  * Version: 1.0.0
- * Author: Your Name
- * Author URI: https://yourwebsite.com
+ * Author: Miguel Tolentino
+ * Author URI: 
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: wp-alp
