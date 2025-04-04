@@ -66,40 +66,28 @@ class WP_ALP_Security {
         return wp_verify_nonce($nonce, 'wp_alp_security_nonce');
     }
 
-    /**
-     * Generate CSRF token for forms.
-     *
-     * @since    1.0.0
-     * @return   string    The generated CSRF token.
-     */
-    public function generate_csrf_token() {
-        if (!session_id()) {
-            session_start();
-        }
-        $token = bin2hex(random_bytes(32));
-        $_SESSION['wp_alp_csrf_token'] = $token;
-        return $token;
-    }
+   /**
+ * Generate CSRF token for forms.
+ *
+ * @since    1.0.0
+ * @return   string    The generated CSRF token.
+ */
+public function generate_csrf_token() {
+    // En lugar de usar sesiones, generamos un token basado en el nonce de WordPress
+    return wp_create_nonce('wp_alp_csrf_token');
+}
 
-    /**
-     * Verify CSRF token from submitted form.
-     *
-     * @since    1.0.0
-     * @param    string    $token    The token to verify.
-     * @return   bool                Whether the token is valid.
-     */
-    public function verify_csrf_token($token) {
-        if (!session_id()) {
-            session_start();
-        }
-        if (!isset($_SESSION['wp_alp_csrf_token'])) {
-            return false;
-        }
-        $valid = hash_equals($_SESSION['wp_alp_csrf_token'], $token);
-        // Consume the token after use
-        unset($_SESSION['wp_alp_csrf_token']);
-        return $valid;
-    }
+/**
+ * Verify CSRF token from submitted form.
+ *
+ * @since    1.0.0
+ * @param    string    $token    The token to verify.
+ * @return   bool                Whether the token is valid.
+ */
+public function verify_csrf_token($token) {
+    // Verificamos el token usando el sistema de nonces de WordPress
+    return wp_verify_nonce($token, 'wp_alp_csrf_token');
+}
 
     /**
      * Validate recaptcha response.

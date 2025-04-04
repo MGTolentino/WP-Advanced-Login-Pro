@@ -516,3 +516,13 @@
         font-size: 14px;
     }
 }
+
+/* Password visibility toggle */
+.wp-alp-password-wrapper {
+    position: relative;
+    display: flex;
+}
+
+.wp-alp-password-wrapper input {
+    flex: 1;
+}

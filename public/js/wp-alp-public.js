@@ -19,8 +19,8 @@
         // Password visibility toggle
         initPasswordToggle();
         
-        // Login/Register modal
-        initAuthModal();
+        // Form submissions
+        initFormSubmissions();
         
         // Social login handlers
         initSocialLogin();
@@ -77,134 +77,49 @@
     }
 
     /**
-     * Initialize login/register modal functionality
+     * Initialize form submissions
      */
-    function initAuthModal() {
-        // Add modal HTML to the body
-        var modalHtml = `
-            <div id="wp-alp-modal-overlay" class="wp-alp-modal-overlay">
-                <div id="wp-alp-modal" class="wp-alp-modal">
-                    <div class="wp-alp-modal-header">
-                        <h2 id="wp-alp-modal-title">Login or Register</h2>
-                        <button id="wp-alp-modal-close" class="wp-alp-modal-close">&times;</button>
-                    </div>
-                    <div id="wp-alp-modal-content" class="wp-alp-modal-content">
-                        <!-- Content will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        `;
-        $('body').append(modalHtml);
-
-        // Handle login links
-        $('.wp-alp-login-trigger').on('click', function(e) {
-            e.preventDefault();
-            showAuthModal('login');
-        });
-
-        // Handle register links
-        $('.wp-alp-register-trigger').on('click', function(e) {
-            e.preventDefault();
-            showAuthModal('register');
-        });
-
-        // Close modal on overlay click or close button
-        $('#wp-alp-modal-overlay, #wp-alp-modal-close').on('click', function(e) {
-            if (e.target === this) {
-                closeAuthModal();
-            }
-        });
-
-        // Prevent modal from closing when clicking inside content
-        $('#wp-alp-modal').on('click', function(e) {
-            e.stopPropagation();
-        });
-
-        // Handle tab switching in modal
-        $('body').on('click', '.wp-alp-modal-tab', function(e) {
-            e.preventDefault();
-            var tabType = $(this).data('tab');
-            showAuthModal(tabType);
-        });
-    }
-
-    /**
-     * Show authentication modal with specified type
-     * 
-     * @param {string} type The type of modal to show ('login' or 'register')
-     */
-    function showAuthModal(type) {
-        var $modal = $('#wp-alp-modal-overlay');
-        var $content = $('#wp-alp-modal-content');
-        var $title = $('#wp-alp-modal-title');
-        
-        // Update title
-        if (type === 'login') {
-            $title.text('Log In');
-        } else {
-            $title.text('Sign Up');
-        }
-        
-        // Show loading indicator
-        $content.html('<div class="wp-alp-loading"><span class="dashicons dashicons-update-alt"></span></div>');
-        
-        // Show modal
-        $modal.addClass('active');
-        
-        // Load form content via AJAX
-        $.ajax({
-            url: wp_alp_ajax.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'wp_alp_get_form',
-                type: type,
-                security: wp_alp_ajax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $content.html(response.data.html);
-                    // Initialize forms after loading
-                    initModalForms();
-                } else {
-                    $content.html('<div class="wp-alp-message wp-alp-message-error">' + response.data.message + '</div>');
-                }
-            },
-            error: function() {
-                $content.html('<div class="wp-alp-message wp-alp-message-error">Error loading form. Please try again.</div>');
-            }
-        });
-    }
-
-    /**
-     * Initialize forms in the modal
-     */
-    function initModalForms() {
-        // Initialize password strength meter
-        initPasswordStrengthMeter();
-        
-        // Initialize password toggle
-        initPasswordToggle();
-        
-        // Handle form submissions
+    function initFormSubmissions() {
+        // Login form
         $('#wp-alp-login-form').on('submit', function(e) {
             e.preventDefault();
-            handleModalFormSubmit($(this), 'login');
+            handleFormSubmit($(this), 'login');
         });
         
+        // Register user form
         $('#wp-alp-register-user-form').on('submit', function(e) {
             e.preventDefault();
-            handleModalFormSubmit($(this), 'register_user');
+            handleFormSubmit($(this), 'register_user');
+        });
+        
+        // Register vendor form
+        $('#wp-alp-register-vendor-form').on('submit', function(e) {
+            e.preventDefault();
+            handleFormSubmit($(this), 'register_vendor');
+        });
+        
+        // Profile completion form
+        $('#wp-alp-profile-completion-form').on('submit', function(e) {
+            e.preventDefault();
+            handleFormSubmit($(this), 'complete_profile');
+        });
+        
+        // Skip profile completion
+        $('#wp-alp-skip-profile').on('click', function(e) {
+            e.preventDefault();
+            var redirectTo = $(this).data('redirect') || wp_alp_ajax.home_url;
+            window.location.href = redirectTo;
         });
     }
 
     /**
-     * Handle modal form submission
+     * Handle form submission
      * 
      * @param {jQuery} $form The form element
      * @param {string} formType The type of form
      */
-    function handleModalFormSubmit($form, formType) {
-        var $messagesContainer = $('#wp-alp-modal-messages');
+    function handleFormSubmit($form, formType) {
+        var $messagesContainer = $('#wp-alp-' + formType + '-messages');
         var $submitButton = $form.find('button[type="submit"]');
         
         // Clear previous messages
@@ -216,8 +131,13 @@
         // Collect form data
         var formData = new FormData($form.get(0));
         
-        // Add action type
-        formData.append('is_modal', 'true');
+        // Add flag to indicate this is an AJAX request
+        formData.append('is_ajax', 'true');
+        
+        // Asegurarse de que tenemos el nonce de seguridad
+        if (!formData.has('security')) {
+            formData.append('security', wp_alp_ajax.nonce);
+        }
         
         // Send AJAX request
         $.ajax({
@@ -227,17 +147,17 @@
             processData: false,
             contentType: false,
             success: function(response) {
-                console.log("Response:", response);
-                
                 try {
-                    // Ensure we have a proper JSON response
+                    // Log the raw response for debugging
+                    console.log("Raw response:", response);
+                    
+                    // If response is a string and starts with HTML doctype, it's an error
                     if (typeof response === 'string') {
-                        // Check if it's HTML
                         if (response.trim().startsWith('<!DOCTYPE') || response.trim().startsWith('<html')) {
-                            console.error("Received HTML instead of JSON:", response.substring(0, 200));
+                            console.error("Received HTML instead of JSON");
                             throw new Error('Server returned HTML instead of JSON');
                         }
-                        // Try to parse JSON
+                        // Try to parse JSON string
                         response = JSON.parse(response);
                     }
                     
@@ -256,23 +176,17 @@
                             '</div>'
                         );
                         
-                        // If profile completion is needed, redirect
-                        if (response.data && response.data.needs_profile_completion) {
+                        // Redirect if needed
+                        if (response.data && response.data.redirect) {
                             setTimeout(function() {
                                 window.location.href = response.data.redirect;
-                            }, 1000);
-                            return;
-                        }
-                        
-                        // Close modal and refresh page after success
-                        setTimeout(function() {
-                            closeAuthModal();
-                            if (response.data && response.data.redirect) {
-                                window.location.href = response.data.redirect;
-                            } else {
+                            }, 1500);
+                        } else {
+                            // Refresh page if no redirect specified
+                            setTimeout(function() {
                                 window.location.reload();
-                            }
-                        }, 1500);
+                            }, 1500);
+                        }
                     } else {
                         // Display error message
                         var errorMessage = 'An error occurred';
@@ -293,11 +207,12 @@
                     }
                 } catch (e) {
                     console.error('Error processing response:', e);
+                    console.error('Response text:', response);
                     
                     // Display error message
                     $messagesContainer.html(
                         '<div class="wp-alp-message wp-alp-message-error">' + 
-                        'An unexpected error occurred. Try refreshing the page and attempting again.' + 
+                        'An unexpected error occurred. Please refresh the page and try again.' + 
                         '</div>'
                     );
                     
@@ -306,8 +221,7 @@
                 }
             },
             error: function(xhr, status, error) {
-                console.error('AJAX Error:', error);
-                console.error('Status:', status);
+                console.error('AJAX Error:', status, error);
                 console.error('Response Text:', xhr.responseText);
                 
                 // Display error message
@@ -321,49 +235,6 @@
                 $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
             }
         });
-    }
-
-    /**
-     * Close authentication modal
-     */
-    function closeAuthModal() {
-        $('#wp-alp-modal-overlay').removeClass('active');
-    }
-
-    /**
-     * Calculate password strength
-     * 
-     * @param {string} password The password to check
-     * @return {number} Strength score (0-5)
-     */
-    function calculatePasswordStrength(password) {
-        var strength = 0;
-        
-        if (password.length >= 8) strength += 1;
-        if (password.match(/[a-z]+/)) strength += 1;
-        if (password.match(/[A-Z]+/)) strength += 1;
-        if (password.match(/[0-9]+/)) strength += 1;
-        if (password.match(/[^a-zA-Z0-9]+/)) strength += 1;
-        
-        return strength;
-    }
-
-    /**
-     * Update strength meter display
-     * 
-     * @param {jQuery} $meter The strength meter element
-     * @param {number} strength The strength score (0-5)
-     */
-    function updateStrengthMeter($meter, strength) {
-        $meter.removeClass('weak medium strong');
-        
-        if (strength <= 1) {
-            $meter.addClass('weak').text(wp_alp_ajax.weak_password);
-        } else if (strength <= 3) {
-            $meter.addClass('medium').text(wp_alp_ajax.medium_password);
-        } else {
-            $meter.addClass('strong').text(wp_alp_ajax.strong_password);
-        }
     }
 
     /**
@@ -418,15 +289,30 @@
                 provider: provider,
                 code: code,
                 state: state,
-                is_modal: 'true'
+                is_ajax: 'true'
             },
             success: function(response) {
-                if (response.success && response.data.redirect) {
+                if (typeof response === 'string') {
+                    try {
+                        response = JSON.parse(response);
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                        alert(wp_alp_ajax.social_login_error);
+                        window.location.href = wp_alp_ajax.login_url;
+                        return;
+                    }
+                }
+                
+                if (response.success && response.data && response.data.redirect) {
                     // Redirect to the specified URL
                     window.location.href = response.data.redirect;
                 } else {
                     // Display error message
-                    alert(response.data.message || wp_alp_ajax.social_login_error);
+                    var errorMessage = wp_alp_ajax.social_login_error;
+                    if (response.data && response.data.message) {
+                        errorMessage = response.data.message;
+                    }
+                    alert(errorMessage);
                     // Redirect to login page
                     window.location.href = wp_alp_ajax.login_url;
                 }
@@ -438,6 +324,42 @@
                 window.location.href = wp_alp_ajax.login_url;
             }
         });
+    }
+
+    /**
+     * Calculate password strength
+     * 
+     * @param {string} password The password to check
+     * @return {number} Strength score (0-5)
+     */
+    function calculatePasswordStrength(password) {
+        var strength = 0;
+        
+        if (password.length >= 8) strength += 1;
+        if (password.match(/[a-z]+/)) strength += 1;
+        if (password.match(/[A-Z]+/)) strength += 1;
+        if (password.match(/[0-9]+/)) strength += 1;
+        if (password.match(/[^a-zA-Z0-9]+/)) strength += 1;
+        
+        return strength;
+    }
+
+    /**
+     * Update strength meter display
+     * 
+     * @param {jQuery} $meter The strength meter element
+     * @param {number} strength The strength score (0-5)
+     */
+    function updateStrengthMeter($meter, strength) {
+        $meter.removeClass('weak medium strong');
+        
+        if (strength <= 1) {
+            $meter.addClass('weak').text(wp_alp_ajax.weak_password);
+        } else if (strength <= 3) {
+            $meter.addClass('medium').text(wp_alp_ajax.medium_password);
+        } else {
+            $meter.addClass('strong').text(wp_alp_ajax.strong_password);
+        }
     }
 
     /**
