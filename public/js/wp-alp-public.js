@@ -167,6 +167,9 @@ function initPasswordToggle() {
         // Collect form data
         var formData = new FormData($form.get(0));
         
+        // Añade el nonce como 'security' - AÑADE ESTA LÍNEA
+        formData.append('security', wp_alp_ajax.nonce);
+        
         // Send AJAX request
         $.ajax({
             url: wp_alp_ajax.ajax_url,
@@ -177,25 +180,24 @@ function initPasswordToggle() {
             success: function(response) {
                 try {
                     // Asegurarse de que response es un objeto y no HTML
-                    if (typeof response === 'string' && response.trim().startsWith('<!DOCTYPE')) {
+                    if (typeof response === 'string' && (response.trim().startsWith('<!DOCTYPE') || response.trim().startsWith('<html'))) {
                         throw new Error('Server returned HTML instead of JSON');
                     }
                     
                     if (response && response.success) {
-                       // Display success message
-                    var message = 'Operation completed successfully';
-                    // Check different possible locations of the message
-                    if (response.data && response.data.message) {
-                        message = response.data.message;
-                    } else if (response.message) {
-                        message = response.message;
-                    }
-
-                    $messagesContainer.html(
-                        '<div class="wp-alp-message wp-alp-message-success">' + 
-                        message + 
-                        '</div>'
-                    );
+                        // Display success message
+                        var message = 'Operation completed successfully';
+                        if (response.data && response.data.message) {
+                            message = response.data.message;
+                        } else if (response.message) {
+                            message = response.message;
+                        }
+                        
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-success">' + 
+                            message + 
+                            '</div>'
+                        );
                         
                         // Redirect if needed
                         if (response.data && response.data.redirect) {
@@ -211,7 +213,7 @@ function initPasswordToggle() {
                         } else if (response && response.message) {
                             errorMessage = response.message;
                         }
-
+                        
                         $messagesContainer.html(
                             '<div class="wp-alp-message wp-alp-message-error">' + 
                             errorMessage + 
@@ -227,7 +229,7 @@ function initPasswordToggle() {
                     // Display error message
                     $messagesContainer.html(
                         '<div class="wp-alp-message wp-alp-message-error">' + 
-                        'An unexpected error occurred. Please try again later.' + 
+                        'An unexpected error occurred. Try refreshing the page and attempting again.' + 
                         '</div>'
                     );
                     
@@ -236,6 +238,10 @@ function initPasswordToggle() {
                 }
             },
             error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                console.error('Status:', status);
+                console.error('Response:', xhr.responseText);
+                
                 // Display error message
                 $messagesContainer.html(
                     '<div class="wp-alp-message wp-alp-message-error">' + 
@@ -245,8 +251,6 @@ function initPasswordToggle() {
                 
                 // Re-enable submit button
                 $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
-                
-                console.error('AJAX Error:', error);
             }
         });
     }
