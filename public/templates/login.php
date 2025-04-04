@@ -37,14 +37,14 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
                 </div>
                 
                 <div class="wp-alp-form-field">
-    <label for="wp-alp-password"><?php esc_html_e('Password', 'wp-alp'); ?></label>
-    <div class="wp-alp-password-wrapper">
-        <input type="password" id="wp-alp-password" name="password" required>
-        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
-            <span class="dashicons dashicons-visibility"></span>
-        </button>
-    </div>
-</div>
+                    <label for="wp-alp-password"><?php esc_html_e('Password', 'wp-alp'); ?></label>
+                    <div class="wp-alp-password-wrapper">
+                        <input type="password" id="wp-alp-password" name="password" required>
+                        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
+                            <span class="dashicons dashicons-visibility"></span>
+                        </button>
+                    </div>
+                </div>
                 
                 <div class="wp-alp-form-field wp-alp-checkbox-field">
                     <input type="checkbox" id="wp-alp-remember" name="remember" value="1">

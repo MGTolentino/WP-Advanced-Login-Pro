@@ -234,6 +234,10 @@ class WP_ALP_Core {
         $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_vendor', $plugin_public, 'ajax_register_vendor');
         $this->loader->add_action('wp_ajax_wp_alp_complete_profile', $plugin_public, 'ajax_complete_profile');
         
+        // Add AJAX handler for modal forms
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_get_form', $plugin_public, 'get_form_html');
+        $this->loader->add_action('wp_ajax_wp_alp_get_form', $plugin_public, 'get_form_html');
+        
         // Add social login handlers
         $this->loader->add_action('wp_ajax_nopriv_wp_alp_social_login', $plugin_public, 'handle_social_login');
         

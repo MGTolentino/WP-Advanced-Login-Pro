@@ -108,6 +108,9 @@ class WP_ALP_Public {
             $this->version,
             'all'
         );
+        
+        // Add dashicons for the toggle password icon and loading spinner
+        wp_enqueue_style('dashicons');
     }
 
     /**
@@ -152,6 +155,10 @@ class WP_ALP_Public {
         add_shortcode('wp_alp_register_user', array($this, 'register_user_shortcode'));
         add_shortcode('wp_alp_register_vendor', array($this, 'register_vendor_shortcode'));
         add_shortcode('wp_alp_profile_completion', array($this, 'profile_completion_shortcode'));
+        
+        // Add new shortcodes for modal triggers
+        add_shortcode('wp_alp_login_button', array($this, 'login_button_shortcode'));
+        add_shortcode('wp_alp_register_button', array($this, 'register_button_shortcode'));
     }
 
     /**
@@ -170,6 +177,48 @@ class WP_ALP_Public {
         ), $atts, 'wp_alp_login');
 
         return $this->forms->render_login_form($atts);
+    }
+
+    /**
+     * Login button shortcode that triggers the modal.
+     *
+     * @since    1.0.0
+     * @param    array    $atts    Shortcode attributes.
+     * @return   string            The rendered button.
+     */
+    public function login_button_shortcode($atts) {
+        // Parse attributes
+        $atts = shortcode_atts(array(
+            'text' => __('Login', 'wp-alp'),
+            'class' => '',
+        ), $atts, 'wp_alp_login_button');
+        
+        if (is_user_logged_in()) {
+            return '';
+        }
+        
+        return '<a href="#" class="wp-alp-button wp-alp-login-trigger ' . esc_attr($atts['class']) . '">' . esc_html($atts['text']) . '</a>';
+    }
+
+    /**
+     * Register button shortcode that triggers the modal.
+     *
+     * @since    1.0.0
+     * @param    array    $atts    Shortcode attributes.
+     * @return   string            The rendered button.
+     */
+    public function register_button_shortcode($atts) {
+        // Parse attributes
+        $atts = shortcode_atts(array(
+            'text' => __('Register', 'wp-alp'),
+            'class' => '',
+        ), $atts, 'wp_alp_register_button');
+        
+        if (is_user_logged_in()) {
+            return '';
+        }
+        
+        return '<a href="#" class="wp-alp-button wp-alp-register-trigger ' . esc_attr($atts['class']) . '">' . esc_html($atts['text']) . '</a>';
     }
 
     /**
@@ -390,7 +439,7 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_login() {
-        // Prevenir redirecciones durante AJAX
+        // Prevent any redirects during AJAX requests
         add_filter('wp_redirect', '__return_false', 999);
         
         // Check AJAX referer
@@ -398,7 +447,7 @@ class WP_ALP_Public {
         
         $response = $this->forms->process_login($_POST);
         
-        // Eliminar el filtro para no afectar otras redirecciones
+        // Remove the redirect prevention filter
         remove_filter('wp_redirect', '__return_false', 999);
         
         if (is_wp_error($response)) {
@@ -406,9 +455,15 @@ class WP_ALP_Public {
                 'message' => $response->get_error_message(),
             ));
         } else {
+            // Check if profile completion is needed
+            $user_id = get_current_user_id();
+            $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+            $needs_profile_completion = ($profile_status === 'incomplete');
+            
             wp_send_json_success(array(
                 'message' => __('Login successful. Redirecting...', 'wp-alp'),
                 'redirect' => $response['redirect'],
+                'needs_profile_completion' => $needs_profile_completion
             ));
         }
     }
@@ -419,7 +474,7 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_register_user() {
-        // Prevenir redirecciones durante AJAX
+        // Prevent any redirects during AJAX requests
         add_filter('wp_redirect', '__return_false', 999);
         
         // Check AJAX referer
@@ -427,7 +482,7 @@ class WP_ALP_Public {
         
         $response = $this->forms->process_user_registration($_POST, $this->user_manager);
         
-        // Eliminar el filtro para no afectar otras redirecciones
+        // Remove the redirect prevention filter
         remove_filter('wp_redirect', '__return_false', 999);
         
         if (is_wp_error($response)) {
@@ -435,10 +490,14 @@ class WP_ALP_Public {
                 'message' => $response->get_error_message(),
             ));
         } else {
+            // Check if profile completion is needed
+            $needs_profile_completion = true; // New registrations always need profile completion
+            
             wp_send_json_success(array(
                 'message' => __('Registration successful. Redirecting...', 'wp-alp'),
                 'redirect' => $response['redirect'],
                 'user_id' => $response['user_id'],
+                'needs_profile_completion' => $needs_profile_completion
             ));
         }
     }
@@ -449,10 +508,16 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_register_vendor() {
+        // Prevent any redirects during AJAX requests
+        add_filter('wp_redirect', '__return_false', 999);
+        
         // Check AJAX referer
-        check_ajax_referer('wp_alp_public_nonce', 'security');
+        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');
         
         $response = $this->forms->process_vendor_registration($_POST, $this->user_manager);
+        
+        // Remove the redirect prevention filter
+        remove_filter('wp_redirect', '__return_false', 999);
         
         if (is_wp_error($response)) {
             wp_send_json_error(array(
@@ -474,10 +539,16 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_complete_profile() {
+        // Prevent any redirects during AJAX requests
+        add_filter('wp_redirect', '__return_false', 999);
+        
         // Check AJAX referer
-        check_ajax_referer('wp_alp_public_nonce', 'security');
+        check_ajax_referer('wp_alp_public_nonce', '_wpnonce');
         
         $response = $this->forms->process_profile_completion($_POST, $this->user_manager, $this->jetengine);
+        
+        // Remove the redirect prevention filter
+        remove_filter('wp_redirect', '__return_false', 999);
         
         if (is_wp_error($response)) {
             wp_send_json_error(array(
@@ -493,32 +564,85 @@ class WP_ALP_Public {
     }
 
     /**
+     * AJAX handler to get form HTML for modal.
+     *
+     * @since    1.0.0
+     */
+    public function get_form_html() {
+        // Check AJAX referer
+        check_ajax_referer('wp_alp_public_nonce', 'security');
+        
+        $type = isset($_POST['type']) ? sanitize_text_field($_POST['type']) : 'login';
+        $html = '';
+        
+        // Add modal tabs
+        $html .= '<div class="wp-alp-modal-tabs">';
+        $html .= '<a href="#" class="wp-alp-modal-tab ' . ($type === 'login' ? 'active' : '') . '" data-tab="login">' . __('Log In', 'wp-alp') . '</a>';
+        $html .= '<a href="#" class="wp-alp-modal-tab ' . ($type === 'register' ? 'active' : '') . '" data-tab="register">' . __('Sign Up', 'wp-alp') . '</a>';
+        $html .= '</div>';
+        
+        // Add message container
+        $html .= '<div id="wp-alp-modal-messages" class="wp-alp-form-messages"></div>';
+        
+        // Get form HTML based on type
+        if ($type === 'login') {
+            $atts = array(
+                'show_title' => 'false',
+                'show_social' => 'true',
+                'redirect' => '',
+            );
+            $html .= $this->forms->render_login_form($atts);
+        } else {
+            $atts = array(
+                'show_title' => 'false',
+                'show_social' => 'true',
+                'redirect' => '',
+            );
+            $html .= $this->forms->render_register_user_form($atts);
+        }
+        
+        wp_send_json_success(array(
+            'html' => $html
+        ));
+    }
+
+    /**
      * Handle social login.
      *
      * @since    1.0.0
      */
     public function handle_social_login() {
-        if (isset($_POST['provider']) && isset($_POST['code']) && isset($_POST['state'])) {
-            $provider = sanitize_text_field($_POST['provider']);
-            $code = sanitize_text_field($_POST['code']);
-            $state = sanitize_text_field($_POST['state']);
-            
-            $response = $this->forms->process_social_login($provider, $code, $state, $this->social, $this->user_manager);
-            
-            if (is_wp_error($response)) {
-                wp_send_json_error(array(
-                    'message' => $response->get_error_message(),
-                ));
-            } else {
-                wp_send_json_success(array(
-                    'message' => __('Social login successful. Redirecting...', 'wp-alp'),
-                    'redirect' => $response['redirect'],
-                    'user_id' => $response['user_id'],
-                ));
-            }
-        } else {
+        // Prevent any redirects during AJAX requests
+        if (isset($_POST['is_modal']) && $_POST['is_modal'] === 'true') {
+            add_filter('wp_redirect', '__return_false', 999);
+        }
+        
+        $provider = sanitize_text_field($_POST['provider']);
+        $code = sanitize_text_field($_POST['code']);
+        $state = sanitize_text_field($_POST['state']);
+        
+        $response = $this->forms->process_social_login($provider, $code, $state, $this->social, $this->user_manager);
+        
+        // Remove the redirect prevention filter
+        if (isset($_POST['is_modal']) && $_POST['is_modal'] === 'true') {
+            remove_filter('wp_redirect', '__return_false', 999);
+        }
+        
+        if (is_wp_error($response)) {
             wp_send_json_error(array(
-                'message' => __('Invalid social login request.', 'wp-alp'),
+                'message' => $response->get_error_message(),
+            ));
+        } else {
+            // Check if profile completion is needed
+            $user_id = $response['user_id'];
+            $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+            $needs_profile_completion = ($profile_status === 'incomplete');
+            
+            wp_send_json_success(array(
+                'message' => __('Social login successful. Redirecting...', 'wp-alp'),
+                'redirect' => $response['redirect'],
+                'user_id' => $response['user_id'],
+                'needs_profile_completion' => $needs_profile_completion
             ));
         }
     }

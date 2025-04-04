@@ -50,25 +50,25 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
                 </div>
                 
                 <div class="wp-alp-form-field">
-    <label for="wp-alp-password"><?php esc_html_e('Password', 'wp-alp'); ?> <span class="required">*</span></label>
-    <div class="wp-alp-password-wrapper">
-        <input type="password" id="wp-alp-password" name="password" required>
-        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
-            <span class="dashicons dashicons-visibility"></span>
-        </button>
-    </div>
-    <div class="wp-alp-password-strength" id="wp-alp-password-strength"></div>
-</div>
-
-<div class="wp-alp-form-field">
-    <label for="wp-alp-password-confirm"><?php esc_html_e('Confirm Password', 'wp-alp'); ?> <span class="required">*</span></label>
-    <div class="wp-alp-password-wrapper">
-        <input type="password" id="wp-alp-password-confirm" name="password_confirm" required>
-        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
-            <span class="dashicons dashicons-visibility"></span>
-        </button>
-    </div>
-</div>
+                    <label for="wp-alp-password"><?php esc_html_e('Password', 'wp-alp'); ?> <span class="required">*</span></label>
+                    <div class="wp-alp-password-wrapper">
+                        <input type="password" id="wp-alp-password" name="password" required>
+                        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
+                            <span class="dashicons dashicons-visibility"></span>
+                        </button>
+                    </div>
+                    <div class="wp-alp-password-strength" id="wp-alp-password-strength"></div>
+                </div>
+                
+                <div class="wp-alp-form-field">
+                    <label for="wp-alp-password-confirm"><?php esc_html_e('Confirm Password', 'wp-alp'); ?> <span class="required">*</span></label>
+                    <div class="wp-alp-password-wrapper">
+                        <input type="password" id="wp-alp-password-confirm" name="password_confirm" required>
+                        <button type="button" class="wp-alp-toggle-password" aria-label="<?php esc_attr_e('Toggle password visibility', 'wp-alp'); ?>">
+                            <span class="dashicons dashicons-visibility"></span>
+                        </button>
+                    </div>
+                </div>
                 
                 <?php if (!empty($recaptcha_site_key)) : ?>
                     <div class="wp-alp-form-field wp-alp-recaptcha-field">
@@ -138,50 +138,3 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
     
     <div class="wp-alp-form-messages" id="wp-alp-register-user-messages"></div>
 </div>
-
-<script>
-    (function() {
-        var passwordField = document.getElementById('wp-alp-password');
-        var confirmField = document.getElementById('wp-alp-password-confirm');
-        var strengthMeter = document.getElementById('wp-alp-password-strength');
-        
-        // Password strength check
-        passwordField.addEventListener('keyup', function() {
-            var password = this.value;
-            var strength = 0;
-            
-            if (password.length >= 8) strength += 1;
-            if (password.match(/[a-z]+/)) strength += 1;
-            if (password.match(/[A-Z]+/)) strength += 1;
-            if (password.match(/[0-9]+/)) strength += 1;
-            if (password.match(/[^a-zA-Z0-9]+/)) strength += 1;
-            
-            switch (strength) {
-                case 0:
-                case 1:
-                    strengthMeter.className = 'wp-alp-password-strength weak';
-                    strengthMeter.innerHTML = '<?php esc_html_e('Weak', 'wp-alp'); ?>';
-                    break;
-                case 2:
-                case 3:
-                    strengthMeter.className = 'wp-alp-password-strength medium';
-                    strengthMeter.innerHTML = '<?php esc_html_e('Medium', 'wp-alp'); ?>';
-                    break;
-                case 4:
-                case 5:
-                    strengthMeter.className = 'wp-alp-password-strength strong';
-                    strengthMeter.innerHTML = '<?php esc_html_e('Strong', 'wp-alp'); ?>';
-                    break;
-            }
-        });
-        
-        // Password confirmation check
-        confirmField.addEventListener('keyup', function() {
-            if (this.value !== passwordField.value) {
-                this.setCustomValidity('<?php esc_html_e('Passwords do not match', 'wp-alp'); ?>');
-            } else {
-                this.setCustomValidity('');
-            }
-        });
-    })();
-</script>
