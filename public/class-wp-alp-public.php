@@ -480,6 +480,13 @@ public function ajax_login() {
             $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
             $needs_profile_completion = ($profile_status === 'incomplete');
 
+            error_log('Respuesta AJAX: ' . json_encode([
+                'mensaje' => 'Login exitoso',
+                'username' => $_POST['username_email'],
+                'user_id' => get_current_user_id(),
+                'profile_status' => get_user_meta(get_current_user_id(), 'wp_alp_profile_status', true)
+            ]));
+
             wp_send_json_success(array(
                 'message' => __('Login successful.', 'wp-alp'),
                 'redirect' => $response['redirect'],
