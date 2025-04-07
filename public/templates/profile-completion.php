@@ -157,69 +157,80 @@ $services = array(
             e.preventDefault();
             
             var redirectTo = '<?php echo esc_url(empty($redirect_to) ? home_url() : $redirect_to); ?>';
-            window.location.href = redirectTo;
+            
+            // Check if we're in a modal
+            if (document.querySelector('.wp-alp-modal')) {
+                window.location.href = redirectTo;
+            } else {
+                window.location.href = redirectTo;
+            }
         });
         
-        // Form submission
-        document.getElementById('wp-alp-profile-completion-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            var form = this;
-            var messagesContainer = document.getElementById('wp-alp-profile-completion-messages');
-            var submitButton = form.querySelector('button[type="submit"]');
-            
-            // Clear previous messages
-            messagesContainer.innerHTML = '';
-            
-            // Disable submit button
-            submitButton.disabled = true;
-            submitButton.classList.add('wp-alp-button-loading');
-            
-            // Collect form data
-            var formData = new FormData(form);
-            
-            // Send AJAX request
-            fetch(wp_alp_ajax.ajax_url, {
-                method: 'POST',
-                body: formData,
-                credentials: 'same-origin'
-            })
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                if (data.success) {
-                    // Display success message
-                    messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-success">' + 
-                        data.data.message + '</div>';
+        // Form submission - use the modal handler if in modal
+        var form = document.getElementById('wp-alp-profile-completion-form');
+        if (form) {
+            // If we're in a modal, the event is handled by jQuery in wp-alp-public.js
+            if (!document.querySelector('.wp-alp-modal')) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
                     
-                    // Redirect if needed
-                    if (data.data.redirect) {
-                        setTimeout(function() {
-                            window.location.href = data.data.redirect;
-                        }, 1000);
-                    }
-                } else {
-                    // Display error message
-                    messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-error">' + 
-                        data.data.message + '</div>';
+                    var messagesContainer = document.getElementById('wp-alp-profile-completion-messages');
+                    var submitButton = form.querySelector('button[type="submit"]');
                     
-                    // Re-enable submit button
-                    submitButton.disabled = false;
-                    submitButton.classList.remove('wp-alp-button-loading');
-                }
-            })
-            .catch(function(error) {
-                // Display error message
-                messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-error">' + 
-                    '<?php esc_html_e('An error occurred. Please try again.', 'wp-alp'); ?>' + '</div>';
-                
-                // Re-enable submit button
-                submitButton.disabled = false;
-                submitButton.classList.remove('wp-alp-button-loading');
-                
-                console.error('Error:', error);
-            });
-        });
+                    // Clear previous messages
+                    messagesContainer.innerHTML = '';
+                    
+                    // Disable submit button
+                    submitButton.disabled = true;
+                    submitButton.classList.add('wp-alp-button-loading');
+                    
+                    // Collect form data
+                    var formData = new FormData(form);
+                    
+                    // Send AJAX request
+                    fetch(wp_alp_ajax.ajax_url, {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin'
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.success) {
+                            // Display success message
+                            messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-success">' + 
+                                data.data.message + '</div>';
+                            
+                            // Redirect if needed
+                            if (data.data.redirect) {
+                                setTimeout(function() {
+                                    window.location.href = data.data.redirect;
+                                }, 1000);
+                            }
+                        } else {
+                            // Display error message
+                            messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-error">' + 
+                                data.data.message + '</div>';
+                            
+                            // Re-enable submit button
+                            submitButton.disabled = false;
+                            submitButton.classList.remove('wp-alp-button-loading');
+                        }
+                    })
+                    .catch(function(error) {
+                        // Display error message
+                        messagesContainer.innerHTML = '<div class="wp-alp-message wp-alp-message-error">' + 
+                            '<?php esc_html_e('An error occurred. Please try again.', 'wp-alp'); ?>' + '</div>';
+                        
+                        // Re-enable submit button
+                        submitButton.disabled = false;
+                        submitButton.classList.remove('wp-alp-button-loading');
+                        
+                        console.error('Error:', error);
+                    });
+                });
+            }
+        }
     })();
 </script>

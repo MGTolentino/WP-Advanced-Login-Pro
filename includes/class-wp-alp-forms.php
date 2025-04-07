@@ -182,55 +182,60 @@ class WP_ALP_Forms {
         return ob_get_clean();
     }
     
-    /**
-     * Render profile completion form.
-     *
-     * @since    1.0.0
-     * @param    array    $atts    Shortcode attributes.
-     * @return   string            The rendered form.
-     */
-    public function render_profile_completion_form($atts = array()) {
-        if (!is_user_logged_in()) {
-            return '<p>' . __('You must be logged in to complete your profile.', 'wp-alp') . '</p>';
-        }
-        
-        $user = wp_get_current_user();
-        $user_id = $user->ID;
-        
-        // Check if profile is already complete
-        $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-        if ($profile_status === 'complete') {
-            return '<p>' . __('Your profile is already complete.', 'wp-alp') . '</p>';
-        }
-        
-        // Process attributes
-        $atts = shortcode_atts(array(
-            'redirect' => '',
-            'show_title' => true,
-        ), $atts, 'wp_alp_profile_completion');
-        
-        // Generate nonce and CSRF token
-        $nonce = $this->security->generate_nonce();
-        $csrf_token = $this->security->generate_csrf_token();
-        
-        // Start output buffering
-        ob_start();
-        
-        // Get template
-        $template = WP_ALP_PLUGIN_DIR . 'public/templates/profile-completion.php';
-        
-        // Check if template exists in theme
-        $theme_template = get_stylesheet_directory() . '/wp-alp/profile-completion.php';
-        if (file_exists($theme_template)) {
-            $template = $theme_template;
-        }
-        
-        // Include template with variables
-        include $template;
-        
-        // Return the buffered output
-        return ob_get_clean();
+   /**
+ * Render profile completion form.
+ *
+ * @since    1.0.0
+ * @param    array    $atts    Shortcode attributes.
+ * @return   string            The rendered form.
+ */
+public function render_profile_completion_form($atts = array()) {
+    if (!is_user_logged_in()) {
+        return '<p>' . __('You must be logged in to complete your profile.', 'wp-alp') . '</p>';
     }
+    
+    $user = wp_get_current_user();
+    $user_id = $user->ID;
+    
+    // Check if profile is already complete
+    $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+    if ($profile_status === 'complete') {
+        return '<p>' . __('Your profile is already complete.', 'wp-alp') . '</p>';
+    }
+    
+    // Process attributes
+    $atts = shortcode_atts(array(
+        'redirect' => '',
+        'show_title' => true,
+    ), $atts, 'wp_alp_profile_completion');
+    
+    // Convert string "false" to boolean false
+    if (is_string($atts['show_title']) && strtolower($atts['show_title']) === 'false') {
+        $atts['show_title'] = false;
+    }
+    
+    // Generate nonce and CSRF token
+    $nonce = $this->security->generate_nonce();
+    $csrf_token = $this->security->generate_csrf_token();
+    
+    // Start output buffering
+    ob_start();
+    
+    // Get template
+    $template = WP_ALP_PLUGIN_DIR . 'public/templates/profile-completion.php';
+    
+    // Check if template exists in theme
+    $theme_template = get_stylesheet_directory() . '/wp-alp/profile-completion.php';
+    if (file_exists($theme_template)) {
+        $template = $theme_template;
+    }
+    
+    // Include template with variables
+    include $template;
+    
+    // Return the buffered output
+    return ob_get_clean();
+}
     
     /**
      * Render logout form/button.

@@ -108,99 +108,149 @@ function initPasswordToggle() {
 }
 
     /**
-     * Initialize modal forms
-     */
-    function initModalForms() {
-        // Login trigger
-        $('.wp-alp-login-trigger').on('click', function(e) {
-            e.preventDefault();
-            loadModalForm('login');
-        });
-        
-        // Register trigger
-        $('.wp-alp-register-trigger').on('click', function(e) {
-            e.preventDefault();
-            loadModalForm('register');
-        });
-        
-        // Close modal
-        $(document).on('click', '.wp-alp-modal-close, .wp-alp-modal-overlay', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-        
-        // Tab switching
-        $(document).on('click', '.wp-alp-modal-tab', function(e) {
-            e.preventDefault();
-            var tab = $(this).data('tab');
-            loadModalForm(tab);
-        });
-        
-        // Handle ESC key
-        $(document).on('keydown', function(e) {
-            if (e.key === 'Escape' && $('.wp-alp-modal').length) {
-                closeModal();
-            }
-        });
-        
-        // Handle form submission in modal
-        $(document).on('submit', '.wp-alp-modal .wp-alp-form', function(e) {
-            e.preventDefault();
-            handleModalFormSubmit($(this));
-        });
-    }
+ * Initialize modal forms
+ */
+function initModalForms() {
+    // Login trigger
+    $('.wp-alp-login-trigger').on('click', function(e) {
+        e.preventDefault();
+        loadModalForm('login');
+    });
+    
+    // Register trigger
+    $('.wp-alp-register-trigger').on('click', function(e) {
+        e.preventDefault();
+        loadModalForm('register');
+    });
+    
+    // Close modal
+    $(document).on('click', '.wp-alp-modal-close, .wp-alp-modal-overlay', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+    
+    // Tab switching
+    $(document).on('click', '.wp-alp-modal-tab', function(e) {
+        e.preventDefault();
+        var tab = $(this).data('tab');
+        loadModalForm(tab);
+    });
+    
+    // Handle ESC key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $('.wp-alp-modal').length) {
+            closeModal();
+        }
+    });
+    
+    // Handle form submission in modal
+    $(document).on('submit', '.wp-alp-modal .wp-alp-form', function(e) {
+        e.preventDefault();
+        handleModalFormSubmit($(this));
+    });
+    
+    // Handle Skip Profile button in modal
+    $(document).on('click', '.wp-alp-modal #wp-alp-skip-profile', function(e) {
+        e.preventDefault();
+        var redirectTo = $(this).data('redirect') || wp_alp_ajax.home_url;
+        window.location.href = redirectTo;
+    });
+}
 
     /**
-     * Load modal form via AJAX
-     */
-    function loadModalForm(type) {
-        // Create modal if it doesn't exist
-        if (!$('.wp-alp-modal').length) {
-            var modalHtml = '<div class="wp-alp-modal-overlay">' +
-                '<div class="wp-alp-modal">' +
-                '<a href="#" class="wp-alp-modal-close">&times;</a>' +
-                '<div class="wp-alp-modal-content"></div>' +
-                '</div>' +
-                '</div>';
-            $('body').append(modalHtml);
+ * Initialize modal forms
+ */
+function initModalForms() {
+    // Login trigger
+    $('.wp-alp-login-trigger').on('click', function(e) {
+        e.preventDefault();
+        loadModalForm('login');
+    });
+    
+    // Register trigger
+    $('.wp-alp-register-trigger').on('click', function(e) {
+        e.preventDefault();
+        loadModalForm('register');
+    });
+    
+    // Close modal
+    $(document).on('click', '.wp-alp-modal-close, .wp-alp-modal-overlay', function(e) {
+        if (e.target === this) {
+            closeModal();
         }
-        
-        var $modalContent = $('.wp-alp-modal-content');
-        
-        // Show loading spinner
-        $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
-        
-        // Load form via AJAX
-        $.ajax({
-            url: wp_alp_ajax.ajax_url,
-            type: 'POST',
-            data: {
-                action: 'wp_alp_get_form',
-                type: type,
-                security: wp_alp_ajax.nonce
-            },
-            success: function(response) {
-                if (response.success) {
-                    $modalContent.html(response.data.html);
-                    
-                    // Update active tab
-                    $('.wp-alp-modal-tab').removeClass('active');
-                    $('.wp-alp-modal-tab[data-tab="' + type + '"]').addClass('active');
-                } else {
-                    $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
-                        wp_alp_ajax.ajax_error + '</div>');
-                }
-            },
-            error: function() {
+    });
+    
+    // Tab switching
+    $(document).on('click', '.wp-alp-modal-tab', function(e) {
+        e.preventDefault();
+        var tab = $(this).data('tab');
+        loadModalForm(tab);
+    });
+    
+    // Handle ESC key
+    $(document).on('keydown', function(e) {
+        if (e.key === 'Escape' && $('.wp-alp-modal').length) {
+            closeModal();
+        }
+    });
+    
+    // Handle form submission in modal
+    $(document).on('submit', '.wp-alp-modal .wp-alp-form', function(e) {
+        e.preventDefault();
+        handleModalFormSubmit($(this));
+    });
+    
+    // Handle Skip Profile button in modal
+    $(document).on('click', '.wp-alp-modal #wp-alp-skip-profile', function(e) {
+        e.preventDefault();
+        var redirectTo = $(this).data('redirect') || wp_alp_ajax.home_url;
+        window.location.href = redirectTo;
+    });
+}
+
+/**
+ * Load profile completion form via AJAX
+ */
+function loadProfileCompletionForm() {
+    var $modalContent = $('.wp-alp-modal-content');
+    
+    // Show loading spinner
+    $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
+    
+    // Load form via AJAX
+    $.ajax({
+        url: wp_alp_ajax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'wp_alp_get_profile_form',
+            security: wp_alp_ajax.nonce
+        },
+        success: function(response) {
+            if (response.success) {
+                // Replace tabs with title
+                var tabsHtml = '<div class="wp-alp-modal-tabs"><h3>' + 
+                    'Complete Your Profile' + '</h3></div>';
+                
+                // Remove existing tabs
+                $('.wp-alp-modal-tabs').remove();
+                
+                // Add the title at the top of modal
+                $('.wp-alp-modal').prepend(tabsHtml);
+                
+                // Set form content
+                $modalContent.html(response.data.html);
+            } else {
                 $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
                     wp_alp_ajax.ajax_error + '</div>');
             }
-        });
-        
-        // Add active class to modal
-        $('.wp-alp-modal-overlay').addClass('active');
-    }
+        },
+        error: function() {
+            $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                wp_alp_ajax.ajax_error + '</div>');
+        }
+    });
+}
 
     /**
      * Close modal
@@ -216,116 +266,114 @@ function initPasswordToggle() {
         }, 300);
     }
 
-    /**
-     * Handle modal form submission
-     */
-    function handleModalFormSubmit($form) {
-        var formType = $form.data('form-type');
-        var $messagesContainer = $('#wp-alp-modal-messages');
-        var $submitButton = $form.find('button[type="submit"]');
-        
-        // Clear previous messages
-        $messagesContainer.empty();
-        
-        // Disable submit button
-        $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
-        
-        // Get form action URL
-        var actionUrl = wp_alp_ajax.ajax_url;
-        
-        // Collect form data
-        var formData = new FormData($form.get(0));
-        
-        // Add AJAX flag
-        formData.append('is_ajax', 'true');
-        formData.append('is_modal', 'true');
-        
-        // Add security token if not already present
-        if (!formData.has('security')) {
-            formData.append('security', wp_alp_ajax.nonce);
-        }
-        
-        // Send AJAX request
-        $.ajax({
-            url: actionUrl,
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                try {
-                    // If response is a string (HTML), we have an issue
-                    if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
-                        console.error('Received HTML instead of JSON');
-                        throw new Error('Server returned HTML instead of JSON');
-                    }
+/**
+ * Handle modal form submission
+ */
+function handleModalFormSubmit($form) {
+    var formType = $form.data('form-type');
+    var $messagesContainer = $('#wp-alp-modal-messages');
+    var $submitButton = $form.find('button[type="submit"]');
+    
+    // Clear previous messages
+    $messagesContainer.empty();
+    
+    // Disable submit button
+    $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
+    
+    // Get form action URL
+    var actionUrl = wp_alp_ajax.ajax_url;
+    
+    // Collect form data
+    var formData = new FormData($form.get(0));
+    
+    // Add AJAX flag
+    formData.append('is_ajax', 'true');
+    formData.append('is_modal', 'true');
+    
+    // Add security token if not already present
+    if (!formData.has('security')) {
+        formData.append('security', wp_alp_ajax.nonce);
+    }
+    
+    // Send AJAX request
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            try {
+                // If response is a string (HTML), we have an issue
+                if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                    console.error('Received HTML instead of JSON');
+                    throw new Error('Server returned HTML instead of JSON');
+                }
+                
+                // Ensure response is an object
+                if (typeof response === 'string') {
+                    response = JSON.parse(response);
+                }
+                
+                if (response.success) {
+                    // Display success message
+                    $messagesContainer.html(
+                        '<div class="wp-alp-message wp-alp-message-success">' + 
+                        response.data.message + 
+                        '</div>'
+                    );
                     
-                    // Ensure response is an object
-                    if (typeof response === 'string') {
-                        response = JSON.parse(response);
+                    // Handle profile completion if needed
+                    if (formType === 'profile_completion' || (formType !== 'profile_completion' && !response.data.needs_profile_completion)) {
+                        // Profile is complete or was just completed - redirect
+                        setTimeout(function() {
+                            window.location.href = response.data.redirect;
+                        }, 1000);
+                    } else if (response.data.needs_profile_completion) {
+                        // User needs to complete profile - load profile form
+                        loadProfileCompletionForm();
                     }
-                    
-                    if (response.success) {
-                        // Display success message
-                        $messagesContainer.html(
-                            '<div class="wp-alp-message wp-alp-message-success">' + 
-                            response.data.message + 
-                            '</div>'
-                        );
-                        
-                        // If profile completion is needed, handle it specifically
-                        if (response.data.needs_profile_completion) {
-                            // Redirect to profile completion page after a short delay
-                            setTimeout(function() {
-                                window.location.href = response.data.redirect;
-                            }, 1000);
-                        } else {
-                            // Normal redirect
-                            setTimeout(function() {
-                                window.location.href = response.data.redirect;
-                            }, 1000);
-                        }
-                    } else {
-                        // Display error message
-                        $messagesContainer.html(
-                            '<div class="wp-alp-message wp-alp-message-error">' + 
-                            response.data.message + 
-                            '</div>'
-                        );
-                        
-                        // Re-enable submit button
-                        $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
-                    }
-                } catch (e) {
-                    console.error('Error processing response:', e);
-                    
+                } else {
                     // Display error message
                     $messagesContainer.html(
                         '<div class="wp-alp-message wp-alp-message-error">' + 
-                        'An unexpected error occurred. Try refreshing the page and attempting again.' + 
+                        response.data.message + 
                         '</div>'
                     );
                     
                     // Re-enable submit button
                     $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error);
-                console.log('Response Text:', xhr.responseText);
+            } catch (e) {
+                console.error('Error processing response:', e);
                 
                 // Display error message
                 $messagesContainer.html(
                     '<div class="wp-alp-message wp-alp-message-error">' + 
-                    wp_alp_ajax.ajax_error + 
+                    'An unexpected error occurred. Try refreshing the page and attempting again.' + 
                     '</div>'
                 );
                 
                 // Re-enable submit button
                 $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
             }
-        });
-    }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', status, error);
+            console.log('Response Text:', xhr.responseText);
+            
+            // Display error message
+            $messagesContainer.html(
+                '<div class="wp-alp-message wp-alp-message-error">' + 
+                wp_alp_ajax.ajax_error + 
+                '</div>'
+            );
+            
+            // Re-enable submit button
+            $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+        }
+    });
+}
 
     /**
      * Initialize form submissions

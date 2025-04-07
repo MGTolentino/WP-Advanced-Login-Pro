@@ -102,6 +102,10 @@ class WP_ALP_Public {
 
         // Initialize forms manager
         $this->forms = new WP_ALP_Forms($security, $social);
+
+        // Add AJAX handlers
+add_action('wp_ajax_wp_alp_get_profile_form', array($this, 'get_profile_completion_html'));
+add_action('wp_ajax_nopriv_wp_alp_get_profile_form', array($this, 'get_profile_completion_html'));
     }
 
     /**
@@ -443,113 +447,107 @@ class WP_ALP_Public {
     }
 
     /**
-     * AJAX login handler.
-     *
-     * @since    1.0.0
-     */
-    public function ajax_login() {
-        // Asegurar que estamos enviando el tipo de contenido correcto
-        header('Content-Type: application/json; charset=UTF-8');
-        
-        // Prevenir redirecciones durante solicitudes AJAX - no quitar este filtro
-        add_filter('wp_redirect', '__return_false', 999);
-        add_filter('wp_safe_redirect', '__return_false', 999);
-        
-        // Verificar si es una solicitud AJAX
-        $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
-        
-        if (!$is_ajax) {
-            // Si no es una solicitud AJAX, usar el flujo normal
-            $this->process_login_form();
-            return;
-        }
-        
-        try {
-            // Procesar el login independientemente de los nonces para facilitar el diagnóstico
-            // en producción, restaura la verificación de nonce
-            $response = $this->forms->process_login($_POST);
-            
-            // Manejar la respuesta AJAX independientemente del tipo de redirección
-            if (is_wp_error($response)) {
-                echo json_encode(array(
-                    'success' => false,
-                    'data' => array(
-                        'message' => $response->get_error_message()
-                    )
-                ));
-            } else {
-                // Verificar si el perfil necesita completarse
-                $user_id = get_current_user_id();
-                $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-
-                echo json_encode(array(
-                    'success' => true,
-                    'data' => array(
-                        'message' => __('Login successful. Redirecting...', 'wp-alp'),
-                        'redirect' => $response['redirect'],
-                        'needs_profile_completion' => ($profile_status === 'incomplete')
-                    )
-                ));
-            }
-        } catch (Exception $e) {
-            // Capturar cualquier excepción y devolverla como JSON
-            echo json_encode(array(
-                'success' => false,
-                'data' => array(
-                    'message' => 'Error: ' . $e->getMessage()
-                )
-            ));
-        }
-        
-        // Es crucial terminar la ejecución aquí para evitar que se envíe otro contenido
-        exit;
+ * AJAX login handler.
+ *
+ * @since    1.0.0
+ */
+public function ajax_login() {
+    // Asegurar que estamos enviando el tipo de contenido correcto
+    header('Content-Type: application/json; charset=UTF-8');
+    
+    // Prevenir redirecciones durante solicitudes AJAX
+    add_filter('wp_redirect', '__return_false', 999);
+    add_filter('wp_safe_redirect', '__return_false', 999);
+    
+    // Verificar si es una solicitud AJAX
+    $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
+    $is_modal = isset($_POST['is_modal']) && $_POST['is_modal'] === 'true';
+    
+    if (!$is_ajax) {
+        // Si no es una solicitud AJAX, usar el flujo normal
+        $this->process_login_form();
+        return;
     }
-
-    /**
-     * AJAX user registration handler.
-     *
-     * @since    1.0.0
-     */
-    public function ajax_register_user() {
-        // Prevenir redirecciones durante solicitudes AJAX - no quitar este filtro
-        add_filter('wp_redirect', '__return_false', 999);
+    
+    try {
+        // Procesar el login
+        $response = $this->forms->process_login($_POST);
         
-        // Verificar si es una solicitud AJAX
-        $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
-        
-        if (!$is_ajax) {
-            // Si no es una solicitud AJAX, usar el flujo normal
-            $this->process_register_user_form();
-            return;
-        }
-        
-        // Check AJAX referer
-        $nonce = isset($_POST['security']) ? $_POST['security'] : (isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : '');
-        if (!wp_verify_nonce($nonce, 'wp_alp_public_nonce')) {
-            wp_send_json_error(array(
-                'message' => __('Security token expired. Please refresh the page and try again.', 'wp-alp'),
-            ));
-            return;
-        }
-        
-        $response = $this->forms->process_user_registration($_POST, $this->user_manager);
-        
-        // Manejar la respuesta AJAX independientemente del tipo de redirección
         if (is_wp_error($response)) {
             wp_send_json_error(array(
-                'message' => $response->get_error_message(),
+                'message' => $response->get_error_message()
             ));
+            exit;
         } else {
+            // Verificar si el perfil necesita completarse
+            $user_id = get_current_user_id();
+            $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+            $needs_profile_completion = ($profile_status === 'incomplete');
+
             wp_send_json_success(array(
-                'message' => __('Registration successful. Redirecting...', 'wp-alp'),
+                'message' => __('Login successful.', 'wp-alp'),
                 'redirect' => $response['redirect'],
-                'user_id' => $response['user_id'],
-                'needs_profile_completion' => true // Nuevos registros siempre necesitan completar el perfil
+                'needs_profile_completion' => $needs_profile_completion,
+                'user_id' => $user_id
             ));
+            exit;
         }
-        
-        // Note: No eliminar el filtro de redirección para asegurar que no ocurran redirecciones
+    } catch (Exception $e) {
+        wp_send_json_error(array(
+            'message' => 'Error: ' . $e->getMessage()
+        ));
+        exit;
     }
+}
+
+    /**
+ * AJAX user registration handler.
+ *
+ * @since    1.0.0
+ */
+public function ajax_register_user() {
+    // Asegurar que estamos enviando el tipo de contenido correcto
+    header('Content-Type: application/json; charset=UTF-8');
+    
+    // Prevenir redirecciones durante solicitudes AJAX
+    add_filter('wp_redirect', '__return_false', 999);
+    add_filter('wp_safe_redirect', '__return_false', 999);
+    
+    // Verificar si es una solicitud AJAX
+    $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
+    $is_modal = isset($_POST['is_modal']) && $_POST['is_modal'] === 'true';
+    
+    if (!$is_ajax) {
+        // Si no es una solicitud AJAX, usar el flujo normal
+        $this->process_register_user_form();
+        return;
+    }
+    
+    // Check AJAX referer
+    $nonce = isset($_POST['security']) ? $_POST['security'] : (isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : '');
+    if (!wp_verify_nonce($nonce, 'wp_alp_public_nonce')) {
+        wp_send_json_error(array(
+            'message' => __('Security token expired. Please refresh the page and try again.', 'wp-alp'),
+        ));
+        exit;
+    }
+    
+    $response = $this->forms->process_user_registration($_POST, $this->user_manager);
+    
+    if (is_wp_error($response)) {
+        wp_send_json_error(array(
+            'message' => $response->get_error_message(),
+        ));
+    } else {
+        wp_send_json_success(array(
+            'message' => __('Registration successful.', 'wp-alp'),
+            'redirect' => $response['redirect'],
+            'user_id' => $response['user_id'],
+            'needs_profile_completion' => true  // Nuevos registros siempre necesitan completar el perfil
+        ));
+    }
+    exit;
+}
 
     /**
      * AJAX vendor registration handler.
@@ -597,50 +595,54 @@ class WP_ALP_Public {
         // Note: No eliminar el filtro de redirección para asegurar que no ocurran redirecciones
     }
 
-    /**
-     * AJAX profile completion handler.
-     *
-     * @since    1.0.0
-     */
-    public function ajax_complete_profile() {
-        // Prevenir redirecciones durante solicitudes AJAX - no quitar este filtro
-        add_filter('wp_redirect', '__return_false', 999);
-        
-        // Verificar si es una solicitud AJAX
-        $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
-        
-        if (!$is_ajax) {
-            // Si no es una solicitud AJAX, usar el flujo normal
-            $this->process_profile_completion_form();
-            return;
-        }
-        
-        // Check AJAX referer
-        $nonce = isset($_POST['security']) ? $_POST['security'] : (isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : '');
-        if (!wp_verify_nonce($nonce, 'wp_alp_public_nonce')) {
-            wp_send_json_error(array(
-                'message' => __('Security token expired. Please refresh the page and try again.', 'wp-alp'),
-            ));
-            return;
-        }
-        
-        $response = $this->forms->process_profile_completion($_POST, $this->user_manager, $this->jetengine);
-        
-        // Manejar la respuesta AJAX independientemente del tipo de redirección
-        if (is_wp_error($response)) {
-            wp_send_json_error(array(
-                'message' => $response->get_error_message(),
-            ));
-        } else {
-            wp_send_json_success(array(
-                'message' => __('Profile completed successfully. Redirecting...', 'wp-alp'),
-                'redirect' => $response['redirect'],
-                'lead_id' => $response['lead_id'],
-            ));
-        }
-        
-        // Note: No eliminar el filtro de redirección para asegurar que no ocurran redirecciones
+   /**
+ * AJAX profile completion handler.
+ *
+ * @since    1.0.0
+ */
+public function ajax_complete_profile() {
+    // Asegurar que estamos enviando el tipo de contenido correcto
+    header('Content-Type: application/json; charset=UTF-8');
+    
+    // Prevenir redirecciones durante solicitudes AJAX
+    add_filter('wp_redirect', '__return_false', 999);
+    add_filter('wp_safe_redirect', '__return_false', 999);
+    
+    // Verificar si es una solicitud AJAX
+    $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
+    $is_modal = isset($_POST['is_modal']) && $_POST['is_modal'] === 'true';
+    
+    if (!$is_ajax) {
+        // Si no es una solicitud AJAX, usar el flujo normal
+        $this->process_profile_completion_form();
+        return;
     }
+    
+    // Check AJAX referer
+    $nonce = isset($_POST['security']) ? $_POST['security'] : (isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : '');
+    if (!wp_verify_nonce($nonce, 'wp_alp_public_nonce')) {
+        wp_send_json_error(array(
+            'message' => __('Security token expired. Please refresh the page and try again.', 'wp-alp'),
+        ));
+        exit;
+    }
+    
+    $response = $this->forms->process_profile_completion($_POST, $this->user_manager, $this->jetengine);
+    
+    if (is_wp_error($response)) {
+        wp_send_json_error(array(
+            'message' => $response->get_error_message(),
+        ));
+    } else {
+        wp_send_json_success(array(
+            'message' => __('Profile completed successfully. Redirecting...', 'wp-alp'),
+            'redirect' => $response['redirect'],
+            'lead_id' => $response['lead_id'],
+            'profile_completed' => true
+        ));
+    }
+    exit;
+}
 
     /**
      * Handle social login.
@@ -741,6 +743,30 @@ class WP_ALP_Public {
             'html' => $html
         ));
     }
+
+    /**
+ * AJAX handler to get profile completion form HTML for modal.
+ *
+ * @since    1.0.0
+ */
+public function get_profile_completion_html() {
+    // Check AJAX referer
+    check_ajax_referer('wp_alp_public_nonce', 'security');
+    
+    // Add modal message container
+    $html = '<div id="wp-alp-modal-messages" class="wp-alp-form-messages"></div>';
+    
+    // Get profile completion form
+    $atts = array(
+        'show_title' => 'false',
+        'redirect' => '',
+    );
+    $html .= $this->forms->render_profile_completion_form($atts);
+    
+    wp_send_json_success(array(
+        'html' => $html
+    ));
+}
 
     /**
      * Get login page URL.
