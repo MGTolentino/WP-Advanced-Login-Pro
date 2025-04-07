@@ -448,47 +448,52 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_login() {
-        // Prevenir redirecciones durante solicitudes AJAX - no quitar este filtro
+        // Asegurar que estamos usando la codificación de caracteres correcta
+        header('Content-Type: application/json; charset=UTF-8');
+        
+        // Prevenir cualquier redirección
         add_filter('wp_redirect', '__return_false', 999);
         
-        // Verificar si es una solicitud AJAX
-        $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
-        
-        if (!$is_ajax) {
-            // Si no es una solicitud AJAX, usar el flujo normal
-            $this->process_login_form();
-            return;
-        }
-        
-        // Check AJAX referer 
-        $nonce = isset($_POST['security']) ? $_POST['security'] : (isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : '');
-        if (!wp_verify_nonce($nonce, 'wp_alp_public_nonce')) {
-            wp_send_json_error(array(
-                'message' => __('Security token expired. Please refresh the page and try again.', 'wp-alp'),
-            ));
-            return;
-        }
-        
-        $response = $this->forms->process_login($_POST);
-        
-        // Manejar la respuesta AJAX independientemente del tipo de redirección
-        if (is_wp_error($response)) {
-            wp_send_json_error(array(
-                'message' => $response->get_error_message(),
-            ));
-        } else {
-            // Verificar si el perfil necesita completarse
-            $user_id = get_current_user_id();
-            $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+        try {
+            // Proceso básico de login
+            $creds = array(
+                'user_login'    => $_POST['username_email'],
+                'user_password' => $_POST['password'],
+                'remember'      => isset($_POST['remember'])
+            );
             
-            wp_send_json_success(array(
-                'message' => __('Login successful. Redirecting...', 'wp-alp'),
-                'redirect' => $response['redirect'],
-                'needs_profile_completion' => ($profile_status === 'incomplete')
+            $user = wp_signon($creds, is_ssl());
+            
+            if (is_wp_error($user)) {
+                // Error de login
+                echo json_encode(array(
+                    'success' => false,
+                    'data' => array(
+                        'message' => $user->get_error_message()
+                    )
+                ));
+            } else {
+                // Login exitoso
+                echo json_encode(array(
+                    'success' => true,
+                    'data' => array(
+                        'message' => 'Login successful. Redirecting...',
+                        'redirect' => home_url()
+                    )
+                ));
+            }
+        } catch (Exception $e) {
+            // Capturar cualquier excepción
+            echo json_encode(array(
+                'success' => false,
+                'data' => array(
+                    'message' => 'Error: ' . $e->getMessage()
+                )
             ));
         }
         
-        // Note: No eliminar el filtro de redirección para asegurar que no ocurran redirecciones
+        // Es muy importante terminar la ejecución aquí
+        exit;
     }
 
     /**
