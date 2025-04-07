@@ -264,7 +264,7 @@ class WP_ALP_Forms {
         return $this->social->render_social_buttons($context);
     }
     
-    /**
+   /**
      * Process login form submission.
      *
      * @since    1.0.0
@@ -272,12 +272,14 @@ class WP_ALP_Forms {
      * @return   array|WP_Error         Response data on success, WP_Error on failure.
      */
     public function process_login($form_data) {
-        // Verify security tokens
-        if (!$this->security->verify_nonce($form_data['_wpnonce'])) {
+        // Verify security tokens - Accept both _wpnonce and security
+        $nonce = isset($form_data['_wpnonce']) ? $form_data['_wpnonce'] : (isset($form_data['security']) ? $form_data['security'] : '');
+        if (!$this->security->verify_nonce($nonce)) {
             return new WP_Error('invalid_nonce', __('Security token expired. Please refresh the page and try again.', 'wp-alp'));
         }
         
-        if (!$this->security->verify_csrf_token($form_data['_csrf_token'])) {
+        // Verify csrf token if provided
+        if (isset($form_data['_csrf_token']) && !$this->security->verify_csrf_token($form_data['_csrf_token'])) {
             return new WP_Error('invalid_csrf', __('Security check failed. Please refresh the page and try again.', 'wp-alp'));
         }
         

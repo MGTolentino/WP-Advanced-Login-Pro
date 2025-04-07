@@ -60,24 +60,52 @@
     }
 
     /**
-     * Initialize password visibility toggle
-     */
-    function initPasswordToggle() {
-        $('.wp-alp-toggle-password').on('click', function(e) {
-            e.preventDefault();
-            var $button = $(this);
-            var $icon = $button.find('.dashicons');
-            var $input = $button.closest('.wp-alp-password-wrapper').find('input');
-            
+ * Función corregida para inicializar el toggle de visibilidad de contraseña
+ */
+function initPasswordToggle() {
+    // Usar delegación de eventos para capturar clics en el botón de toggle
+    $(document).on('click', '.wp-alp-toggle-password', function(e) {
+        e.preventDefault();
+        console.log('Toggle password clicked');
+        
+        var $button = $(this);
+        var $icon = $button.find('.dashicons');
+        
+        // Si no hay un icono dentro del botón, buscar en sus elementos hermanos
+        if (!$icon.length) {
+            $icon = $button.siblings('.dashicons');
+        }
+        
+        // Buscar el campo de contraseña relacionado
+        var $input = $button.closest('.wp-alp-password-wrapper').find('input[type="password"], input[type="text"]');
+        
+        // Si no se encuentra, intentar buscar en el padre
+        if (!$input.length) {
+            $input = $button.parent().find('input[type="password"], input[type="text"]');
+        }
+        
+        // Si todavía no se encuentra, buscar en los hermanos
+        if (!$input.length) {
+            $input = $button.siblings('input[type="password"], input[type="text"]');
+        }
+        
+        console.log('Input field found:', $input.length > 0);
+        
+        if ($input.length) {
             if ($input.attr('type') === 'password') {
                 $input.attr('type', 'text');
-                $icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+                if ($icon.length) {
+                    $icon.removeClass('dashicons-visibility').addClass('dashicons-hidden');
+                }
             } else {
                 $input.attr('type', 'password');
-                $icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+                if ($icon.length) {
+                    $icon.removeClass('dashicons-hidden').addClass('dashicons-visibility');
+                }
             }
-        });
-    }
+        }
+    });
+}
 
     /**
      * Initialize modal forms

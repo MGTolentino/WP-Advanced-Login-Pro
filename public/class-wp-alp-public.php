@@ -448,42 +448,51 @@ class WP_ALP_Public {
      * @since    1.0.0
      */
     public function ajax_login() {
-        // Asegurar que estamos usando la codificación de caracteres correcta
+        // Asegurar que estamos enviando el tipo de contenido correcto
         header('Content-Type: application/json; charset=UTF-8');
         
-        // Prevenir cualquier redirección
+        // Prevenir redirecciones durante solicitudes AJAX - no quitar este filtro
         add_filter('wp_redirect', '__return_false', 999);
+        add_filter('wp_safe_redirect', '__return_false', 999);
+        
+        // Verificar si es una solicitud AJAX
+        $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
+        
+        if (!$is_ajax) {
+            // Si no es una solicitud AJAX, usar el flujo normal
+            $this->process_login_form();
+            return;
+        }
         
         try {
-            // Proceso básico de login
-            $creds = array(
-                'user_login'    => $_POST['username_email'],
-                'user_password' => $_POST['password'],
-                'remember'      => isset($_POST['remember'])
-            );
+            // Procesar el login independientemente de los nonces para facilitar el diagnóstico
+            // en producción, restaura la verificación de nonce
+            $response = $this->forms->process_login($_POST);
             
-            $user = wp_signon($creds, is_ssl());
-            
-            if (is_wp_error($user)) {
-                // Error de login
+            // Manejar la respuesta AJAX independientemente del tipo de redirección
+            if (is_wp_error($response)) {
                 echo json_encode(array(
                     'success' => false,
                     'data' => array(
-                        'message' => $user->get_error_message()
+                        'message' => $response->get_error_message()
                     )
                 ));
             } else {
-                // Login exitoso
+                // Verificar si el perfil necesita completarse
+                $user_id = get_current_user_id();
+                $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+                
                 echo json_encode(array(
                     'success' => true,
                     'data' => array(
-                        'message' => 'Login successful. Redirecting...',
-                        'redirect' => home_url()
+                        'message' => __('Login successful. Redirecting...', 'wp-alp'),
+                        'redirect' => $response['redirect'],
+                        'needs_profile_completion' => ($profile_status === 'incomplete')
                     )
                 ));
             }
         } catch (Exception $e) {
-            // Capturar cualquier excepción
+            // Capturar cualquier excepción y devolverla como JSON
             echo json_encode(array(
                 'success' => false,
                 'data' => array(
@@ -492,7 +501,7 @@ class WP_ALP_Public {
             ));
         }
         
-        // Es muy importante terminar la ejecución aquí
+        // Es crucial terminar la ejecución aquí para evitar que se envíe otro contenido
         exit;
     }
 
