@@ -481,7 +481,7 @@ class WP_ALP_Public {
                 // Verificar si el perfil necesita completarse
                 $user_id = get_current_user_id();
                 $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-                
+
                 echo json_encode(array(
                     'success' => true,
                     'data' => array(
