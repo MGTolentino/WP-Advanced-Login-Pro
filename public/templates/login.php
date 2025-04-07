@@ -70,24 +70,22 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
         </form>
         
         <div class="wp-alp-form-links">
-            <a href="<?php echo esc_url(wp_lostpassword_url()); ?>" class="wp-alp-link wp-alp-lost-password-link">
-                <?php esc_html_e('Forgot Password?', 'wp-alp'); ?>
-            </a>
-            
-            <?php if (!empty($options['register_user_page'])) : ?>
-                <span class="wp-alp-separator">|</span>
-                <a href="<?php echo esc_url(get_permalink($options['register_user_page'])); ?>" class="wp-alp-link wp-alp-register-link">
-                    <?php esc_html_e('Create an Account', 'wp-alp'); ?>
-                </a>
-            <?php endif; ?>
-            
-            <?php if (!empty($options['register_vendor_page'])) : ?>
-                <span class="wp-alp-separator">|</span>
-                <a href="<?php echo esc_url(get_permalink($options['register_vendor_page'])); ?>" class="wp-alp-link wp-alp-register-vendor-link">
-                    <?php esc_html_e('Register as Vendor', 'wp-alp'); ?>
-                </a>
-            <?php endif; ?>
-        </div>
+    <a href="<?php echo esc_url(wp_lostpassword_url()); ?>" class="wp-alp-link wp-alp-lost-password-link">
+        <?php esc_html_e('Forgot Password?', 'wp-alp'); ?>
+    </a>
+    
+    <span class="wp-alp-separator">|</span>
+    <a href="#" class="wp-alp-link wp-alp-modal-tab" data-tab="register">
+        <?php esc_html_e('Create an Account', 'wp-alp'); ?>
+    </a>
+    
+    <?php if (!empty($options['register_vendor_page'])) : ?>
+        <span class="wp-alp-separator">|</span>
+        <a href="<?php echo esc_url(get_permalink($options['register_vendor_page'])); ?>" class="wp-alp-link wp-alp-register-vendor-link">
+            <?php esc_html_e('Register as Vendor', 'wp-alp'); ?>
+        </a>
+    <?php endif; ?>
+</div>
         
         <?php if ($show_social && method_exists($this->social, 'render_social_buttons')) : ?>
             <div class="wp-alp-social-login">

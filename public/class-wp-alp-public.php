@@ -102,10 +102,6 @@ class WP_ALP_Public {
 
         // Initialize forms manager
         $this->forms = new WP_ALP_Forms($security, $social);
-
-        // Add AJAX handlers
-add_action('wp_ajax_wp_alp_get_profile_form', array($this, 'get_profile_completion_html'));
-add_action('wp_ajax_nopriv_wp_alp_get_profile_form', array($this, 'get_profile_completion_html'));
     }
 
     /**
@@ -446,7 +442,7 @@ add_action('wp_ajax_nopriv_wp_alp_get_profile_form', array($this, 'get_profile_c
         }
     }
 
-    /**
+/**
  * AJAX login handler.
  *
  * @since    1.0.0
@@ -744,7 +740,7 @@ public function ajax_complete_profile() {
         ));
     }
 
-    /**
+/**
  * AJAX handler to get profile completion form HTML for modal.
  *
  * @since    1.0.0

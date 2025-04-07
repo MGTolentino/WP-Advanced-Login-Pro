@@ -207,44 +207,55 @@ class WP_ALP_Core {
     }
 
     /**
-     * Register all of the hooks related to the public-facing functionality
-     * of the plugin.
-     *
-     * @since    1.0.0
-     * @access   private
-     */
-    private function define_public_hooks() {
-        $plugin_public = new WP_ALP_Public($this->get_plugin_name(), $this->get_version(), $this->security, $this->social, $this->user_manager, $this->jetengine);
+ * Register all of the hooks related to the public-facing functionality
+ * of the plugin.
+ *
+ * @since    1.0.0
+ * @access   private
+ */
+private function define_public_hooks() {
+    $plugin_public = new WP_ALP_Public($this->get_plugin_name(), $this->get_version(), $this->security, $this->social, $this->user_manager, $this->jetengine);
 
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
-        $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
-        
-        // Register shortcodes
-        $this->loader->add_action('init', $plugin_public, 'register_shortcodes');
-        
-        // Override default WordPress login
-        $this->loader->add_action('init', $plugin_public, 'override_wp_login');
-        
-        // Handle form submissions
-        $this->loader->add_action('init', $plugin_public, 'handle_form_submissions');
-        
-        // Add AJAX handlers
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_login', $plugin_public, 'ajax_login');
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_user', $plugin_public, 'ajax_register_user');
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_vendor', $plugin_public, 'ajax_register_vendor');
-        $this->loader->add_action('wp_ajax_wp_alp_complete_profile', $plugin_public, 'ajax_complete_profile');
-        
-        // Add AJAX handler for modal forms
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_get_form', $plugin_public, 'get_form_html');
-        $this->loader->add_action('wp_ajax_wp_alp_get_form', $plugin_public, 'get_form_html');
-        
-        // Add social login handlers
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_social_login', $plugin_public, 'handle_social_login');
-        
-        // Add security measures
-        $this->loader->add_action('wp_login_failed', $this->security, 'handle_failed_login');
-        $this->loader->add_filter('authenticate', $this->security, 'check_login_limiter', 30, 3);
-    }
+    $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
+    $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
+    
+    // Register shortcodes
+    $this->loader->add_action('init', $plugin_public, 'register_shortcodes');
+    
+    // Override default WordPress login
+    $this->loader->add_action('init', $plugin_public, 'override_wp_login');
+    
+    // Handle form submissions
+    $this->loader->add_action('init', $plugin_public, 'handle_form_submissions');
+    
+    // Add AJAX handlers
+    $this->loader->add_action('wp_ajax_wp_alp_login', $plugin_public, 'ajax_login');
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_login', $plugin_public, 'ajax_login');
+
+    $this->loader->add_action('wp_ajax_wp_alp_register_user', $plugin_public, 'ajax_register_user');
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_user', $plugin_public, 'ajax_register_user');
+
+    $this->loader->add_action('wp_ajax_wp_alp_register_vendor', $plugin_public, 'ajax_register_vendor');
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_vendor', $plugin_public, 'ajax_register_vendor');
+
+    $this->loader->add_action('wp_ajax_wp_alp_complete_profile', $plugin_public, 'ajax_complete_profile');
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_complete_profile', $plugin_public, 'ajax_complete_profile');
+
+    // Add AJAX handler for modal forms
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_get_form', $plugin_public, 'get_form_html');
+    $this->loader->add_action('wp_ajax_wp_alp_get_form', $plugin_public, 'get_form_html');
+
+    // Add AJAX handler for profile completion form
+    $this->loader->add_action('wp_ajax_wp_alp_get_profile_form', $plugin_public, 'get_profile_completion_html');
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_get_profile_form', $plugin_public, 'get_profile_completion_html');
+    
+    // Add social login handlers
+    $this->loader->add_action('wp_ajax_nopriv_wp_alp_social_login', $plugin_public, 'handle_social_login');
+    
+    // Add security measures
+    $this->loader->add_action('wp_login_failed', $this->security, 'handle_failed_login');
+    $this->loader->add_filter('authenticate', $this->security, 'check_login_limiter', 30, 3);
+}
 
     /**
      * Run the loader to execute all of the hooks with WordPress.

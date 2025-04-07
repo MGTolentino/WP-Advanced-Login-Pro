@@ -112,18 +112,18 @@ $show_social = filter_var($atts['show_social'], FILTER_VALIDATE_BOOLEAN);
         </form>
         
         <div class="wp-alp-form-links">
-            <span><?php esc_html_e('Already have an account?', 'wp-alp'); ?></span>
-            <a href="<?php echo esc_url(get_permalink($options['login_page'])); ?>" class="wp-alp-link wp-alp-login-link">
-                <?php esc_html_e('Login', 'wp-alp'); ?>
-            </a>
-            
-            <?php if (!empty($options['register_vendor_page'])) : ?>
-                <span class="wp-alp-separator">|</span>
-                <a href="<?php echo esc_url(get_permalink($options['register_vendor_page'])); ?>" class="wp-alp-link wp-alp-register-vendor-link">
-                    <?php esc_html_e('Register as Vendor', 'wp-alp'); ?>
-                </a>
-            <?php endif; ?>
-        </div>
+    <span><?php esc_html_e('Already have an account?', 'wp-alp'); ?></span>
+    <a href="#" class="wp-alp-link wp-alp-modal-tab" data-tab="login">
+        <?php esc_html_e('Login', 'wp-alp'); ?>
+    </a>
+    
+    <?php if (!empty($options['register_vendor_page'])) : ?>
+        <span class="wp-alp-separator">|</span>
+        <a href="<?php echo esc_url(get_permalink($options['register_vendor_page'])); ?>" class="wp-alp-link wp-alp-register-vendor-link">
+            <?php esc_html_e('Register as Vendor', 'wp-alp'); ?>
+        </a>
+    <?php endif; ?>
+</div>
         
         <?php if ($show_social && method_exists($this->social, 'render_social_buttons')) : ?>
             <div class="wp-alp-social-login">
