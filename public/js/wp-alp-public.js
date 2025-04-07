@@ -209,6 +209,57 @@ function initModalForms() {
     });
 }
 
+    /**
+     * Load modal form via AJAX
+     */
+    function loadModalForm(type) {
+        // Create modal if it doesn't exist
+        if (!$('.wp-alp-modal').length) {
+            var modalHtml = '<div class="wp-alp-modal-overlay">' +
+                '<div class="wp-alp-modal">' +
+                '<a href="#" class="wp-alp-modal-close">&times;</a>' +
+                '<div class="wp-alp-modal-content"></div>' +
+                '</div>' +
+                '</div>';
+            $('body').append(modalHtml);
+        }
+        
+        var $modalContent = $('.wp-alp-modal-content');
+        
+        // Show loading spinner
+        $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
+        
+        // Load form via AJAX
+        $.ajax({
+            url: wp_alp_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wp_alp_get_form',
+                type: type,
+                security: wp_alp_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    $modalContent.html(response.data.html);
+                    
+                    // Update active tab
+                    $('.wp-alp-modal-tab').removeClass('active');
+                    $('.wp-alp-modal-tab[data-tab="' + type + '"]').addClass('active');
+                } else {
+                    $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                        wp_alp_ajax.ajax_error + '</div>');
+                }
+            },
+            error: function() {
+                $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                    wp_alp_ajax.ajax_error + '</div>');
+            }
+        });
+        
+        // Add active class to modal
+        $('.wp-alp-modal-overlay').addClass('active');
+    }
+
 /**
  * Load profile completion form via AJAX
  */
