@@ -266,122 +266,141 @@ function loadProfileCompletionForm() {
         }, 300);
     }
 
-/**
- * Handle modal form submission
- */
-function handleModalFormSubmit($form) {
-    var formType = $form.data('form-type');
-    var $messagesContainer = $('#wp-alp-modal-messages');
-    var $submitButton = $form.find('button[type="submit"]');
-    
-    // Clear previous messages
-    $messagesContainer.empty();
-    
-    // Disable submit button
-    $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
-    
-    // Get form action URL
-    var actionUrl = wp_alp_ajax.ajax_url;
-    
-    // Collect form data
-    var formData = new FormData($form.get(0));
-    
-    // Add AJAX flag
-    formData.append('is_ajax', 'true');
-    formData.append('is_modal', 'true');
-    
-    // Add security token if not already present
-    if (!formData.has('security')) {
-        formData.append('security', wp_alp_ajax.nonce);
-    }
-    
-    // Send AJAX request
-    $.ajax({
-        url: actionUrl,
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            try {
-                // If response is a string (HTML), we have an issue
-                if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
-                    console.error('Received HTML instead of JSON');
-                    throw new Error('Server returned HTML instead of JSON');
-                }
-                
-                // Ensure response is an object
-                if (typeof response === 'string') {
-                    response = JSON.parse(response);
-                }
-                
-                if (response.success) {
-                    // Display success message
-                    $messagesContainer.html(
-                        '<div class="wp-alp-message wp-alp-message-success">' + 
-                        response.data.message + 
-                        '</div>'
-                    );
-                    
-                    // Handle profile completion if needed
-                    if (formType === 'profile_completion' || (formType !== 'profile_completion' && !response.data.needs_profile_completion)) {
-                        // Profile is complete or was just completed - redirect
-                        setTimeout(function() {
-                            window.location.href = response.data.redirect;
-                        }, 1000);
-                    } else if (response.data.needs_profile_completion) {
-                        // User needs to complete profile - load profile form
-                        loadProfileCompletionForm();
+    function handleModalFormSubmit($form) {
+        var formType = $form.attr('id') || '';
+        if (formType.includes('login')) {
+            formType = 'login';
+        } else if (formType.includes('register')) {
+            formType = 'register';
+        } else if (formType.includes('profile-completion')) {
+            formType = 'profile_completion';
+        }
+        
+        var $messagesContainer = $('#wp-alp-modal-messages');
+        var $submitButton = $form.find('button[type="submit"]');
+        
+        // Clear previous messages
+        $messagesContainer.empty();
+        
+        // Disable submit button
+        $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
+        
+        // Get form action URL
+        var actionUrl = wp_alp_ajax.ajax_url;
+        
+        // Collect form data
+        var formData = new FormData($form.get(0));
+        
+        // Add AJAX flag
+        formData.append('is_ajax', 'true');
+        formData.append('is_modal', 'true');
+        
+        // Add security token if not already present
+        if (!formData.has('security')) {
+            formData.append('security', wp_alp_ajax.nonce);
+        }
+        
+        // Send AJAX request
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                try {
+                    // If response is a string (HTML), we have an issue
+                    if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                        console.error('Received HTML instead of JSON');
+                        throw new Error('Server returned HTML instead of JSON');
                     }
-                } else {
+                    
+                    // Ensure response is an object
+                    if (typeof response === 'string') {
+                        if (response.trim() === '') {
+                            // Handle empty response as successful login
+                            console.log('Empty response received, assuming successful login');
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 1000);
+                            return;
+                        }
+                        response = JSON.parse(response);
+                    }
+                    
+                    if (response.success) {
+                        // Display success message
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-success">' + 
+                            response.data.message + 
+                            '</div>'
+                        );
+                        
+                        // Handle profile completion if needed
+                        if (formType === 'profile_completion' || (formType !== 'profile_completion' && !response.data.needs_profile_completion)) {
+                            // Profile is complete or was just completed - redirect
+                            setTimeout(function() {
+                                window.location.href = response.data.redirect;
+                            }, 1000);
+                        } else if (response.data.needs_profile_completion) {
+                            // User needs to complete profile - load profile form
+                            loadProfileCompletionForm();
+                        }
+                    } else {
+                        // Display error message
+                        $messagesContainer.html(
+                            '<div class="wp-alp-message wp-alp-message-error">' + 
+                            response.data.message + 
+                            '</div>'
+                        );
+                        
+                        // Re-enable submit button
+                        $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+                    }
+                } catch (e) {
+                    console.error('Error processing response:', e);
+                    
                     // Display error message
                     $messagesContainer.html(
                         '<div class="wp-alp-message wp-alp-message-error">' + 
-                        response.data.message + 
+                        'An unexpected error occurred. Try refreshing the page and attempting again.' + 
                         '</div>'
                     );
                     
                     // Re-enable submit button
                     $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
                 }
-            } catch (e) {
-                console.error('Error processing response:', e);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                console.log('Response Text:', xhr.responseText);
+                
+                // Handle empty response with parse error as successful login
+                if (status === "parsererror" && xhr.responseText.trim() === "") {
+                    console.log('Empty response with parse error, assuming successful login');
+                    $messagesContainer.html(
+                        '<div class="wp-alp-message wp-alp-message-success">' + 
+                        'Login successful. Redirecting...' + 
+                        '</div>'
+                    );
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                    return;
+                }
                 
                 // Display error message
                 $messagesContainer.html(
                     '<div class="wp-alp-message wp-alp-message-error">' + 
-                    'An unexpected error occurred. Try refreshing the page and attempting again.' + 
+                    wp_alp_ajax.ajax_error + 
                     '</div>'
                 );
                 
                 // Re-enable submit button
                 $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
             }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX Error:', status, error);
-            console.log('Response Text:', xhr.responseText);
-            
-            // Si el login fue exitoso pero la respuesta es vacía, redirigir al home
-            if (status === "parsererror" && xhr.responseText === "") {
-                setTimeout(function() {
-                    window.location.href = wp_alp_ajax.home_url;
-                }, 1000);
-                return;
-            }
-            
-            // Display error message
-            $messagesContainer.html(
-                '<div class="wp-alp-message wp-alp-message-error">' + 
-                wp_alp_ajax.ajax_error + 
-                '</div>'
-            );
-            
-            // Re-enable submit button
-            $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
-        }
-    });
-}
+        });
+    }
 
     /**
      * Initialize form submissions

@@ -442,81 +442,66 @@ class WP_ALP_Public {
         }
     }
 
-/**
- * AJAX login handler.
- *
- * @since    1.0.0
- */
-public function ajax_login() {
-
-    error_log('Inicio de ajax_login');
-
-    // Asegurar que estamos enviando el tipo de contenido correcto
-    header('Content-Type: application/json; charset=UTF-8');
-    
-    // Prevenir redirecciones durante solicitudes AJAX
-    add_filter('wp_redirect', '__return_false', 999);
-    add_filter('wp_safe_redirect', '__return_false', 999);
-
-    error_log('Después de configurar filtros de redirección');
-
-    
-    // Verificar si es una solicitud AJAX
-    $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
-    $is_modal = isset($_POST['is_modal']) && $_POST['is_modal'] === 'true';
-
-    error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
-
-    
-    if (!$is_ajax) {
-        // Si no es una solicitud AJAX, usar el flujo normal
-        $this->process_login_form();
-        return;
-    }
-    
-    try {
-
-        error_log('Antes de process_login');
-
-        // Procesar el login
-        $response = $this->forms->process_login($_POST);
-
-        error_log('Después de process_login: ' . (is_wp_error($response) ? 'Error' : 'Éxito'));
-
+    public function ajax_login() {
+        // Asegurar que estamos enviando el tipo de contenido correcto
+        header('Content-Type: application/json; charset=UTF-8');
         
-        if (is_wp_error($response)) {
-            wp_send_json_error(array(
-                'message' => $response->get_error_message()
-            ));
-            exit;
-        } else {
-            // Verificar si el perfil necesita completarse
-            $user_id = get_current_user_id();
-            $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-            $needs_profile_completion = ($profile_status === 'incomplete');
-
-            error_log('Respuesta AJAX: ' . json_encode([
-                'mensaje' => 'Login exitoso',
-                'username' => $_POST['username_email'],
-                'user_id' => get_current_user_id(),
-                'profile_status' => get_user_meta(get_current_user_id(), 'wp_alp_profile_status', true)
-            ]));
-
-            wp_send_json_success(array(
-                'message' => __('Login successful.', 'wp-alp'),
-                'redirect' => $response['redirect'],
-                'needs_profile_completion' => $needs_profile_completion,
-                'user_id' => $user_id
-            ));
-            exit;
+        // Prevenir redirecciones durante solicitudes AJAX
+        add_filter('wp_redirect', '__return_false', 999);
+        add_filter('wp_safe_redirect', '__return_false', 999);
+        
+        // Verificar si es una solicitud AJAX
+        $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
+        $is_modal = isset($_POST['is_modal']) && $_POST['is_modal'] === 'true';
+        
+        if (!$is_ajax) {
+            // Si no es una solicitud AJAX, usar el flujo normal
+            $this->process_login_form();
+            return;
         }
-    } catch (Exception $e) {
-        wp_send_json_error(array(
-            'message' => 'Error: ' . $e->getMessage()
-        ));
-        exit;
+        
+        try {
+            // Procesar el login
+            $response = $this->forms->process_login($_POST);
+            
+            if (is_wp_error($response)) {
+                // Método alternativo de envío de respuesta JSON
+                echo json_encode(array(
+                    'success' => false,
+                    'data' => array(
+                        'message' => $response->get_error_message()
+                    )
+                ));
+                die();
+            } else {
+                // Verificar si el perfil necesita completarse
+                $user_id = get_current_user_id();
+                $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+                $needs_profile_completion = ($profile_status === 'incomplete');
+    
+                // Método alternativo de envío de respuesta JSON
+                echo json_encode(array(
+                    'success' => true,
+                    'data' => array(
+                        'message' => __('Login successful.', 'wp-alp'),
+                        'redirect' => $response['redirect'],
+                        'needs_profile_completion' => $needs_profile_completion,
+                        'user_id' => $user_id
+                    )
+                ));
+                die();
+            }
+        } catch (Exception $e) {
+            // Método alternativo de envío de respuesta JSON
+            echo json_encode(array(
+                'success' => false,
+                'data' => array(
+                    'message' => 'Error: ' . $e->getMessage()
+                )
+            ));
+            die();
+        }
     }
-}
 
     /**
  * AJAX user registration handler.
