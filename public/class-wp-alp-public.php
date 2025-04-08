@@ -828,4 +828,297 @@ public function get_profile_completion_html() {
         wp_safe_redirect($url);
         exit;
     }
+
+    /**
+ * Get initial form HTML for modal.
+ */
+public function get_initial_form_html() {
+    check_ajax_referer('wp_alp_public_nonce', 'security');
+    
+    $html = '<div id="wp-alp-modal-messages" class="wp-alp-form-messages"></div>';
+    
+    ob_start();
+    include WP_ALP_PLUGIN_DIR . 'public/templates/initial-form.php';
+    $form_html = ob_get_clean();
+    
+    wp_send_json_success(array(
+        'html' => $html . $form_html
+    ));
+}
+
+/**
+ * Check user existence AJAX handler.
+ */
+public function check_identifier() {
+    check_ajax_referer('wp_alp_public_nonce', 'security');
+    
+    $identifier = isset($_POST['identifier']) ? sanitize_text_field($_POST['identifier']) : '';
+    $is_phone = false;
+    $user_exists = false;
+    $is_subscriber = false;
+    $profile_incomplete = false;
+    $email = '';
+    $phone = '';
+    
+    // Check if identifier is an email or phone
+    if (is_email($identifier)) {
+        $email = $identifier;
+        $user = get_user_by('email', $email);
+    } else {
+        // Assume it's a phone number
+        $is_phone = true;
+        $phone = $identifier;
+        
+        // Search for users with this phone number in meta
+        $users = get_users(array(
+            'meta_key' => 'wp_alp_phone',
+            'meta_value' => $phone,
+            'number' => 1
+        ));
+        
+        $user = !empty($users) ? $users[0] : false;
+        
+        if ($user) {
+            $email = $user->user_email;
+        }
+    }
+    
+    if ($user) {
+        $user_exists = true;
+        $user_roles = $user->roles;
+        $is_subscriber = in_array('subscriber', $user_roles);
+        
+        if ($is_subscriber) {
+            $profile_status = get_user_meta($user->ID, 'wp_alp_profile_status', true);
+            $profile_incomplete = ($profile_status === 'incomplete');
+        }
+    }
+    
+    wp_send_json_success(array(
+        'exists' => $user_exists,
+        'is_subscriber' => $is_subscriber,
+        'profile_incomplete' => $profile_incomplete,
+        'is_phone' => $is_phone,
+        'email' => $email,
+        'phone' => $phone,
+    ));
+}
+
+/**
+ * Get combined registration and profile form.
+ */
+public function get_combined_form_html() {
+    check_ajax_referer('wp_alp_public_nonce', 'security');
+    
+    $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+    $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
+    $is_phone = isset($_POST['is_phone']) && $_POST['is_phone'] === 'true';
+    $is_new_user = isset($_POST['is_new_user']) && $_POST['is_new_user'] === 'true';
+    
+    $html = '<div id="wp-alp-modal-messages" class="wp-alp-form-messages"></div>';
+    
+    // Generate nonce and CSRF token
+    $nonce = $this->security->generate_nonce();
+    $csrf_token = $this->security->generate_csrf_token();
+    
+    $atts = array(
+        'show_title' => 'true',
+        'redirect' => '',
+    );
+    
+    ob_start();
+    include WP_ALP_PLUGIN_DIR . 'public/templates/combined-form.php';
+    $form_html = ob_get_clean();
+    
+    wp_send_json_success(array(
+        'html' => $html . $form_html
+    ));
+}
+
+/**
+ * Process combined form (registration + profile).
+ */
+public function process_combined_form() {
+    header('Content-Type: application/json; charset=UTF-8');
+    
+    // Prevent redirections during AJAX requests
+    add_filter('wp_redirect', '__return_false', 999);
+    add_filter('wp_safe_redirect', '__return_false', 999);
+    
+    $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
+    
+    if (!$is_ajax) {
+        // Handle non-AJAX form submission
+        return;
+    }
+    
+    // Check security nonce
+    $nonce = isset($_POST['_wpnonce']) ? $_POST['_wpnonce'] : '';
+    if (!$this->security->verify_nonce($nonce)) {
+        echo json_encode(array(
+            'success' => false,
+            'data' => array(
+                'message' => __('Security check failed. Please refresh and try again.', 'wp-alp')
+            )
+        ));
+        exit;
+    }
+    
+    try {
+        $is_new_user = isset($_POST['is_new_user']) && $_POST['is_new_user'] === '1';
+        
+        if ($is_new_user) {
+            // Register new user first
+            $registration_data = array(
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+                'password_confirm' => $_POST['password'],
+                'first_name' => $_POST['first_name'],
+                'last_name' => $_POST['last_name'],
+            );
+            
+            if (isset($_POST['phone'])) {
+                $registration_data['phone'] = $_POST['phone'];
+            }
+            
+            $register_response = $this->forms->process_user_registration($registration_data, $this->user_manager);
+            
+            if (is_wp_error($register_response)) {
+                echo json_encode(array(
+                    'success' => false,
+                    'data' => array(
+                        'message' => $register_response->get_error_message()
+                    )
+                ));
+                exit;
+            }
+            
+            $user_id = $register_response['user_id'];
+        } else {
+            // User exists, get user ID from current session
+            $user_id = get_current_user_id();
+            
+            if (!$user_id) {
+                echo json_encode(array(
+                    'success' => false,
+                    'data' => array(
+                        'message' => __('You must be logged in to complete your profile.', 'wp-alp')
+                    )
+                ));
+                exit;
+            }
+        }
+        
+        // Now process profile completion
+        $profile_data = array(
+            'phone' => $_POST['phone'],
+            'event_type' => $_POST['event_type'],
+            'event_date' => $_POST['event_date'],
+            'event_address' => $_POST['event_address'],
+            'event_attendees' => $_POST['event_attendees'],
+        );
+        
+        $profile_response = $this->forms->process_profile_completion($profile_data, $this->user_manager, $this->jetengine);
+        
+        if (is_wp_error($profile_response)) {
+            echo json_encode(array(
+                'success' => false,
+                'data' => array(
+                    'message' => $profile_response->get_error_message()
+                )
+            ));
+            exit;
+        }
+        
+        // Send verification email to new users
+        if ($is_new_user) {
+            $this->send_verification_email($user_id);
+        }
+        
+        echo json_encode(array(
+            'success' => true,
+            'data' => array(
+                'message' => __('Registration and profile completed successfully. Redirecting...', 'wp-alp'),
+                'redirect' => $profile_response['redirect'],
+                'lead_id' => $profile_response['lead_id']
+            )
+        ));
+        exit;
+        
+    } catch (Exception $e) {
+        echo json_encode(array(
+            'success' => false,
+            'data' => array(
+                'message' => 'Error: ' . $e->getMessage()
+            )
+        ));
+        exit;
+    }
+}
+
+/**
+ * Send verification email to user
+ */
+private function send_verification_email($user_id) {
+    $user = get_user_by('ID', $user_id);
+    if (!$user) {
+        return false;
+    }
+    
+    // Generate verification code and store it
+    $verification_code = wp_generate_password(20, false);
+    update_user_meta($user_id, 'wp_alp_email_verification_code', $verification_code);
+    update_user_meta($user_id, 'wp_alp_email_verification_expiry', time() + 86400); // 24 hours
+    
+    $verify_url = add_query_arg(array(
+        'action' => 'verify_email',
+        'user_id' => $user_id,
+        'code' => $verification_code
+    ), home_url('/'));
+    
+    $subject = __('Verify your email address', 'wp-alp');
+    
+    $message = sprintf(
+        __('Hello %s,', 'wp-alp') . "\n\n" .
+        __('Thank you for registering. Please verify your email address by clicking the link below:', 'wp-alp') . "\n\n" .
+        '%s' . "\n\n" .
+        __('This link will expire in 24 hours.', 'wp-alp') . "\n\n" .
+        __('Thank you,', 'wp-alp') . "\n" .
+        get_bloginfo('name'),
+        $user->display_name,
+        $verify_url
+    );
+    
+    return wp_mail($user->user_email, $subject, $message);
+}
+
+/**
+ * Handle email verification
+ */
+public function verify_email() {
+    if (!isset($_GET['action']) || $_GET['action'] !== 'verify_email' || 
+        !isset($_GET['user_id']) || !isset($_GET['code'])) {
+        return;
+    }
+    
+    $user_id = intval($_GET['user_id']);
+    $code = sanitize_text_field($_GET['code']);
+    
+    $stored_code = get_user_meta($user_id, 'wp_alp_email_verification_code', true);
+    $expiry = get_user_meta($user_id, 'wp_alp_email_verification_expiry', true);
+    
+    if (!$stored_code || !$expiry || time() > $expiry || $stored_code !== $code) {
+        wp_redirect(add_query_arg('verification', 'failed', home_url()));
+        exit;
+    }
+    
+    // Mark email as verified
+    update_user_meta($user_id, 'wp_alp_email_verified', 'yes');
+    delete_user_meta($user_id, 'wp_alp_email_verification_code');
+    delete_user_meta($user_id, 'wp_alp_email_verification_expiry');
+    
+    // Redirect to success page
+    wp_redirect(add_query_arg('verification', 'success', home_url()));
+    exit;
+}
 }

@@ -526,3 +526,262 @@
 .wp-alp-password-wrapper input {
     flex: 1;
 }
+
+/* Airbnb-style form containers */
+.wp-alp-form-container {
+    max-width: 100%;
+    width: 100%;
+    padding: 24px 0;
+}
+
+.wp-alp-form-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #222;
+}
+
+/* Initial form (email/phone input) */
+.wp-alp-initial-container input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dadada;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.wp-alp-continue-button {
+    width: 100%;
+    background-color: #ff385c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.wp-alp-continue-button:hover {
+    background-color: #e31c5f;
+}
+
+.wp-alp-separator-text {
+    text-align: center;
+    margin: 16px 0;
+    position: relative;
+}
+
+.wp-alp-separator-text:before,
+.wp-alp-separator-text:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: #dadada;
+}
+
+.wp-alp-separator-text:before {
+    left: 0;
+}
+
+.wp-alp-separator-text:after {
+    right: 0;
+}
+
+.wp-alp-separator-text span {
+    display: inline-block;
+    background-color: white;
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Social buttons */
+.wp-alp-social-login {
+    margin-top: 20px;
+}
+
+.wp-alp-social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #dadada;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.wp-alp-social-button img {
+    margin-right: 10px;
+    width: 24px;
+    height: 24px;
+}
+
+/* Password form */
+.wp-alp-identifier-display {
+    font-size: 16px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.wp-alp-forgot-password {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.wp-alp-forgot-password a {
+    color: #444;
+    text-decoration: underline;
+}
+
+/* Combined registration and profile form */
+.wp-alp-form-section {
+    margin-bottom: 24px;
+}
+
+.wp-alp-section-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: #222;
+}
+
+.wp-alp-form-field {
+    margin-bottom: 16px;
+}
+
+.wp-alp-form-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.wp-alp-form-field input,
+.wp-alp-form-field select,
+.wp-alp-form-field textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dadada;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.wp-alp-password-wrapper {
+    position: relative;
+}
+
+.wp-alp-toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.wp-alp-submit-button {
+    width: 100%;
+    background-color: #ff385c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.wp-alp-submit-button:hover {
+    background-color: #e31c5f;
+}
+
+/* Messages */
+.wp-alp-form-messages {
+    margin-bottom: 16px;
+}
+
+.wp-alp-message {
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.wp-alp-message-success {
+    background-color: #ecf8f3;
+    color: #0c9;
+    border: 1px solid #0c9;
+}
+
+.wp-alp-message-error {
+    background-color: #fff2f0;
+    color: #f5222d;
+    border: 1px solid #f5222d;
+}
+
+/* Modal styles */
+.wp-alp-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.wp-alp-modal-overlay.active {
+    display: flex;
+}
+
+.wp-alp-modal {
+    background-color: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    padding: 24px;
+}
+
+.wp-alp-modal-close {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 24px;
+    line-height: 1;
+    color: #666;
+    text-decoration: none;
+}
+
+.wp-alp-modal-content {
+    margin-top: 10px;
+}
+
+/* Loading spinner */
+.wp-alp-loading-spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #ff385c;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 30px auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

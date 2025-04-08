@@ -255,6 +255,22 @@ private function define_public_hooks() {
     // Add security measures
     $this->loader->add_action('wp_login_failed', $this->security, 'handle_failed_login');
     $this->loader->add_filter('authenticate', $this->security, 'check_login_limiter', 30, 3);
+
+    // Add handlers for new login flow
+$this->loader->add_action('wp_ajax_nopriv_wp_alp_get_initial_form', $plugin_public, 'get_initial_form_html');
+$this->loader->add_action('wp_ajax_wp_alp_get_initial_form', $plugin_public, 'get_initial_form_html');
+
+$this->loader->add_action('wp_ajax_nopriv_wp_alp_check_identifier', $plugin_public, 'check_identifier');
+$this->loader->add_action('wp_ajax_wp_alp_check_identifier', $plugin_public, 'check_identifier');
+
+$this->loader->add_action('wp_ajax_nopriv_wp_alp_get_combined_form', $plugin_public, 'get_combined_form_html');
+$this->loader->add_action('wp_ajax_wp_alp_get_combined_form', $plugin_public, 'get_combined_form_html');
+
+$this->loader->add_action('wp_ajax_nopriv_wp_alp_process_combined_form', $plugin_public, 'process_combined_form');
+$this->loader->add_action('wp_ajax_wp_alp_process_combined_form', $plugin_public, 'process_combined_form');
+
+// Add handler for email verification
+$this->loader->add_action('init', $plugin_public, 'verify_email');
 }
 
     /**

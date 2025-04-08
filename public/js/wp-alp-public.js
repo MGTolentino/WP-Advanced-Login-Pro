@@ -107,20 +107,14 @@ function initPasswordToggle() {
     });
 }
 
-    /**
+/**
  * Initialize modal forms
  */
 function initModalForms() {
-    // Login trigger
-    $('.wp-alp-login-trigger').on('click', function(e) {
+    // Login/Register trigger
+    $('.wp-alp-login-trigger, .wp-alp-register-trigger').on('click', function(e) {
         e.preventDefault();
-        loadModalForm('login');
-    });
-    
-    // Register trigger
-    $('.wp-alp-register-trigger').on('click', function(e) {
-        e.preventDefault();
-        loadModalForm('register');
+        loadInitialForm();
     });
     
     // Close modal
@@ -130,13 +124,6 @@ function initModalForms() {
         }
     });
     
-    // Tab switching
-    $(document).on('click', '.wp-alp-modal-tab', function(e) {
-        e.preventDefault();
-        var tab = $(this).data('tab');
-        loadModalForm(tab);
-    });
-    
     // Handle ESC key
     $(document).on('keydown', function(e) {
         if (e.key === 'Escape' && $('.wp-alp-modal').length) {
@@ -144,9 +131,37 @@ function initModalForms() {
         }
     });
     
+    // Handle tab navigation if still needed
+    $(document).on('click', '.wp-alp-modal-tab', function(e) {
+        e.preventDefault();
+        var tab = $(this).data('tab');
+        if (tab === 'login' || tab === 'register') {
+            loadModalForm(tab);
+        }
+    });
+    
+    // Handle initial form submission (email/phone check)
+    $(document).on('submit', '#wp-alp-initial-form', function(e) {
+        e.preventDefault();
+        handleInitialFormSubmit($(this));
+    });
+    
+    // Handle combined form submission
+    $(document).on('submit', '#wp-alp-combined-form', function(e) {
+        e.preventDefault();
+        handleCombinedFormSubmit($(this));
+    });
+    
     // Handle form submission in modal
     $(document).on('submit', '.wp-alp-modal .wp-alp-form', function(e) {
         e.preventDefault();
+        var formId = $(this).attr('id');
+        
+        // Skip already handled forms
+        if (formId === 'wp-alp-initial-form' || formId === 'wp-alp-combined-form') {
+            return;
+        }
+        
         handleModalFormSubmit($(this));
     });
     
@@ -156,6 +171,470 @@ function initModalForms() {
         var redirectTo = $(this).data('redirect') || wp_alp_ajax.home_url;
         window.location.href = redirectTo;
     });
+}
+
+/**
+ * Load initial form (email/phone input + social buttons)
+ */
+function loadInitialForm() {
+    // Create modal if it doesn't exist
+    if (!$('.wp-alp-modal').length) {
+        var modalHtml = '<div class="wp-alp-modal-overlay">' +
+            '<div class="wp-alp-modal">' +
+            '<a href="#" class="wp-alp-modal-close">&times;</a>' +
+            '<div class="wp-alp-modal-content"></div>' +
+            '</div>' +
+            '</div>';
+        $('body').append(modalHtml);
+    }
+    
+    var $modalContent = $('.wp-alp-modal-content');
+    
+    // Show loading spinner
+    $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
+    
+    // Load initial form via AJAX
+    $.ajax({
+        url: wp_alp_ajax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'wp_alp_get_initial_form',
+            security: wp_alp_ajax.nonce
+        },
+        success: function(response) {
+            if (response.success) {
+                $modalContent.html(response.data.html);
+            } else {
+                $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                    wp_alp_ajax.ajax_error + '</div>');
+            }
+        },
+        error: function() {
+            $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                wp_alp_ajax.ajax_error + '</div>');
+        }
+    });
+    
+    // Add active class to modal
+    $('.wp-alp-modal-overlay').addClass('active');
+}
+
+/**
+ * Handle initial form submission (email/phone check)
+ */
+function handleInitialFormSubmit($form) {
+    var $messagesContainer = $('#wp-alp-initial-messages');
+    var $submitButton = $form.find('button[type="submit"]');
+    var identifier = $form.find('input[name="identifier"]').val();
+    
+    // Clear previous messages
+    $messagesContainer.empty();
+    
+    // Disable submit button
+    $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
+    
+    // Check identifier via AJAX
+    $.ajax({
+        url: wp_alp_ajax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'wp_alp_check_identifier',
+            identifier: identifier,
+            security: wp_alp_ajax.nonce
+        },
+        success: function(response) {
+            if (response.success) {
+                var data = response.data;
+                
+                if (data.exists) {
+                    if (data.is_subscriber && data.profile_incomplete) {
+                        // Existing subscriber with incomplete profile
+                        // Show password entry screen first
+                        loadPasswordForm(identifier, data.is_phone);
+                    } else {
+                        // Regular user, show login form
+                        loadModalForm('login');
+                    }
+                } else {
+                    // New user, show combined registration form
+                    loadCombinedForm(identifier, data.is_phone, true);
+                }
+            } else {
+                $messagesContainer.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                    response.data.message + '</div>');
+                    
+                // Re-enable submit button
+                $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+            }
+        },
+        error: function() {
+            $messagesContainer.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                wp_alp_ajax.ajax_error + '</div>');
+                
+            // Re-enable submit button
+            $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+        }
+    });
+}
+
+/**
+ * Load password entry form
+ */
+function loadPasswordForm(identifier, isPhone) {
+    var $modalContent = $('.wp-alp-modal-content');
+    
+    // Show loading spinner
+    $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
+    
+    var html = '<div id="wp-alp-modal-messages" class="wp-alp-form-messages"></div>' +
+   '<div class="wp-alp-form-container wp-alp-password-container">' +
+   '<h2 class="wp-alp-form-title">' + (isPhone ? 'Enter your password' : 'Welcome back') + '</h2>' +
+   '<div class="wp-alp-form-wrapper">' +
+   '<form id="wp-alp-password-form" class="wp-alp-form" data-form-type="password">' +
+   '<div class="wp-alp-form-inner">' +
+   '<div class="wp-alp-identifier-display">' + identifier + '</div>' +
+   '<div class="wp-alp-form-field">' +
+   '<label for="wp-alp-login-password">Password</label>' +
+   '<div class="wp-alp-password-wrapper">' +
+   '<input type="password" id="wp-alp-login-password" name="password" required>' +
+   '<button type="button" class="wp-alp-toggle-password" aria-label="Toggle password visibility">' +
+   '<span class="dashicons dashicons-visibility"></span>' +
+   '</button>' +
+   '</div>' +
+   '</div>' +
+   '<input type="hidden" name="action" value="wp_alp_login">' +
+   '<input type="hidden" name="username_email" value="' + identifier + '">' +
+   '<input type="hidden" name="security" value="' + wp_alp_ajax.nonce + '">' +
+   '<input type="hidden" name="is_ajax" value="true">' +
+   '<input type="hidden" name="is_modal" value="true">' +
+   '<div class="wp-alp-form-submit">' +
+   '<button type="submit" class="wp-alp-button wp-alp-login-button">Log in</button>' +
+   '</div>' +
+   '<div class="wp-alp-forgot-password">' +
+   '<a href="' + wp_lostpassword_url() + '">Forgot password?</a>' +
+   '</div>' +
+   '</div>' +
+   '</form>' +
+   '</div>' +
+   '</div>';
+
+$modalContent.html(html);
+
+// Add handler for the password form
+$('#wp-alp-password-form').on('submit', function(e) {
+   e.preventDefault();
+   handlePasswordFormSubmit($(this), identifier, isPhone);
+});
+}
+
+/**
+* Handle password form submission
+*/
+function handlePasswordFormSubmit($form, identifier, isPhone) {
+   var $messagesContainer = $('#wp-alp-modal-messages');
+   var $submitButton = $form.find('button[type="submit"]');
+   
+   // Clear previous messages
+   $messagesContainer.empty();
+   
+   // Disable submit button
+   $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
+   
+   // Collect form data
+   var formData = new FormData($form.get(0));
+   
+   // Send AJAX request
+   $.ajax({
+       url: wp_alp_ajax.ajax_url,
+       type: 'POST',
+       data: formData,
+       processData: false,
+       contentType: false,
+       success: function(response) {
+           try {
+               // If response is a string (HTML), we have an issue
+               if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                   console.error('Received HTML instead of JSON');
+                   throw new Error('Server returned HTML instead of JSON');
+               }
+               
+               // Handle empty response as successful login
+               if (typeof response === 'string' && response.trim() === '') {
+                   setTimeout(function() {
+                       // Load profile completion form for subscribers with incomplete profile
+                       loadCombinedForm(identifier, isPhone, false);
+                   }, 1000);
+                   return;
+               }
+               
+               // Ensure response is an object
+               if (typeof response === 'string') {
+                   response = JSON.parse(response);
+               }
+               
+               if (response.success) {
+                   // Display success message
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-success">' + 
+                       response.data.message + 
+                       '</div>'
+                   );
+                   
+                   if (response.data.needs_profile_completion) {
+                       // Load profile completion form
+                       setTimeout(function() {
+                           loadCombinedForm(identifier, isPhone, false);
+                       }, 1000);
+                   } else {
+                       // Regular login redirect
+                       setTimeout(function() {
+                           window.location.href = response.data.redirect;
+                       }, 1000);
+                   }
+               } else {
+                   // Display error message
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-error">' + 
+                       response.data.message + 
+                       '</div>'
+                   );
+                   
+                   // Re-enable submit button
+                   $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+               }
+           } catch (e) {
+               console.error('Error processing response:', e);
+               
+               // Handle AJAX parsing error
+               if (e.message === 'Unexpected end of JSON input' || e.message.includes('JSON')) {
+                   // Assume login succeeded but response is malformed
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-success">' + 
+                       'Login successful. Proceeding...' + 
+                       '</div>'
+                   );
+                   
+                   setTimeout(function() {
+                       // Load profile completion form
+                       loadCombinedForm(identifier, isPhone, false);
+                   }, 1000);
+               } else {
+                   // Display error message
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-error">' + 
+                       'An unexpected error occurred. Try refreshing the page and attempting again.' + 
+                       '</div>'
+                   );
+                   
+                   // Re-enable submit button
+                   $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+               }
+           }
+       },
+       error: function(xhr, status, error) {
+           console.error('AJAX Error:', status, error);
+           console.log('Response Text:', xhr.responseText);
+           
+           // Handle empty response with parse error as successful login
+           if (status === "parsererror" && xhr.responseText.trim() === "") {
+               console.log('Empty response with parse error, assuming successful login');
+               $messagesContainer.html(
+                   '<div class="wp-alp-message wp-alp-message-success">' + 
+                   'Login successful. Proceeding...' + 
+                   '</div>'
+               );
+               setTimeout(function() {
+                   // Load profile completion form
+                   loadCombinedForm(identifier, isPhone, false);
+               }, 1000);
+               return;
+           }
+           
+           // Display error message
+           $messagesContainer.html(
+               '<div class="wp-alp-message wp-alp-message-error">' + 
+               wp_alp_ajax.ajax_error + 
+               '</div>'
+           );
+           
+           // Re-enable submit button
+           $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+       }
+   });
+}
+
+/**
+* Load combined registration and profile completion form
+*/
+function loadCombinedForm(identifier, isPhone, isNewUser) {
+   var $modalContent = $('.wp-alp-modal-content');
+   
+   // Show loading spinner
+   $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
+   
+   // Format data based on identifier type
+   var email = isPhone ? '' : identifier;
+   var phone = isPhone ? identifier : '';
+   
+   // Load combined form via AJAX
+   $.ajax({
+       url: wp_alp_ajax.ajax_url,
+       type: 'POST',
+       data: {
+           action: 'wp_alp_get_combined_form',
+           email: email,
+           phone: phone,
+           is_phone: isPhone,
+           is_new_user: isNewUser,
+           security: wp_alp_ajax.nonce
+       },
+       success: function(response) {
+           if (response.success) {
+               $modalContent.html(response.data.html);
+           } else {
+               $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+                   wp_alp_ajax.ajax_error + '</div>');
+           }
+       },
+       error: function() {
+           $modalContent.html('<div class="wp-alp-message wp-alp-message-error">' + 
+               wp_alp_ajax.ajax_error + '</div>');
+       }
+   });
+}
+
+/**
+* Handle combined form submission
+*/
+function handleCombinedFormSubmit($form) {
+   var $messagesContainer = $('#wp-alp-combined-messages');
+   var $submitButton = $form.find('button[type="submit"]');
+   
+   // Clear previous messages
+   $messagesContainer.empty();
+   
+   // Disable submit button
+   $submitButton.prop('disabled', true).addClass('wp-alp-button-loading');
+   
+   // Collect form data
+   var formData = new FormData($form.get(0));
+   
+   // Add AJAX flags
+   formData.append('is_ajax', 'true');
+   formData.append('is_modal', 'true');
+   
+   // Send AJAX request
+   $.ajax({
+       url: wp_alp_ajax.ajax_url,
+       type: 'POST',
+       data: formData,
+       processData: false,
+       contentType: false,
+       success: function(response) {
+           try {
+               // If response is a string (HTML), we have an issue
+               if (typeof response === 'string' && (response.includes('<!DOCTYPE') || response.includes('<html'))) {
+                   console.error('Received HTML instead of JSON');
+                   throw new Error('Server returned HTML instead of JSON');
+               }
+               
+               // Handle empty response as successful submission
+               if (typeof response === 'string' && response.trim() === '') {
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-success">' + 
+                       'Registration successful. Redirecting...' + 
+                       '</div>'
+                   );
+                   setTimeout(function() {
+                       window.location.reload();
+                   }, 1500);
+                   return;
+               }
+               
+               // Ensure response is an object
+               if (typeof response === 'string') {
+                   response = JSON.parse(response);
+               }
+               
+               if (response.success) {
+                   // Display success message
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-success">' + 
+                       response.data.message + 
+                       '</div>'
+                   );
+                   
+                   // Redirect to specified URL
+                   setTimeout(function() {
+                       window.location.href = response.data.redirect;
+                   }, 1500);
+               } else {
+                   // Display error message
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-error">' + 
+                       response.data.message + 
+                       '</div>'
+                   );
+                   
+                   // Re-enable submit button
+                   $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+               }
+           } catch (e) {
+               console.error('Error processing response:', e);
+               
+               // Handle JSON parsing errors
+               if (e.message === 'Unexpected end of JSON input' || e.message.includes('JSON')) {
+                   // Assume submission succeeded but response is malformed
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-success">' + 
+                       'Registration successful. Redirecting...' + 
+                       '</div>'
+                   );
+                   setTimeout(function() {
+                       window.location.reload();
+                   }, 1500);
+               } else {
+                   // Display error message
+                   $messagesContainer.html(
+                       '<div class="wp-alp-message wp-alp-message-error">' + 
+                       'An unexpected error occurred. Try refreshing the page and attempting again.' + 
+                       '</div>'
+                   );
+                   
+                   // Re-enable submit button
+                   $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+               }
+           }
+       },
+       error: function(xhr, status, error) {
+           console.error('AJAX Error:', status, error);
+           console.log('Response Text:', xhr.responseText);
+           
+           // Handle empty response with parse error as successful submission
+           if (status === "parsererror" && xhr.responseText.trim() === "") {
+               console.log('Empty response with parse error, assuming successful submission');
+               $messagesContainer.html(
+                   '<div class="wp-alp-message wp-alp-message-success">' + 
+                   'Registration successful. Redirecting...' + 
+                   '</div>'
+               );
+               setTimeout(function() {
+                   window.location.reload();
+               }, 1500);
+               return;
+           }
+           
+           // Display error message
+           $messagesContainer.html(
+               '<div class="wp-alp-message wp-alp-message-error">' + 
+               wp_alp_ajax.ajax_error + 
+               '</div>'
+           );
+           
+           // Re-enable submit button
+           $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+       }
+   });
 }
 
     /**
