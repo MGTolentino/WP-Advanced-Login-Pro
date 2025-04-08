@@ -135,7 +135,7 @@ class WP_ALP_Public {
             $this->version,
             false
         );
-
+    
         wp_localize_script(
             $this->plugin_name,
             'wp_alp_ajax',
@@ -143,6 +143,7 @@ class WP_ALP_Public {
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'home_url' => home_url(),
                 'login_url' => $this->get_login_page_url(),
+                'lostpassword_url' => wp_lostpassword_url(), 
                 'nonce' => wp_create_nonce('wp_alp_public_nonce'),
                 'strong_password' => __('Strong', 'wp-alp'),
                 'medium_password' => __('Medium', 'wp-alp'),

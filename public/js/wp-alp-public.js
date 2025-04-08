@@ -287,44 +287,44 @@ function loadPasswordForm(identifier, isPhone) {
     $modalContent.html('<div class="wp-alp-loading-spinner"></div>');
     
     var html = '<div id="wp-alp-modal-messages" class="wp-alp-form-messages"></div>' +
-   '<div class="wp-alp-form-container wp-alp-password-container">' +
-   '<h2 class="wp-alp-form-title">' + (isPhone ? 'Enter your password' : 'Welcome back') + '</h2>' +
-   '<div class="wp-alp-form-wrapper">' +
-   '<form id="wp-alp-password-form" class="wp-alp-form" data-form-type="password">' +
-   '<div class="wp-alp-form-inner">' +
-   '<div class="wp-alp-identifier-display">' + identifier + '</div>' +
-   '<div class="wp-alp-form-field">' +
-   '<label for="wp-alp-login-password">Password</label>' +
-   '<div class="wp-alp-password-wrapper">' +
-   '<input type="password" id="wp-alp-login-password" name="password" required>' +
-   '<button type="button" class="wp-alp-toggle-password" aria-label="Toggle password visibility">' +
-   '<span class="dashicons dashicons-visibility"></span>' +
-   '</button>' +
-   '</div>' +
-   '</div>' +
-   '<input type="hidden" name="action" value="wp_alp_login">' +
-   '<input type="hidden" name="username_email" value="' + identifier + '">' +
-   '<input type="hidden" name="security" value="' + wp_alp_ajax.nonce + '">' +
-   '<input type="hidden" name="is_ajax" value="true">' +
-   '<input type="hidden" name="is_modal" value="true">' +
-   '<div class="wp-alp-form-submit">' +
-   '<button type="submit" class="wp-alp-button wp-alp-login-button">Log in</button>' +
-   '</div>' +
-   '<div class="wp-alp-forgot-password">' +
-   '<a href="' + wp_lostpassword_url() + '">Forgot password?</a>' +
-   '</div>' +
-   '</div>' +
-   '</form>' +
-   '</div>' +
-   '</div>';
+        '<div class="wp-alp-form-container wp-alp-password-container">' +
+        '<h2 class="wp-alp-form-title">' + (isPhone ? 'Enter your password' : 'Welcome back') + '</h2>' +
+        '<div class="wp-alp-form-wrapper">' +
+        '<form id="wp-alp-password-form" class="wp-alp-form" data-form-type="password">' +
+        '<div class="wp-alp-form-inner">' +
+        '<div class="wp-alp-identifier-display">' + identifier + '</div>' +
+        '<div class="wp-alp-form-field">' +
+        '<label for="wp-alp-login-password">Password</label>' +
+        '<div class="wp-alp-password-wrapper">' +
+        '<input type="password" id="wp-alp-login-password" name="password" required>' +
+        '<button type="button" class="wp-alp-toggle-password" aria-label="Toggle password visibility">' +
+        '<span class="dashicons dashicons-visibility"></span>' +
+        '</button>' +
+        '</div>' +
+        '</div>' +
+        '<input type="hidden" name="action" value="wp_alp_login">' +
+        '<input type="hidden" name="username_email" value="' + identifier + '">' +
+        '<input type="hidden" name="security" value="' + wp_alp_ajax.nonce + '">' +
+        '<input type="hidden" name="is_ajax" value="true">' +
+        '<input type="hidden" name="is_modal" value="true">' +
+        '<div class="wp-alp-form-submit">' +
+        '<button type="submit" class="wp-alp-button wp-alp-login-button">Log in</button>' +
+        '</div>' +
+        '<div class="wp-alp-forgot-password">' +
+        '<a href="' + wp_alp_ajax.lostpassword_url + '">Forgot password?</a>' + // Cambiar esta línea
+        '</div>' +
+        '</div>' +
+        '</form>' +
+        '</div>' +
+        '</div>';
 
-$modalContent.html(html);
+    $modalContent.html(html);
 
-// Add handler for the password form
-$('#wp-alp-password-form').on('submit', function(e) {
-   e.preventDefault();
-   handlePasswordFormSubmit($(this), identifier, isPhone);
-});
+    // Add handler for the password form
+    $('#wp-alp-password-form').on('submit', function(e) {
+        e.preventDefault();
+        handlePasswordFormSubmit($(this), identifier, isPhone);
+    });
 }
 
 /**
