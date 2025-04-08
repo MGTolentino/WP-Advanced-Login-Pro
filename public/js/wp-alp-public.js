@@ -373,25 +373,25 @@ function handlePasswordFormSubmit($form, identifier, isPhone) {
                }
                
                if (response.success) {
-                   // Display success message
-                   $messagesContainer.html(
-                       '<div class="wp-alp-message wp-alp-message-success">' + 
-                       response.data.message + 
-                       '</div>'
-                   );
-                   
-                   if (response.data.needs_profile_completion) {
-                       // Load profile completion form
-                       setTimeout(function() {
-                           loadCombinedForm(identifier, isPhone, false);
-                       }, 1000);
-                   } else {
-                       // Regular login redirect
-                       setTimeout(function() {
-                           window.location.href = response.data.redirect;
-                       }, 1000);
-                   }
-               } else {
+                // Display success message
+                $messagesContainer.html(
+                    '<div class="wp-alp-message wp-alp-message-success">' + 
+                    response.data.message + 
+                    '</div>'
+                );
+                
+                if (response.data.needs_profile_completion) {
+                    // Load profile completion form without reloading
+                    setTimeout(function() {
+                        loadCombinedForm(identifier, isPhone, false);
+                    }, 1000);
+                } else {
+                    // Regular login redirect
+                    setTimeout(function() {
+                        window.location.href = response.data.redirect;
+                    }, 1000);
+                }
+            } else {
                    // Display error message
                    $messagesContainer.html(
                        '<div class="wp-alp-message wp-alp-message-error">' + 
@@ -432,34 +432,54 @@ function handlePasswordFormSubmit($form, identifier, isPhone) {
            }
        },
        error: function(xhr, status, error) {
-           console.error('AJAX Error:', status, error);
-           console.log('Response Text:', xhr.responseText);
-           
-           // Handle empty response with parse error as successful login
-           if (status === "parsererror" && xhr.responseText.trim() === "") {
-               console.log('Empty response with parse error, assuming successful login');
-               $messagesContainer.html(
-                   '<div class="wp-alp-message wp-alp-message-success">' + 
-                   'Login successful. Proceeding...' + 
-                   '</div>'
-               );
-               setTimeout(function() {
-                   // Load profile completion form
-                   loadCombinedForm(identifier, isPhone, false);
-               }, 1000);
-               return;
-           }
-           
-           // Display error message
-           $messagesContainer.html(
-               '<div class="wp-alp-message wp-alp-message-error">' + 
-               wp_alp_ajax.ajax_error + 
-               '</div>'
-           );
-           
-           // Re-enable submit button
-           $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
-       }
+        console.error('AJAX Error:', status, error);
+        console.log('Response Text:', xhr.responseText);
+        
+        // Handle empty response with parse error as successful login
+        if (status === "parsererror" && (xhr.responseText.trim() === "" || xhr.status === 200)) {
+            console.log('Empty response with parse error, assuming successful login');
+            $messagesContainer.html(
+                '<div class="wp-alp-message wp-alp-message-success">' + 
+                'Login successful. Proceeding...' + 
+                '</div>'
+            );
+            
+            // Evitar recarga y seguir con el proceso
+            setTimeout(function() {
+                // Obtener estado del perfil directamente
+                $.ajax({
+                    url: wp_alp_ajax.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'wp_alp_check_profile_status',
+                        security: wp_alp_ajax.nonce
+                    },
+                    success: function(statusResponse) {
+                        if (statusResponse.success && statusResponse.data.profile_incomplete) {
+                            loadCombinedForm(identifier, isPhone, false);
+                        } else {
+                            window.location.href = wp_alp_ajax.home_url;
+                        }
+                    },
+                    error: function() {
+                        // En caso de error, cargar el formulario de completar perfil
+                        loadCombinedForm(identifier, isPhone, false);
+                    }
+                });
+            }, 1000);
+            return;
+        }
+        
+        // Display error message
+        $messagesContainer.html(
+            '<div class="wp-alp-message wp-alp-message-error">' + 
+            wp_alp_ajax.ajax_error + 
+            '</div>'
+        );
+        
+        // Re-enable submit button
+        $submitButton.prop('disabled', false).removeClass('wp-alp-button-loading');
+    }
    });
 }
 

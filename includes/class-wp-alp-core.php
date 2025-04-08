@@ -256,6 +256,8 @@ private function define_public_hooks() {
     $this->loader->add_action('wp_login_failed', $this->security, 'handle_failed_login');
     $this->loader->add_filter('authenticate', $this->security, 'check_login_limiter', 30, 3);
 
+    $this->loader->add_action('wp_ajax_wp_alp_check_profile_status', $plugin_public, 'check_profile_status');
+
     // Add handlers for new login flow
 $this->loader->add_action('wp_ajax_nopriv_wp_alp_get_initial_form', $plugin_public, 'get_initial_form_html');
 $this->loader->add_action('wp_ajax_wp_alp_get_initial_form', $plugin_public, 'get_initial_form_html');

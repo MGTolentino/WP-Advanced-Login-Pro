@@ -475,21 +475,17 @@ class WP_ALP_Public {
                 ));
                 die();
             } else {
-                // Verificar si el perfil necesita completarse
-                $user_id = get_current_user_id();
-                $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-                $needs_profile_completion = ($profile_status === 'incomplete');
-    
-                // Método alternativo de envío de respuesta JSON
-                echo json_encode(array(
-                    'success' => true,
-                    'data' => array(
-                        'message' => __('Login successful.', 'wp-alp'),
-                        'redirect' => $response['redirect'],
-                        'needs_profile_completion' => $needs_profile_completion,
-                        'user_id' => $user_id
-                    )
-                ));
+               // Verificar si el perfil necesita completarse
+$user_id = get_current_user_id();
+$profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+$needs_profile_completion = ($profile_status === 'incomplete');
+
+wp_send_json_success(array(
+    'message' => __('Login successful.', 'wp-alp'),
+    'redirect' => $response['redirect'],
+    'needs_profile_completion' => $needs_profile_completion,
+    'user_id' => $user_id
+));
                 die();
             }
         } catch (Exception $e) {
@@ -503,6 +499,30 @@ class WP_ALP_Public {
             die();
         }
     }
+
+    /**
+ * Check profile status AJAX handler.
+ */
+public function check_profile_status() {
+    check_ajax_referer('wp_alp_public_nonce', 'security');
+    
+    $user_id = get_current_user_id();
+    
+    if (!$user_id) {
+        wp_send_json_error(array(
+            'message' => __('User is not logged in.', 'wp-alp')
+        ));
+        return;
+    }
+    
+    $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+    $is_subscriber = in_array('subscriber', wp_get_current_user()->roles);
+    
+    wp_send_json_success(array(
+        'profile_incomplete' => ($profile_status === 'incomplete' && $is_subscriber),
+        'user_id' => $user_id
+    ));
+}
 
     /**
  * AJAX user registration handler.
