@@ -448,16 +448,25 @@ class WP_ALP_Public {
  * @since    1.0.0
  */
 public function ajax_login() {
+
+    error_log('Inicio de ajax_login');
+
     // Asegurar que estamos enviando el tipo de contenido correcto
     header('Content-Type: application/json; charset=UTF-8');
     
     // Prevenir redirecciones durante solicitudes AJAX
     add_filter('wp_redirect', '__return_false', 999);
     add_filter('wp_safe_redirect', '__return_false', 999);
+
+    error_log('Después de configurar filtros de redirección');
+
     
     // Verificar si es una solicitud AJAX
     $is_ajax = isset($_POST['is_ajax']) && $_POST['is_ajax'] === 'true';
     $is_modal = isset($_POST['is_modal']) && $_POST['is_modal'] === 'true';
+
+    error_log('is_ajax: ' . ($is_ajax ? 'true' : 'false'));
+
     
     if (!$is_ajax) {
         // Si no es una solicitud AJAX, usar el flujo normal
@@ -466,8 +475,14 @@ public function ajax_login() {
     }
     
     try {
+
+        error_log('Antes de process_login');
+
         // Procesar el login
         $response = $this->forms->process_login($_POST);
+
+        error_log('Después de process_login: ' . (is_wp_error($response) ? 'Error' : 'Éxito'));
+
         
         if (is_wp_error($response)) {
             wp_send_json_error(array(

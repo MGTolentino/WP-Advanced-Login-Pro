@@ -159,57 +159,6 @@ function initModalForms() {
 }
 
     /**
- * Initialize modal forms
- */
-function initModalForms() {
-    // Login trigger
-    $('.wp-alp-login-trigger').on('click', function(e) {
-        e.preventDefault();
-        loadModalForm('login');
-    });
-    
-    // Register trigger
-    $('.wp-alp-register-trigger').on('click', function(e) {
-        e.preventDefault();
-        loadModalForm('register');
-    });
-    
-    // Close modal
-    $(document).on('click', '.wp-alp-modal-close, .wp-alp-modal-overlay', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
-    });
-    
-    // Tab switching
-    $(document).on('click', '.wp-alp-modal-tab', function(e) {
-        e.preventDefault();
-        var tab = $(this).data('tab');
-        loadModalForm(tab);
-    });
-    
-    // Handle ESC key
-    $(document).on('keydown', function(e) {
-        if (e.key === 'Escape' && $('.wp-alp-modal').length) {
-            closeModal();
-        }
-    });
-    
-    // Handle form submission in modal
-    $(document).on('submit', '.wp-alp-modal .wp-alp-form', function(e) {
-        e.preventDefault();
-        handleModalFormSubmit($(this));
-    });
-    
-    // Handle Skip Profile button in modal
-    $(document).on('click', '.wp-alp-modal #wp-alp-skip-profile', function(e) {
-        e.preventDefault();
-        var redirectTo = $(this).data('redirect') || wp_alp_ajax.home_url;
-        window.location.href = redirectTo;
-    });
-}
-
-    /**
      * Load modal form via AJAX
      */
     function loadModalForm(type) {
@@ -412,6 +361,14 @@ function handleModalFormSubmit($form) {
         error: function(xhr, status, error) {
             console.error('AJAX Error:', status, error);
             console.log('Response Text:', xhr.responseText);
+            
+            // Si el login fue exitoso pero la respuesta es vacía, redirigir al home
+            if (status === "parsererror" && xhr.responseText === "") {
+                setTimeout(function() {
+                    window.location.href = wp_alp_ajax.home_url;
+                }, 1000);
+                return;
+            }
             
             // Display error message
             $messagesContainer.html(
