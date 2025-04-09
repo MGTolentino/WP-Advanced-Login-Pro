@@ -415,4 +415,37 @@ class WP_ALP_Public {
             ));
         }
     }
+
+    /**
+ * Devuelve el HTML del formulario solicitado vía AJAX.
+ */
+public function get_form_ajax() {
+    check_ajax_referer('wp_alp_nonce', 'nonce');
+    
+    if (!isset($_POST['form']) || empty($_POST['form'])) {
+        wp_send_json_error(array(
+            'message' => __('Tipo de formulario no especificado.', 'wp-alp'),
+        ));
+    }
+    
+    $form = sanitize_text_field($_POST['form']);
+    
+    switch ($form) {
+        case 'initial':
+            wp_send_json_success(array(
+                'html' => WP_ALP_Forms::get_initial_form()
+            ));
+            break;
+        case 'phone':
+            wp_send_json_success(array(
+                'html' => WP_ALP_Forms::get_phone_form()
+            ));
+            break;
+        default:
+            wp_send_json_error(array(
+                'message' => __('Tipo de formulario no válido.', 'wp-alp'),
+            ));
+            break;
+    }
+}
 }

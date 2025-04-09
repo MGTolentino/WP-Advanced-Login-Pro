@@ -89,6 +89,9 @@ class WP_ALP_Core {
         $this->loader->add_action('wp_ajax_wp_alp_complete_profile', $plugin_public, 'complete_profile_ajax');
         $this->loader->add_action('wp_ajax_nopriv_wp_alp_complete_profile', $plugin_public, 'complete_profile_ajax');
         $this->loader->add_action('wp_ajax_nopriv_wp_alp_social_login', $plugin_public, 'social_login_ajax');
+
+        $this->loader->add_action('wp_ajax_wp_alp_get_form', $plugin_public, 'get_form_ajax');
+$this->loader->add_action('wp_ajax_nopriv_wp_alp_get_form', $plugin_public, 'get_form_ajax');
         
         // Añadir modal al footer (para estar disponible en todas las páginas)
         $this->loader->add_action('wp_footer', $plugin_public, 'output_login_modal');
