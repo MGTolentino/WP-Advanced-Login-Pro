@@ -1,0 +1,161 @@
+/**
+ * Estilos para la administración de WP Advanced Login Pro.
+ */
+.wp-alp-admin-header {
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #ff385c;
+}
+
+.wp-alp-admin-header h1 {
+    margin-top: 0;
+    color: #23282d;
+}
+
+.wp-alp-admin-header p {
+    font-size: 14px;
+    color: #646970;
+}
+
+.wp-alp-shortcode {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #f0f0f1;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+    font-family: monospace;
+    margin-right: 10px;
+}
+
+.wp-alp-copy-shortcode {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #3c434a;
+}
+
+.wp-alp-copy-shortcode:hover {
+    background-color: #f0f0f1;
+    color: #3c434a;
+}
+
+.wp-alp-instructions-panel {
+    margin-top: 30px;
+    background-color: #fff;
+    border: 1px solid #dcdcde;
+    border-radius: 3px;
+    padding: 15px 20px;
+}
+
+.wp-alp-instructions-panel h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #dcdcde;
+    padding-bottom: 10px;
+}
+
+.wp-alp-instructions-panel ol,
+.wp-alp-instructions-panel ul {
+    margin-left: 20px;
+}
+
+.wp-alp-instructions-panel li {
+    margin-bottom: 10px;
+}
+
+.wp-alp-instructions-panel code {
+    background-color: #f0f0f1;
+    padding: 3px 5px;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.form-table th {
+    width: 250px;
+}
+
+.form-table input[type="text"],
+.form-table input[type="password"],
+.form-table input[type="number"],
+.form-table select,
+.form-table textarea {
+    width: 350px;
+}
+
+.form-table textarea {
+    min-height: 100px;
+}
+
+.wp-alp-tab-nav {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dcdcde;
+}
+
+.wp-alp-tab-nav a {
+    display: inline-block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #3c434a;
+    margin-right: 5px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+}
+
+.wp-alp-tab-nav a.active {
+    background-color: #fff;
+    border-color: #dcdcde;
+    border-bottom-color: #fff;
+    margin-bottom: -1px;
+}
+
+.wp-alp-tab-content {
+    display: none;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #dcdcde;
+    border-top: none;
+}
+
+.wp-alp-tab-content.active {
+    display: block;
+}
+
+.wp-alp-provider-logo {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.wp-alp-info-box {
+    background-color: #f0f6fc;
+    border-left: 4px solid #72aee6;
+    padding: 12px;
+    margin: 20px 0;
+}
+
+.wp-alp-warning-box {
+    background-color: #fcf8e3;
+    border-left: 4px solid #f0ad4e;
+    padding: 12px;
+    margin: 20px 0;
+}
+
+.wp-alp-success-box {
+    background-color: #dff0d8;
+    border-left: 4px solid #5cb85c;
+    padding: 12px;
+    margin: 20px 0;
+}
+
+.wp-alp-error-box {
+    background-color: #f2dede;
+    border-left: 4px solid #d9534f;
+    padding: 12px;
+    margin: 20px 0;
+}

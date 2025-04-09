@@ -1,0 +1,430 @@
+/**
+ * Estilos para la parte pública del plugin WP Advanced Login Pro.
+ * 
+ * Estos estilos están inspirados en el diseño de Airbnb.
+ */
+
+/* Modal */
+.wp-alp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.wp-alp-modal-container {
+    position: relative;
+    width: 100%;
+    max-width: 568px;
+    max-height: 90vh;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.wp-alp-modal-content {
+    padding: 24px;
+    flex-grow: 1;
+}
+
+.wp-alp-close-modal {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.wp-alp-close-icon::before,
+.wp-alp-close-icon::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background-color: #484848;
+    top: 50%;
+    left: 50%;
+}
+
+.wp-alp-close-icon::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.wp-alp-close-icon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.wp-alp-modal-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.wp-alp-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: #ff385c;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Formularios */
+.wp-alp-form-container {
+    width: 100%;
+    max-width: 100%;
+}
+
+.wp-alp-form-container h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.wp-alp-form-container h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 16px;
+}
+
+.wp-alp-input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.wp-alp-input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #222222;
+    margin-bottom: 8px;
+}
+
+.wp-alp-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #222222;
+    box-sizing: border-box;
+}
+
+.wp-alp-input:focus {
+    border-color: #000000;
+    outline: none;
+}
+
+.wp-alp-input.error {
+    border-color: #ff385c;
+}
+
+.wp-alp-button-group {
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+.wp-alp-button {
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.wp-alp-primary-button {
+    background-color: #ff385c;
+    color: #ffffff;
+}
+
+.wp-alp-primary-button:hover {
+    background-color: #e31c5f;
+}
+
+.wp-alp-secondary-button {
+    background-color: #ffffff;
+    color: #222222;
+    border: 1px solid #dddddd;
+}
+
+.wp-alp-secondary-button:hover {
+    background-color: #f7f7f7;
+}
+
+.wp-alp-divider {
+    display: flex;
+    align-items: center;
+    margin: 16px 0;
+    text-align: center;
+}
+
+.wp-alp-divider::before,
+.wp-alp-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #dddddd;
+}
+
+.wp-alp-divider span {
+    padding: 0 16px;
+    color: #717171;
+    font-size: 14px;
+}
+
+.wp-alp-social-login {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.wp-alp-social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #222222;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.wp-alp-social-button:hover {
+    background-color: #f7f7f7;
+}
+
+.wp-alp-social-icon {
+    margin-right: 12px;
+    width: 24px;
+    height: 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.google-icon {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%23FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/><path fill="%23FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/><path fill="%234CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/><path fill="%231976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/></svg>');
+}
+
+.facebook-icon {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="%233F51B5" d="M42,37c0,2.762-2.238,5-5,5H11c-2.761,0-5-2.238-5-5V11c0-2.762,2.239-5,5-5h26c2.762,0,5,2.238,5,5V37z"/><path fill="%23FFFFFF" d="M34.368,25H31v13h-5V25h-3v-4h3v-2.41c0.002-3.508,1.459-5.59,5.592-5.59H35v4h-2.287C31.104,17,31,17.6,31,18.723V21h4L34.368,25z"/></svg>');
+}
+
+.apple-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M32.183,15.694c-1.756,0-2.786,0.967-3.496,1.67c-0.557,0.557-0.878,1.115-1.115,1.115c-0.173,0-0.52-0.558-1.043-1.115c-0.66-0.703-1.756-1.67-3.427-1.67c-2.66,0-5.288,1.995-5.288,5.81c0,3.783,3.439,8.47,6.299,8.47c0.966,0,1.995-0.595,2.868-1.128c0.914-0.56,1.666-1.025,2.332-1.025c0.665,0,1.416,0.465,2.331,1.025c0.873,0.533,1.902,1.128,2.868,1.128c2.86,0,6.299-4.687,6.299-8.47C37.471,17.689,34.843,15.694,32.183,15.694z M29.665,12.438c1.129-1.326,1.919-3.132,1.919-4.91c0-0.246-0.015-0.49-0.043-0.711c-1.375,0.117-2.884,0.879-3.891,2.066c-1.097,1.281-1.903,3.075-1.903,4.88c0,0.218,0.021,0.435,0.042,0.624C27.227,14.493,28.751,13.507,29.665,12.438z'/%3E%3C/svg%3E");
+}
+
+.phone-icon {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>');
+}
+
+.wp-alp-back-button {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    width: 32px;
+    height: 32px;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.wp-alp-back-icon::before {
+    content: '';
+    display: block;
+    width: 12px;
+    height: 12px;
+    border-left: 2px solid #484848;
+    border-bottom: 2px solid #484848;
+    transform: rotate(45deg);
+}
+
+.wp-alp-toggle-password {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #717171;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 12px;
+}
+
+.wp-alp-forgot-password {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+.wp-alp-forgot-password a {
+    color: #222222;
+    font-size: 14px;
+    text-decoration: underline;
+}
+
+.wp-alp-help-text {
+    font-size: 12px;
+    color: #717171;
+    margin-top: 8px;
+}
+
+.wp-alp-user-info-section,
+.wp-alp-event-info-section {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #dddddd;
+}
+
+.wp-alp-terms-section {
+    font-size: 12px;
+    color: #717171;
+    margin-bottom: 16px;
+}
+
+.wp-alp-terms-section a {
+    color: #222222;
+    text-decoration: underline;
+}
+
+.wp-alp-verification-text {
+    margin-bottom: 24px;
+    font-size: 16px;
+    color: #484848;
+}
+
+.wp-alp-verification-code-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 24px;
+}
+
+.wp-alp-verification-digit {
+    width: calc(16.666% - 8px);
+    height: 56px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+}
+
+.wp-alp-resend-code {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.wp-alp-resend-code a {
+    color: #222222;
+    text-decoration: underline;
+}
+
+.wp-alp-error-message {
+    background-color: #fff8f6;
+    border: 1px solid #ffb6b6;
+    color: #c13515;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.wp-alp-success-message {
+    background-color: #f8fff6;
+    border: 1px solid #b6ffb6;
+    color: #15c135;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.wp-alp-disabled {
+    opacity: 0.7;
+}
+
+.wp-alp-disabled input {
+    background-color: #f7f7f7;
+    cursor: not-allowed;
+}
+
+.wp-alp-login-button {
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #222222;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.wp-alp-login-button:hover {
+    background-color: #f7f7f7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wp-alp-modal-container {
+        max-height: 100vh;
+        border-radius: 0;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+    }
+    
+    .wp-alp-modal-overlay {
+        padding: 0;
+    }
+}
