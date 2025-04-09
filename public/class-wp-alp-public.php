@@ -166,14 +166,17 @@ class WP_ALP_Public {
             // Obtener el usuario de WordPress
             $user = get_user_by('ID', $result['user_id']);
             
-            // Comprobar si es un subscriber con perfil incompleto
+            // Comprobar si es un subscriber con perfil incompleto - SOLO PARA REFERENCIA
+            // en esta implementación, no mostramos el formulario de perfil hasta después del login
             if ($result['found_by'] === 'email' && 
-                (in_array('subscriber', $user->roles) || $result['user_type'] === 'subscriber') && 
+                (in_array('subscriber', (array)$user->roles) || $result['user_type'] === 'subscriber') && 
                 $result['profile_status'] === 'incomplete') {
-                // Usuario que necesita completar perfil
+                // Añadir flag pero NO cambiar el HTML aún
                 $data['needs_profile'] = true;
-                $data['html'] = WP_ALP_Forms::get_profile_completion_form($result['user_id']);
             }
+            
+            // Filtro para modificar el resultado (usado desde functions.php)
+            $data = apply_filters('wp_alp_validate_user_result', $data, $result);
             
             wp_send_json_success($data);
         } else {
@@ -184,6 +187,7 @@ class WP_ALP_Public {
             ));
         }
     }
+    
 
     /**
      * Registra un nuevo usuario vía AJAX.
@@ -252,12 +256,24 @@ class WP_ALP_Public {
                 'user_id' => $result['user_id'],
             );
             
-            if (isset($result['needs_profile']) && $result['needs_profile']) {
+            // Verificar si el usuario necesita completar perfil
+            $user = get_user_by('ID', $result['user_id']);
+            $user_type = get_user_meta($result['user_id'], 'wp_alp_user_type', true);
+            $profile_status = get_user_meta($result['user_id'], 'wp_alp_profile_status', true);
+            
+            if ($user && 
+                (in_array('subscriber', (array)$user->roles) || $user_type === 'subscriber') && 
+                $profile_status === 'incomplete') {
+                
+                // Usuario necesita completar su perfil
                 $response['needs_profile'] = true;
                 $response['html'] = WP_ALP_Forms::get_profile_completion_form($result['user_id']);
             } else {
                 $response['redirect'] = get_option('wp_alp_redirect_after_login', home_url());
             }
+            
+            // Filtro para modificar el resultado (usado desde functions.php)
+            $response = apply_filters('wp_alp_login_user_result', $response, $result['user_id']);
             
             wp_send_json_success($response);
         } else {
@@ -446,6 +462,43 @@ public function get_form_ajax() {
             wp_send_json_success(array(
                 'html' => WP_ALP_Forms::get_phone_form()
             ));
+            break;
+        case 'login':
+            $identifier = isset($_POST['identifier']) ? sanitize_text_field($_POST['identifier']) : '';
+            wp_send_json_success(array(
+                'html' => WP_ALP_Forms::get_login_form($identifier)
+            ));
+            break;
+        case 'register':
+            $identifier = isset($_POST['identifier']) ? sanitize_text_field($_POST['identifier']) : '';
+            wp_send_json_success(array(
+                'html' => WP_ALP_Forms::get_register_form($identifier)
+            ));
+            break;
+        case 'profile':
+            $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            if ($user_id > 0) {
+                wp_send_json_success(array(
+                    'html' => WP_ALP_Forms::get_profile_completion_form($user_id)
+                ));
+            } else {
+                wp_send_json_error(array(
+                    'message' => __('ID de usuario no válido.', 'wp-alp'),
+                ));
+            }
+            break;
+        case 'verification':
+            $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+            $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+            if ($user_id > 0 && !empty($email)) {
+                wp_send_json_success(array(
+                    'html' => WP_ALP_Forms::get_verification_form($email, $user_id)
+                ));
+            } else {
+                wp_send_json_error(array(
+                    'message' => __('Datos de verificación incompletos.', 'wp-alp'),
+                ));
+            }
             break;
         default:
             wp_send_json_error(array(
