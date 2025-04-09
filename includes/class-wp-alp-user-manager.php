@@ -167,17 +167,33 @@ class WP_ALP_User_Manager {
         }
         
         // Preparar datos para el lead
-        $lead_data = array(
-            'Nombre' => $sanitized['first_name'] ?? $user->first_name,
-            'Apellido' => $sanitized['last_name'] ?? $user->last_name,
-            'EMAIL' => $sanitized['email'] ?? $user->user_email,
-            'CELULAR' => $sanitized['phone'] ?? get_user_meta($user_id, 'wp_alp_phone', true),
-            'status' => 'nuevo',
-            '_user_id' => $user_id,
-        );
-        
-        // Crear lead en JetEngine
-        $lead_id = $this->jetengine->create_lead($lead_data);
+$lead_data = array(
+    'lead_nombre' => $sanitized['first_name'] ?? $user->first_name,
+    'lead_apellido' => $sanitized['last_name'] ?? $user->last_name,
+    'lead_e_mail' => $sanitized['email'] ?? $user->user_email,
+    'lead_celular' => $sanitized['phone'] ?? get_user_meta($user_id, 'wp_alp_phone', true),
+    'cct_status' => 'publish',
+    'cct_created' => current_time('mysql'),
+    'cct_modified' => current_time('mysql'),
+    'cct_author_id' => $user_id,
+);
+
+// Crear lead directamente en la tabla
+global $wpdb;
+$inserted = $wpdb->insert(
+    $wpdb->prefix . 'jet_cct_leads',
+    $lead_data,
+    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d')
+);
+
+if (!$inserted) {
+    return array(
+        'success' => false,
+        'message' => __('Error al crear el lead.', 'wp-alp'),
+    );
+}
+
+$lead_id = $wpdb->insert_id;
         
         if (!$lead_id) {
             return array(
@@ -186,19 +202,37 @@ class WP_ALP_User_Manager {
             );
         }
         
-        // Preparar datos para el evento
-        $event_data = array(
-            'Tipo de Evento' => $sanitized['event_type'],
-            'Fecha de evento' => $sanitized['event_date'],
-            'Direccion de evento' => $sanitized['event_address'],
-            'Cantidad de asistentes' => intval($sanitized['guests']),
-            'Detalles adicionales' => $sanitized['details'] ?? '',
-            'inserted_cct_leads' => $lead_id,
-            'status' => 'nuevo',
-        );
-        
-        // Crear evento en JetEngine
-        $event_id = $this->jetengine->create_event($event_data);
+        // Convertir fecha a timestamp si no lo es
+$event_date = $sanitized['event_date'];
+if (!is_numeric($event_date)) {
+    $event_date = strtotime($sanitized['event_date']);
+    if ($event_date === false) {
+        $event_date = time();
+    }
+}
+
+// Preparar datos para el evento
+$event_data = array(
+    'lead_id' => $lead_id,
+    'tipo_de_evento' => $sanitized['event_type'],
+    'fecha_de_evento' => $event_date,
+    'direccion_evento' => $sanitized['event_address'],
+    'evento_asistentes' => intval($sanitized['guests']),
+    'comentarios_evento' => $sanitized['details'] ?? '',
+    'evento_status' => 'nuevo',
+    'cct_status' => 'publish',
+    'cct_created' => current_time('mysql'),
+    'cct_modified' => current_time('mysql'),
+);
+
+// Crear evento directamente en la tabla
+$event_inserted = $wpdb->insert(
+    $wpdb->prefix . 'jet_cct_eventos',
+    $event_data,
+    array('%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s')
+);
+
+$event_id = $event_inserted ? $wpdb->insert_id : 0;
         
         // Actualizar metadatos del usuario
         update_user_meta($user_id, 'wp_alp_user_type', 'lead');

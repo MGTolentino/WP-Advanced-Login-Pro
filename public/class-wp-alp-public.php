@@ -352,50 +352,58 @@ class WP_ALP_Public {
         }
     }
 
-    /**
+/**
  * Completa el perfil de un usuario vía AJAX.
  */
 public function complete_profile_ajax() {
-    // Verificar si hay sesión de usuario actual
-    $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
-    $current_user = wp_get_current_user();
+    // Intentar verificar el nonce
+    $nonce_verified = check_ajax_referer('wp_alp_nonce', 'nonce', false);
     
-    // Si el usuario está logueado y el ID coincide, o si se proporciona un nonce válido
-    if (
-        (is_user_logged_in() && $current_user->ID === $user_id) || 
-        wp_verify_nonce($_POST['nonce'], 'wp_alp_nonce')
-    ) {
-        $required_fields = array('user_id', 'event_type', 'event_date', 'event_address', 'guests');
-        
-        foreach ($required_fields as $field) {
-            if (!isset($_POST[$field]) || empty($_POST[$field])) {
-                wp_send_json_error(array(
-                    'message' => sprintf(__('El campo %s es obligatorio.', 'wp-alp'), $field),
-                ));
-            }
-        }
-        
-        $data = array();
-        foreach ($_POST as $key => $value) {
-            $data[$key] = sanitize_text_field($value);
-        }
-        
-        $result = WP_ALP_Forms::process_profile_form($data);
-        
-        if ($result['success']) {
-            wp_send_json_success(array(
-                'success' => true,
-                'message' => $result['message'],
-                'redirect' => get_option('wp_alp_redirect_after_login', home_url()),
-            ));
-        } else {
-            wp_send_json_error(array(
-                'message' => $result['message'],
-            ));
-        }
-    } else {
+    // Si el nonce falla pero el usuario está logueado, permitir la acción
+    if (!$nonce_verified && !is_user_logged_in()) {
         wp_send_json_error(array(
-            'message' => __('Error de seguridad. Por favor, actualiza la página e intenta nuevamente.', 'wp-alp'),
+            'message' => __('Error de seguridad. Actualiza la página e intenta nuevamente.', 'wp-alp'),
+        ));
+        return;
+    }
+    
+    $required_fields = array('user_id', 'event_type', 'event_date', 'event_address', 'guests');
+    
+    foreach ($required_fields as $field) {
+        if (!isset($_POST[$field]) || empty($_POST[$field])) {
+            wp_send_json_error(array(
+                'message' => sprintf(__('El campo %s es obligatorio.', 'wp-alp'), $field),
+            ));
+            return;
+        }
+    }
+    
+    $data = array();
+    foreach ($_POST as $key => $value) {
+        $data[$key] = sanitize_text_field($value);
+    }
+    
+    $user_manager = new WP_ALP_User_Manager();
+    $result = $user_manager->complete_user_profile($data['user_id'], $data);
+    
+    if ($result['success']) {
+        // Actualizar el rol del usuario a 'lead'
+        $user = get_user_by('ID', $data['user_id']);
+        if ($user) {
+            $user->set_role('subscriber'); // Mantener como subscriber pero con meta de lead
+        }
+        
+        wp_send_json_success(array(
+            'success' => true,
+            'message' => $result['message'],
+            'redirect' => get_option('wp_alp_redirect_after_login', home_url()),
+        ));
+    } else {
+        // Registrar el error para debugging
+        error_log('Error al completar perfil: ' . json_encode($result));
+        
+        wp_send_json_error(array(
+            'message' => $result['message'],
         ));
     }
 }

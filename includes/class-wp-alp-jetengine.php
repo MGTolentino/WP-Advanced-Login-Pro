@@ -243,7 +243,7 @@ class WP_ALP_JetEngine {
 
     /**
      * Busca un lead por correo electrónico.
-     *
+     * 
      * @param string $email Correo electrónico.
      * @return array|false Datos del lead o false si no se encuentra.
      */
