@@ -353,11 +353,18 @@ class WP_ALP_Public {
     }
 
     /**
-     * Completa el perfil de un usuario vía AJAX.
-     */
-    public function complete_profile_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
-        
+ * Completa el perfil de un usuario vía AJAX.
+ */
+public function complete_profile_ajax() {
+    // Verificar si hay sesión de usuario actual
+    $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+    $current_user = wp_get_current_user();
+    
+    // Si el usuario está logueado y el ID coincide, o si se proporciona un nonce válido
+    if (
+        (is_user_logged_in() && $current_user->ID === $user_id) || 
+        wp_verify_nonce($_POST['nonce'], 'wp_alp_nonce')
+    ) {
         $required_fields = array('user_id', 'event_type', 'event_date', 'event_address', 'guests');
         
         foreach ($required_fields as $field) {
@@ -386,7 +393,12 @@ class WP_ALP_Public {
                 'message' => $result['message'],
             ));
         }
+    } else {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Por favor, actualiza la página e intenta nuevamente.', 'wp-alp'),
+        ));
     }
+}
 
     /**
      * Maneja el login social vía AJAX.
