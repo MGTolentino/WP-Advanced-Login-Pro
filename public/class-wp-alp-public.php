@@ -33,17 +33,26 @@ class WP_ALP_Public {
     }
 
     /**
-     * Registra los estilos para el lado público.
-     */
-    public function enqueue_styles() {
-        wp_enqueue_style(
-            $this->plugin_name,
-            plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
-            array(),
-            $this->version,
-            'all'
-        );
-    }
+ * Registra los estilos para el lado público.
+ */
+public function enqueue_styles() {
+    wp_enqueue_style(
+        $this->plugin_name,
+        plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
+        array(),
+        $this->version,
+        'all'
+    );
+    
+    // Añadir estilos personalizados para sobreescribir conflictos
+    wp_enqueue_style(
+        $this->plugin_name . '-custom',
+        plugin_dir_url(__FILE__) . 'css/custom-alp-styles.css',
+        array($this->plugin_name),
+        $this->version,
+        'all'
+    );
+}
 
     /**
      * Registra los scripts para el lado público.
@@ -84,23 +93,23 @@ class WP_ALP_Public {
             }
         }
         
-        // Si está habilitado Social Login
-        if (get_option('wp_alp_enable_social_login', true)) {
-            // Google Login
-            if (!empty(get_option('wp_alp_google_client_id', ''))) {
-                wp_enqueue_script('google-api', 'https://apis.google.com/js/platform.js', array(), null, true);
-            }
-            
-            // Facebook Login
-            if (!empty(get_option('wp_alp_facebook_app_id', ''))) {
-                wp_enqueue_script('facebook-api', 'https://connect.facebook.net/en_US/sdk.js', array(), null, true);
-            }
-            
-            // Apple Login
-            if (!empty(get_option('wp_alp_apple_client_id', ''))) {
-                wp_enqueue_script('apple-api', 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js', array(), null, true);
-            }
-        }
+// Si está habilitado Social Login
+if (get_option('wp_alp_enable_social_login', true)) {
+    // Google Login - Usar la URL correcta
+    if (!empty(get_option('wp_alp_google_client_id', ''))) {
+        // Ya no cargamos scripts específicos aquí, lo hacemos en wp_footer
+    }
+    
+    // Facebook Login
+    if (!empty(get_option('wp_alp_facebook_app_id', ''))) {
+        // Mover la carga del script a nuestro código personalizado
+    }
+    
+    // Apple Login
+    if (!empty(get_option('wp_alp_apple_client_id', ''))) {
+        wp_enqueue_script('apple-api', 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js', array(), null, true);
+    }
+}
     }
 
     /**

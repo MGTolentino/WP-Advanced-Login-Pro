@@ -7,7 +7,7 @@
  */
 class WP_ALP_Forms {
 
-    /**
+/**
  * Genera el HTML para el formulario inicial (entrada de email/teléfono).
  *
  * @return string HTML del formulario.
@@ -61,11 +61,6 @@ public static function get_initial_form() {
                 <button type="button" class="wp-alp-social-button" id="wp-alp-phone-btn">
                     <span class="wp-alp-social-icon phone-icon"></span>
                     <span><?php _e('Continuar con el número de teléfono', 'wp-alp'); ?></span>
-                </button>
-                
-                <button type="button" class="wp-alp-social-button" id="wp-alp-email-btn">
-                    <span class="wp-alp-social-icon email-icon"></span>
-                    <span><?php _e('Continuar con correo electrónico', 'wp-alp'); ?></span>
                 </button>
             </div>
         </div>

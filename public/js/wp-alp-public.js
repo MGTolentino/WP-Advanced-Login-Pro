@@ -223,6 +223,12 @@
      * Inicializa los botones de login social.
      */
     function initSocialLogin() {
+
+        // Verificar si debe omitir la inicialización estándar
+    if (window.overrideWpAlpSocialInit) {
+        console.log('Inicialización social manejada externamente');
+        return;
+    }
         // Google Login
         $(document).on('click', '#wp-alp-google-btn', function() {
             if (typeof gapi !== 'undefined' && gapi.auth2) {
