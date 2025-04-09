@@ -163,7 +163,13 @@ class WP_ALP_Public {
                 'html' => WP_ALP_Forms::get_login_form($identifier),
             );
             
-            if ($result['found_by'] === 'email' && $result['user_type'] === 'subscriber' && $result['profile_status'] === 'incomplete') {
+            // Obtener el usuario de WordPress
+            $user = get_user_by('ID', $result['user_id']);
+            
+            // Comprobar si es un subscriber con perfil incompleto
+            if ($result['found_by'] === 'email' && 
+                (in_array('subscriber', $user->roles) || $result['user_type'] === 'subscriber') && 
+                $result['profile_status'] === 'incomplete') {
                 // Usuario que necesita completar perfil
                 $data['needs_profile'] = true;
                 $data['html'] = WP_ALP_Forms::get_profile_completion_form($result['user_id']);
