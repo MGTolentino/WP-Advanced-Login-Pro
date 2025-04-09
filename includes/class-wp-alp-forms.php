@@ -8,14 +8,17 @@
 class WP_ALP_Forms {
 
     /**
-     * Genera el HTML para el formulario inicial (entrada de email/teléfono).
-     *
-     * @return string HTML del formulario.
-     */
-    public static function get_initial_form() {
-        ob_start();
-        ?>
-        <div class="wp-alp-form-container wp-alp-initial-form">
+ * Genera el HTML para el formulario inicial (entrada de email/teléfono).
+ *
+ * @return string HTML del formulario.
+ */
+public static function get_initial_form() {
+    ob_start();
+    ?>
+    <div class="wp-alp-form-container wp-alp-initial-form">
+        <h3 class="wp-alp-modal-title"><?php _e('Inicia sesión o regístrate', 'wp-alp'); ?></h3>
+        
+        <div class="wp-alp-modal-content">
             <h2><?php _e('¡Te damos la bienvenida!', 'wp-alp'); ?></h2>
             
             <div class="wp-alp-input-group">
@@ -35,35 +38,41 @@ class WP_ALP_Forms {
             
             <div class="wp-alp-social-login">
                 <?php if (!empty(get_option('wp_alp_google_client_id', ''))) : ?>
-                <button type="button" class="wp-alp-social-button wp-alp-google-button" id="wp-alp-google-btn">
+                <button type="button" class="wp-alp-social-button" id="wp-alp-google-btn">
                     <span class="wp-alp-social-icon google-icon"></span>
                     <span><?php _e('Continuar con Google', 'wp-alp'); ?></span>
                 </button>
                 <?php endif; ?>
                 
                 <?php if (!empty(get_option('wp_alp_facebook_app_id', ''))) : ?>
-                <button type="button" class="wp-alp-social-button wp-alp-facebook-button" id="wp-alp-facebook-btn">
+                <button type="button" class="wp-alp-social-button" id="wp-alp-facebook-btn">
                     <span class="wp-alp-social-icon facebook-icon"></span>
                     <span><?php _e('Continuar con Facebook', 'wp-alp'); ?></span>
                 </button>
                 <?php endif; ?>
                 
                 <?php if (!empty(get_option('wp_alp_apple_client_id', ''))) : ?>
-                <button type="button" class="wp-alp-social-button wp-alp-apple-button" id="wp-alp-apple-btn">
+                <button type="button" class="wp-alp-social-button" id="wp-alp-apple-btn">
                     <span class="wp-alp-social-icon apple-icon"></span>
                     <span><?php _e('Continuar con Apple', 'wp-alp'); ?></span>
                 </button>
                 <?php endif; ?>
                 
-                <button type="button" class="wp-alp-social-button wp-alp-phone-button" id="wp-alp-phone-btn">
+                <button type="button" class="wp-alp-social-button" id="wp-alp-phone-btn">
                     <span class="wp-alp-social-icon phone-icon"></span>
                     <span><?php _e('Continuar con el número de teléfono', 'wp-alp'); ?></span>
                 </button>
+                
+                <button type="button" class="wp-alp-social-button" id="wp-alp-email-btn">
+                    <span class="wp-alp-social-icon email-icon"></span>
+                    <span><?php _e('Continuar con correo electrónico', 'wp-alp'); ?></span>
+                </button>
             </div>
         </div>
-        <?php
-        return ob_get_clean();
-    }
+    </div>
+    <?php
+    return ob_get_clean();
+}
 
     /**
      * Genera el HTML para el formulario de login.
