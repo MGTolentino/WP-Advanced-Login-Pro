@@ -428,3 +428,52 @@
         padding: 0;
     }
 }
+        /* Estilos para el loader */
+        #wp-alp-modal-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        /* Ajustar posición del loader para superponerlo al contenido */
+        .wp-alp-modal-container {
+            position: relative;
+        }
+        
+        /* Estilos para la animación de transición */
+        @keyframes fadeContent {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .wp-alp-fade-in {
+            animation: fadeContent 0.3s ease-in-out;
+        }
+        
+        /* Mensajes de éxito y error */
+        .wp-alp-success-message,
+        .wp-alp-error-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .wp-alp-success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+        
+        .wp-alp-error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
