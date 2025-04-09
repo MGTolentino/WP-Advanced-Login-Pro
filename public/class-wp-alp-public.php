@@ -390,7 +390,7 @@ public function complete_profile_ajax() {
         // Actualizar el rol del usuario a 'lead'
         $user = get_user_by('ID', $data['user_id']);
         if ($user) {
-            $user->set_role('subscriber'); // Mantener como subscriber pero con meta de lead
+            $user->set_role('lead'); // Cambiar el rol a 'lead'
         }
         
         wp_send_json_success(array(
@@ -398,7 +398,8 @@ public function complete_profile_ajax() {
             'message' => $result['message'],
             'redirect' => get_option('wp_alp_redirect_after_login', home_url()),
         ));
-    } else {
+    }
+    else {
         // Registrar el error para debugging
         error_log('Error al completar perfil: ' . json_encode($result));
         

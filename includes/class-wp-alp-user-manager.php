@@ -238,6 +238,12 @@ $event_id = $event_inserted ? $wpdb->insert_id : 0;
         update_user_meta($user_id, 'wp_alp_user_type', 'lead');
         update_user_meta($user_id, 'wp_alp_profile_status', 'complete');
         update_user_meta($user_id, 'wp_alp_lead_id', $lead_id);
+
+        // Actualizar el rol de WordPress del usuario a 'lead'
+$user = get_user_by('ID', $user_id);
+if ($user) {
+    $user->set_role('lead');
+}
         
         if (!empty($sanitized['first_name'])) {
             wp_update_user(array(
