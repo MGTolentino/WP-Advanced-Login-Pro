@@ -258,7 +258,7 @@ class WP_ALP_Social {
             'code' => $code,
         );
         
-        $response = wp_remote_get('https://graph.facebook.com/v13.0/oauth/access_token?' . http_build_query($params), array(
+        $response = wp_remote_get('https://graph.facebook.com/v18.0/oauth/access_token?' . http_build_query($params), array(            
             'timeout' => 30,
         ));
         
@@ -283,7 +283,7 @@ class WP_ALP_Social {
      */
     private function get_facebook_user_data($access_token) {
         $fields = 'id,email,first_name,last_name,picture';
-        $response = wp_remote_get('https://graph.facebook.com/v13.0/me?fields=' . $fields . '&access_token=' . $access_token, array(
+        $response = wp_remote_get('https://graph.facebook.com/v18.0/me?fields=' . $fields . '&access_token=' . $access_token, array(            
             'timeout' => 30,
         ));
         

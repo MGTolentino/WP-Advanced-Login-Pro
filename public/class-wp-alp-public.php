@@ -65,6 +65,17 @@ public function enqueue_styles() {
             $this->version,
             false
         );
+
+        // Si está habilitado Social Login
+        if (get_option('wp_alp_enable_social_login', true)) {
+            wp_enqueue_script(
+                $this->plugin_name . '-social',
+                plugin_dir_url(__FILE__) . 'js/social-login.js',
+                array('jquery', $this->plugin_name),
+                $this->version,
+                true // Cargar en el footer
+            );
+        }
         
         wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
             'ajax_url' => admin_url('admin-ajax.php'),
@@ -73,6 +84,9 @@ public function enqueue_styles() {
             'plugin_url' => plugin_dir_url(__FILE__),
             'enable_social' => get_option('wp_alp_enable_social_login', true),
             'enable_phone' => get_option('wp_alp_enable_phone_login', true),
+            'google_client_id' => get_option('wp_alp_google_client_id', ''),
+            'facebook_app_id' => get_option('wp_alp_facebook_app_id', ''),
+            'apple_client_id' => get_option('wp_alp_apple_client_id', ''),
             'translations' => array(
                 'error' => __('Error', 'wp-alp'),
                 'success' => __('Éxito', 'wp-alp'),
@@ -138,6 +152,25 @@ if (get_option('wp_alp_enable_social_login', true)) {
         
         return '<button type="button" class="' . $button_class . '" data-wp-alp-trigger="login">' . esc_html($atts['text']) . '</button>';
     }
+
+    /**
+ * Outputea el script de inicialización social en el footer.
+ */
+public function initialize_social_scripts() {
+    if (get_option('wp_alp_enable_social_login', true)) {
+        ?>
+        <script>
+            jQuery(document).ready(function($) {
+                $(document).on('wp_alp_modal_opened', function() {
+                    if (typeof window.socialLoginModalOpened === 'function') {
+                        window.socialLoginModalOpened();
+                    }
+                });
+            });
+        </script>
+        <?php
+    }
+}
 
     /**
      * Genera y añade el modal de login al pie de página.

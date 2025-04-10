@@ -53,8 +53,13 @@
      * Carga la API de Google
      */
     function loadGoogleAPI() {
-        if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.google_client_id) {
-            console.log('Cliente ID de Google no configurado');
+        if (typeof wp_alp_ajax === 'undefined') {
+            console.error('Plugin WP-ALP: Variable wp_alp_ajax no disponible');
+            return;
+        }
+        
+        if (!wp_alp_ajax.google_client_id) {
+            console.error('Plugin WP-ALP: Cliente ID de Google no configurado');
             return;
         }
 
@@ -78,8 +83,13 @@
      * Carga el SDK de Facebook
      */
     function loadFacebookAPI() {
-        if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.facebook_app_id) {
-            console.log('App ID de Facebook no configurado');
+        if (typeof wp_alp_ajax === 'undefined') {
+            console.error('Plugin WP-ALP: Variable wp_alp_ajax no disponible');
+            return;
+        }
+        
+        if (!wp_alp_ajax.google_client_id) {
+            console.error('Plugin WP-ALP: Cliente ID de Google no configurado');
             return;
         }
 
@@ -118,8 +128,13 @@
      * Carga la API de Apple
      */
     function loadAppleAPI() {
-        if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.apple_client_id) {
-            console.log('Cliente ID de Apple no configurado');
+        if (typeof wp_alp_ajax === 'undefined') {
+            console.error('Plugin WP-ALP: Variable wp_alp_ajax no disponible');
+            return;
+        }
+        
+        if (!wp_alp_ajax.google_client_id) {
+            console.error('Plugin WP-ALP: Cliente ID de Google no configurado');
             return;
         }
 
