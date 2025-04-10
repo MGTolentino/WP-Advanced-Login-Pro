@@ -36,9 +36,13 @@ get_header();
             <h1><?php _e('Inicia sesión o regístrate', 'wp-alp'); ?></h1>
             
             <div id="wp-alp-login-form-wrapper">
-                <!-- El formulario se cargará aquí con AJAX -->
-                <?php echo WP_ALP_Forms::get_initial_form(); ?>
-            </div>
+    <!-- El formulario se cargará aquí con AJAX -->
+    <?php 
+    // Usar la instancia de la clase en lugar de llamada estática
+    $forms = new WP_ALP_Forms();
+    echo $forms->get_initial_form();
+    ?>
+</div>
         </div>
         
         <div class="wp-alp-login-benefits">

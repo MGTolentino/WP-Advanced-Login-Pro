@@ -67,27 +67,27 @@ public function enqueue_styles() {
         );
 
         // Si está habilitado Social Login
-        if (get_option('wp_alp_enable_social_login', true)) {
-            wp_enqueue_script(
-                $this->plugin_name . '-social',
-                plugin_dir_url(__FILE__) . 'js/social-login.js',
-                array('jquery', $this->plugin_name),
-                $this->version,
-                true // Cargar en el footer
-            );
-        }
+if (get_option('wp_alp_enable_social_login', true)) {
+    wp_enqueue_script(
+        $this->plugin_name . '-social',
+        plugin_dir_url(__FILE__) . 'js/social-login.js',
+        array('jquery', $this->plugin_name), // Añadir dependencia al script principal
+        $this->version,
+        true
+    );
+}
         
-        wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('wp_alp_nonce'),
-            'home_url' => home_url(),
-            'plugin_url' => plugin_dir_url(__FILE__),
-            'enable_social' => get_option('wp_alp_enable_social_login', true),
-            'enable_phone' => get_option('wp_alp_enable_phone_login', true),
-            'google_client_id' => get_option('wp_alp_google_client_id', ''),
-            'facebook_app_id' => get_option('wp_alp_facebook_app_id', ''),
-            'apple_client_id' => get_option('wp_alp_apple_client_id', ''),
-            'translations' => array(
+wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('wp_alp_nonce'),
+    'home_url' => home_url(),
+    'plugin_url' => plugin_dir_url(__FILE__),
+    'enable_social' => get_option('wp_alp_enable_social_login', true),
+    'enable_phone' => get_option('wp_alp_enable_phone_login', true),
+    'google_client_id' => get_option('wp_alp_google_client_id', ''),
+    'facebook_app_id' => get_option('wp_alp_facebook_app_id', ''),
+    'apple_client_id' => get_option('wp_alp_apple_client_id', ''),
+    'translations' => array(
                 'error' => __('Error', 'wp-alp'),
                 'success' => __('Éxito', 'wp-alp'),
                 'loading' => __('Cargando...', 'wp-alp'),
