@@ -25,7 +25,12 @@
         // Inicializar listeners
         initModalListeners();
         initFormListeners();
-        initSocialLogin();
+        
+        // La inicialización social ahora se maneja en social-login.js
+        // Solo inicializar si no está siendo manejado externamente
+        if (typeof window.socialLoginInitialized === 'undefined') {
+            initSocialLogin();
+        }
     });
 
     /**
@@ -221,63 +226,13 @@
 
     /**
      * Inicializa los botones de login social.
+     * Esta función se mantiene por compatibilidad pero 
+     * la implementación real ahora está en social-login.js
      */
     function initSocialLogin() {
-
-        // Verificar si debe omitir la inicialización estándar
-    if (window.overrideWpAlpSocialInit) {
-        console.log('Inicialización social manejada externamente');
-        return;
-    }
-        // Google Login
-        $(document).on('click', '#wp-alp-google-btn', function() {
-            if (typeof gapi !== 'undefined' && gapi.auth2) {
-                var auth2 = gapi.auth2.getAuthInstance();
-                auth2.signIn().then(function(googleUser) {
-                    var token = googleUser.getAuthResponse().id_token;
-                    socialLogin('google', token);
-                }).catch(function(error) {
-                    console.error('Google Sign-In Error:', error);
-                });
-            } else {
-                console.error('Google Sign-In API no está cargada correctamente.');
-            }
-        });
-
-        // Facebook Login
-        $(document).on('click', '#wp-alp-facebook-btn', function() {
-            if (typeof FB !== 'undefined') {
-                FB.login(function(response) {
-                    if (response.authResponse) {
-                        var token = response.authResponse.accessToken;
-                        socialLogin('facebook', token);
-                    }
-                }, {scope: 'email'});
-            } else {
-                console.error('Facebook SDK no está cargado correctamente.');
-            }
-        });
-
-        // Apple Login
-        $(document).on('click', '#wp-alp-apple-btn', function() {
-            if (typeof AppleID !== 'undefined') {
-                AppleID.auth.signIn().then(function(response) {
-                    var token = response.authorization.id_token;
-                    var userData = {};
-                    
-                    if (response.user) {
-                        userData.first_name = response.user.name.firstName;
-                        userData.last_name = response.user.name.lastName;
-                    }
-                    
-                    socialLogin('apple', token, userData);
-                }).catch(function(error) {
-                    console.error('Apple Sign-In Error:', error);
-                });
-            } else {
-                console.error('Apple Sign-In JS no está cargado correctamente.');
-            }
-        });
+        // Esta función está vacía intencionalmente
+        // La implementación real está en social-login.js
+        console.log('La implementación de login social se ha movido a social-login.js');
     }
 
     /**
@@ -290,6 +245,11 @@
         
         // Cargar formulario inicial
         loadInitialForm();
+        
+        // Notificar a social-login.js que el modal está abierto
+        if (typeof window.socialLoginModalOpened === 'function') {
+            window.socialLoginModalOpened();
+        }
     }
 
     /**
@@ -415,16 +375,37 @@
      */
     function loadPhoneForm() {
         showLoader();
-        modal.content.html(WP_ALP_Forms.get_phone_form());
-        hideLoader();
+        
+        $.ajax({
+            url: wp_alp_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wp_alp_get_form',
+                form: 'phone',
+                nonce: wp_alp_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    updateModalContent(response.data.html);
+                } else {
+                    showError(response.data.message || 'Error al cargar el formulario.');
+                }
+            },
+            error: function() {
+                showError('Error de conexión. Por favor, intenta nuevamente.');
+            }
+        });
     }
 
     /**
      * Actualiza el contenido del modal.
      */
     function updateModalContent(html) {
-        modal.content.html(html);
-        hideLoader();
+        // Actualizar con animación suave
+        modal.content.fadeOut(150, function() {
+            modal.content.html(html).fadeIn(150);
+            hideLoader();
+        });
     }
 
     /**
@@ -627,50 +608,13 @@
         });
     }
 
-    /**
-     * Procesa el login social.
-     */
-    function socialLogin(provider, token, userData) {
-        showLoader();
-        
-        var data = {
-            action: 'wp_alp_social_login',
-            provider: provider,
-            token: token,
-            nonce: wp_alp_ajax.nonce
-        };
-        
-        // Añadir datos de usuario si están disponibles (para Apple)
-        if (userData) {
-            if (userData.first_name) data.first_name = userData.first_name;
-            if (userData.last_name) data.last_name = userData.last_name;
-        }
-        
-        $.ajax({
-            url: wp_alp_ajax.ajax_url,
-            type: 'POST',
-            data: data,
-            success: function(response) {
-                if (response.success) {
-                    showSuccess(response.data.message);
-                    
-                    if (response.data.needs_profile) {
-                        window.location.href = response.data.redirect;
-                    } else {
-                        setTimeout(function() {
-                            window.location.href = response.data.redirect;
-                        }, 1000);
-                    }
-                } else {
-                    hideLoader();
-                    showError(response.data.message);
-                }
-            },
-            error: function() {
-                hideLoader();
-                showError('Error de conexión. Por favor, intenta nuevamente.');
-            }
-        });
-    }
+    // Exponer algunas funciones para ser usadas por otros scripts
+    window.wpAlp = {
+        showLoader: showLoader,
+        hideLoader: hideLoader,
+        showError: showError,
+        showSuccess: showSuccess,
+        updateModalContent: updateModalContent
+    };
 
 })(jQuery);
