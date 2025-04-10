@@ -23,16 +23,27 @@ class WP_ALP_Core {
     protected $plugin_name;
 
     /**
+ * La instancia de la clase social.
+ */
+protected $social;
+
+    /**
      * Constructor de la clase.
      */
     public function __construct() {
         $this->plugin_name = 'wp-advanced-login-pro';
         $this->version = WP_ALP_VERSION;
-
+    
         $this->load_dependencies();
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
+        
+        // Crear instancia de la clase social
+        $this->social = new WP_ALP_Social();
+        
+        // Registrar hooks REST
+        $this->define_rest_hooks();
     }
 
     /**
@@ -49,6 +60,14 @@ class WP_ALP_Core {
         $plugin_i18n = new WP_ALP_i18n();
         $this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
     }
+
+    /**
+ * Registra los hooks relacionados con la API REST.
+ */
+private function define_rest_hooks() {
+    // Asegurarse de que los endpoints REST se registren
+    $this->loader->add_action('rest_api_init', $this->social, 'register_rest_routes');
+}
 
     /**
      * Registra todos los hooks relacionados con la funcionalidad admin.

@@ -455,6 +455,9 @@ public function complete_profile_ajax() {
      * Maneja el login social vía AJAX.
      */
     public function social_login_ajax() {
+
+        error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $_POST['provider']);
+
         check_ajax_referer('wp_alp_nonce', 'nonce');
         
         if (!isset($_POST['provider']) || empty($_POST['provider']) || !isset($_POST['token']) || empty($_POST['token'])) {
@@ -497,7 +500,10 @@ public function complete_profile_ajax() {
         } else {
             wp_send_json_error(array(
                 'message' => $result['message'],
+                
             ));
+            error_log('WP_ALP: Error en social_login_ajax: ' . $result['message']);
+
         }
     }
 
