@@ -4,8 +4,14 @@
  * Este archivo maneja la inicialización y procesamiento
  * del login con Google, Facebook y Apple.
  */
+
 (function($) {
+
+    
     'use strict';
+
+    var googleSignInInProgress = false;
+
 
     // Marcar que esta implementación está activa
     window.socialLoginInitialized = true;
@@ -162,6 +168,12 @@
             return;
         }
         
+        // Evitar múltiples solicitudes
+        if (googleSignInInProgress) {
+            console.log('Ya hay un proceso de inicio de sesión con Google en curso');
+            return;
+        }
+        
         try {
             if (typeof google === 'undefined' || !google.accounts) {
                 window.wpAlp.showError('Cargando Google Sign-In...');
@@ -182,33 +194,58 @@
                 return;
             }
             
+            // Marcar que hay un proceso en curso
+            googleSignInInProgress = true;
+            
             // Mostrar loader
             window.wpAlp.showLoader();
             
-            // Inicializar Google Sign-In
-            google.accounts.id.initialize({
-                client_id: wp_alp_ajax.google_client_id,
-                callback: function(credentialResponse) {
-                    console.log('Google login callback ejecutado');
-                    if (credentialResponse && credentialResponse.credential) {
-                        processGoogleLogin(credentialResponse.credential);
-                    } else {
-                        window.wpAlp.hideLoader();
-                        window.wpAlp.showError('Error en el inicio de sesión con Google. Por favor, intenta nuevamente.');
-                    }
-                },
-                cancel_on_tap_outside: false
-            });
+            // Limpiar cualquier configuración previa
+            google.accounts.id.cancel();
             
-            // Mostrar el popup de Google
-            google.accounts.id.prompt(function(notification) {
-                console.log('Google prompt mostrado', notification);
-                if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                    window.wpAlp.hideLoader();
-                    window.wpAlp.showError('No se pudo mostrar el inicio de sesión con Google. Por favor, intenta más tarde.');
-                }
-            });
+            // Pequeña pausa para asegurar que cualquier solicitud previa se cancele completamente
+            setTimeout(function() {
+                // Inicializar Google Sign-In
+                google.accounts.id.initialize({
+                    client_id: wp_alp_ajax.google_client_id,
+                    callback: function(credentialResponse) {
+                        console.log('Google login callback ejecutado');
+                        // Reiniciar la bandera
+                        googleSignInInProgress = false;
+                        
+                        if (credentialResponse && credentialResponse.credential) {
+                            processGoogleLogin(credentialResponse.credential);
+                        } else {
+                            window.wpAlp.hideLoader();
+                            window.wpAlp.showError('Error en el inicio de sesión con Google. Por favor, intenta nuevamente.');
+                        }
+                    },
+                    cancel_on_tap_outside: false
+                });
+                
+                // Mostrar el popup de Google
+                google.accounts.id.prompt(function(notification) {
+                    console.log('Google prompt mostrado', notification);
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        // Reiniciar la bandera
+                        googleSignInInProgress = false;
+                        window.wpAlp.hideLoader();
+                        
+                        if (notification.getNotDisplayedReason()) {
+                            console.log('Razón por la que no se mostró:', notification.getNotDisplayedReason());
+                        }
+                        
+                        if (notification.getSkippedReason()) {
+                            console.log('Razón por la que se saltó:', notification.getSkippedReason());
+                        }
+                        
+                        window.wpAlp.showError('No se pudo mostrar el inicio de sesión con Google. Por favor, intenta más tarde.');
+                    }
+                });
+            }, 500);
         } catch (e) {
+            // Reiniciar la bandera
+            googleSignInInProgress = false;
             console.error('Error en Google Login:', e);
             window.wpAlp.hideLoader();
             window.wpAlp.showError('Error en el inicio de sesión con Google: ' + e.message);
@@ -253,6 +290,7 @@
             error: function() {
                 window.wpAlp.hideLoader();
                 window.wpAlp.showError('Error de conexión. Por favor, intenta nuevamente.');
+                googleSignInInProgress = false;
             }
         });
     }
