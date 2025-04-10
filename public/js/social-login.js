@@ -190,9 +190,67 @@
                 '&access_type=online' +
                 '&state=' + encodeURIComponent(wp_alp_ajax.nonce);
             
-            // Redireccionar a Google
-            console.log('Redireccionando a Google para autenticación');
-            window.location.href = googleAuthUrl;
+            // Abrir en popup en lugar de redirigir
+            var width = 600, height = 600;
+            var left = (screen.width - width) / 2;
+            var top = (screen.height - height) / 2;
+            var googleWindow = window.open(googleAuthUrl, 'google_login', 
+                'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + 
+                ',menubar=no,toolbar=no,location=no,status=no');
+            
+            // Configurar listener para mensaje del popup
+            window.addEventListener('message', function(event) {
+                if (event.origin !== window.location.origin) return;
+                
+                var data = event.data;
+                if (data.provider === 'google' && data.success) {
+                    // Si el usuario necesita completar perfil
+                    if (data.needs_profile) {
+                        // Cargar formulario de completar perfil
+                        $.ajax({
+                            url: wp_alp_ajax.ajax_url,
+                            type: 'POST',
+                            data: {
+                                action: 'wp_alp_get_form',
+                                form: 'profile',
+                                user_id: data.user_id,
+                                nonce: wp_alp_ajax.nonce
+                            },
+                            success: function(response) {
+                                googleSignInInProgress = false;
+                                if (response.success) {
+                                    window.wpAlp.updateModalContent(response.data.html);
+                                } else {
+                                    window.wpAlp.hideLoader();
+                                    window.wpAlp.showError(response.data.message || 'Error al cargar formulario de perfil');
+                                }
+                            },
+                            error: function() {
+                                googleSignInInProgress = false;
+                                window.wpAlp.hideLoader();
+                                window.wpAlp.showError('Error de conexión. Por favor, intenta nuevamente.');
+                            }
+                        });
+                    } else {
+                        // Usuario completo, mostrar mensaje de éxito
+                        window.wpAlp.hideLoader();
+                        window.wpAlp.showSuccess('Inicio de sesión exitoso');
+                        setTimeout(function() {
+                            window.location.href = data.redirect_url;
+                        }, 1000);
+                    }
+                }
+            });
+            
+            // Verificar si la ventana se cerró sin completar
+            var checkClosed = setInterval(function() {
+                if (googleWindow.closed) {
+                    clearInterval(checkClosed);
+                    googleSignInInProgress = false;
+                    window.wpAlp.hideLoader();
+                }
+            }, 500);
+            
         } catch (e) {
             // Reiniciar la bandera
             googleSignInInProgress = false;
@@ -268,31 +326,83 @@
                         handleFacebookLogin();
                     } else {
                         window.wpAlp.showError('No se pudo cargar Facebook Login. Por favor, intenta más tarde.');
-                   }
-               }, 2000);
-               
-               return;
-           }
-           
-           // Mostrar loader
-           window.wpAlp.showLoader();
-           
-           // Iniciar login con Facebook
-           FB.login(function(response) {
-               console.log('Facebook login callback ejecutado');
-               if (response.authResponse) {
-                   processFacebookLogin(response.authResponse.accessToken);
-               } else {
-                   window.wpAlp.hideLoader();
-                   window.wpAlp.showError('Error en el inicio de sesión con Facebook. Por favor, intenta nuevamente.');
-               }
-           }, {scope: 'email,public_profile'});
-       } catch (e) {
-           console.error('Error en Facebook Login:', e);
-           window.wpAlp.hideLoader();
-           window.wpAlp.showError('Error en el inicio de sesión con Facebook: ' + e.message);
-       }
-   }
+                    }
+                }, 2000);
+                
+                return;
+            }
+            
+            // Mostrar loader
+            window.wpAlp.showLoader();
+            
+            // Iniciar login con Facebook
+            FB.login(function(response) {
+                console.log('Facebook login callback ejecutado');
+                if (response.authResponse) {
+                    // Procesar el login exitoso
+                    $.ajax({
+                        url: wp_alp_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'wp_alp_social_login',
+                            provider: 'facebook',
+                            token: response.authResponse.accessToken,
+                            nonce: wp_alp_ajax.nonce
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                window.wpAlp.showSuccess(response.data.message || 'Inicio de sesión exitoso');
+                                
+                                if (response.data.needs_profile) {
+                                    // Cargar formulario de completar perfil
+                                    $.ajax({
+                                        url: wp_alp_ajax.ajax_url,
+                                        type: 'POST',
+                                        data: {
+                                            action: 'wp_alp_get_form',
+                                            form: 'profile',
+                                            user_id: response.data.user_id,
+                                            nonce: wp_alp_ajax.nonce
+                                        },
+                                        success: function(profileResponse) {
+                                            if (profileResponse.success) {
+                                                window.wpAlp.updateModalContent(profileResponse.data.html);
+                                            } else {
+                                                window.wpAlp.hideLoader();
+                                                window.wpAlp.showError(profileResponse.data.message || 'Error al cargar formulario de perfil');
+                                            }
+                                        },
+                                        error: function() {
+                                            window.wpAlp.hideLoader();
+                                            window.wpAlp.showError('Error de conexión. Por favor, intenta nuevamente.');
+                                        }
+                                    });
+                                } else {
+                                    setTimeout(function() {
+                                        window.location.href = response.data.redirect;
+                                    }, 1000);
+                                }
+                            } else {
+                                window.wpAlp.hideLoader();
+                                window.wpAlp.showError(response.data.message || 'Error en el inicio de sesión con Facebook');
+                            }
+                        },
+                        error: function() {
+                            window.wpAlp.hideLoader();
+                            window.wpAlp.showError('Error de conexión. Por favor, intenta nuevamente.');
+                        }
+                    });
+                } else {
+                    window.wpAlp.hideLoader();
+                    window.wpAlp.showError('Error en el inicio de sesión con Facebook. Por favor, intenta nuevamente.');
+                }
+            }, {scope: 'public_profile,email'});
+        } catch (e) {
+            console.error('Error en Facebook Login:', e);
+            window.wpAlp.hideLoader();
+            window.wpAlp.showError('Error en el inicio de sesión con Facebook: ' + e.message);
+        }
+    }
 
    /**
     * Procesa el token de Facebook

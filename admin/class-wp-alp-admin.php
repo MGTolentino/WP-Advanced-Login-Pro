@@ -184,6 +184,17 @@ class WP_ALP_Admin {
         register_setting('wp_alp_security', 'wp_alp_recaptcha_secret_key', array(
             'type' => 'string',
         ));
+
+         // Configuración de página de login
+    register_setting('wp_alp_general_settings', 'wp_alp_login_page_id');
+    
+    add_settings_field(
+        'wp_alp_login_page_id',
+        __('Página de Login', 'wp-alp'),
+        array($this, 'render_login_page_field'),
+        'wp_alp_general_settings',
+        'wp_alp_general_section'
+    );
     }
 
     /**
@@ -206,4 +217,23 @@ class WP_ALP_Admin {
     public function display_security_page() {
         include_once plugin_dir_path(__FILE__) . 'templates/security.php';
     }
+
+/**
+ * Renderiza el campo de selección de página de login.
+ */
+public function render_login_page_field() {
+    $login_page_id = get_option('wp_alp_login_page_id', 0);
+    
+    wp_dropdown_pages(array(
+        'name' => 'wp_alp_login_page_id',
+        'echo' => 1,
+        'show_option_none' => __('-- Seleccionar página --', 'wp-alp'),
+        'option_none_value' => '0',
+        'selected' => $login_page_id,
+    ));
+    
+    echo '<p class="description">';
+    _e('Selecciona la página que contiene el shortcode [wp_alp_login_page].', 'wp-alp');
+    echo '</p>';
+}
 }

@@ -44,15 +44,15 @@ class WP_ALP_Social {
         register_rest_route('wp-alp/v1', '/auth/google', array(
             'methods' => 'GET',
             'callback' => array($this, 'handle_google_callback'),
-            'permission_callback' => '__return_true',
+            'permission_callback' => '__return_true', // Asegura acceso público
         ));
-
+    
         register_rest_route('wp-alp/v1', '/auth/facebook', array(
             'methods' => 'GET',
             'callback' => array($this, 'handle_facebook_callback'),
             'permission_callback' => '__return_true',
         ));
-
+    
         register_rest_route('wp-alp/v1', '/auth/apple', array(
             'methods' => 'POST',
             'callback' => array($this, 'handle_apple_callback'),
@@ -108,31 +108,50 @@ class WP_ALP_Social {
      * @return WP_REST_Response La respuesta REST.
      */
     public function handle_google_callback($request) {
+        // Agregar log para diagnosticar
+        error_log('Google Auth Callback recibido: ' . json_encode($_GET));
+        
         $code = $request->get_param('code');
         $state = $request->get_param('state');
         
-        // Verificar nonce
-        if (!wp_verify_nonce($state, 'google-auth')) {
-            return new WP_REST_Response(array('error' => 'Invalid state'), 400);
+        if (empty($code)) {
+            error_log('Google Auth: Código faltante');
+            return new WP_REST_Response(array('error' => 'Falta código de autorización'), 400);
         }
         
         // Intercambiar código por token
         $token_data = $this->get_google_token($code);
         if (isset($token_data['error'])) {
+            error_log('Google Auth: Error al obtener token: ' . json_encode($token_data));
             return new WP_REST_Response($token_data, 400);
         }
         
         // Obtener datos del usuario
         $user_data = $this->get_google_user_data($token_data['access_token']);
         if (isset($user_data['error'])) {
+            error_log('Google Auth: Error al obtener datos de usuario: ' . json_encode($user_data));
             return new WP_REST_Response($user_data, 400);
         }
         
         // Iniciar sesión o crear usuario
         $result = $this->login_or_create_user($user_data, 'google');
         
-        // Redirigir al usuario
-        wp_redirect($result['redirect_url']);
+        // Redirigir con un script que cierre la ventana y notifique a la ventana principal
+        $redirect_url = $result['redirect_url'];
+        $needs_profile = $result['needs_profile'] ? 'true' : 'false';
+        $user_id = $result['user_id'];
+        
+        // Devolver HTML que se comunicará con la ventana principal
+        echo '<html><head><script>
+        window.opener.postMessage({
+            provider: "google",
+            success: true,
+            needs_profile: ' . $needs_profile . ',
+            user_id: ' . $user_id . ',
+            redirect_url: "' . esc_js($redirect_url) . '"
+        }, window.location.origin);
+        window.close();
+        </script></head><body>Autenticación exitosa. Cerrando ventana...</body></html>';
         exit;
     }
 
@@ -155,19 +174,23 @@ class WP_ALP_Social {
             'grant_type' => 'authorization_code',
         );
         
+        error_log('Google Auth: Solicitando token con parámetros: ' . json_encode($params));
+        
         $response = wp_remote_post('https://oauth2.googleapis.com/token', array(
             'body' => $params,
             'timeout' => 30,
         ));
         
         if (is_wp_error($response)) {
+            error_log('Google Auth: Error en solicitud: ' . $response->get_error_message());
             return array('error' => $response->get_error_message());
         }
         
         $body = json_decode(wp_remote_retrieve_body($response), true);
+        error_log('Google Auth: Respuesta de token: ' . json_encode($body));
         
         if (isset($body['error'])) {
-            return array('error' => $body['error_description']);
+            return array('error' => $body['error_description'] ?? $body['error']);
         }
         
         return $body;

@@ -41,6 +41,7 @@ function run_wp_advanced_login_pro() {
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-user-manager.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-jetengine.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-forms.php';
+    require_once plugin_dir_path(__FILE__) . 'redirect-protection.php';
 
     // Carga las clases para el admin y parte pública
     require_once plugin_dir_path(__FILE__) . 'admin/class-wp-alp-admin.php';

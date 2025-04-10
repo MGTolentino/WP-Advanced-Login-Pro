@@ -131,7 +131,50 @@ if (get_option('wp_alp_enable_social_login', true)) {
      */
     public function register_shortcodes() {
         add_shortcode('wp_alp_login_button', array($this, 'login_button_shortcode'));
+        add_shortcode('wp_alp_login_page', array($this, 'login_page_shortcode'));
+
     }
+
+    /**
+ * Shortcode para mostrar la página de login completa.
+ *
+ * @param array $atts Atributos del shortcode.
+ * @return string HTML de la página de login.
+ */
+public function login_page_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'redirect' => '',
+    ), $atts, 'wp_alp_login_page');
+    
+    // Si el usuario ya está logueado y no necesita completar perfil
+    if (is_user_logged_in()) {
+        $user_id = get_current_user_id();
+        $user_type = get_user_meta($user_id, 'wp_alp_user_type', true);
+        $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
+        
+        // Si es subscriber con perfil incompleto, mostrar formulario de completar perfil
+        if (current_user_can('subscriber') && ($user_type === '' || $profile_status === 'incomplete')) {
+            ob_start();
+            include(plugin_dir_path(__FILE__) . 'templates/login-page-template.php');
+            return ob_get_clean();
+        }
+        
+        // Si hay redirect_to, redirigir allí
+        if (isset($_GET['redirect_to']) && !empty($_GET['redirect_to'])) {
+            $redirect_url = esc_url_raw($_GET['redirect_to']);
+            echo '<script>window.location.href = "' . $redirect_url . '";</script>';
+            return '<p>' . __('Redirigiendo...', 'wp-alp') . '</p>';
+        }
+        
+        // Si no hay redirect, mostrar mensaje
+        return '<p>' . __('Ya has iniciado sesión.', 'wp-alp') . ' <a href="' . esc_url(home_url()) . '">' . __('Ir a la página principal', 'wp-alp') . '</a></p>';
+    }
+    
+    // Cargar la plantilla de página de login
+    ob_start();
+    include(plugin_dir_path(__FILE__) . 'templates/login-page-template.php');
+    return ob_get_clean();
+}
 
     /**
      * Shortcode para mostrar un botón de inicio de sesión.
@@ -455,9 +498,8 @@ public function complete_profile_ajax() {
      * Maneja el login social vía AJAX.
      */
     public function social_login_ajax() {
-
         error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $_POST['provider']);
-
+    
         check_ajax_referer('wp_alp_nonce', 'nonce');
         
         if (!isset($_POST['provider']) || empty($_POST['provider']) || !isset($_POST['token']) || empty($_POST['token'])) {
@@ -487,6 +529,7 @@ public function complete_profile_ajax() {
             $response = array(
                 'success' => true,
                 'message' => $result['message'],
+                'user_id' => isset($result['user_id']) ? $result['user_id'] : 0,
             );
             
             if (isset($result['needs_profile']) && $result['needs_profile']) {
@@ -500,10 +543,8 @@ public function complete_profile_ajax() {
         } else {
             wp_send_json_error(array(
                 'message' => $result['message'],
-                
             ));
             error_log('WP_ALP: Error en social_login_ajax: ' . $result['message']);
-
         }
     }
 
