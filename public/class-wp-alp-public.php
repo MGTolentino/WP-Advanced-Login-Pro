@@ -494,59 +494,70 @@ public function complete_profile_ajax() {
     }
 }
 
-    /**
-     * Maneja el login social vía AJAX.
-     */
-    public function social_login_ajax() {
-        error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $_POST['provider']);
+   /**
+ * Maneja el login social vía AJAX.
+ */
+public function social_login_ajax() {
+    error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $_POST['provider']);
+
+    check_ajax_referer('wp_alp_nonce', 'nonce');
     
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+    if (!isset($_POST['provider']) || empty($_POST['provider']) || !isset($_POST['token']) || empty($_POST['token'])) {
+        wp_send_json_error(array(
+            'message' => __('El proveedor y el token son obligatorios.', 'wp-alp'),
+        ));
+    }
+    
+    $provider = sanitize_text_field($_POST['provider']);
+    $token = sanitize_text_field($_POST['token']);
+    
+    $data = array(
+        'provider' => $provider,
+        'token' => $token,
+    );
+    
+    // Si es Apple, puede incluir datos adicionales
+    if ($provider === 'apple' && isset($_POST['first_name']) && isset($_POST['last_name'])) {
+        $data['first_name'] = sanitize_text_field($_POST['first_name']);
+        $data['last_name'] = sanitize_text_field($_POST['last_name']);
+    }
+    
+    $social = new WP_ALP_Social();
+    $result = $social->process_social_data_ajax($data);
+    
+    if ($result['success']) {
+        // Generar un nuevo nonce para el usuario autenticado
+        $new_nonce = wp_create_nonce('wp_alp_nonce');
         
-        if (!isset($_POST['provider']) || empty($_POST['provider']) || !isset($_POST['token']) || empty($_POST['token'])) {
-            wp_send_json_error(array(
-                'message' => __('El proveedor y el token son obligatorios.', 'wp-alp'),
-            ));
-        }
-        
-        $provider = sanitize_text_field($_POST['provider']);
-        $token = sanitize_text_field($_POST['token']);
-        
-        $data = array(
-            'provider' => $provider,
-            'token' => $token,
+        $response = array(
+            'success' => true,
+            'message' => $result['message'],
+            'user_id' => isset($result['user_id']) ? $result['user_id'] : 0,
+            'new_nonce' => $new_nonce  // Incluir el nuevo nonce en la respuesta
         );
         
-        // Si es Apple, puede incluir datos adicionales
-        if ($provider === 'apple' && isset($_POST['first_name']) && isset($_POST['last_name'])) {
-            $data['first_name'] = sanitize_text_field($_POST['first_name']);
-            $data['last_name'] = sanitize_text_field($_POST['last_name']);
-        }
-        
-        $social = new WP_ALP_Social();
-        $result = $social->process_social_data_ajax($data);
-        
-        if ($result['success']) {
-            $response = array(
-                'success' => true,
-                'message' => $result['message'],
-                'user_id' => isset($result['user_id']) ? $result['user_id'] : 0,
-            );
+        if (isset($result['needs_profile']) && $result['needs_profile']) {
+            $response['needs_profile'] = true;
             
-            if (isset($result['needs_profile']) && $result['needs_profile']) {
-                $response['needs_profile'] = true;
-                $response['redirect'] = $result['redirect_url'];
-            } else {
-                $response['redirect'] = $result['redirect_url'];
+            // Si el usuario necesita completar perfil, obtener el HTML del formulario
+            if (!empty($result['user_id'])) {
+                $forms = new WP_ALP_Forms();
+                $response['html'] = $forms->get_profile_completion_form($result['user_id']);
             }
             
-            wp_send_json_success($response);
+            $response['redirect'] = $result['redirect_url'];
         } else {
-            wp_send_json_error(array(
-                'message' => $result['message'],
-            ));
-            error_log('WP_ALP: Error en social_login_ajax: ' . $result['message']);
+            $response['redirect'] = $result['redirect_url'];
         }
+        
+        wp_send_json_success($response);
+    } else {
+        wp_send_json_error(array(
+            'message' => $result['message'],
+        ));
+        error_log('WP_ALP: Error en social_login_ajax: ' . $result['message']);
     }
+}
 
     /**
  * Devuelve el HTML del formulario solicitado vía AJAX.

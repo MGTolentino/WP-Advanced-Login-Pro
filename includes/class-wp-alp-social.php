@@ -467,27 +467,64 @@ class WP_ALP_Social {
         }
     }
 
-    /**
-     * Procesa los datos sociales recibidos via AJAX.
-     *
-     * @param array $data Los datos de autenticación social.
-     * @return array Resultado del proceso.
-     */
-    public function process_social_data_ajax($data) {
-        $provider = sanitize_text_field($data['provider']);
-        $token = sanitize_text_field($data['token']);
-        
-        switch ($provider) {
-            case 'google':
+   /**
+ * Procesa los datos sociales recibidos via AJAX.
+ *
+ * @param array $data Los datos de autenticación social.
+ * @return array Resultado del proceso.
+ */
+public function process_social_data_ajax($data) {
+    $provider = sanitize_text_field($data['provider']);
+    $token = sanitize_text_field($data['token']);
+    
+    // Registrar datos para debugging
+    error_log('WP_ALP: Procesando datos sociales para proveedor: ' . $provider);
+    
+    switch ($provider) {
+        case 'google':
+            // Para Google, estamos recibiendo un JWT (token ID) en lugar de un token de acceso
+            if (strpos($token, '.') !== false) {
+                // Es un token JWT, decodificar la parte del payload
+                $parts = explode('.', $token);
+                if (count($parts) >= 2) {
+                    $payload = json_decode($this->base64url_decode($parts[1]), true);
+                    
+                    if ($payload && isset($payload['email']) && isset($payload['sub'])) {
+                        $user_data = array(
+                            'email' => $payload['email'],
+                            'id' => $payload['sub'],
+                            'verified' => isset($payload['email_verified']) ? $payload['email_verified'] : true,
+                            'first_name' => isset($payload['given_name']) ? $payload['given_name'] : '',
+                            'last_name' => isset($payload['family_name']) ? $payload['family_name'] : '',
+                            'picture' => isset($payload['picture']) ? $payload['picture'] : '',
+                        );
+                        
+                        error_log('WP_ALP: Datos de usuario de Google JWT: ' . json_encode($user_data));
+                    } else {
+                        return array(
+                            'success' => false,
+                            'message' => __('Token JWT de Google inválido o incompleto', 'wp-alp'),
+                        );
+                    }
+                } else {
+                    return array(
+                        'success' => false,
+                        'message' => __('Formato de token JWT inválido', 'wp-alp'),
+                    );
+                }
+            } else {
+                // Usar el método tradicional para tokens de acceso
                 $user_data = $this->get_google_user_data($token);
-                break;
-            case 'facebook':
-                $user_data = $this->get_facebook_user_data($token);
-                break;
-            case 'apple':
-                // Decodificar token JWT
-                $token_parts = explode('.', $token);
-                $payload = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', $token_parts[1]))), true);
+            }
+            break;
+        case 'facebook':
+            $user_data = $this->get_facebook_user_data($token);
+            break;
+        case 'apple':
+            // Decodificar token JWT
+            $token_parts = explode('.', $token);
+            if (count($token_parts) >= 2) {
+                $payload = json_decode($this->base64url_decode($token_parts[1]), true);
                 
                 $user_data = array(
                     'email' => $payload['email'],
@@ -496,28 +533,51 @@ class WP_ALP_Social {
                     'first_name' => $data['first_name'] ?? '',
                     'last_name' => $data['last_name'] ?? '',
                 );
-                break;
-            default:
+            } else {
                 return array(
                     'success' => false,
-                    'message' => __('Proveedor no soportado', 'wp-alp'),
+                    'message' => __('Token de Apple inválido', 'wp-alp'),
                 );
-        }
-        
-        if (isset($user_data['error'])) {
+            }
+            break;
+        default:
             return array(
                 'success' => false,
-                'message' => $user_data['error'],
+                'message' => __('Proveedor no soportado', 'wp-alp'),
             );
-        }
-        
-        $result = $this->login_or_create_user($user_data, $provider);
-        
+    }
+    
+    if (isset($user_data['error'])) {
+        error_log('WP_ALP: Error obteniendo datos de usuario: ' . json_encode($user_data));
         return array(
-            'success' => $result['success'],
-            'message' => $result['success'] ? __('Autenticación exitosa', 'wp-alp') : $result['error'],
-            'needs_profile' => $result['needs_profile'] ?? false,
-            'redirect_url' => $result['redirect_url'],
+            'success' => false,
+            'message' => $user_data['error'],
         );
     }
+    
+    $result = $this->login_or_create_user($user_data, $provider);
+    
+    // Asegurarnos de que el resultado incluya el user_id
+    if ($result['success'] && !isset($result['user_id'])) {
+        error_log('WP_ALP: Login exitoso pero falta user_id en el resultado');
+    }
+    
+    return array(
+        'success' => $result['success'],
+        'message' => $result['success'] ? __('Autenticación exitosa', 'wp-alp') : $result['error'],
+        'needs_profile' => $result['needs_profile'] ?? false,
+        'redirect_url' => $result['redirect_url'],
+        'user_id' => $result['user_id'] ?? 0,
+    );
+}
+
+/**
+ * Decodifica una cadena base64url (compatible con JWT)
+ *
+ * @param string $data La cadena codificada
+ * @return string La cadena decodificada
+ */
+private function base64url_decode($data) {
+    return base64_decode(str_replace(array('-', '_'), array('+', '/'), $data));
+}
 }
