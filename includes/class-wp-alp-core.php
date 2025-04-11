@@ -118,7 +118,7 @@ private function define_rest_hooks() {
 
         $this->loader->add_action('wp_footer', $plugin_public, 'initialize_social_scripts', 20);
         // Insertar el botón de vendedor en el header
-        $this->loader->add_action('kava_header_after', $plugin_public, 'output_vendor_button', 20);
+        $this->loader->add_action('kava_header_before', $plugin_public, 'output_vendor_button', 20);
     }
 
     /**
