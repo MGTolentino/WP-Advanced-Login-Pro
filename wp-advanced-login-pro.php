@@ -85,6 +85,7 @@ function wp_alp_register_templates($templates) {
     $plugin_templates = array(
         plugin_dir_path(__FILE__) . 'templates/login-page-template.php' => 'Página de Login WP-ALP',
         plugin_dir_path(__FILE__) . 'templates/vendor-page-template.php' => 'Página para Vendedores WP-ALP',
+        plugin_dir_path(__FILE__) . 'templates/vendor-steps-template.php' => 'Pasos para Vendedores WP-ALP',
     );
     
     return array_merge($templates, $plugin_templates);
@@ -107,7 +108,8 @@ function wp_alp_load_template($template) {
         if (!empty($template_name) && (
             strpos($template_name, 'login-page-template.php') !== false ||
             strpos($template_name, 'vendor-page-template.php') !== false ||
-            strpos($template_name, 'seller-page-template.php') !== false
+            strpos($template_name, 'seller-page-template.php') !== false ||
+            strpos($template_name, 'vendor-steps-template.php') !== false
         )) {
             // Determinar qué archivo de plantilla cargar
             $template_file = '';
@@ -117,6 +119,8 @@ function wp_alp_load_template($template) {
             } else if (strpos($template_name, 'vendor-page-template.php') !== false || 
                        strpos($template_name, 'seller-page-template.php') !== false) {
                 $template_file = 'vendor-page-template.php';
+            } else if (strpos($template_name, 'vendor-steps-template.php') !== false) {
+                $template_file = 'vendor-steps-template.php';
             }
             
             if (!empty($template_file)) {

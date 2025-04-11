@@ -457,3 +457,139 @@ button.wp-alp-vendor-button {
     justify-content: center;
     z-index: 10;
 }
+
+/* Estilos para la página de pasos de vendedor */
+.wp-alp-vendor-steps-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    font-family: 'Circular', -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+}
+
+.wp-alp-steps-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.wp-alp-steps-left {
+    flex: 1;
+    min-width: 300px;
+    padding-right: 40px;
+    margin-bottom: 40px;
+}
+
+.wp-alp-steps-heading {
+    font-size: 42px;
+    font-weight: 600;
+    color: #222222;
+    line-height: 1.2;
+    margin-top: 0;
+}
+
+.wp-alp-steps-right {
+    flex: 2;
+    min-width: 300px;
+}
+
+.wp-alp-steps-list {
+    margin-bottom: 40px;
+}
+
+.wp-alp-step-item {
+    display: flex;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid #DDDDDD;
+    align-items: center;
+}
+
+.wp-alp-step-item:last-child {
+    border-bottom: none;
+}
+
+.wp-alp-step-content {
+    flex: 3;
+    padding-right: 30px;
+}
+
+.wp-alp-step-number {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 16px;
+}
+
+.wp-alp-step-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222222;
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
+.wp-alp-step-description {
+    font-size: 16px;
+    color: #717171;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.wp-alp-step-image {
+    flex: 2;
+    min-width: 120px;
+    text-align: center;
+}
+
+.wp-alp-step-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.wp-alp-steps-action {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.wp-alp-steps-button {
+    display: inline-block;
+    background-color: #CBB781;
+    color: white !important;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.wp-alp-steps-button:hover {
+    background-color: #b8a66e;
+    text-decoration: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .wp-alp-steps-container {
+        flex-direction: column;
+    }
+    
+    .wp-alp-steps-left {
+        padding-right: 0;
+    }
+    
+    .wp-alp-steps-heading {
+        font-size: 32px;
+    }
+    
+    .wp-alp-step-item {
+        flex-direction: column;
+    }
+    
+    .wp-alp-step-content {
+        padding-right: 0;
+        margin-bottom: 24px;
+    }
+}
