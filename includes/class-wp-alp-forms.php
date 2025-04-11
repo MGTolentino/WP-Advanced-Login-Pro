@@ -392,6 +392,42 @@ public static function get_initial_form() {
     }
 
     /**
+ * Genera el HTML para el formulario de registro de vendedor.
+ *
+ * @return string HTML del formulario.
+ */
+public static function get_vendor_form() {
+    ob_start();
+    ?>
+    <div class="wp-alp-form-container wp-alp-vendor-form">
+        <h3 class="wp-alp-modal-title"><?php _e('Conviértete en proveedor', 'wp-alp'); ?></h3>
+        
+        <div class="wp-alp-modal-content">
+            <h2><?php _e('¡Ofrece tus servicios para eventos!', 'wp-alp'); ?></h2>
+            
+            <!-- Aquí irá el formulario completo de registro de vendedor -->
+            <p><?php _e('Como proveedor, podrás ofrecer tus productos y servicios para eventos en nuestra plataforma.', 'wp-alp'); ?></p>
+            
+            <?php if (!is_user_logged_in()): ?>
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-vendor-login-btn" data-form="initial">
+                    <?php _e('Continuar', 'wp-alp'); ?>
+                </button>
+            </div>
+            <?php else: ?>
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-vendor-register-btn">
+                    <?php _e('Comenzar', 'wp-alp'); ?>
+                </button>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+    /**
      * Genera el HTML para el modal completo que contendrá todos los formularios.
      *
      * @return string HTML del modal.

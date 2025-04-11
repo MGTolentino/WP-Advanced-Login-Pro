@@ -132,6 +132,7 @@ if (get_option('wp_alp_enable_social_login', true)) {
     public function register_shortcodes() {
         add_shortcode('wp_alp_login_button', array($this, 'login_button_shortcode'));
         add_shortcode('wp_alp_login_page', array($this, 'login_page_shortcode'));
+        add_shortcode('wp_alp_vendor_button', array($this, 'vendor_button_shortcode'));
 
     }
 
@@ -678,6 +679,13 @@ public function get_form_ajax() {
                 ));
             }
             break;
+
+            case 'vendor':
+                wp_send_json_success(array(
+                    'html' => WP_ALP_Forms::get_vendor_form(),
+                    'new_nonce' => wp_create_nonce('wp_alp_nonce')
+                ));
+                break;
             
         default:
             wp_send_json_error(array(
@@ -685,5 +693,106 @@ public function get_form_ajax() {
             ));
             break;
     }
+}
+
+/**
+ * Genera el HTML del botón "Conviértete en Vendedor" para el header.
+ * 
+ * @return string HTML del botón.
+ */
+public function get_vendor_button() {
+    // Verificar si debe mostrarse el botón
+    $show_button = true;
+    $button_text = __('Conviértete en proveedor', 'wp-alp');
+    
+    // Si el usuario está logueado, verificar si ya es un vendor (hp_vendor)
+    if (is_user_logged_in()) {
+        $current_user_id = get_current_user_id();
+        
+        // Verificar si el usuario es administrador (siempre mostrar)
+        if (current_user_can('administrator')) {
+            $show_button = true;
+        } else {
+            // Verificar si el usuario ya tiene un hp_vendor
+            // Usar la API de HivePress para verificar si existe un vendor asociado
+            if (class_exists('\HivePress\Models\Vendor')) {
+                $vendor = \HivePress\Models\Vendor::query()->filter([
+                    'user' => $current_user_id,
+                ])->get_first();
+                
+                // Si el usuario ya tiene un vendor, no mostrar el botón
+                if ($vendor) {
+                    $show_button = false;
+                }
+            }
+        }
+    }
+    
+    // Si no se debe mostrar el botón, devolver cadena vacía
+    if (!$show_button) {
+        return '';
+    }
+    
+    // Generar el HTML del botón
+    $button_html = '<button type="button" class="wp-alp-vendor-button" data-wp-alp-trigger="vendor">';
+    $button_html .= esc_html($button_text);
+    $button_html .= '</button>';
+    
+    return $button_html;
+}
+
+/**
+ * Inserta el botón "Conviértete en Vendedor" en el header.
+ */
+public function output_vendor_button() {
+    echo $this->get_vendor_button();
+}
+
+/**
+ * Shortcode para el botón "Conviértete en Vendedor".
+ *
+ * @param array $atts Atributos del shortcode.
+ * @return string HTML del botón.
+ */
+public function vendor_button_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'text' => __('Conviértete en proveedor', 'wp-alp'),
+        'class' => '',
+    ), $atts, 'wp_alp_vendor_button');
+    
+    // Usar el texto personalizado si se proporciona
+    $button_text = esc_html($atts['text']);
+    
+    // Verificar si debe mostrarse el botón (igual que en get_vendor_button)
+    $show_button = true;
+    
+    if (is_user_logged_in()) {
+        $current_user_id = get_current_user_id();
+        
+        if (!current_user_can('administrator')) {
+            if (class_exists('\HivePress\Models\Vendor')) {
+                $vendor = \HivePress\Models\Vendor::query()->filter([
+                    'user' => $current_user_id,
+                ])->get_first();
+                
+                if ($vendor) {
+                    $show_button = false;
+                }
+            }
+        }
+    }
+    
+    if (!$show_button) {
+        return '';
+    }
+    
+    // Generar clase del botón
+    $button_class = 'wp-alp-vendor-button';
+    if (!empty($atts['class'])) {
+        $button_class .= ' ' . esc_attr($atts['class']);
+    }
+    
+    // Generar HTML
+    return '<button type="button" class="' . $button_class . '" data-wp-alp-trigger="vendor">' . $button_text . '</button>';
 }
 }

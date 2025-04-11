@@ -43,6 +43,34 @@
             openModal();
         });
 
+        // Abrir modal con botón de vendedor
+$(document).on('click', '[data-wp-alp-trigger="vendor"]', function(e) {
+    e.preventDefault();
+    openModal();
+    
+    // Cargar el formulario de vendedor mediante AJAX
+    $.ajax({
+        url: wp_alp_ajax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'wp_alp_get_form',
+            form: 'vendor',
+            nonce: wp_alp_ajax.nonce
+        },
+        success: function(response) {
+            if (response.success) {
+                updateModalContent(response.data.html);
+                $(document).trigger('wp_alp_modal_opened');
+            } else {
+                showError(response.data.message);
+            }
+        },
+        error: function() {
+            showError(wp_alp_ajax.translations.error);
+        }
+    });
+});
+
         // Cerrar modal con botón de cierre o click fuera
         modal.closeBtn.on('click', closeModal);
         modal.overlay.on('click', function(e) {
@@ -222,6 +250,40 @@
             // Implementar recuperación de contraseña
             alert('Funcionalidad de recuperación de contraseña no implementada en esta versión.');
         });
+
+        // Manejar clic en el botón de login de vendedor (para usuarios no logueados)
+$(document).on('click', '#wp-alp-vendor-login-btn', function() {
+    // Cargar el formulario inicial de login
+    $.ajax({
+        url: wp_alp_ajax.ajax_url,
+        type: 'POST',
+        data: {
+            action: 'wp_alp_get_form',
+            form: 'initial',
+            nonce: wp_alp_ajax.nonce
+        },
+        success: function(response) {
+            if (response.success) {
+                updateModalContent(response.data.html);
+            } else {
+                showError(response.data.message);
+            }
+        },
+        error: function() {
+            showError(wp_alp_ajax.translations.error);
+        }
+    });
+});
+
+// Manejar clic en el botón de registro de vendedor (para usuarios logueados)
+$(document).on('click', '#wp-alp-vendor-register-btn', function() {
+    // Aquí implementarás la lógica para crear el vendedor
+    // Por ahora, solo cerraremos el modal
+    closeModal();
+    
+    // Redireccionar a la página de vendedor
+    window.location.href = wp_alp_ajax.home_url + '/conviertete-en-vendedor/';
+});
     }
 
     /**
