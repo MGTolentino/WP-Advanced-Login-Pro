@@ -98,3 +98,22 @@
         max-width: 200px !important;
     }
 }
+
+/* Estilos para el enlace de "Conviértete en proveedor" en el menú */
+.wp-alp-vendor-button-link {
+    /* Usar los mismos estilos que los otros elementos del menú */
+    font-family: inherit !important;
+    font-size: inherit !important;
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+/* Hover similar a otros elementos del menú */
+.wp-alp-vendor-button-link:hover {
+    color: #ff5722 !important; /* O el color de acento que uses en tu tema */
+}
+
+/* Ocultar el botón original que se está insertando en otra posición */
+button.wp-alp-vendor-button {
+    display: none !important;
+}

@@ -43,6 +43,35 @@
             openModal();
         });
 
+        // Capturar el evento personalizado para los disparadores
+$(document).on('click.wp-alp-trigger', function(e, trigger) {
+    if (trigger === 'vendor') {
+        openModal();
+        
+        // Cargar el formulario de vendedor mediante AJAX
+        $.ajax({
+            url: wp_alp_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wp_alp_get_form',
+                form: 'vendor',
+                nonce: wp_alp_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    updateModalContent(response.data.html);
+                    $(document).trigger('wp_alp_modal_opened');
+                } else {
+                    showError(response.data.message);
+                }
+            },
+            error: function() {
+                showError(wp_alp_ajax.translations.error);
+            }
+        });
+    }
+});
+
         // Abrir modal con botón de vendedor
 $(document).on('click', '[data-wp-alp-trigger="vendor"]', function(e) {
     e.preventDefault();

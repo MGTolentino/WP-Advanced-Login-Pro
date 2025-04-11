@@ -125,10 +125,20 @@ if (get_option('wp_alp_enable_social_login', true)) {
     }
 }
 
-// Añadir script para insertar el botón en el header
+// Añadir script para insertar el botón en el menú principal
 wp_add_inline_script($this->plugin_name, '
     jQuery(document).ready(function($) {
-        $("header .site-branding").after("' . addslashes($this->get_vendor_button()) . '");
+        // Eliminar el botón si ya existe en otra posición
+        $(".wp-alp-vendor-button").remove();
+        
+        // Insertar el botón después del elemento "Official Stores" en el menú
+        $("#menu-item-55968").after("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"#\" data-wp-alp-trigger=\"vendor\" class=\"wp-alp-vendor-button-link\">Conviértete en proveedor</a></li>");
+        
+        // Manejar el clic en el nuevo enlace
+        $(document).on(\'click\', \'.wp-alp-vendor-button-link\', function(e) {
+            e.preventDefault();
+            $(document).trigger(\'click.wp-alp-trigger\', [\'vendor\']);
+        });
     });
 ');
     }
