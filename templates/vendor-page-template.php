@@ -192,7 +192,9 @@ get_header(); ?>
             <div class="wp-alp-cta-content">
                 <h2>¿Estás listo para empezar?</h2>
                 <p>Únete a nuestra comunidad de vendedores y lleva tu negocio al siguiente nivel</p>
-                <a href="<?php echo esc_url(get_permalink(get_page_by_path('registro-vendedor'))); ?>" class="wp-alp-cta-button">Conviértete en vendedor ahora</a>
+                <a href="<?php echo esc_url(get_permalink(get_page_by_path('pasos-para-convertirte-en-vendedor'))); ?>" class="wp-alp-cta-button">
+    <?php echo esc_html(get_locale() == 'en_US' ? 'Become a seller now' : 'Conviértete en vendedor ahora'); ?>
+</a>                
             </div>
         </div>
     </section>
