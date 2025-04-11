@@ -124,6 +124,13 @@ if (get_option('wp_alp_enable_social_login', true)) {
         wp_enqueue_script('apple-api', 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js', array(), null, true);
     }
 }
+
+// Añadir script para insertar el botón en el header
+wp_add_inline_script($this->plugin_name, '
+    jQuery(document).ready(function($) {
+        $("header .site-branding").after("' . addslashes($this->get_vendor_button()) . '");
+    });
+');
     }
 
     /**
