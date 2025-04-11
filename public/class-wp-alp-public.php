@@ -131,11 +131,25 @@ wp_add_inline_script($this->plugin_name, '
         // Eliminar el botón si ya existe en otra posición
         $(".wp-alp-vendor-button").remove();
         
-        // Obtener la URL de la página del vendedor
-        var vendorPageUrl = "' . get_permalink(get_page_by_path("conviertete-en-vendedor")) . '";
+        // URL condicional según el dominio
+        var currentDomain = window.location.hostname;
+        var vendorPageUrl = "";
+        var buttonText = "";
+        
+        if (currentDomain.includes("bookit.events")) {
+            vendorPageUrl = "' . site_url('/become-a-seller/') . '";
+            buttonText = "Become a seller";
+        } else if (currentDomain.includes("reservas.events")) {
+            vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
+            buttonText = "Conviértete en vendedor";
+        } else {
+            // URL predeterminada por si acaso
+            vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
+            buttonText = "Conviértete en vendedor";
+        }
         
         // Insertar el botón ANTES del elemento "Official Stores" en el menú con el texto actualizado
-        $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"" + vendorPageUrl + "\" class=\"wp-alp-vendor-button-link\">Conviértete en vendedor</a></li>");
+        $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"" + vendorPageUrl + "\" class=\"wp-alp-vendor-button-link\">" + buttonText + "</a></li>");
     });
 ');
     }
