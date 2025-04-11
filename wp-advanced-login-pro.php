@@ -84,8 +84,6 @@ run_wp_advanced_login_pro();
 function wp_alp_register_templates($templates) {
     $plugin_templates = array(
         plugin_dir_path(__FILE__) . 'templates/login-page-template.php' => 'Página de Login WP-ALP',
-        plugin_dir_path(__FILE__) . 'templates/seller-page-template.php' => 'Página para Vendedores WP-ALP',
-        plugin_dir_path(__FILE__) . 'templates/login-page-template.php' => 'Página de Login WP-ALP',
         plugin_dir_path(__FILE__) . 'templates/vendor-page-template.php' => 'Página para Vendedores WP-ALP',
     );
     
@@ -105,7 +103,7 @@ function wp_alp_load_template($template) {
         if (!empty($template_name)) {
             $plugin_templates = array(
                 'templates/login-page-template.php',
-                'templates/seller-page-template.php',
+                'templates/vendor-page-template.php',
             );
             
             foreach ($plugin_templates as $plugin_template) {
