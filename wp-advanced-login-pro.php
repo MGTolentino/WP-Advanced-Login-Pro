@@ -91,6 +91,7 @@ function wp_alp_register_templates($templates) {
 }
 add_filter('theme_page_templates', 'wp_alp_register_templates');
 
+
 /**
  * Carga la plantilla correcta si se selecciona una del plugin.
  */
@@ -99,6 +100,9 @@ function wp_alp_load_template($template) {
     
     if ($post && is_page()) {
         $template_name = get_post_meta($post->ID, '_wp_page_template', true);
+        
+        // Añadir log para ver qué plantilla se está solicitando
+        error_log('Template solicitada: ' . $template_name);
         
         if (!empty($template_name)) {
             $plugin_templates = array(
@@ -109,6 +113,10 @@ function wp_alp_load_template($template) {
             foreach ($plugin_templates as $plugin_template) {
                 if (strpos($template_name, $plugin_template) !== false) {
                     $file = plugin_dir_path(__FILE__) . $template_name;
+                    
+                    // Añadir log para ver la ruta completa del archivo
+                    error_log('Ruta completa de plantilla: ' . $file);
+                    error_log('¿Existe el archivo? ' . (file_exists($file) ? 'SÍ' : 'NO'));
                     
                     if (file_exists($file)) {
                         return $file;
