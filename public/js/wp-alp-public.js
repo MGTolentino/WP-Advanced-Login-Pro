@@ -23,6 +23,14 @@
      */
     $(document).ready(function() {
 
+        console.log('Modal elements:', {
+            overlay: $('#wp-alp-modal-overlay').length,
+            container: $('#wp-alp-modal-container').length,
+            content: $('#wp-alp-modal-content').length,
+            loader: $('#wp-alp-modal-loader').length,
+            closeBtn: $('#wp-alp-close-modal').length
+        });
+
     // Inicializar referencias al modal
     modal = {
         overlay: $('#wp-alp-modal-overlay'),
