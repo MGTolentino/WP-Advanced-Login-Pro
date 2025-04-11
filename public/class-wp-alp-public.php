@@ -816,4 +816,18 @@ public function vendor_button_shortcode($atts) {
     // Generar HTML
     return '<button type="button" class="' . $button_class . '" data-wp-alp-trigger="vendor">' . $button_text . '</button>';
 }
+
+/**
+ * Callback para refrescar el nonce vía AJAX.
+ */
+public function refresh_nonce_ajax() {
+    // Generar un nuevo nonce
+    $new_nonce = wp_create_nonce('wp_alp_nonce');
+    
+    // Registrar para debugging
+    error_log('WP_ALP: Nonce refrescado: ' . $new_nonce);
+    
+    // Enviar respuesta
+    wp_send_json_success(array('nonce' => $new_nonce));
+}
 }
