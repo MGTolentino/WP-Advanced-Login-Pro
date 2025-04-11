@@ -106,11 +106,18 @@
     font-size: inherit !important;
     color: inherit !important;
     text-decoration: none !important;
+    transition: color 0.3s ease !important;
 }
 
-/* Hover similar a otros elementos del menú */
+/* Hover con el color dorado #CBB781 */
 .wp-alp-vendor-button-link:hover {
-    color: #ff5722 !important; /* O el color de acento que uses en tu tema */
+    color: #CBB781 !important;
+}
+
+/* Si prefieres un efecto de fondo gris como Airbnb */
+li#menu-item-vendor:hover {
+    background-color: #f7f7f7 !important;
+    border-radius: 22px !important;
 }
 
 /* Ocultar el botón original que se está insertando en otra posición */
