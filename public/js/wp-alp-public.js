@@ -22,6 +22,16 @@
      * Inicialización cuando el DOM está listo.
      */
     $(document).ready(function() {
+
+    // Inicializar referencias al modal
+    modal = {
+        overlay: $('#wp-alp-modal-overlay'),
+        container: $('#wp-alp-modal-container'),
+        content: $('#wp-alp-modal-content'),
+        loader: $('#wp-alp-modal-loader'),
+        closeBtn: $('#wp-alp-close-modal')
+    };
+
         // Inicializar listeners
         initModalListeners();
         initFormListeners();
