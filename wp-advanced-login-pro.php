@@ -103,23 +103,30 @@ function wp_alp_load_template($template) {
         
         error_log('Template solicitada: ' . $template_name);
         
-        if (!empty($template_name)) {
-            $plugin_templates = array(
-                'templates/login-page-template.php',
-                'templates/vendor-page-template.php',
-            );
+        // Verificar si es una de nuestras plantillas
+        if (!empty($template_name) && (
+            strpos($template_name, 'login-page-template.php') !== false ||
+            strpos($template_name, 'vendor-page-template.php') !== false ||
+            strpos($template_name, 'seller-page-template.php') !== false
+        )) {
+            // Determinar qué archivo de plantilla cargar
+            $template_file = '';
             
-            foreach ($plugin_templates as $plugin_template) {
-                if (strpos($template_name, $plugin_template) !== false) {
-                    // Corrección: Extraer solo el nombre del archivo, no la ruta completa
-                    $file = plugin_dir_path(__FILE__) . basename($template_name);
-                    
-                    error_log('Ruta corregida de plantilla: ' . $file);
-                    error_log('¿Existe el archivo? ' . (file_exists($file) ? 'SÍ' : 'NO'));
-                    
-                    if (file_exists($file)) {
-                        return $file;
-                    }
+            if (strpos($template_name, 'login-page-template.php') !== false) {
+                $template_file = 'login-page-template.php';
+            } else if (strpos($template_name, 'vendor-page-template.php') !== false || 
+                       strpos($template_name, 'seller-page-template.php') !== false) {
+                $template_file = 'vendor-page-template.php';
+            }
+            
+            if (!empty($template_file)) {
+                $file = plugin_dir_path(__FILE__) . 'templates/' . $template_file;
+                
+                error_log('Ruta corregida de plantilla: ' . $file);
+                error_log('¿Existe el archivo? ' . (file_exists($file) ? 'SÍ' : 'NO'));
+                
+                if (file_exists($file)) {
+                    return $file;
                 }
             }
         }
