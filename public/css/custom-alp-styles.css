@@ -593,3 +593,200 @@ button.wp-alp-vendor-button {
         margin-bottom: 24px;
     }
 }
+
+/* Progress Bar Styles */
+.wp-alp-progress-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-top: 1px solid #DDDDDD;
+    padding: 20px 0;
+    z-index: 1000;
+}
+
+.wp-alp-progress-inner {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.wp-alp-progress-line {
+    height: 4px;
+    background-color: #E0E0E0;
+    border-radius: 2px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.wp-alp-progress-indicator {
+    height: 100%;
+    background-color: #CBB781;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.wp-alp-progress-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wp-alp-back-button {
+    color: #222222;
+    text-decoration: underline;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.wp-alp-next-button {
+    background-color: #222222;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.wp-alp-next-button:hover {
+    background-color: #000000;
+    text-decoration: none;
+}
+
+/* Add some padding to the bottom of the content to prevent it from being hidden behind the fixed progress bar */
+.wp-alp-vendor-steps-page {
+    padding-bottom: 100px;
+}
+
+/* Vendor Form Page Styles */
+.wp-alp-vendor-form-page {
+    font-family: 'Circular', -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+    color: #222222;
+    padding-bottom: 100px;
+}
+
+.wp-alp-form-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-bottom: 1px solid #DDDDDD;
+    padding: 15px 0;
+    z-index: 1000;
+}
+
+.wp-alp-form-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wp-alp-help-link, .wp-alp-save-exit {
+    color: #222222;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.wp-alp-help-link:hover, .wp-alp-save-exit:hover {
+    text-decoration: underline;
+}
+
+.wp-alp-form-content {
+    margin-top: 80px;
+    padding: 40px 0;
+}
+
+.wp-alp-form-flex {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.wp-alp-form-left {
+    flex: 1;
+    min-width: 300px;
+    padding-right: 40px;
+}
+
+.wp-alp-form-right {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wp-alp-form-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.wp-alp-step-indicator {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #717171;
+}
+
+.wp-alp-form-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+
+.wp-alp-form-description {
+    font-size: 16px;
+    color: #717171;
+    line-height: 1.5;
+    margin-bottom: 32px;
+}
+
+.wp-alp-vendor-form {
+    max-width: 500px;
+}
+
+.wp-alp-form-group {
+    margin-bottom: 24px;
+}
+
+.wp-alp-form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.wp-alp-input, .wp-alp-select {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #DDDDDD;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.wp-alp-input:focus, .wp-alp-select:focus {
+    outline: none;
+    border-color: #222222;
+}
+
+@media (max-width: 768px) {
+    .wp-alp-form-flex {
+        flex-direction: column;
+    }
+    
+    .wp-alp-form-left {
+        padding-right: 0;
+        margin-bottom: 40px;
+    }
+    
+    .wp-alp-form-title {
+        font-size: 24px;
+    }
+}
