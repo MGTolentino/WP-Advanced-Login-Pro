@@ -131,8 +131,8 @@ wp_add_inline_script($this->plugin_name, '
         // Eliminar el botón si ya existe en otra posición
         $(".wp-alp-vendor-button").remove();
         
-        // Insertar el botón ANTES del elemento "Official Stores" en el menú
-        $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"#\" data-wp-alp-trigger=\"vendor\" class=\"wp-alp-vendor-button-link\">Conviértete en proveedor</a></li>");
+        // Insertar el botón ANTES del elemento "Official Stores" en el menú con el texto actualizado
+        $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"#\" data-wp-alp-trigger=\"vendor\" class=\"wp-alp-vendor-button-link\">Conviértete en vendedor</a></li>");
         
         // Manejar el clic en el nuevo enlace
         $(document).on(\'click\', \'.wp-alp-vendor-button-link\', function(e) {

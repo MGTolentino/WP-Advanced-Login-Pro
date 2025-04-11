@@ -85,6 +85,8 @@ function wp_alp_register_templates($templates) {
     $plugin_templates = array(
         plugin_dir_path(__FILE__) . 'templates/login-page-template.php' => 'Página de Login WP-ALP',
         plugin_dir_path(__FILE__) . 'templates/seller-page-template.php' => 'Página para Vendedores WP-ALP',
+        plugin_dir_path(__FILE__) . 'templates/login-page-template.php' => 'Página de Login WP-ALP',
+        plugin_dir_path(__FILE__) . 'templates/vendor-page-template.php' => 'Página para Vendedores WP-ALP',
     );
     
     return array_merge($templates, $plugin_templates);

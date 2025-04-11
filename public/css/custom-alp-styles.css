@@ -99,28 +99,330 @@
     }
 }
 
-/* Estilos para el enlace de "Conviértete en proveedor" en el menú */
+/* Estilos para el enlace de "Conviértete en vendedor" en el menú */
 .wp-alp-vendor-button-link {
-    /* Usar los mismos estilos que los otros elementos del menú */
     font-family: inherit !important;
     font-size: inherit !important;
     color: inherit !important;
     text-decoration: none !important;
-    transition: color 0.3s ease !important;
+    padding: 8px 16px !important;
+    border-radius: 22px !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Hover con el color dorado #CBB781 */
+/* Hover con el color dorado #CBB781 y sombra gris más grande */
 .wp-alp-vendor-button-link:hover {
     color: #CBB781 !important;
+    background-color: #f7f7f7 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Si prefieres un efecto de fondo gris como Airbnb */
+/* Estilo para el elemento del menú completo */
+li#menu-item-vendor {
+    border-radius: 22px !important;
+    transition: all 0.3s ease !important;
+}
+
 li#menu-item-vendor:hover {
     background-color: #f7f7f7 !important;
-    border-radius: 22px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Ocultar el botón original que se está insertando en otra posición */
+/* Ocultar el botón original */
 button.wp-alp-vendor-button {
     display: none !important;
+}
+
+/* Estilos para la página de vendedor */
+.wp-alp-vendor-page {
+    font-family: 'Circular', -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif;
+    color: #222;
+    line-height: 1.6;
+}
+
+.wp-alp-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Hero Section */
+.wp-alp-vendor-hero {
+    padding: 80px 0;
+    background-color: #f7f7f7;
+    text-align: center;
+}
+
+.wp-alp-vendor-hero h1 {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wp-alp-hero-subtitle {
+    font-size: 24px;
+    margin-bottom: 32px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wp-alp-cta-button {
+    display: inline-block;
+    background-color: #CBB781;
+    color: white !important;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.wp-alp-cta-button:hover {
+    background-color: #b8a66e;
+    text-decoration: none;
+}
+
+/* Process Section */
+.wp-alp-vendor-process {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.wp-alp-vendor-process h2 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 48px;
+}
+
+.wp-alp-process-steps {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.wp-alp-process-step {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+    padding: 0 15px;
+    margin-bottom: 30px;
+}
+
+.wp-alp-step-icon {
+    font-size: 48px;
+    color: #CBB781;
+    margin-bottom: 16px;
+}
+
+.wp-alp-process-step h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+/* Mobile App Section */
+.wp-alp-vendor-mobile {
+    padding: 80px 0;
+    background-color: #f7f7f7;
+}
+
+.wp-alp-mobile-flex {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.wp-alp-mobile-text {
+    flex: 1;
+    min-width: 300px;
+    padding-right: 48px;
+}
+
+.wp-alp-mobile-text h2 {
+    font-size: 32px;
+    margin-bottom: 32px;
+}
+
+.wp-alp-mobile-image {
+    flex: 1;
+    min-width: 300px;
+}
+
+.wp-alp-mobile-placeholder {
+    height: 500px;
+    background-color: #e8e8e8;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Features Section */
+.wp-alp-vendor-features {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.wp-alp-features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.wp-alp-feature {
+    flex: 1;
+    min-width: 300px;
+    text-align: center;
+    padding: 24px;
+    margin: 15px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+}
+
+.wp-alp-feature i {
+    font-size: 48px;
+    color: #CBB781;
+    margin-bottom: 24px;
+}
+
+.wp-alp-feature h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+/* Simplicity Section */
+.wp-alp-vendor-simplicity {
+    padding: 60px 0;
+    background-color: #f7f7f7;
+    text-align: center;
+}
+
+.wp-alp-simplicity-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.wp-alp-simplicity-content h2 {
+    font-size: 32px;
+    margin-bottom: 24px;
+}
+
+/* Gallery Section */
+.wp-alp-vendor-gallery {
+    padding: 80px 0;
+    background-color: white;
+}
+
+.wp-alp-vendor-gallery h2 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 48px;
+}
+
+.wp-alp-gallery-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.wp-alp-gallery-item {
+    flex: 1;
+    min-width: 300px;
+    margin: 15px;
+}
+
+.wp-alp-gallery-image {
+    height: 240px;
+    background-color: #e8e8e8;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.wp-alp-gallery-caption h4 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+/* Testimonials Section */
+.wp-alp-vendor-testimonials {
+    padding: 80px 0;
+    background-color: #f7f7f7;
+}
+
+.wp-alp-vendor-testimonials h2 {
+    text-align: center;
+    font-size: 32px;
+    margin-bottom: 48px;
+}
+
+.wp-alp-testimonial {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.wp-alp-testimonial-content {
+    font-size: 18px;
+    font-style: italic;
+    margin-bottom: 16px;
+}
+
+/* CTA Section */
+.wp-alp-vendor-cta {
+    padding: 80px 0;
+    background-color: #CBB781;
+    text-align: center;
+}
+
+.wp-alp-cta-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.wp-alp-cta-content h2 {
+    font-size: 32px;
+    color: white;
+    margin-bottom: 16px;
+}
+
+.wp-alp-cta-content p {
+    font-size: 20px;
+    color: white;
+    margin-bottom: 32px;
+}
+
+.wp-alp-vendor-cta .wp-alp-cta-button {
+    background-color: white;
+    color: #222 !important;
+}
+
+.wp-alp-vendor-cta .wp-alp-cta-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .wp-alp-vendor-hero h1 {
+        font-size: 32px;
+    }
+    
+    .wp-alp-hero-subtitle {
+        font-size: 20px;
+    }
+    
+    .wp-alp-process-step {
+        flex: 0 0 100%;
+    }
+    
+    .wp-alp-mobile-text {
+        padding-right: 0;
+        margin-bottom: 40px;
+    }
 }

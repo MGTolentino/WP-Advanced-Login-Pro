@@ -709,3 +709,64 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     };
 
 })(jQuery);
+
+// Funcionalidad para la página de vendedor
+jQuery(document).ready(function($) {
+    // Pasos del móvil para mostrar dinámicamente
+    var mobileSteps = [
+        {
+            step: "Paso 1",
+            title: "Describe tu servicio",
+            description: "Agrega todos los detalles que los clientes necesitan saber sobre lo que ofreces."
+        },
+        {
+            step: "Paso 2",
+            title: "Añade fotos y videos",
+            description: "Las imágenes de calidad aumentan considerablemente las posibilidades de recibir reservas."
+        },
+        {
+            step: "Paso 3",
+            title: "Establece tu disponibilidad",
+            description: "Define cuándo estás disponible para ofrecer tus servicios."
+        },
+        {
+            step: "Paso 4",
+            title: "Fija tus precios",
+            description: "Establece tarifas competitivas para atraer a más clientes."
+        }
+    ];
+
+    // Función para cambiar el contenido del móvil
+    function showMobileStep(index) {
+        var step = mobileSteps[index];
+        $('#mobile-step-content').fadeOut(200, function() {
+            $(this).html(`
+                <h3>${step.step}</h3>
+                <h4>${step.title}</h4>
+                <p>${step.description}</p>
+            `).fadeIn(200);
+        });
+    }
+
+    // Iniciar rotación de pasos
+    var currentStep = 0;
+    setInterval(function() {
+        currentStep = (currentStep + 1) % mobileSteps.length;
+        showMobileStep(currentStep);
+    }, 5000);
+
+    // Para la sección de testimonios (slider simple)
+    var testimonials = $('.wp-alp-testimonial');
+    var currentTestimonial = 0;
+    
+    if (testimonials.length > 1) {
+        testimonials.hide();
+        $(testimonials[0]).show();
+        
+        setInterval(function() {
+            $(testimonials[currentTestimonial]).fadeOut(400);
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            $(testimonials[currentTestimonial]).fadeIn(400);
+        }, 7000);
+    }
+});
