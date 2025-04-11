@@ -187,48 +187,48 @@ get_header(); ?>
     </section>
 
     <!-- CTA Section -->
-    <section class="wp-alp-vendor-cta" id="start">
-        <div class="wp-alp-container">
-            <div class="wp-alp-cta-content">
-                <h2>¿Estás listo para empezar?</h2>
-                <p>Únete a nuestra comunidad de vendedores y lleva tu negocio al siguiente nivel</p>
-<a href="<?php echo esc_url(get_permalink(get_page_by_path('pasos-para-convertirte-en-vendedor'))); ?>" class="wp-alp-cta-button">
-
-<a href="<?php 
-    // Intenta encontrar la página por su ruta
-    $steps_page = get_page_by_path('pasos-para-convertirte-en-vendedor');
-    
-    // Si no encuentra la página por ese slug, intenta con variaciones
-    if (!$steps_page) {
-        $steps_page = get_page_by_path('steps-to-become-a-seller');
-    }
-    
-    // Si aún no lo encuentra, busca por título
-    if (!$steps_page) {
-        $steps_pages = get_posts(array(
-            'post_type' => 'page',
-            'post_status' => 'publish',
-            'posts_per_page' => 1,
-            'title' => get_locale() == 'en_US' ? 'Steps to become a seller' : 'Pasos para convertirte en vendedor'
-        ));
-        
-        if (!empty($steps_pages)) {
-            $steps_page = $steps_pages[0];
-        }
-    }
-    
-    // Si se encontró la página, usa su URL, de lo contrario usa una URL codificada
-    if ($steps_page) {
-        echo esc_url(get_permalink($steps_page->ID));
-    } else {
-        // URL de respaldo directa
-        echo esc_url(home_url(get_locale() == 'en_US' ? '/steps-to-become-a-seller/' : '/pasos-para-convertirte-en-vendedor/'));
-    }
-?>" class="wp-alp-cta-button">
-</a>                
-            </div>
+<section class="wp-alp-vendor-cta" id="start">
+    <div class="wp-alp-container">
+        <div class="wp-alp-cta-content">
+            <h2>¿Estás listo para empezar?</h2>
+            <p>Únete a nuestra comunidad de vendedores y lleva tu negocio al siguiente nivel</p>
+            
+            <a href="<?php 
+                // Intenta encontrar la página por su ruta
+                $steps_page = get_page_by_path('pasos-para-convertirte-en-vendedor');
+                
+                // Si no encuentra la página por ese slug, intenta con variaciones
+                if (!$steps_page) {
+                    $steps_page = get_page_by_path('steps-to-become-a-seller');
+                }
+                
+                // Si aún no lo encuentra, busca por título
+                if (!$steps_page) {
+                    $steps_pages = get_posts(array(
+                        'post_type' => 'page',
+                        'post_status' => 'publish',
+                        'posts_per_page' => 1,
+                        'title' => get_locale() == 'en_US' ? 'Steps to become a seller' : 'Pasos para convertirte en vendedor'
+                    ));
+                    
+                    if (!empty($steps_pages)) {
+                        $steps_page = $steps_pages[0];
+                    }
+                }
+                
+                // Si se encontró la página, usa su URL, de lo contrario usa una URL codificada
+                if ($steps_page) {
+                    echo esc_url(get_permalink($steps_page->ID));
+                } else {
+                    // URL de respaldo directa
+                    echo esc_url(home_url(get_locale() == 'en_US' ? '/steps-to-become-a-seller/' : '/pasos-para-convertirte-en-vendedor/'));
+                }
+            ?>" class="wp-alp-cta-button">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Become a seller now' : 'Conviértete en vendedor ahora'); ?>
+            </a>
         </div>
-    </section>
+    </div>
+</section>
 </div>
 
 <?php get_footer(); ?>
