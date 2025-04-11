@@ -195,3 +195,13 @@ function wp_alp_redirect_to_login() {
     }
 }
 add_action('template_redirect', 'wp_alp_redirect_to_login');
+
+// Agregar atributo data-wp-alp-trigger="login" a elementos con clase wp-alp-login-trigger
+function add_login_trigger_attribute($atts, $item, $args) {
+    // Verifica si el elemento tiene la clase wp-alp-login-trigger
+    if (is_object($item) && isset($item->classes) && in_array('wp-alp-login-trigger', $item->classes)) {
+        $atts['data-wp-alp-trigger'] = 'login';
+    }
+    return $atts;
+}
+add_filter('nav_menu_link_attributes', 'add_login_trigger_attribute', 10, 3);

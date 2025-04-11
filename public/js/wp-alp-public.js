@@ -60,11 +60,12 @@
      * Inicializa los listeners para abrir/cerrar el modal.
      */
     function initModalListeners() {
-        // Abrir modal con botones o enlaces específicos
-        $(document).on('click', '[data-wp-alp-trigger="login"]', function(e) {
-            e.preventDefault();
-            openModal();
-        });
+
+          // Abrir modal con botones o enlaces específicos (usando clase o atributo)
+    $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger', function(e) {
+        e.preventDefault();
+        openModal();
+    });
 
         // Cerrar modal con botón de cierre o click fuera
         modal.closeBtn.on('click', closeModal);
