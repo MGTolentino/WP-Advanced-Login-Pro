@@ -23,12 +23,17 @@
      */
     $(document).ready(function() {
 
-        console.log('Modal elements:', {
-            overlay: $('#wp-alp-modal-overlay').length,
-            container: $('#wp-alp-modal-container').length,
-            content: $('#wp-alp-modal-content').length,
-            loader: $('#wp-alp-modal-loader').length,
-            closeBtn: $('#wp-alp-close-modal').length
+        console.log('Document ready ejecutado');
+
+        console.log('Botones de login encontrados:', $('[data-wp-alp-trigger="login"]').length);
+    console.log('Botones con clase wp-alp-login-trigger:', $('.wp-alp-login-trigger').length);
+    console.log('Elemento del botón:', $('[data-wp-alp-trigger="login"]')[0]);
+    
+        // Agregar un manejador directo para debugging
+        $('[data-wp-alp-trigger="login"]').on('click', function(e) {
+            console.log('Botón de login clickeado directamente');
+            e.preventDefault();
+            openModal();
         });
 
     // Inicializar referencias al modal
@@ -291,6 +296,8 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
      * Abre el modal.
      */
     function openModal() {
+        console.log('Función openModal ejecutándose');
+
         modal.overlay.fadeIn(300);
         modal.content.html('');
         showLoader();
