@@ -67,7 +67,7 @@ get_header(); ?>
             </div>
             
             <div class="wp-alp-steps-action">
-    <a href="<?php echo esc_url(get_permalink(get_page_by_path(get_locale() == 'en_US' ? 'vendor-form-step1' : 'formulario-vendedor-paso1'))); ?>" class="wp-alp-steps-button">
+    <a href="<?php echo esc_url(get_permalink(get_page_by_path(get_locale() == 'en_US' ? 'vendor-form-step-1' : 'formulario-vendedor-paso-1'))); ?>" class="wp-alp-steps-button">
         <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
     </a>
 </div>
