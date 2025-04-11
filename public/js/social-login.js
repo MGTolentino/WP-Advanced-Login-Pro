@@ -16,6 +16,9 @@
         googleButtonRendered: false
     };
 
+    console.log('social-login.js cargado');
+
+
     // Marcar que esta implementación está activa
     window.socialLoginInitialized = true;
 
@@ -59,6 +62,8 @@
      * Carga la API de Google Identity Services
      */
     function loadGoogleAPI() {
+        console.log('loadGoogleAPI llamado');
+
         if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.google_client_id) {
             console.error('Plugin WP-ALP: ID de cliente de Google no configurado');
             return;
@@ -99,6 +104,8 @@
      * Inicializa la API de Google Identity Services
      */
     function initializeGoogleIdentity() {
+        console.log('initializeGoogleIdentity llamado');
+
         if (typeof google === 'undefined' || !google.accounts) {
             console.error('API de Google no disponible');
             return;
@@ -120,6 +127,10 @@
      * Renderiza el botón de Google en el formulario
      */
     function renderGoogleButton() {
+
+        console.log('renderGoogleButton llamado');
+        console.log('Google API inicializada:', socialLoginState.googleInitialized);
+        console.log('Botón original encontrado:', document.getElementById('wp-alp-google-btn') ? true : false);
         // Solo proceder si la API está inicializada
         if (!socialLoginState.googleInitialized || typeof google === 'undefined' || !google.accounts) {
             return;
