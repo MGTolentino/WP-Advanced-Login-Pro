@@ -201,16 +201,18 @@ get_header(); ?>
     bottom: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    padding: 0 !important;
-    z-index: 999 !important;
+    z-index: 999999 !important;
+    display: block !important;
+    background-color: transparent !important;
 }
 
-/* Progress bar - initially just a solid line */
 .wp-alp-progress-bar {
     width: 100% !important;
     height: 2px !important;
     background-color: #DDDDDD !important;
-    display: flex !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* Progress sections (invisible initially) */
@@ -236,6 +238,18 @@ get_header(); ?>
     .wp-alp-step-title {
         font-size: 20px !important;
     }
+}
+
+/* Barra de emergencia - usada para depuración */
+body:after {
+    content: "";
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #DDDDDD;
+    z-index: 999999;
 }
 </style>
 
