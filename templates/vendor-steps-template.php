@@ -93,7 +93,14 @@ get_header(); ?>
     </div>
     
     <div class="wp-alp-progress-bar" id="progress-bar">
-    <div class="wp-alp-progress-divider"></div>
+    <!-- Barra de progreso visual -->
+    <div class="wp-alp-progress-track">
+        <div class="wp-alp-progress-section" id="progress-section-1"></div>
+        <div class="wp-alp-progress-section" id="progress-section-2"></div>
+        <div class="wp-alp-progress-section" id="progress-section-3"></div>
+    </div>
+    
+    <!-- Botones de navegación -->
     <div class="wp-alp-container">
         <div class="wp-alp-progress-inner">
             <div class="wp-alp-progress-buttons">
@@ -117,30 +124,37 @@ get_header(); ?>
 jQuery(document).ready(function($) {
     // Variables para la navegación
     var currentStep = 0;
-    var totalSteps = 1; // Solo tenemos 2 pasos: inicial y step 1
+    var totalSteps = 3; // Total de pasos (ahora son 3)
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
     var $progressBar = $('#progress-bar');
+    var $progressSections = $('.wp-alp-progress-section');
     var $backButton = $('#back-button');
     var $nextButton = $('#next-button');
     var $currentStepInput = $('#current-step');
     
-    // Inicialmente ocultamos la barra de progreso
-    $progressBar.hide();
+    // Inicialmente configurar para el paso 0
+    $progressBar.addClass('step-0');
     
     // Botón de inicio de registro
     $('#start-registration').on('click', function() {
         goToStep(1);
     });
     
-    // Función para actualizar la URL sin recargar la página
-    function updateUrl(step) {
-        var newUrl = window.location.pathname;
-        if (step > 0) {
-            newUrl += '?step=' + step;
+    // Función para actualizar la barra de progreso visual
+    function updateProgressBar(step) {
+        // Resetear clases
+        $progressBar.removeClass('step-0 step-1 step-2 step-3');
+        
+        // Añadir clase para el paso actual
+        $progressBar.addClass('step-' + step);
+        
+        // Actualizar secciones activas
+        $progressSections.removeClass('active');
+        for (var i = 0; i < step; i++) {
+            $($progressSections[i]).addClass('active');
         }
-        history.pushState({step: step}, '', newUrl);
     }
     
     // Función para mostrar un paso específico
@@ -159,13 +173,16 @@ jQuery(document).ready(function($) {
         // Mostrar el paso seleccionado
         $('#step-' + step).show();
         
-        // Gestionar la barra de progreso
+        // Actualizar la barra de progreso visual
+        updateProgressBar(step);
+        
+        // Gestionar la visibilidad de los botones en la barra de progreso
         if (step === 0) {
-            // Estamos en la página inicial, ocultar la barra de progreso
-            $progressBar.hide();
+            // En paso 0, la barra se muestra pero sin botones
+            $progressBar.addClass('step-0');
         } else {
-            // Estamos en un paso del formulario, mostrar la barra de progreso
-            $progressBar.show();
+            // En otros pasos, mostrar con botones
+            $progressBar.removeClass('step-0');
             
             // Actualizar estado del botón Atrás
             if (step === 1) {

@@ -972,3 +972,109 @@ button.wp-alp-vendor-button {
     margin: 32px 0 !important;
     width: 100% !important;
 }
+
+/* Estilos base para la barra de progreso */
+.wp-alp-progress-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background-color: white !important;
+    z-index: 10000 !important;
+    box-shadow: 0 -1px 10px rgba(0,0,0,0.05) !important;
+    display: block !important; /* Siempre visible, ajustaremos con JS */
+}
+
+/* La pista de progreso (línea gris) */
+.wp-alp-progress-track {
+    width: 100% !important;
+    height: 2px !important;
+    background-color: #DDDDDD !important;
+    position: relative !important;
+    display: flex !important;
+}
+
+/* Secciones de la barra de progreso (invisible en paso 0) */
+.wp-alp-progress-section {
+    flex: 1 !important;
+    height: 100% !important;
+    position: relative !important;
+}
+
+/* Secciones activas de la barra */
+.wp-alp-progress-section.active {
+    background-color: #222222 !important;
+}
+
+/* Separadores entre secciones (invisible en paso 0) */
+.wp-alp-progress-section:not(:last-child)::after {
+    content: "" !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+    width: 1px !important;
+    background-color: white !important;
+    display: none !important; /* Oculto en paso 0, mostrado en otros pasos */
+}
+
+/* Contenedor de botones */
+.wp-alp-progress-inner {
+    padding: 20px 24px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+/* Contenedor de los botones de navegación */
+.wp-alp-progress-buttons {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Botón Atrás */
+.wp-alp-back-button {
+    color: #222222 !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    display: inline-block !important;
+    padding: 8px 0 !important;
+}
+
+.wp-alp-back-button:hover {
+    text-decoration: underline !important;
+}
+
+/* Botón Siguiente/Publicar */
+.wp-alp-next-button {
+    background-color: #222222 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 14px 24px !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    transition: background-color 0.2s ease !important;
+    display: inline-block !important;
+}
+
+.wp-alp-next-button:hover {
+    background-color: #000000 !important;
+}
+
+/* Estado de la barra de progreso en paso 0 */
+.wp-alp-progress-bar.step-0 .wp-alp-progress-buttons {
+    display: none !important; /* Ocultar botones en el paso 0 */
+}
+
+.wp-alp-progress-bar.step-0 .wp-alp-progress-inner {
+    padding: 0 !important; /* Sin padding en paso 0 */
+}
+
+/* Estado de la barra de progreso en pasos posteriores */
+.wp-alp-progress-bar:not(.step-0) .wp-alp-progress-section:not(:last-child)::after {
+    display: block !important; /* Mostrar separadores en pasos posteriores */
+}
