@@ -36,21 +36,61 @@ get_header(); ?>
                     
                     <div class="wp-alp-steps-right">
                         <div class="wp-alp-steps-list">
-                            <!-- Step 1 -->
-                            <div class="wp-alp-step-item">
-                                <div class="wp-alp-step-content">
-                                    <span class="wp-alp-step-number">1</span>
-                                    <h2 class="wp-alp-step-title">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
-                                    </h2>
-                                    <p class="wp-alp-step-description">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
-                                    </p>
-                                </div>
-                                <div class="wp-alp-step-image">
-                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step1.png'); ?>" alt="Step 1">
-                                </div>
-                            </div>
+                            <!-- Paso 1: Describe tu servicio -->
+<div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
+    <div class="wp-alp-form-content-inner">
+        <div class="wp-alp-step-label">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+        </div>
+        
+        <h1 class="wp-alp-step-heading">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
+        </h1>
+        
+        <div class="wp-alp-step-description">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate. Next, tell us where it\'s located and how many clients can book.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender. A continuación, indícanos la ubicación y cuántos clientes pueden reservar.'); ?>
+        </div>
+        
+        <div class="wp-alp-form-flex">
+            <div class="wp-alp-form-left">
+                <!-- Contenido del formulario -->
+                <div class="wp-alp-form-group">
+                    <label for="service-type"><?php echo esc_html(get_locale() == 'en_US' ? 'What type of service do you offer?' : '¿Qué tipo de servicio ofreces?'); ?></label>
+                    <select id="service-type" name="service_type" class="wp-alp-select" required>
+                        <option value=""><?php echo esc_html(get_locale() == 'en_US' ? 'Select a service type' : 'Selecciona un tipo de servicio'); ?></option>
+                        <option value="music"><?php echo esc_html(get_locale() == 'en_US' ? 'Music and Entertainment' : 'Música y Entretenimiento'); ?></option>
+                        <option value="venue"><?php echo esc_html(get_locale() == 'en_US' ? 'Venue or Location' : 'Recinto o Ubicación'); ?></option>
+                        <option value="catering"><?php echo esc_html(get_locale() == 'en_US' ? 'Catering and Food' : 'Catering y Alimentos'); ?></option>
+                        <option value="decoration"><?php echo esc_html(get_locale() == 'en_US' ? 'Decoration' : 'Decoración'); ?></option>
+                        <option value="photography"><?php echo esc_html(get_locale() == 'en_US' ? 'Photography and Video' : 'Fotografía y Video'); ?></option>
+                        <option value="other"><?php echo esc_html(get_locale() == 'en_US' ? 'Other' : 'Otro'); ?></option>
+                    </select>
+                </div>
+                
+                <div class="wp-alp-form-group">
+                    <label for="service-name"><?php echo esc_html(get_locale() == 'en_US' ? 'What is the name of your service?' : '¿Cuál es el nombre de tu servicio?'); ?></label>
+                    <input type="text" id="service-name" name="service_name" class="wp-alp-input" required>
+                </div>
+                
+                <div class="wp-alp-form-group">
+                    <label for="service-capacity"><?php echo esc_html(get_locale() == 'en_US' ? 'How many people can you accommodate?' : '¿Cuántas personas puedes atender?'); ?></label>
+                    <input type="number" id="service-capacity" name="service_capacity" class="wp-alp-input" min="1" required>
+                </div>
+                
+                <div class="wp-alp-form-group">
+                    <label for="service-location"><?php echo esc_html(get_locale() == 'en_US' ? 'Where is your service located?' : '¿Dónde está ubicado tu servicio?'); ?></label>
+                    <input type="text" id="service-location" name="service_location" class="wp-alp-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'City, State' : 'Ciudad, Estado'); ?>" required>
+                </div>
+            </div>
+            
+            <div class="wp-alp-form-right">
+                <div class="wp-alp-service-image">
+                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
                             
                             <!-- Step 2 -->
                             <div class="wp-alp-step-item">
@@ -259,24 +299,22 @@ get_header(); ?>
         </div>
     </div>
     
-    <!-- Barra de progreso con botones de navegación (inicialmente oculta) -->
-    <div class="wp-alp-progress-bar" id="progress-bar" style="display: none;">
-        <div class="wp-alp-container">
-            <div class="wp-alp-progress-inner">
-                <div class="wp-alp-progress-line">
-                    <div class="wp-alp-progress-indicator" id="progress-indicator" style="width: 33%;"></div>
-                </div>
-                <div class="wp-alp-progress-buttons">
-                    <a href="#" class="wp-alp-back-button" id="back-button">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-                    </a>
-                    <a href="#" class="wp-alp-next-button" id="next-button">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-                    </a>
-                </div>
+    <!-- Barra de progreso con botones de navegación -->
+<div class="wp-alp-progress-bar" id="progress-bar" style="display: none;">
+    <div class="wp-alp-progress-divider"></div>
+    <div class="wp-alp-container">
+        <div class="wp-alp-progress-inner">
+            <div class="wp-alp-progress-buttons">
+                <a href="#" class="wp-alp-back-button" id="back-button">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                </a>
+                <a href="#" class="wp-alp-next-button" id="next-button">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                </a>
             </div>
         </div>
     </div>
+</div>
     
     <!-- Formulario oculto para almacenar todos los datos -->
     <form id="vendor-form-data" style="display: none;">
@@ -317,54 +355,51 @@ jQuery(document).ready(function($) {
     }
     
     // Función para mostrar un paso específico
-    function goToStep(step) {
-        // Validar límites
-        if (step < 0) step = 0;
-        if (step > activeSteps) step = activeSteps;
+    // Función para mostrar un paso específico
+function goToStep(step) {
+    // Validar límites
+    if (step < 0) step = 0;
+    if (step > activeSteps) step = activeSteps;
+    
+    // Guardar el paso actual
+    currentStep = step;
+    $currentStepInput.val(step);
+    
+    // Ocultar todos los pasos
+    $steps.hide();
+    
+    // Mostrar el paso seleccionado
+    $('#step-' + step).show();
+    
+    // Gestionar la barra de progreso
+    if (step === 0) {
+        // Estamos en la página inicial, ocultar la barra de progreso
+        $progressBar.hide();
+    } else {
+        // Estamos en un paso del formulario, mostrar la barra de progreso
+        $progressBar.show();
         
-        // Guardar el paso actual
-        currentStep = step;
-        $currentStepInput.val(step);
-        
-        // Ocultar todos los pasos
-        $steps.hide();
-        
-        // Mostrar el paso seleccionado
-        $('#step-' + step).show();
-        
-        // Gestionar la barra de progreso
-        if (step === 0) {
-            // Estamos en la página inicial, ocultar la barra de progreso
-            $progressBar.hide();
+        // Actualizar estado del botón Atrás
+        if (step === 1) {
+            $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>');
         } else {
-            // Estamos en un paso del formulario, mostrar la barra de progreso
-            $progressBar.show();
-            
-            // Actualizar el ancho del indicador
-            var progressWidth = ((step / activeSteps) * 100) + '%';
-            $progressIndicator.css('width', progressWidth);
-            
-            // Actualizar estado del botón Atrás
-            if (step === 1) {
-                $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>');
-            } else {
-                $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>');
-            }
-            
-            // Actualizar texto del botón Siguiente en el último paso
-            if (step === activeSteps) {
-                $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Publish' : 'Publicar'); ?>');
-            } else {
-                $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
-            }
+            $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>');
         }
         
-        // Actualizar la URL
-        updateUrl(step);
-        
-        // Desplazarse al inicio de la página
-        $('html, body').scrollTop(0);
+        // Actualizar texto del botón Siguiente en el último paso
+        if (step === activeSteps) {
+            $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Publish' : 'Publicar'); ?>');
+        } else {
+            $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
+        }
     }
+    
+    // Actualizar la URL
+    updateUrl(step);
+    
+    // Desplazarse al inicio de la página
+    $('html, body').scrollTop(0);
+}
     
     // Manejar clics en botones de navegación
     $nextButton.on('click', function(e) {
