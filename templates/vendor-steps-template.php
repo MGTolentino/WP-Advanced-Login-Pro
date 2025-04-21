@@ -208,7 +208,7 @@ get_header(); ?>
 /* Progress bar - inicialmente solo una línea sólida */
 .wp-alp-progress-bar {
     width: 100% !important;
-    height: 2px !important;
+    height: 6px !important;
     background-color: #DDDDDD !important;
     display: flex !important;
 }
