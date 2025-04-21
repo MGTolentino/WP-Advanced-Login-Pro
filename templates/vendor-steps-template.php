@@ -63,6 +63,15 @@ get_header(); ?>
                 </div>
             </div>
         </div>
+
+        <!-- Progress Bar (Simple line initially) -->
+    <div class="wp-alp-progress-container">
+        <div class="wp-alp-progress-bar">
+            <div class="wp-alp-progress-section" data-section="1"></div>
+            <div class="wp-alp-progress-section" data-section="2"></div>
+            <div class="wp-alp-progress-section" data-section="3"></div>
+        </div>
+    </div>
         
         <!-- "Get Started" Button -->
         <div class="wp-alp-get-started-container">
@@ -72,14 +81,7 @@ get_header(); ?>
         </div>
     </div>
     
-    <!-- Progress Bar (Simple line initially) -->
-    <div class="wp-alp-progress-container">
-        <div class="wp-alp-progress-bar">
-            <div class="wp-alp-progress-section" data-section="1"></div>
-            <div class="wp-alp-progress-section" data-section="2"></div>
-            <div class="wp-alp-progress-section" data-section="3"></div>
-        </div>
-    </div>
+    
 </div>
 
 <!-- Add custom styles inline to ensure they take precedence -->
@@ -197,22 +199,18 @@ get_header(); ?>
 
 /* Progress bar container */
 .wp-alp-progress-container {
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
     width: 100% !important;
-    z-index: 999999 !important;
+    margin: 20px 0 !important;
+    padding: 0 !important;
     display: block !important;
-    background-color: transparent !important;
 }
 
+/* Progress bar - inicialmente solo una línea sólida */
 .wp-alp-progress-bar {
     width: 100% !important;
     height: 2px !important;
     background-color: #DDDDDD !important;
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    display: flex !important;
 }
 
 /* Progress sections (invisible initially) */
