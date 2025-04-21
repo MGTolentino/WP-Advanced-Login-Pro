@@ -3,26 +3,15 @@
  * Template Name: Pasos para Vendedores WP-ALP
  * 
  * Template para la página de pasos del proceso de convertirse en vendedor
- * Implementado como SPA (Single Page Application)
+ * Simplificado para mostrar solo la página inicial y un primer paso básico
  */
 
 get_header(); ?>
 
 <div class="wp-alp-vendor-form-page">
-    <div class="wp-alp-form-header">
-        <div class="wp-alp-container">
-            <div class="wp-alp-form-header-content">
-                <a href="#" class="wp-alp-help-link">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Have a question?' : '¿Tienes alguna duda?'); ?>
-                </a>
-                <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-save-exit">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Save and exit' : 'Guardar y salir'); ?>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contenedor principal para todos los pasos del formulario -->
+    <!-- Eliminamos el header fijo que causaba problemas -->
+    
+    <!-- Contenedor principal para la página inicial y el primer paso -->
     <div class="wp-alp-form-content">
         <div class="wp-alp-container">
             <!-- Paso Inicial: Información sobre los pasos -->
@@ -94,179 +83,18 @@ get_header(); ?>
                 </div>
             </div>
 
-            <!-- Paso 1: Describe tu servicio -->
+            <!-- Paso 1: Simplificado a solo un texto HTML -->
             <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
                 <div class="wp-alp-step-wrapper">
-                    <div class="wp-alp-step-label">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
-                    </div>
-                    
-                    <h1 class="wp-alp-step-heading">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
-                    </h1>
-                    
-                    <div class="wp-alp-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate. Next, tell us where it\'s located and how many clients can book.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender. A continuación, indícanos la ubicación y cuántos clientes pueden reservar.'); ?>
-                    </div>
-                    
-                    <div class="wp-alp-form-flex">
-                        <div class="wp-alp-form-left">
-                            <!-- Contenido del formulario -->
-                            <div class="wp-alp-form-group">
-                                <label for="service-type"><?php echo esc_html(get_locale() == 'en_US' ? 'What type of service do you offer?' : '¿Qué tipo de servicio ofreces?'); ?></label>
-                                <select id="service-type" name="service_type" class="wp-alp-select" required>
-                                    <option value=""><?php echo esc_html(get_locale() == 'en_US' ? 'Select a service type' : 'Selecciona un tipo de servicio'); ?></option>
-                                    <option value="music"><?php echo esc_html(get_locale() == 'en_US' ? 'Music and Entertainment' : 'Música y Entretenimiento'); ?></option>
-                                    <option value="venue"><?php echo esc_html(get_locale() == 'en_US' ? 'Venue or Location' : 'Recinto o Ubicación'); ?></option>
-                                    <option value="catering"><?php echo esc_html(get_locale() == 'en_US' ? 'Catering and Food' : 'Catering y Alimentos'); ?></option>
-                                    <option value="decoration"><?php echo esc_html(get_locale() == 'en_US' ? 'Decoration' : 'Decoración'); ?></option>
-                                    <option value="photography"><?php echo esc_html(get_locale() == 'en_US' ? 'Photography and Video' : 'Fotografía y Video'); ?></option>
-                                    <option value="other"><?php echo esc_html(get_locale() == 'en_US' ? 'Other' : 'Otro'); ?></option>
-                                </select>
-                            </div>
-                            
-                            <div class="wp-alp-form-group">
-                                <label for="service-name"><?php echo esc_html(get_locale() == 'en_US' ? 'What is the name of your service?' : '¿Cuál es el nombre de tu servicio?'); ?></label>
-                                <input type="text" id="service-name" name="service_name" class="wp-alp-input" required>
-                            </div>
-                            
-                            <div class="wp-alp-form-group">
-                                <label for="service-capacity"><?php echo esc_html(get_locale() == 'en_US' ? 'How many people can you accommodate?' : '¿Cuántas personas puedes atender?'); ?></label>
-                                <input type="number" id="service-capacity" name="service_capacity" class="wp-alp-input" min="1" required>
-                            </div>
-                            
-                            <div class="wp-alp-form-group">
-                                <label for="service-location"><?php echo esc_html(get_locale() == 'en_US' ? 'Where is your service located?' : '¿Dónde está ubicado tu servicio?'); ?></label>
-                                <input type="text" id="service-location" name="service_location" class="wp-alp-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'City, State' : 'Ciudad, Estado'); ?>" required>
-                            </div>
-                        </div>
-                        
-                        <div class="wp-alp-form-right">
-                            <div class="wp-alp-service-image">
-                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
-                            </div>
-                        </div>
-                    </div>
+                    <h1>Step 1</h1>
+                    <p>Este es el primer paso simplificado.</p>
                 </div>
-            </div>
-            
-            <!-- Paso 2: Añade fotos y detalles -->
-            <div class="wp-alp-form-step" id="step-2" data-step="2" style="display: none;">
-                <div class="wp-alp-step-wrapper">
-                    <div class="wp-alp-step-label">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 2' : 'Paso 2'); ?>
-                    </div>
-                    
-                    <h1 class="wp-alp-step-heading">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
-                    </h1>
-                    
-                    <div class="wp-alp-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add photos, a title, and a description to help customers find your service.' : 'Añade fotos, un título y una descripción para ayudar a los clientes a encontrar tu servicio.'); ?>
-                    </div>
-                    
-                    <div class="wp-alp-form-flex">
-                        <div class="wp-alp-form-left">
-                            <!-- Contenido del paso 2 -->
-                            <div class="wp-alp-form-group">
-                                <label for="service-title"><?php echo esc_html(get_locale() == 'en_US' ? 'Give your service a title' : 'Dale un título a tu servicio'); ?></label>
-                                <input type="text" id="service-title" name="service_title" class="wp-alp-input" required>
-                            </div>
-                            
-                            <div class="wp-alp-form-group">
-                                <label for="service-description"><?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?></label>
-                                <textarea id="service-description" name="service_description" class="wp-alp-input" rows="5" required></textarea>
-                            </div>
-                            
-                            <div class="wp-alp-form-group">
-                                <label><?php echo esc_html(get_locale() == 'en_US' ? 'Add photos of your service (at least 5 photos)' : 'Añade fotos de tu servicio (al menos 5 fotos)'); ?></label>
-                                <div class="wp-alp-photo-upload">
-                                    <div class="wp-alp-photo-placeholder">
-                                        <span class="wp-alp-photo-icon">+</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="wp-alp-form-right">
-                            <div class="wp-alp-service-image">
-                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step2.png'); ?>" alt="Add photos and details">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Paso 3: Finaliza y publica -->
-            <div class="wp-alp-form-step" id="step-3" data-step="3" style="display: none;">
-                <div class="wp-alp-step-wrapper">
-                    <div class="wp-alp-step-label">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 3' : 'Paso 3'); ?>
-                    </div>
-                    
-                    <h1 class="wp-alp-step-heading">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
-                    </h1>
-                    
-                    <div class="wp-alp-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set your prices and publish your service.' : 'Establece tus precios y publica tu servicio.'); ?>
-                    </div>
-                    
-                    <div class="wp-alp-form-flex">
-                        <div class="wp-alp-form-left">
-                            <!-- Contenido del paso 3 -->
-                            <div class="wp-alp-form-group">
-                                <label for="service-price"><?php echo esc_html(get_locale() == 'en_US' ? 'How much do you charge for your service?' : '¿Cuánto cobras por tu servicio?'); ?></label>
-                                <div class="wp-alp-price-input">
-                                    <span class="wp-alp-currency">$</span>
-                                    <input type="number" id="service-price" name="service_price" class="wp-alp-input" min="1" required>
-                                </div>
-                            </div>
-                            
-                            <div class="wp-alp-form-group">
-                                <label for="service-availability"><?php echo esc_html(get_locale() == 'en_US' ? 'When is your service available?' : '¿Cuándo está disponible tu servicio?'); ?></label>
-                                <select id="service-availability" name="service_availability" class="wp-alp-select" required>
-                                    <option value="always"><?php echo esc_html(get_locale() == 'en_US' ? 'Always available' : 'Siempre disponible'); ?></option>
-                                    <option value="weekends"><?php echo esc_html(get_locale() == 'en_US' ? 'Only weekends' : 'Solo fines de semana'); ?></option>
-                                    <option value="custom"><?php echo esc_html(get_locale() == 'en_US' ? 'Custom schedule' : 'Horario personalizado'); ?></option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="wp-alp-form-right">
-                            <div class="wp-alp-service-image">
-                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step3.png'); ?>" alt="Finish and publish">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Espacio para 5 pasos más -->
-            <div class="wp-alp-form-step" id="step-4" data-step="4" style="display: none;">
-                <!-- Contenido para paso 4 -->
-            </div>
-            
-            <div class="wp-alp-form-step" id="step-5" data-step="5" style="display: none;">
-                <!-- Contenido para paso 5 -->
-            </div>
-            
-            <div class="wp-alp-form-step" id="step-6" data-step="6" style="display: none;">
-                <!-- Contenido para paso 6 -->
-            </div>
-            
-            <div class="wp-alp-form-step" id="step-7" data-step="7" style="display: none;">
-                <!-- Contenido para paso 7 -->
-            </div>
-            
-            <div class="wp-alp-form-step" id="step-8" data-step="8" style="display: none;">
-                <!-- Contenido para paso 8 -->
             </div>
         </div>
     </div>
     
     <!-- Barra de progreso con botones de navegación -->
-    <div class="wp-alp-progress-bar" id="progress-bar" style="display: none;">
+    <div class="wp-alp-progress-bar" id="progress-bar">
         <div class="wp-alp-progress-divider"></div>
         <div class="wp-alp-container">
             <div class="wp-alp-progress-inner">
@@ -290,13 +118,12 @@ get_header(); ?>
     </form>
 </div>
 
-<!-- JavaScript para la navegación SPA -->
+<!-- JavaScript simplificado para la navegación básica -->
 <script>
 jQuery(document).ready(function($) {
     // Variables para la navegación
     var currentStep = 0;
-    var totalSteps = 8; // Total de pasos que tenemos definidos
-    var activeSteps = 3; // Pasos actualmente implementados
+    var totalSteps = 1; // Solo tenemos 2 pasos: inicial y step 1
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
@@ -304,6 +131,11 @@ jQuery(document).ready(function($) {
     var $backButton = $('#back-button');
     var $nextButton = $('#next-button');
     var $currentStepInput = $('#current-step');
+    
+    // Inicialmente ocultamos la barra de progreso en el paso 0
+    if (currentStep === 0) {
+        $progressBar.hide();
+    }
     
     // Botón de inicio de registro
     $('#start-registration').on('click', function() {
@@ -323,7 +155,7 @@ jQuery(document).ready(function($) {
     function goToStep(step) {
         // Validar límites
         if (step < 0) step = 0;
-        if (step > activeSteps) step = activeSteps;
+        if (step > totalSteps) step = totalSteps;
         
         // Guardar el paso actual
         currentStep = step;
@@ -343,6 +175,12 @@ jQuery(document).ready(function($) {
             // Estamos en un paso del formulario, mostrar la barra de progreso
             $progressBar.show();
             
+            // Agregar consultas de depuración
+            console.log('Mostrando barra de progreso');
+            console.log('Estado de visibilidad:', $progressBar.is(':visible'));
+            console.log('Altura de la barra:', $progressBar.outerHeight());
+            console.log('Posición Y de la barra:', $progressBar.offset().top);
+            
             // Actualizar estado del botón Atrás
             if (step === 1) {
                 $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>');
@@ -351,7 +189,7 @@ jQuery(document).ready(function($) {
             }
             
             // Actualizar texto del botón Siguiente en el último paso
-            if (step === activeSteps) {
+            if (step === totalSteps) {
                 $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Publish' : 'Publicar'); ?>');
             } else {
                 $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
@@ -368,50 +206,13 @@ jQuery(document).ready(function($) {
     // Manejar clics en botones de navegación
     $nextButton.on('click', function(e) {
         e.preventDefault();
-        
-        // Validar campos del paso actual antes de avanzar
-        if (validateCurrentStep()) {
-            // Guardar datos del paso actual
-            saveCurrentStepData();
-            
-            // Avanzar al siguiente paso
-            goToStep(currentStep + 1);
-        }
+        goToStep(currentStep + 1);
     });
     
     $backButton.on('click', function(e) {
         e.preventDefault();
         goToStep(currentStep - 1);
     });
-    
-    // Función para validar el paso actual
-    function validateCurrentStep() {
-        // Implementación básica - verificar campos required
-        var valid = true;
-        var $currentStepElement = $('#step-' + currentStep);
-        
-        $currentStepElement.find('[required]').each(function() {
-            if (!$(this).val()) {
-                $(this).addClass('error');
-                valid = false;
-            } else {
-                $(this).removeClass('error');
-            }
-        });
-        
-        if (!valid) {
-            alert('<?php echo esc_js(get_locale() == 'en_US' ? 'Please fill in all required fields.' : 'Por favor, completa todos los campos obligatorios.'); ?>');
-        }
-        
-        return valid;
-    }
-    
-    // Función para guardar los datos del paso actual
-    function saveCurrentStepData() {
-        // Aquí puedes implementar lógica para guardar los datos mediante AJAX
-        // o almacenarlos temporalmente para enviarlos al final del proceso
-        console.log('Guardando datos del paso ' + currentStep);
-    }
     
     // Manejo de navegación del historial del navegador
     window.onpopstate = function(event) {
