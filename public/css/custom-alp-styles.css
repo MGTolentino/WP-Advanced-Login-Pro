@@ -596,26 +596,51 @@ button.wp-alp-vendor-button {
 }
 
 /* Progress Bar Styles - MODIFICADO */
-/* Progress Bar Styles - Estilo Airbnb */
+/* Reset de la barra de progreso para asegurar que aparezca */
 .wp-alp-progress-bar {
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
     width: 100% !important;
     background-color: white !important;
-    z-index: 10000 !important;
-    box-shadow: 0 -1px 10px rgba(0,0,0,0.1) !important;
-    display: none; /* Inicialmente oculto, se mostrará con JS */
+    z-index: 99999 !important;
+    box-shadow: 0 -1px 10px rgba(0,0,0,0.05) !important;
+    display: block !important; /* Siempre visible */
 }
 
-.wp-alp-progress-divider {
-    height: 1px !important;
-    background-color: #e0e0e0 !important;
+/* Track de progreso - línea gris base */
+.wp-alp-progress-track {
     width: 100% !important;
-    display: block !important;
-    visibility: visible !important;
+    height: 2px !important;
+    background-color: #DDDDDD !important;
+    display: flex !important;
 }
 
+/* Secciones individuales de la barra de progreso */
+.wp-alp-progress-section {
+    flex: 1 !important;
+    height: 100% !important;
+    position: relative !important;
+}
+
+/* Sección activa */
+.wp-alp-progress-section.active {
+    background-color: #222222 !important;
+}
+
+/* Separadores entre secciones */
+.wp-alp-progress-section:not(:last-child)::after {
+    content: "" !important;
+    position: absolute !important;
+    right: 0 !important;
+    top: -3px !important; /* Ajustado para centrar verticalmente */
+    height: 8px !important; /* Más alto para ser visible */
+    width: 1px !important;
+    background-color: white !important;
+    display: none !important; /* Por defecto oculto */
+}
+
+/* Contenedor de botones */
 .wp-alp-progress-inner {
     padding: 20px 24px !important;
     display: flex !important;
@@ -623,6 +648,7 @@ button.wp-alp-vendor-button {
     align-items: center !important;
 }
 
+/* Botones de navegación */
 .wp-alp-progress-buttons {
     display: flex !important;
     justify-content: space-between !important;
@@ -630,6 +656,7 @@ button.wp-alp-vendor-button {
     width: 100% !important;
 }
 
+/* Botón Atrás */
 .wp-alp-back-button {
     color: #222222 !important;
     text-decoration: none !important;
@@ -643,6 +670,7 @@ button.wp-alp-vendor-button {
     text-decoration: underline !important;
 }
 
+/* Botón Siguiente/Publicar */
 .wp-alp-next-button {
     background-color: #222222 !important;
     color: white !important;
@@ -657,20 +685,29 @@ button.wp-alp-vendor-button {
 
 .wp-alp-next-button:hover {
     background-color: #000000 !important;
-    text-decoration: none !important;
-    color: white !important;
 }
 
-/* Añade padding adicional al contenedor principal para evitar que la barra fija cubra contenido */
+/* Estilos específicos para el paso 0 (página inicial) */
+.wp-alp-progress-bar.step-0 .wp-alp-progress-buttons {
+    display: none !important; /* Ocultar botones en paso 0 */
+}
+
+.wp-alp-progress-bar.step-0 .wp-alp-progress-inner {
+    padding: 0 !important; /* Quitar padding en paso 0 */
+}
+
+.wp-alp-progress-bar.step-0 .wp-alp-progress-section {
+    background-color: transparent !important; /* Todas las secciones transparentes */
+}
+
+/* Estilos específicos para pasos 1+ */
+.wp-alp-progress-bar:not(.step-0) .wp-alp-progress-section:not(:last-child)::after {
+    display: block !important; /* Mostrar separadores en pasos posteriores */
+}
+
+/* Asegurar que el contenedor tenga padding para la barra fija */
 .wp-alp-vendor-form-page {
     padding-bottom: 80px !important;
-}
-
-/* Asegurarse de que la barra de progreso sea visible cuando se activa */
-#progress-bar.show-progress-bar {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
 }
 
 /* Vendor Form Page Styles */

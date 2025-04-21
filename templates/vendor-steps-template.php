@@ -124,7 +124,7 @@ get_header(); ?>
 jQuery(document).ready(function($) {
     // Variables para la navegación
     var currentStep = 0;
-    var totalSteps = 3; // Total de pasos (ahora son 3)
+    var totalSteps = 3; // Total de pasos
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
@@ -134,7 +134,7 @@ jQuery(document).ready(function($) {
     var $nextButton = $('#next-button');
     var $currentStepInput = $('#current-step');
     
-    // Inicialmente configurar para el paso 0
+    // IMPORTANTE: Inicialmente configurar para el paso 0
     $progressBar.addClass('step-0');
     
     // Botón de inicio de registro
@@ -155,6 +155,10 @@ jQuery(document).ready(function($) {
         for (var i = 0; i < step; i++) {
             $($progressSections[i]).addClass('active');
         }
+        
+        // Depuración - verificar en consola que se está actualizando
+        console.log('Actualizada barra de progreso para paso ' + step);
+        console.log('Secciones activas: ' + $('.wp-alp-progress-section.active').length);
     }
     
     // Función para mostrar un paso específico
@@ -173,15 +177,18 @@ jQuery(document).ready(function($) {
         // Mostrar el paso seleccionado
         $('#step-' + step).show();
         
-        // Actualizar la barra de progreso visual
+        // IMPORTANTE: Actualizar la barra de progreso visual
         updateProgressBar(step);
         
-        // Gestionar la visibilidad de los botones en la barra de progreso
+        // NUNCA OCULTAR LA BARRA - Solo cambiar su apariencia según el paso
         if (step === 0) {
-            // En paso 0, la barra se muestra pero sin botones
+            // Solo modificar clases, no ocultar
             $progressBar.addClass('step-0');
+            
+            // Depuración
+            console.log('Aplicada clase step-0 a la barra de progreso');
         } else {
-            // En otros pasos, mostrar con botones
+            // En otros pasos, quitar la clase de paso 0
             $progressBar.removeClass('step-0');
             
             // Actualizar estado del botón Atrás
@@ -197,6 +204,9 @@ jQuery(document).ready(function($) {
             } else {
                 $nextButton.text('Siguiente');
             }
+            
+            // Depuración
+            console.log('Aplicada clase step-' + step + ' a la barra de progreso');
         }
         
         // Actualizar la URL
@@ -217,15 +227,6 @@ jQuery(document).ready(function($) {
         goToStep(currentStep - 1);
     });
     
-    // Manejo de navegación del historial del navegador
-    window.onpopstate = function(event) {
-        if (event.state && typeof event.state.step !== 'undefined') {
-            goToStep(event.state.step);
-        } else {
-            goToStep(0);
-        }
-    };
-    
     // Inicialización: verificar si hay un paso en la URL
     var urlParams = new URLSearchParams(window.location.search);
     var stepParam = urlParams.get('step');
@@ -237,6 +238,18 @@ jQuery(document).ready(function($) {
         // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
         goToStep(0);
     }
+    
+    // Forzar visibilidad de la barra (código de emergencia)
+    setTimeout(function() {
+        $progressBar.attr('style', 'display: block !important; position: fixed !important; bottom: 0 !important; z-index: 99999 !important;');
+        console.log('Forzada visibilidad de la barra de progreso');
+        
+        if (currentStep === 0) {
+            $progressBar.addClass('step-0');
+        } else {
+            updateProgressBar(currentStep);
+        }
+    }, 500);
 });
 </script>
 
