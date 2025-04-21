@@ -231,23 +231,4 @@ get_header(); ?>
 </section>
 </div>
 
-<!-- Progress Bar Section -->
-<div class="wp-alp-progress-bar">
-    <div class="wp-alp-container">
-        <div class="wp-alp-progress-inner">
-            <div class="wp-alp-progress-line">
-                <div class="wp-alp-progress-indicator" style="width: 33%;"></div>
-            </div>
-            <div class="wp-alp-progress-buttons">
-                <a href="<?php echo esc_url(get_permalink(get_page_by_path('conviertete-en-vendedor'))); ?>" class="wp-alp-back-button">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-                </a>
-                <a href="#" class="wp-alp-next-button">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-
 <?php get_footer(); ?>
