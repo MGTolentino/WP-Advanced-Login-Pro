@@ -1144,3 +1144,12 @@ button.wp-alp-vendor-button {
         order: -1;
     }
 }
+
+
+.wp-alp-progress-divider {
+    height: 1px !important;
+    background-color: #dddddd !important;
+    width: 100% !important;
+    display: block !important;
+    visibility: visible !important;
+}
