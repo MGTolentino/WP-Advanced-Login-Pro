@@ -9,9 +9,7 @@
 get_header(); ?>
 
 <div class="wp-alp-vendor-form-page">
-    <!-- Eliminamos el header fijo que causaba problemas -->
-    
-    <!-- Contenedor principal para la página inicial y el primer paso -->
+    <!-- Contenedor principal para la página inicial -->
     <div class="wp-alp-form-content">
         <div class="wp-alp-container">
             <!-- Paso Inicial: Información sobre los pasos -->
@@ -19,7 +17,7 @@ get_header(); ?>
                 <div class="wp-alp-steps-container">
                     <div class="wp-alp-steps-left">
                         <h1 class="wp-alp-steps-heading">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
+                            Empezar a ofrecer tus servicios es muy sencillo
                         </h1>
                     </div>
                     
@@ -74,9 +72,10 @@ get_header(); ?>
                             </div>
                         </div>
                         
-                        <div class="wp-alp-steps-action">
-                            <button type="button" class="wp-alp-steps-button" id="start-registration">
-                                <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
+                         <!-- Botón de inicio al estilo Airbnb -->
+                         <div class="wp-alp-airbnb-start-button-container">
+                            <button type="button" class="wp-alp-airbnb-start-button" id="start-registration">
+                                Get Started
                             </button>
                         </div>
                     </div>
@@ -93,22 +92,17 @@ get_header(); ?>
         </div>
     </div>
     
-    <!-- Barra de progreso con botones de navegación -->
     <div class="wp-alp-progress-bar" id="progress-bar">
-        <div class="wp-alp-progress-divider"></div>
-        <div class="wp-alp-container">
-            <div class="wp-alp-progress-inner">
-                <div class="wp-alp-progress-buttons">
-                    <a href="#" class="wp-alp-back-button" id="back-button">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-                    </a>
-                    <a href="#" class="wp-alp-next-button" id="next-button">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-                    </a>
-                </div>
+    <div class="wp-alp-progress-divider"></div>
+    <div class="wp-alp-container">
+        <div class="wp-alp-progress-inner">
+            <div class="wp-alp-progress-buttons">
+                <a href="#" class="wp-alp-back-button" id="back-button">Atrás</a>
+                <a href="#" class="wp-alp-next-button" id="next-button">Siguiente</a>
             </div>
         </div>
     </div>
+</div>
     
     <!-- Formulario oculto para almacenar todos los datos -->
     <form id="vendor-form-data" style="display: none;">
@@ -132,10 +126,8 @@ jQuery(document).ready(function($) {
     var $nextButton = $('#next-button');
     var $currentStepInput = $('#current-step');
     
-    // Inicialmente ocultamos la barra de progreso en el paso 0
-    if (currentStep === 0) {
-        $progressBar.hide();
-    }
+    // Inicialmente ocultamos la barra de progreso
+    $progressBar.hide();
     
     // Botón de inicio de registro
     $('#start-registration').on('click', function() {
@@ -175,24 +167,18 @@ jQuery(document).ready(function($) {
             // Estamos en un paso del formulario, mostrar la barra de progreso
             $progressBar.show();
             
-            // Agregar consultas de depuración
-            console.log('Mostrando barra de progreso');
-            console.log('Estado de visibilidad:', $progressBar.is(':visible'));
-            console.log('Altura de la barra:', $progressBar.outerHeight());
-            console.log('Posición Y de la barra:', $progressBar.offset().top);
-            
             // Actualizar estado del botón Atrás
             if (step === 1) {
-                $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>');
+                $backButton.text('Volver a la visión general');
             } else {
-                $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>');
+                $backButton.text('Atrás');
             }
             
             // Actualizar texto del botón Siguiente en el último paso
             if (step === totalSteps) {
-                $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Publish' : 'Publicar'); ?>');
+                $nextButton.text('Publicar');
             } else {
-                $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
+                $nextButton.text('Siguiente');
             }
         }
         
