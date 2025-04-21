@@ -798,6 +798,12 @@ button.wp-alp-vendor-button {
     padding-bottom: 100px;
 }
 
+.wp-alp-container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
 .wp-alp-form-header {
     position: fixed;
     top: 0;
@@ -832,12 +838,116 @@ button.wp-alp-vendor-button {
 .wp-alp-form-content {
     margin-top: 80px;
     padding: 40px 0;
-    max-width: 1180px;
-    margin-left: auto;
-    margin-right: auto;
 }
 
-.wp-alp-form-content-inner {
+.wp-alp-steps-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.wp-alp-steps-left {
+    flex: 1;
+    min-width: 300px;
+    padding-right: 40px;
+    margin-bottom: 40px;
+}
+
+.wp-alp-steps-heading {
+    font-size: 42px;
+    font-weight: 600;
+    color: #222222;
+    line-height: 1.2;
+    margin-top: 0;
+}
+
+.wp-alp-steps-right {
+    flex: 2;
+    min-width: 300px;
+}
+
+.wp-alp-steps-list {
+    margin-bottom: 40px;
+}
+
+.wp-alp-step-item {
+    display: flex;
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid #DDDDDD;
+    align-items: center;
+}
+
+.wp-alp-step-item:last-child {
+    border-bottom: none;
+}
+
+.wp-alp-step-content {
+    flex: 3;
+    padding-right: 30px;
+}
+
+.wp-alp-step-number {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 600;
+    color: #222222;
+    margin-bottom: 16px;
+}
+
+.wp-alp-step-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #222222;
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+
+.wp-alp-step-description {
+    font-size: 16px;
+    color: #717171;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.wp-alp-step-image {
+    flex: 2;
+    min-width: 120px;
+    text-align: center;
+}
+
+.wp-al.wp-alp-step-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+.wp-alp-steps-action {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+}
+
+.wp-alp-steps-button {
+    display: inline-block;
+    background-color: #CBB781;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.wp-alp-steps-button:hover {
+    background-color: #b8a66e;
+    text-decoration: none;
+}
+
+/* Estilos para los pasos del formulario */
+.wp-alp-step-wrapper {
     max-width: 980px;
     margin: 0 auto;
     padding: 0 24px;
@@ -858,18 +968,11 @@ button.wp-alp-vendor-button {
     line-height: 1.25;
 }
 
-.wp-alp-step-description {
-    font-size: 16px;
-    line-height: 1.5;
-    color: #222222;
-    margin-bottom: 32px;
-    max-width: 650px;
-}
-
 .wp-alp-form-flex {
     display: flex;
     justify-content: space-between;
     gap: 60px;
+    margin-top: 40px;
 }
 
 .wp-alp-form-left {
@@ -915,6 +1018,48 @@ button.wp-alp-vendor-button {
 .wp-alp-input:focus, .wp-alp-select:focus {
     border-color: #222222;
     outline: none;
+}
+
+.wp-alp-input.error, .wp-alp-select.error {
+    border-color: #ff0000;
+}
+
+.wp-alp-price-input {
+    position: relative;
+}
+
+.wp-alp-currency {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    font-size: 16px;
+}
+
+.wp-alp-price-input .wp-alp-input {
+    padding-left: 24px;
+}
+
+.wp-alp-photo-upload {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.wp-alp-photo-placeholder {
+    width: 120px;
+    height: 120px;
+    border: 2px dashed #dddddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.wp-alp-photo-icon {
+    font-size: 32px;
+    color: #777777;
 }
 
 /* Barra de progreso actualizada */
@@ -969,13 +1114,30 @@ button.wp-alp-vendor-button {
 
 /* Estilos responsivos */
 @media (max-width: 768px) {
+    .wp-alp-steps-container {
+        flex-direction: column;
+    }
+    
+    .wp-alp-steps-left {
+        padding-right: 0;
+    }
+    
+    .wp-alp-steps-heading {
+        font-size: 32px;
+    }
+    
+    .wp-alp-step-item {
+        flex-direction: column;
+    }
+    
+    .wp-alp-step-content {
+        padding-right: 0;
+        margin-bottom: 24px;
+    }
+    
     .wp-alp-form-flex {
         flex-direction: column;
         gap: 30px;
-    }
-    
-    .wp-alp-step-heading {
-        font-size: 26px;
     }
     
     .wp-alp-form-right {
