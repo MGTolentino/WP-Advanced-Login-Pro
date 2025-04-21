@@ -1,703 +1,489 @@
 <?php
 /**
- * Handles form rendering and processing.
+ * Maneja los formularios del plugin.
  *
- * @since      1.0.0
- * @package    WP_Advanced_Login_Pro
- * @subpackage WP_Advanced_Login_Pro/includes
+ * Esta clase contiene métodos para generar y procesar
+ * los distintos formularios utilizados en el plugin.
  */
-
 class WP_ALP_Forms {
-    
-    /**
-     * Security manager instance.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      WP_ALP_Security    $security    The security manager instance.
-     */
-    private $security;
-    
-    /**
-     * Social login manager instance.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      WP_ALP_Social    $social    The social login manager instance.
-     */
-    private $social;
-    
-    /**
-     * Initialize the class and set its properties.
-     *
-     * @since    1.0.0
-     * @param    WP_ALP_Security    $security    The security manager instance.
-     * @param    WP_ALP_Social      $social      The social login manager instance.
-     */
-    public function __construct($security, $social) {
-        $this->security = $security;
-        $this->social = $social;
-    }
-    
-    /**
-     * Render login form.
-     *
-     * @since    1.0.0
-     * @param    array    $atts    Shortcode attributes.
-     * @return   string            The rendered form.
-     */
-    public function render_login_form($atts = array()) {
-        if (is_user_logged_in()) {
-            return $this->render_logout_form();
-        }
+
+/**
+ * Genera el HTML para el formulario inicial (entrada de email/teléfono).
+ *
+ * @return string HTML del formulario.
+ */
+public static function get_initial_form() {
+    ob_start();
+    ?>
+    <div class="wp-alp-form-container wp-alp-initial-form">
+        <h3 class="wp-alp-modal-title"><?php _e('Inicia sesión o regístrate', 'wp-alp'); ?></h3>
         
-        // Get options
-        $options = get_option('wp_alp_general_options');
-        
-        // Process attributes
-        $atts = shortcode_atts(array(
-            'redirect' => '',
-            'show_title' => true,
-            'show_social' => true,
-        ), $atts, 'wp_alp_login');
-        
-        // Generate nonce and CSRF token
-        $nonce = $this->security->generate_nonce();
-        $csrf_token = $this->security->generate_csrf_token();
-        
-        // Start output buffering
+        <div class="wp-alp-modal-content">
+            <h2><?php _e('¡Te damos la bienvenida!', 'wp-alp'); ?></h2>
+            
+            <div class="wp-alp-input-group">
+                <label for="wp-alp-identifier"><?php _e('Correo electrónico', 'wp-alp'); ?></label>
+                <input type="text" id="wp-alp-identifier" name="identifier" class="wp-alp-input" placeholder="<?php _e('Correo electrónico', 'wp-alp'); ?>" />
+            </div>
+            
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-continue-btn">
+                    <?php _e('Continuar', 'wp-alp'); ?>
+                </button>
+            </div>
+            
+            <div class="wp-alp-divider">
+                <span><?php _e('o', 'wp-alp'); ?></span>
+            </div>
+            
+            <div class="wp-alp-social-login">
+                <?php if (!empty(get_option('wp_alp_google_client_id', ''))) : ?>
+                <button type="button" class="wp-alp-social-button" id="wp-alp-google-btn">
+                    <span class="wp-alp-social-icon google-icon"></span>
+                    <span><?php _e('Continuar con Google', 'wp-alp'); ?></span>
+                </button>
+                <?php endif; ?>
+                
+                <?php if (!empty(get_option('wp_alp_facebook_app_id', ''))) : ?>
+                <button type="button" class="wp-alp-social-button" id="wp-alp-facebook-btn">
+                    <span class="wp-alp-social-icon facebook-icon"></span>
+                    <span><?php _e('Continuar con Facebook', 'wp-alp'); ?></span>
+                </button>
+                <?php endif; ?>
+                
+                <?php if (!empty(get_option('wp_alp_apple_client_id', ''))) : ?>
+                <button type="button" class="wp-alp-social-button" id="wp-alp-apple-btn">
+                    <span class="wp-alp-social-icon apple-icon"></span>
+                    <span><?php _e('Continuar con Apple', 'wp-alp'); ?></span>
+                </button>
+                <?php endif; ?>
+                
+                <button type="button" class="wp-alp-social-button" id="wp-alp-phone-btn">
+                    <span class="wp-alp-social-icon phone-icon"></span>
+                    <span><?php _e('Continuar con el número de teléfono', 'wp-alp'); ?></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+
+    /**
+     * Genera el HTML para el formulario de login.
+     *
+     * @param string $email Email del usuario.
+     * @return string HTML del formulario.
+     */
+    public static function get_login_form($email) {
         ob_start();
-        
-        // Get template
-        $template = WP_ALP_PLUGIN_DIR . 'public/templates/login.php';
-        
-        // Check if template exists in theme
-        $theme_template = get_stylesheet_directory() . '/wp-alp/login.php';
-        if (file_exists($theme_template)) {
-            $template = $theme_template;
-        }
-        
-        // Include template with variables
-        include $template;
-        
-        // Return the buffered output
+        ?>
+        <div class="wp-alp-form-container wp-alp-login-form">
+            <button type="button" class="wp-alp-back-button" id="wp-alp-back-to-initial">
+                <span class="wp-alp-back-icon"></span>
+            </button>
+            
+            <h2><?php _e('Inicia sesión', 'wp-alp'); ?></h2>
+            
+            <div class="wp-alp-input-group wp-alp-disabled">
+                <label for="wp-alp-login-email"><?php _e('Correo electrónico', 'wp-alp'); ?></label>
+                <input type="email" id="wp-alp-login-email" name="email" class="wp-alp-input" value="<?php echo esc_attr($email); ?>" readonly />
+            </div>
+            
+            <div class="wp-alp-input-group">
+                <label for="wp-alp-login-password"><?php _e('Contraseña', 'wp-alp'); ?></label>
+                <input type="password" id="wp-alp-login-password" name="password" class="wp-alp-input" placeholder="<?php _e('Contraseña', 'wp-alp'); ?>" />
+                <button type="button" class="wp-alp-toggle-password" data-target="wp-alp-login-password">
+                    <span class="wp-alp-show-text"><?php _e('Mostrar', 'wp-alp'); ?></span>
+                    <span class="wp-alp-hide-text" style="display: none;"><?php _e('Ocultar', 'wp-alp'); ?></span>
+                </button>
+            </div>
+            
+            <div class="wp-alp-forgot-password">
+                <a href="#" id="wp-alp-forgot-password-link"><?php _e('¿Olvidaste tu contraseña?', 'wp-alp'); ?></a>
+            </div>
+            
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-login-btn">
+                    <?php _e('Iniciar sesión', 'wp-alp'); ?>
+                </button>
+            </div>
+        </div>
+        <?php
         return ob_get_clean();
     }
-    
+
     /**
-     * Render registration form for normal users.
+     * Genera el HTML para el formulario de registro.
      *
-     * @since    1.0.0
-     * @param    array    $atts    Shortcode attributes.
-     * @return   string            The rendered form.
+     * @param string $email Email del usuario.
+     * @return string HTML del formulario.
      */
-    public function render_register_user_form($atts = array()) {
-        if (is_user_logged_in()) {
-            return '<p>' . __('You are already registered and logged in.', 'wp-alp') . '</p>';
-        }
-        
-        // Get options
-        $options = get_option('wp_alp_general_options');
-        
-        // Process attributes
-        $atts = shortcode_atts(array(
-            'redirect' => '',
-            'show_title' => true,
-            'show_social' => true,
-        ), $atts, 'wp_alp_register_user');
-        
-        // Generate nonce and CSRF token
-        $nonce = $this->security->generate_nonce();
-        $csrf_token = $this->security->generate_csrf_token();
-        
-        // Get recaptcha site key
-        $security_options = get_option('wp_alp_security_options');
-        $recaptcha_site_key = isset($security_options['recaptcha_site_key']) ? $security_options['recaptcha_site_key'] : '';
-        
-        // Start output buffering
+    public static function get_register_form($email) {
         ob_start();
-        
-        // Get template
-        $template = WP_ALP_PLUGIN_DIR . 'public/templates/register-user.php';
-        
-        // Check if template exists in theme
-        $theme_template = get_stylesheet_directory() . '/wp-alp/register-user.php';
-        if (file_exists($theme_template)) {
-            $template = $theme_template;
-        }
-        
-        // Include template with variables
-        include $template;
-        
-        // Return the buffered output
+        ?>
+        <div class="wp-alp-form-container wp-alp-register-form">
+            <button type="button" class="wp-alp-back-button" id="wp-alp-back-to-initial">
+                <span class="wp-alp-back-icon"></span>
+            </button>
+            
+            <h2><?php _e('Termina de registrarte', 'wp-alp'); ?></h2>
+            
+            <div class="wp-alp-user-info-section">
+                <h3><?php _e('Nombre legal', 'wp-alp'); ?></h3>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-register-first-name"><?php _e('Nombre que aparece en tu identificación', 'wp-alp'); ?></label>
+                    <input type="text" id="wp-alp-register-first-name" name="first_name" class="wp-alp-input" placeholder="<?php _e('Nombre', 'wp-alp'); ?>" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-register-last-name"><?php _e('Apellidos que aparecen en tu identificación', 'wp-alp'); ?></label>
+                    <input type="text" id="wp-alp-register-last-name" name="last_name" class="wp-alp-input" placeholder="<?php _e('Apellidos', 'wp-alp'); ?>" />
+                </div>
+                
+                <p class="wp-alp-help-text">
+                    <?php _e('Asegúrate de que coincida con el nombre que aparece en tu identificación oficial. Si usas otro distinto, puedes agregar el nombre que prefieras.', 'wp-alp'); ?>
+                </p>
+            </div>
+            
+            <div class="wp-alp-user-info-section">
+                <h3><?php _e('Fecha de nacimiento', 'wp-alp'); ?></h3>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-register-birthdate"><?php _e('Fecha de nacimiento', 'wp-alp'); ?></label>
+                    <input type="date" id="wp-alp-register-birthdate" name="birthdate" class="wp-alp-input" />
+                </div>
+                
+                <p class="wp-alp-help-text">
+                    <?php _e('Debes tener al menos 18 años para registrarte. No compartiremos tu fecha de nacimiento con ningún otro usuario.', 'wp-alp'); ?>
+                </p>
+            </div>
+            
+            <div class="wp-alp-user-info-section">
+                <h3><?php _e('Información de contacto', 'wp-alp'); ?></h3>
+                
+                <div class="wp-alp-input-group wp-alp-disabled">
+                    <label for="wp-alp-register-email"><?php _e('Correo electrónico', 'wp-alp'); ?></label>
+                    <input type="email" id="wp-alp-register-email" name="email" class="wp-alp-input" value="<?php echo esc_attr($email); ?>" readonly />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-register-phone"><?php _e('Número de teléfono', 'wp-alp'); ?></label>
+                    <input type="tel" id="wp-alp-register-phone" name="phone" class="wp-alp-input" placeholder="<?php _e('Número de teléfono', 'wp-alp'); ?>" />
+                </div>
+                
+                <p class="wp-alp-help-text">
+                    <?php _e('Te enviaremos las confirmaciones y los recibos por correo electrónico.', 'wp-alp'); ?>
+                </p>
+            </div>
+            
+            <div class="wp-alp-user-info-section">
+                <h3><?php _e('Contraseña', 'wp-alp'); ?></h3>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-register-password"><?php _e('Contraseña', 'wp-alp'); ?></label>
+                    <input type="password" id="wp-alp-register-password" name="password" class="wp-alp-input" placeholder="<?php _e('Contraseña', 'wp-alp'); ?>" />
+                    <button type="button" class="wp-alp-toggle-password" data-target="wp-alp-register-password">
+                        <span class="wp-alp-show-text"><?php _e('Mostrar', 'wp-alp'); ?></span>
+                        <span class="wp-alp-hide-text" style="display: none;"><?php _e('Ocultar', 'wp-alp'); ?></span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="wp-alp-event-info-section">
+                <h3><?php _e('Información del evento', 'wp-alp'); ?></h3>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-type"><?php _e('Tipo de evento', 'wp-alp'); ?></label>
+                    <select id="wp-alp-event-type" name="event_type" class="wp-alp-input">
+                        <option value=""><?php _e('Selecciona un tipo de evento', 'wp-alp'); ?></option>
+                        <option value="Bodas"><?php _e('Bodas', 'wp-alp'); ?></option>
+                        <option value="Cumpleaños"><?php _e('Cumpleaños', 'wp-alp'); ?></option>
+                        <option value="Corporativo"><?php _e('Corporativo', 'wp-alp'); ?></option>
+                        <option value="Graduación"><?php _e('Graduación', 'wp-alp'); ?></option>
+                        <option value="Otro"><?php _e('Otro', 'wp-alp'); ?></option>
+                    </select>
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-date"><?php _e('Fecha del evento', 'wp-alp'); ?></label>
+                    <input type="date" id="wp-alp-event-date" name="event_date" class="wp-alp-input" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-address"><?php _e('Dirección del evento', 'wp-alp'); ?></label>
+                    <input type="text" id="wp-alp-event-address" name="event_address" class="wp-alp-input" placeholder="<?php _e('Dirección del evento', 'wp-alp'); ?>" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-guests"><?php _e('Número de invitados', 'wp-alp'); ?></label>
+                    <input type="number" id="wp-alp-event-guests" name="guests" class="wp-alp-input" min="1" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-details"><?php _e('Detalles adicionales', 'wp-alp'); ?></label>
+                    <textarea id="wp-alp-event-details" name="details" class="wp-alp-input" placeholder="<?php _e('¿Tienes alguna solicitud especial o requisito adicional para el evento?', 'wp-alp'); ?>"></textarea>
+                </div>
+            </div>
+            
+            <div class="wp-alp-terms-section">
+                <p class="wp-alp-terms-text">
+                    <?php _e('Al seleccionar Aceptar y continuar, acepto los', 'wp-alp'); ?>
+                    <a href="#" target="_blank"><?php _e('Términos del servicio', 'wp-alp'); ?></a>,
+                    <a href="#" target="_blank"><?php _e('Términos de Pago del Servicio', 'wp-alp'); ?></a>
+                    <?php _e('y la', 'wp-alp'); ?>
+                    <a href="#" target="_blank"><?php _e('Política contra la discriminación', 'wp-alp'); ?></a>
+                    <?php _e('de nuestra plataforma, así como su', 'wp-alp'); ?>
+                    <a href="#" target="_blank"><?php _e('Política de privacidad', 'wp-alp'); ?></a>.
+                </p>
+            </div>
+            
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-register-btn">
+                    <?php _e('Aceptar y continuar', 'wp-alp'); ?>
+                </button>
+            </div>
+        </div>
+        <?php
         return ob_get_clean();
     }
-    
+
     /**
-     * Render registration form for vendors.
+     * Genera el HTML para el formulario de completar perfil.
      *
-     * @since    1.0.0
-     * @param    array    $atts    Shortcode attributes.
-     * @return   string            The rendered form.
+     * @param int $user_id ID del usuario.
+     * @return string HTML del formulario.
      */
-    public function render_register_vendor_form($atts = array()) {
-        if (is_user_logged_in()) {
-            return '<p>' . __('You are already registered and logged in.', 'wp-alp') . '</p>';
+    public static function get_profile_completion_form($user_id) {
+        $user = get_user_by('ID', $user_id);
+        
+        if (!$user) {
+            return '';
         }
-        
-        // Get options
-        $options = get_option('wp_alp_general_options');
-        
-        // Process attributes
-        $atts = shortcode_atts(array(
-            'redirect' => '',
-            'show_title' => true,
-            'show_social' => true,
-        ), $atts, 'wp_alp_register_vendor');
-        
-        // Generate nonce and CSRF token
-        $nonce = $this->security->generate_nonce();
-        $csrf_token = $this->security->generate_csrf_token();
-        
-        // Get recaptcha site key
-        $security_options = get_option('wp_alp_security_options');
-        $recaptcha_site_key = isset($security_options['recaptcha_site_key']) ? $security_options['recaptcha_site_key'] : '';
-        
-        // Start output buffering
-        ob_start();
-        
-        // Get template
-        $template = WP_ALP_PLUGIN_DIR . 'public/templates/register-vendor.php';
-        
-        // Check if template exists in theme
-        $theme_template = get_stylesheet_directory() . '/wp-alp/register-vendor.php';
-        if (file_exists($theme_template)) {
-            $template = $theme_template;
-        }
-        
-        // Include template with variables
-        include $template;
-        
-        // Return the buffered output
-        return ob_get_clean();
-    }
-    
-    /**
-     * Render profile completion form.
-     *
-     * @since    1.0.0
-     * @param    array    $atts    Shortcode attributes.
-     * @return   string            The rendered form.
-     */
-    public function render_profile_completion_form($atts = array()) {
-        if (!is_user_logged_in()) {
-            return '<p>' . __('You must be logged in to complete your profile.', 'wp-alp') . '</p>';
-        }
-        
-        $user = wp_get_current_user();
-        $user_id = $user->ID;
-        
-        // Check if profile is already complete
-        $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-        if ($profile_status === 'complete') {
-            return '<p>' . __('Your profile is already complete.', 'wp-alp') . '</p>';
-        }
-        
-        // Process attributes
-        $atts = shortcode_atts(array(
-            'redirect' => '',
-            'show_title' => true,
-        ), $atts, 'wp_alp_profile_completion');
-        
-        // Generate nonce and CSRF token
-        $nonce = $this->security->generate_nonce();
-        $csrf_token = $this->security->generate_csrf_token();
-        
-        // Start output buffering
-        ob_start();
-        
-        // Get template
-        $template = WP_ALP_PLUGIN_DIR . 'public/templates/profile-completion.php';
-        
-        // Check if template exists in theme
-        $theme_template = get_stylesheet_directory() . '/wp-alp/profile-completion.php';
-        if (file_exists($theme_template)) {
-            $template = $theme_template;
-        }
-        
-        // Include template with variables
-        include $template;
-        
-        // Return the buffered output
-        return ob_get_clean();
-    }
-    
-    /**
-     * Render logout form/button.
-     *
-     * @since    1.0.0
-     * @return   string    The rendered form.
-     */
-    private function render_logout_form() {
-        $user = wp_get_current_user();
         
         ob_start();
         ?>
-        <div class="wp-alp-logged-in">
-            <p><?php printf(__('Logged in as %s', 'wp-alp'), '<strong>' . esc_html($user->display_name) . '</strong>'); ?></p>
-            <a href="<?php echo wp_logout_url(home_url()); ?>" class="wp-alp-button wp-alp-logout-button">
-                <?php _e('Log Out', 'wp-alp'); ?>
-            </a>
+        <div class="wp-alp-form-container wp-alp-profile-form">
+            <h2><?php _e('Completa tu perfil', 'wp-alp'); ?></h2>
+            
+            <div class="wp-alp-event-info-section">
+                <h3><?php _e('Información del evento', 'wp-alp'); ?></h3>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-type"><?php _e('Tipo de evento', 'wp-alp'); ?></label>
+                    <select id="wp-alp-event-type" name="event_type" class="wp-alp-input">
+                        <option value=""><?php _e('Selecciona un tipo de evento', 'wp-alp'); ?></option>
+                        <option value="Bodas"><?php _e('Bodas', 'wp-alp'); ?></option>
+                        <option value="Cumpleaños"><?php _e('Cumpleaños', 'wp-alp'); ?></option>
+                        <option value="Corporativo"><?php _e('Corporativo', 'wp-alp'); ?></option>
+                        <option value="Graduación"><?php _e('Graduación', 'wp-alp'); ?></option>
+                        <option value="Otro"><?php _e('Otro', 'wp-alp'); ?></option>
+                    </select>
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-date"><?php _e('Fecha del evento', 'wp-alp'); ?></label>
+                    <input type="date" id="wp-alp-event-date" name="event_date" class="wp-alp-input" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-address"><?php _e('Dirección del evento', 'wp-alp'); ?></label>
+                    <input type="text" id="wp-alp-event-address" name="event_address" class="wp-alp-input" placeholder="<?php _e('Dirección del evento', 'wp-alp'); ?>" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-guests"><?php _e('Número de invitados', 'wp-alp'); ?></label>
+                    <input type="number" id="wp-alp-event-guests" name="guests" class="wp-alp-input" min="1" />
+                </div>
+                
+                <div class="wp-alp-input-group">
+                    <label for="wp-alp-event-details"><?php _e('Detalles adicionales', 'wp-alp'); ?></label>
+                    <textarea id="wp-alp-event-details" name="details" class="wp-alp-input" placeholder="<?php _e('¿Tienes alguna solicitud especial o requisito adicional para el evento?', 'wp-alp'); ?>"></textarea>
+                </div>
+                
+                <input type="hidden" name="user_id" value="<?php echo esc_attr($user_id); ?>" />
+                <input type="hidden" name="email" value="<?php echo esc_attr($user->user_email); ?>" />
+                <input type="hidden" name="first_name" value="<?php echo esc_attr($user->first_name); ?>" />
+                <input type="hidden" name="last_name" value="<?php echo esc_attr($user->last_name); ?>" />
+                <input type="hidden" name="phone" value="<?php echo esc_attr(get_user_meta($user_id, 'wp_alp_phone', true)); ?>" />
+            </div>
+            
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-complete-profile-btn">
+                    <?php _e('Completar perfil', 'wp-alp'); ?>
+                </button>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Genera el HTML para el formulario de verificación de código.
+     *
+     * @param string $email Email del usuario.
+     * @param int $user_id ID del usuario.
+     * @return string HTML del formulario.
+     */
+    public static function get_verification_form($email, $user_id) {
+        ob_start();
+        ?>
+        <div class="wp-alp-form-container wp-alp-verification-form">
+            <button type="button" class="wp-alp-back-button" id="wp-alp-back-to-initial">
+                <span class="wp-alp-back-icon"></span>
+            </button>
+            
+            <h2><?php _e('Confirmar cuenta', 'wp-alp'); ?></h2>
+            
+            <h3><?php _e('Ingresa el código de verificación', 'wp-alp'); ?></h3>
+            
+            <p class="wp-alp-verification-text">
+                <?php printf(__('Ingresa el código que te enviamos por correo electrónico a %s.', 'wp-alp'), '<strong>' . esc_html($email) . '</strong>'); ?>
+            </p>
+            
+            <div class="wp-alp-verification-code-container">
+                <input type="text" class="wp-alp-verification-digit" maxlength="1" data-index="0" autocomplete="off" />
+                <input type="text" class="wp-alp-verification-digit" maxlength="1" data-index="1" autocomplete="off" />
+                <input type="text" class="wp-alp-verification-digit" maxlength="1" data-index="2" autocomplete="off" />
+                <input type="text" class="wp-alp-verification-digit" maxlength="1" data-index="3" autocomplete="off" />
+                <input type="text" class="wp-alp-verification-digit" maxlength="1" data-index="4" autocomplete="off" />
+                <input type="text" class="wp-alp-verification-digit" maxlength="1" data-index="5" autocomplete="off" />
+                <input type="hidden" id="wp-alp-verification-code" name="verification_code" />
+                <input type="hidden" id="wp-alp-verification-user-id" name="user_id" value="<?php echo esc_attr($user_id); ?>" />
+            </div>
+            
+            <div class="wp-alp-resend-code">
+                <p><?php _e('¿No recibiste ningún correo electrónico?', 'wp-alp'); ?> <a href="#" id="wp-alp-resend-code-link"><?php _e('Vuelve a intentarlo', 'wp-alp'); ?></a></p>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Genera el HTML para el formulario de teléfono.
+     *
+     * @return string HTML del formulario.
+     */
+    public static function get_phone_form() {
+        ob_start();
+        ?>
+        <div class="wp-alp-form-container wp-alp-phone-form">
+            <button type="button" class="wp-alp-back-button" id="wp-alp-back-to-initial">
+                <span class="wp-alp-back-icon"></span>
+            </button>
+            
+            <h2><?php _e('Ingresa tu número de teléfono', 'wp-alp'); ?></h2>
+            
+            <div class="wp-alp-input-group">
+                <label for="wp-alp-phone-number"><?php _e('Número de teléfono', 'wp-alp'); ?></label>
+                <input type="tel" id="wp-alp-phone-number" name="phone" class="wp-alp-input" placeholder="<?php _e('Número de teléfono', 'wp-alp'); ?>" />
+            </div>
+            
+            <div class="wp-alp-button-group">
+                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-phone-continue-btn">
+                    <?php _e('Continuar', 'wp-alp'); ?>
+                </button>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Genera el HTML para el modal completo que contendrá todos los formularios.
+     *
+     * @return string HTML del modal.
+     */
+    public static function get_modal_container() {
+        ob_start();
+        ?>
+        <div id="wp-alp-modal-overlay" class="wp-alp-modal-overlay" style="display: none;">
+            <div id="wp-alp-modal-container" class="wp-alp-modal-container">
+                <button type="button" id="wp-alp-close-modal" class="wp-alp-close-modal">
+                    <span class="wp-alp-close-icon"></span>
+                </button>
+                
+                <div id="wp-alp-modal-content" class="wp-alp-modal-content">
+                    <!-- Aquí se cargarán dinámicamente los formularios -->
+                    <?php echo self::get_initial_form(); ?>
+                </div>
+                
+                <div id="wp-alp-modal-loader" class="wp-alp-modal-loader" style="display: none;">
+                    <div class="wp-alp-spinner"></div>
+                </div>
+            </div>
         </div>
         <?php
         return ob_get_clean();
     }
     
     /**
-     * Render social login buttons.
+     * Procesa los datos del formulario de registro.
      *
-     * @since    1.0.0
-     * @param    string    $context    The context (login, register_user, register_vendor).
-     * @return   string                The rendered buttons.
+     * @param array $data Datos del formulario.
+     * @return array Resultado del procesamiento.
      */
-    public function render_social_buttons($context = 'login') {
-        return $this->social->render_social_buttons($context);
+    public static function process_register_form($data) {
+        $user_manager = new WP_ALP_User_Manager();
+        return $user_manager->register_user($data);
     }
     
     /**
-     * Process login form submission.
+     * Procesa los datos del formulario de login.
      *
-     * @since    1.0.0
-     * @param    array    $form_data    The submitted form data.
-     * @return   array|WP_Error         Response data on success, WP_Error on failure.
+     * @param string $email Email del usuario.
+     * @param string $password Contraseña.
+     * @return array Resultado del procesamiento.
      */
-    public function process_login($form_data) {
-        // Verify security tokens
-        if (!$this->security->verify_nonce($form_data['_wpnonce'])) {
-            return new WP_Error('invalid_nonce', __('Security token expired. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        if (!$this->security->verify_csrf_token($form_data['_csrf_token'])) {
-            return new WP_Error('invalid_csrf', __('Security check failed. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        // Check for bot
-        if ($this->security->detect_bot($form_data)) {
-            return new WP_Error('bot_detected', __('Bot activity detected.', 'wp-alp'));
-        }
-        
-        // Sanitize input
-        $username_email = $this->security->sanitize_input($form_data['username_email']);
-        $password = $form_data['password']; // Don't sanitize password
-        $remember = isset($form_data['remember']) ? (bool) $form_data['remember'] : false;
-        
-        // Determine if username or email was provided
-        $user_data = array();
-        if (is_email($username_email)) {
-            $user = get_user_by('email', $username_email);
-            if ($user) {
-                $user_data['user_login'] = $user->user_login;
-            }
-        } else {
-            $user_data['user_login'] = $username_email;
-        }
-        
-        if (empty($user_data['user_login'])) {
-            return new WP_Error('invalid_username', __('Unknown username or email address. Please check again or try with your email address.', 'wp-alp'));
-        }
-        
-        $user_data['user_password'] = $password;
-        $user_data['remember'] = $remember;
-        
-        // Attempt to log in the user
-        $user = wp_signon($user_data, is_ssl());
-        
-        if (is_wp_error($user)) {
-            return $user;
-        }
-        
-        // Determine redirect URL
-        $redirect_url = home_url();
-        if (!empty($form_data['redirect_to'])) {
-            $redirect_url = esc_url_raw($form_data['redirect_to']);
-        } else {
-            // Get default redirect based on user type
-            $user_type = get_user_meta($user->ID, 'wp_alp_user_type', true);
-            $options = get_option('wp_alp_general_options');
-            
-            switch ($user_type) {
-                case 'lead':
-                    if (!empty($options['lead_redirect'])) {
-                        $redirect_url = $options['lead_redirect'];
-                    }
-                    break;
-                case 'vendor':
-                    if (!empty($options['vendor_redirect'])) {
-                        $redirect_url = $options['vendor_redirect'];
-                    }
-                    break;
-                default:
-                    if (!empty($options['user_redirect'])) {
-                        $redirect_url = $options['user_redirect'];
-                    }
-            }
-        }
-        
-        // Check if profile completion is needed
-        $profile_status = get_user_meta($user->ID, 'wp_alp_profile_status', true);
-        if ($profile_status === 'incomplete') {
-            $options = get_option('wp_alp_general_options');
-            if (!empty($options['profile_completion_page'])) {
-                $redirect_url = get_permalink($options['profile_completion_page']);
-            }
-        }
-        
-        return array(
-            'success' => true,
-            'redirect' => $redirect_url,
-        );
+    public static function process_login_form($email, $password) {
+        $user_manager = new WP_ALP_User_Manager();
+        return $user_manager->login_user($email, $password);
     }
     
     /**
-     * Process user registration form submission.
+     * Procesa los datos del formulario de completar perfil.
      *
-     * @since    1.0.0
-     * @param    array                $form_data    The submitted form data.
-     * @param    WP_ALP_User_Manager  $user_manager The user manager instance.
-     * @return   array|WP_Error                     Response data on success, WP_Error on failure.
+     * @param array $data Datos del formulario.
+     * @return array Resultado del procesamiento.
      */
-    public function process_user_registration($form_data, $user_manager) {
-        // Verify security tokens
-        if (!$this->security->verify_nonce($form_data['_wpnonce'])) {
-            return new WP_Error('invalid_nonce', __('Security token expired. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        if (!$this->security->verify_csrf_token($form_data['_csrf_token'])) {
-            return new WP_Error('invalid_csrf', __('Security check failed. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        // Check for bot
-        if ($this->security->detect_bot($form_data)) {
-            return new WP_Error('bot_detected', __('Bot activity detected.', 'wp-alp'));
-        }
-        
-        // Verify recaptcha if enabled
-        $security_options = get_option('wp_alp_security_options');
-        if (!empty($security_options['recaptcha_site_key']) && !empty($security_options['recaptcha_secret_key'])) {
-            if (empty($form_data['g-recaptcha-response'])) {
-                return new WP_Error('recaptcha_required', __('Please complete the reCAPTCHA verification.', 'wp-alp'));
-            }
-            
-            $recaptcha_valid = $this->security->verify_recaptcha($form_data['g-recaptcha-response']);
-            if (!$recaptcha_valid) {
-                return new WP_Error('recaptcha_failed', __('reCAPTCHA verification failed. Please try again.', 'wp-alp'));
-            }
-        }
-        
-        // Prepare user data
-        $user_data = array(
-            'email' => $form_data['email'],
-            'password' => $form_data['password'],
-            'password_confirm' => $form_data['password_confirm'],
-            'first_name' => isset($form_data['first_name']) ? $form_data['first_name'] : '',
-            'last_name' => isset($form_data['last_name']) ? $form_data['last_name'] : '',
-        );
-        
-        // Additional validation
-        if ($user_data['password'] !== $user_data['password_confirm']) {
-            return new WP_Error('password_mismatch', __('Passwords do not match.', 'wp-alp'));
-        }
-        
-        // Register user
-        $user_id = $user_manager->register_user($user_data, 'normal');
-        
-        if (is_wp_error($user_id)) {
-            return $user_id;
-        }
-        
-        // Set profile status as incomplete to trigger profile completion form
-        update_user_meta($user_id, 'wp_alp_profile_status', 'incomplete');
-        
-        // Check if auto-login is enabled
-        $options = get_option('wp_alp_general_options');
-        $auto_login = isset($options['auto_login']) ? (bool) $options['auto_login'] : true;
-        
-        if ($auto_login) {
-            // Log the user in
-            wp_set_auth_cookie($user_id, false);
-            $user = get_user_by('ID', $user_id);
-            do_action('wp_login', $user->user_login, $user);
-        }
-        
-        // Determine redirect URL
-        $redirect_url = home_url();
-        if (!empty($form_data['redirect_to'])) {
-            $redirect_url = esc_url_raw($form_data['redirect_to']);
-        } else {
-            // Show profile completion form if available
-            if (!empty($options['profile_completion_page'])) {
-                $redirect_url = get_permalink($options['profile_completion_page']);
-            } elseif (!empty($options['user_redirect'])) {
-                $redirect_url = $options['user_redirect'];
-            }
-        }
-        
-        return array(
-            'success' => true,
-            'redirect' => $redirect_url,
-            'user_id' => $user_id,
-        );
+    public static function process_profile_form($data) {
+        $user_manager = new WP_ALP_User_Manager();
+        return $user_manager->complete_user_profile($data['user_id'], $data);
     }
     
     /**
-     * Process vendor registration form submission.
+     * Procesa el código de verificación.
      *
-     * @since    1.0.0
-     * @param    array                $form_data    The submitted form data.
-     * @param    WP_ALP_User_Manager  $user_manager The user manager instance.
-     * @return   array|WP_Error                     Response data on success, WP_Error on failure.
+     * @param int $user_id ID del usuario.
+     * @param string $code Código de verificación.
+     * @return array Resultado del procesamiento.
      */
-    public function process_vendor_registration($form_data, $user_manager) {
-        // Verify security tokens
-        if (!$this->security->verify_nonce($form_data['_wpnonce'])) {
-            return new WP_Error('invalid_nonce', __('Security token expired. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        if (!$this->security->verify_csrf_token($form_data['_csrf_token'])) {
-            return new WP_Error('invalid_csrf', __('Security check failed. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        // Check for bot
-        if ($this->security->detect_bot($form_data)) {
-            return new WP_Error('bot_detected', __('Bot activity detected.', 'wp-alp'));
-        }
-        
-        // Verify recaptcha if enabled
-        $security_options = get_option('wp_alp_security_options');
-        if (!empty($security_options['recaptcha_site_key']) && !empty($security_options['recaptcha_secret_key'])) {
-            if (empty($form_data['g-recaptcha-response'])) {
-                return new WP_Error('recaptcha_required', __('Please complete the reCAPTCHA verification.', 'wp-alp'));
-            }
-            
-            $recaptcha_valid = $this->security->verify_recaptcha($form_data['g-recaptcha-response']);
-            if (!$recaptcha_valid) {
-                return new WP_Error('recaptcha_failed', __('reCAPTCHA verification failed. Please try again.', 'wp-alp'));
-            }
-        }
-        
-        // Prepare user data
-        $user_data = array(
-            'email' => $form_data['email'],
-            'password' => $form_data['password'],
-            'password_confirm' => $form_data['password_confirm'],
-            'first_name' => $form_data['first_name'],
-            'last_name' => $form_data['last_name'],
-            'phone' => $form_data['phone'],
-            'company' => isset($form_data['company']) ? $form_data['company'] : '',
-            'address' => isset($form_data['address']) ? $form_data['address'] : '',
-        );
-        
-        // Additional validation
-        if ($user_data['password'] !== $user_data['password_confirm']) {
-            return new WP_Error('password_mismatch', __('Passwords do not match.', 'wp-alp'));
-        }
-        
-        // Register user as vendor
-        $user_id = $user_manager->register_user($user_data, 'vendor');
-        
-        if (is_wp_error($user_id)) {
-            return $user_id;
-        }
-        
-        // Create vendor profile
-        $vendor_data = array(
-            'company' => $user_data['company'],
-            'address' => $user_data['address'],
-            'phone' => $user_data['phone'],
-        );
-        
-        $vendor_id = $user_manager->create_vendor($user_id, $vendor_data);
-        
-        if (is_wp_error($vendor_id)) {
-            // If there's an error creating the vendor, log it but don't prevent user registration
-            error_log('Error creating vendor: ' . $vendor_id->get_error_message());
-        }
-        
-        // Check if auto-login is enabled
-        $options = get_option('wp_alp_general_options');
-        $auto_login = isset($options['auto_login']) ? (bool) $options['auto_login'] : true;
-        
-        if ($auto_login) {
-            // Log the user in
-            wp_set_auth_cookie($user_id, false);
-            $user = get_user_by('ID', $user_id);
-            do_action('wp_login', $user->user_login, $user);
-        }
-        
-        // Determine redirect URL
-        $redirect_url = home_url();
-        if (!empty($form_data['redirect_to'])) {
-            $redirect_url = esc_url_raw($form_data['redirect_to']);
-        } else if (!empty($options['vendor_redirect'])) {
-            $redirect_url = $options['vendor_redirect'];
-        }
-        
-        return array(
-            'success' => true,
-            'redirect' => $redirect_url,
-            'user_id' => $user_id,
-            'vendor_id' => $vendor_id,
-        );
+    public static function process_verification_code($user_id, $code) {
+        $user_manager = new WP_ALP_User_Manager();
+        return $user_manager->verify_email_code($user_id, $code);
     }
     
     /**
-     * Process profile completion form submission.
+     * Solicita el reenvío del código de verificación.
      *
-     * @since    1.0.0
-     * @param    array                $form_data     The submitted form data.
-     * @param    WP_ALP_User_Manager  $user_manager  The user manager instance.
-     * @param    WP_ALP_JetEngine     $jetengine     The JetEngine manager instance.
-     * @return   array|WP_Error                      Response data on success, WP_Error on failure.
+     * @param int $user_id ID del usuario.
+     * @return array Resultado del procesamiento.
      */
-    public function process_profile_completion($form_data, $user_manager, $jetengine) {
-        // Verify security tokens
-        if (!$this->security->verify_nonce($form_data['_wpnonce'])) {
-            return new WP_Error('invalid_nonce', __('Security token expired. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        if (!$this->security->verify_csrf_token($form_data['_csrf_token'])) {
-            return new WP_Error('invalid_csrf', __('Security check failed. Please refresh the page and try again.', 'wp-alp'));
-        }
-        
-        // Check if user is logged in
-        if (!is_user_logged_in()) {
-            return new WP_Error('not_logged_in', __('You must be logged in to complete your profile.', 'wp-alp'));
-        }
-        
-        $user_id = get_current_user_id();
-        
-        // Prepare lead data from form submission
-        $lead_data = array(
-            'phone' => isset($form_data['phone']) ? $form_data['phone'] : '',
-            'event_type' => isset($form_data['event_type']) ? $form_data['event_type'] : '',
-            'event_date' => isset($form_data['event_date']) ? $form_data['event_date'] : '',
-            'event_address' => isset($form_data['event_address']) ? $form_data['event_address'] : '',
-            'event_attendees' => isset($form_data['event_attendees']) ? $form_data['event_attendees'] : '',
-            'event_details' => isset($form_data['event_details']) ? $form_data['event_details'] : '',
-            'event_category' => isset($form_data['event_category']) ? $form_data['event_category'] : '',
-            'service_interest' => isset($form_data['service_interest']) ? $form_data['service_interest'] : '',
-        );
-        
-        // Create lead
-        $lead_id = $user_manager->create_lead($user_id, $lead_data);
-        
-        if (is_wp_error($lead_id)) {
-            return $lead_id;
-        }
-        
-        // Mark profile as complete
-        update_user_meta($user_id, 'wp_alp_profile_status', 'complete');
-        
-        // Determine redirect URL
-        $redirect_url = home_url();
-        if (!empty($form_data['redirect_to'])) {
-            $redirect_url = esc_url_raw($form_data['redirect_to']);
-        } else {
-            // Get default redirect based on user type
-            $options = get_option('wp_alp_general_options');
-            
-            if (!empty($options['lead_redirect'])) {
-                $redirect_url = $options['lead_redirect'];
-            } elseif (!empty($options['user_redirect'])) {
-                $redirect_url = $options['user_redirect'];
-            }
-        }
-        
-        return array(
-            'success' => true,
-            'redirect' => $redirect_url,
-            'lead_id' => $lead_id,
-        );
+    public static function process_resend_code($user_id) {
+        $user_manager = new WP_ALP_User_Manager();
+        return $user_manager->resend_verification_code($user_id);
     }
     
     /**
-     * Process social login.
+     * Verifica si un usuario existe.
      *
-     * @since    1.0.0
-     * @param    string               $provider      The social provider.
-     * @param    string               $code          The authorization code.
-     * @param    string               $state         The state parameter.
-     * @param    WP_ALP_Social        $social        The social login manager instance.
-     * @param    WP_ALP_User_Manager  $user_manager  The user manager instance.
-     * @return   array|WP_Error                      Response data on success, WP_Error on failure.
+     * @param string $identifier Email o teléfono.
+     * @return array Resultado de la verificación.
      */
-    public function process_social_login($provider, $code, $state, $social, $user_manager) {
-        // Authenticate with social provider
-        $social_data = $social->authenticate($provider, $code, $state);
-        
-        if (is_wp_error($social_data)) {
-            return $social_data;
-        }
-        
-        // Check if the user exists by email
-        $user = get_user_by('email', $social_data['email']);
-        
-        if ($user) {
-            // User exists, log them in
-            wp_set_auth_cookie($user->ID, true);
-            do_action('wp_login', $user->user_login, $user);
-        } else {
-            // User doesn't exist, register them
-            $user_id = $user_manager->register_social_user($social_data);
-            
-            if (is_wp_error($user_id)) {
-                return $user_id;
-            }
-            
-            // Log the user in
-            wp_set_auth_cookie($user_id, true);
-            $user = get_user_by('ID', $user_id);
-            do_action('wp_login', $user->user_login, $user);
-        }
-        
-        // Determine redirect URL
-        $options = get_option('wp_alp_general_options');
-        $redirect_url = home_url();
-        
-        // Check if profile completion is needed for new users
-        $user_id = $user->ID;
-        $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
-        
-        if ($profile_status === 'incomplete') {
-            if (!empty($options['profile_completion_page'])) {
-                $redirect_url = get_permalink($options['profile_completion_page']);
-            }
-        } else {
-            // Get default redirect based on user type
-            $user_type = get_user_meta($user_id, 'wp_alp_user_type', true);
-            
-            switch ($user_type) {
-                case 'lead':
-                    if (!empty($options['lead_redirect'])) {
-                        $redirect_url = $options['lead_redirect'];
-                    }
-                    break;
-                case 'vendor':
-                    if (!empty($options['vendor_redirect'])) {
-                        $redirect_url = $options['vendor_redirect'];
-                    }
-                    break;
-                default:
-                    if (!empty($options['user_redirect'])) {
-                        $redirect_url = $options['user_redirect'];
-                    }
-            }
-        }
-        
-        return array(
-            'success' => true,
-            'redirect' => $redirect_url,
-            'user_id' => $user->ID,
-        );
+    public static function process_check_user($identifier) {
+        $user_manager = new WP_ALP_User_Manager();
+        return $user_manager->check_user_exists($identifier);
     }
 }

@@ -1,282 +1,150 @@
 <?php
 /**
- * The core plugin class.
+ * La clase principal del plugin.
  *
- * This is used to define internationalization, admin-specific hooks, and
- * public-facing site hooks.
- *
- * @since      1.0.0
- * @package    WP_Advanced_Login_Pro
- * @subpackage WP_Advanced_Login_Pro/includes
+ * Esta es la clase núcleo que gestiona todas las partes del plugin
+ * y registra todos los hooks.
  */
-
 class WP_ALP_Core {
 
     /**
-     * The loader that's responsible for maintaining and registering all hooks that power
-     * the plugin.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      WP_ALP_Loader    $loader    Maintains and registers all hooks for the plugin.
+     * El cargador que es responsable de mantener y registrar todos los hooks del plugin.
      */
     protected $loader;
 
     /**
-     * The unique identifier of this plugin.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      string    $plugin_name    The string used to uniquely identify this plugin.
-     */
-    protected $plugin_name;
-
-    /**
-     * The current version of the plugin.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      string    $version    The current version of the plugin.
+     * La versión actual del plugin.
      */
     protected $version;
 
     /**
-     * The security manager instance.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      WP_ALP_Security    $security    Handles security features.
+     * Define el nombre del plugin para identificarlo internamente.
      */
-    protected $security;
+    protected $plugin_name;
 
     /**
-     * The social login manager instance.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      WP_ALP_Social    $social    Handles social login integration.
-     */
-    protected $social;
+ * La instancia de la clase social.
+ */
+protected $social;
 
     /**
-     * The user manager instance.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      WP_ALP_User_Manager    $user_manager    Handles user management.
-     */
-    protected $user_manager;
-
-    /**
-     * The JetEngine integration instance.
-     *
-     * @since    1.0.0
-     * @access   protected
-     * @var      WP_ALP_JetEngine    $jetengine    Handles JetEngine integration.
-     */
-    protected $jetengine;
-
-    /**
-     * Define the core functionality of the plugin.
-     *
-     * Set the plugin name and the plugin version that can be used throughout the plugin.
-     * Load the dependencies, define the locale, and set the hooks for the admin area and
-     * the public-facing side of the site.
-     *
-     * @since    1.0.0
+     * Constructor de la clase.
      */
     public function __construct() {
-        if (defined('WP_ALP_VERSION')) {
-            $this->version = WP_ALP_VERSION;
-        } else {
-            $this->version = '1.0.0';
-        }
         $this->plugin_name = 'wp-advanced-login-pro';
-
+        $this->version = WP_ALP_VERSION;
+    
         $this->load_dependencies();
         $this->set_locale();
         $this->define_admin_hooks();
         $this->define_public_hooks();
+        
+        // Crear instancia de la clase social
+        $this->social = new WP_ALP_Social();
+        
+        // Registrar hooks REST
+        $this->define_rest_hooks();
     }
 
     /**
-     * Load the required dependencies for this plugin.
-     *
-     * Include the following files that make up the plugin:
-     *
-     * - WP_ALP_Loader. Orchestrates the hooks of the plugin.
-     * - WP_ALP_i18n. Defines internationalization functionality.
-     * - WP_ALP_Admin. Defines all hooks for the admin area.
-     * - WP_ALP_Public. Defines all hooks for the public side of the site.
-     * - WP_ALP_Security. Handles security features.
-     * - WP_ALP_Social. Handles social login integration.
-     * - WP_ALP_User_Manager. Handles user management.
-     * - WP_ALP_JetEngine. Handles JetEngine integration.
-     * - WP_ALP_Forms. Handles form rendering and processing.
-     *
-     * @since    1.0.0
-     * @access   private
+     * Carga las dependencias requeridas para el plugin.
      */
     private function load_dependencies() {
-        /**
-         * The class responsible for orchestrating the actions and filters of the
-         * core plugin.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-loader.php';
-
-        /**
-         * The class responsible for defining internationalization functionality
-         * of the plugin.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-i18n.php';
-
-        /**
-         * The class responsible for handling security features.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-security.php';
-
-        /**
-         * The class responsible for handling social login integration.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-social.php';
-
-        /**
-         * The class responsible for handling user management.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-user-manager.php';
-
-        /**
-         * The class responsible for handling JetEngine integration.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-jetengine.php';
-
-        /**
-         * The class responsible for handling form rendering and processing.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'includes/class-wp-alp-forms.php';
-
-        /**
-         * The class responsible for defining all actions that occur in the admin area.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'admin/class-wp-alp-admin.php';
-
-        /**
-         * The class responsible for defining all actions that occur in the public-facing
-         * side of the site.
-         */
-        require_once WP_ALP_PLUGIN_DIR . 'public/class-wp-alp-public.php';
-
         $this->loader = new WP_ALP_Loader();
-        $this->security = new WP_ALP_Security();
-        $this->social = new WP_ALP_Social();
-        $this->user_manager = new WP_ALP_User_Manager();
-        $this->jetengine = new WP_ALP_JetEngine();
     }
 
     /**
-     * Define the locale for this plugin for internationalization.
-     *
-     * Uses the WP_ALP_i18n class in order to set the domain and to register the hook
-     * with WordPress.
-     *
-     * @since    1.0.0
-     * @access   private
+     * Define la configuración de localización para el plugin.
      */
     private function set_locale() {
         $plugin_i18n = new WP_ALP_i18n();
-
         $this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
     }
 
     /**
-     * Register all of the hooks related to the admin area functionality
-     * of the plugin.
-     *
-     * @since    1.0.0
-     * @access   private
+ * Registra los hooks relacionados con la API REST.
+ */
+private function define_rest_hooks() {
+    // Asegurarse de que los endpoints REST se registren
+    $this->loader->add_action('rest_api_init', $this->social, 'register_rest_routes');
+}
+
+    /**
+     * Registra todos los hooks relacionados con la funcionalidad admin.
      */
     private function define_admin_hooks() {
         $plugin_admin = new WP_ALP_Admin($this->get_plugin_name(), $this->get_version());
-
+        
+        // Enqueue scripts y estilos
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
         
-        // Add settings page
-        $this->loader->add_action('admin_menu', $plugin_admin, 'add_settings_page');
+        // Añadir menú de administración
+        $this->loader->add_action('admin_menu', $plugin_admin, 'add_admin_menu');
+        
+        // Registrar configuraciones
         $this->loader->add_action('admin_init', $plugin_admin, 'register_settings');
     }
 
     /**
-     * Register all of the hooks related to the public-facing functionality
-     * of the plugin.
-     *
-     * @since    1.0.0
-     * @access   private
+     * Registra todos los hooks relacionados con la funcionalidad pública.
      */
     private function define_public_hooks() {
-        $plugin_public = new WP_ALP_Public($this->get_plugin_name(), $this->get_version(), $this->security, $this->social, $this->user_manager, $this->jetengine);
-
+        $plugin_public = new WP_ALP_Public($this->get_plugin_name(), $this->get_version());
+        
+        // Enqueue scripts y estilos
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_styles');
         $this->loader->add_action('wp_enqueue_scripts', $plugin_public, 'enqueue_scripts');
         
-        // Register shortcodes
+        // Shortcode para el modal de login
         $this->loader->add_action('init', $plugin_public, 'register_shortcodes');
         
-        // Override default WordPress login
-        $this->loader->add_action('init', $plugin_public, 'override_wp_login');
+        // AJAX handlers
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_validate_user', $plugin_public, 'validate_user_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_user', $plugin_public, 'register_user_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_login_user', $plugin_public, 'login_user_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_verify_code', $plugin_public, 'verify_code_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_resend_code', $plugin_public, 'resend_code_ajax');
+        $this->loader->add_action('wp_ajax_wp_alp_complete_profile', $plugin_public, 'complete_profile_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_complete_profile', $plugin_public, 'complete_profile_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_social_login', $plugin_public, 'social_login_ajax');
+        $this->loader->add_action('wp_ajax_wp_alp_social_login', $plugin_public, 'social_login_ajax');
+        // Añadir este hook al final de la lista de AJAX handlers
+$this->loader->add_action('wp_ajax_wp_alp_refresh_nonce', $plugin_public, 'refresh_nonce_ajax');
+$this->loader->add_action('wp_ajax_nopriv_wp_alp_refresh_nonce', $plugin_public, 'refresh_nonce_ajax');
+
+        $this->loader->add_action('wp_ajax_wp_alp_get_form', $plugin_public, 'get_form_ajax');
+        $this->loader->add_action('wp_ajax_nopriv_wp_alp_get_form', $plugin_public, 'get_form_ajax');
         
-        // Handle form submissions
-        $this->loader->add_action('init', $plugin_public, 'handle_form_submissions');
-        
-        // Add AJAX handlers
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_login', $plugin_public, 'ajax_login');
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_user', $plugin_public, 'ajax_register_user');
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_register_vendor', $plugin_public, 'ajax_register_vendor');
-        $this->loader->add_action('wp_ajax_wp_alp_complete_profile', $plugin_public, 'ajax_complete_profile');
-        
-        // Add social login handlers
-        $this->loader->add_action('wp_ajax_nopriv_wp_alp_social_login', $plugin_public, 'handle_social_login');
-        
-        // Add security measures
-        $this->loader->add_action('wp_login_failed', $this->security, 'handle_failed_login');
-        $this->loader->add_filter('authenticate', $this->security, 'check_login_limiter', 30, 3);
+        // Añadir modal al footer (para estar disponible en todas las páginas)
+        $this->loader->add_action('wp_footer', $plugin_public, 'output_login_modal');
+
+        $this->loader->add_action('wp_footer', $plugin_public, 'initialize_social_scripts', 20);
     }
 
     /**
-     * Run the loader to execute all of the hooks with WordPress.
-     *
-     * @since    1.0.0
+     * Ejecuta el cargador para ejecutar todos los hooks.
      */
     public function run() {
         $this->loader->run();
     }
 
     /**
-     * The name of the plugin used to uniquely identify it within the context of
-     * WordPress and to define internationalization functionality.
-     *
-     * @since     1.0.0
-     * @return    string    The name of the plugin.
+     * El nombre del plugin.
      */
     public function get_plugin_name() {
         return $this->plugin_name;
     }
 
     /**
-     * The reference to the class that orchestrates the hooks with the plugin.
-     *
-     * @since     1.0.0
-     * @return    WP_ALP_Loader    Orchestrates the hooks of the plugin.
+     * El cargador que orquesta los hooks.
      */
     public function get_loader() {
         return $this->loader;
     }
 
     /**
-     * Retrieve the version number of the plugin.
-     *
-     * @since     1.0.0
-     * @return    string    The version number of the plugin.
+     * La versión del plugin.
      */
     public function get_version() {
         return $this->version;

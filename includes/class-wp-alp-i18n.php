@@ -1,18 +1,14 @@
 <?php
 /**
- * Define the internationalization functionality.
+ * Define la funcionalidad de internacionalización.
  *
- * @since      1.0.0
- * @package    WP_Advanced_Login_Pro
- * @subpackage WP_Advanced_Login_Pro/includes
+ * Carga y define los archivos de internacionalización para este plugin
+ * para que esté listo para traducción.
  */
-
 class WP_ALP_i18n {
-    
+
     /**
-     * Load the plugin text domain for translation.
-     *
-     * @since    1.0.0
+     * Carga el dominio de texto del plugin para la traducción.
      */
     public function load_plugin_textdomain() {
         load_plugin_textdomain(

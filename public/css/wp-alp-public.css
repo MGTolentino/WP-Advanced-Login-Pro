@@ -1,448 +1,436 @@
-/**
- * Public CSS for WP Advanced Login Pro
- *
- * @since      1.0.0
- * @package    WP_Advanced_Login_Pro
- * @subpackage WP_Advanced_Login_Pro/public/css
- */
+/* Estilos generales */
+.wp-alp-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
 
-/* Form Container */
-.wp-alp-form-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 2rem;
+.wp-alp-modal-container {
     background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 568px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    position: relative;
 }
 
-.wp-alp-form-title {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    color: #333;
-    font-size: 24px;
+.wp-alp-close-modal {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.wp-alp-close-modal:hover {
+    background-color: #f7f7f7;
+}
+
+.wp-alp-close-icon {
+    width: 16px;
+    height: 16px;
+    position: relative;
+}
+
+.wp-alp-close-icon:before, .wp-alp-close-icon:after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 2px;
+    background-color: #222;
+    left: 0;
+    top: 50%;
+}
+
+.wp-alp-close-icon:before {
+    transform: rotate(45deg);
+}
+
+.wp-alp-close-icon:after {
+    transform: rotate(-45deg);
+}
+
+.wp-alp-modal-content {
+    padding: 24px;
+}
+
+.wp-alp-modal-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.wp-alp-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #ff385c;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Estilos para los formularios */
+.wp-alp-form-container {
+    width: 100%;
+}
+
+.wp-alp-form-container h2 {
+    font-size: 22px;
     font-weight: 600;
+    color: #222;
+    margin: 0 0 24px;
     text-align: center;
+    padding-top: 24px;
 }
 
-.wp-alp-form-description {
-    margin-bottom: 2rem;
-    color: #666;
-    text-align: center;
+.wp-alp-back-button {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
-/* Form Sections */
-.wp-alp-form-section {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #eee;
+.wp-alp-back-button:hover {
+    background-color: #f7f7f7;
 }
 
-.wp-alp-section-title {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    color: #333;
-    font-size: 18px;
-    font-weight: 600;
+.wp-alp-back-icon {
+    width: 16px;
+    height: 16px;
+    border-top: 2px solid #222;
+    border-left: 2px solid #222;
+    transform: rotate(-45deg);
 }
 
-/* Form Fields */
-.wp-alp-form-field {
-    margin-bottom: 1.5rem;
+.wp-alp-input-group {
+    margin-bottom: 16px;
+    position: relative;
 }
 
-.wp-alp-form-field label {
+.wp-alp-input-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
     font-size: 14px;
     font-weight: 500;
+    color: #222;
+    margin-bottom: 8px;
 }
 
-.wp-alp-form-field input[type="text"],
-.wp-alp-form-field input[type="email"],
-.wp-alp-form-field input[type="password"],
-.wp-alp-form-field input[type="tel"],
-.wp-alp-form-field input[type="number"],
-.wp-alp-form-field input[type="date"],
-.wp-alp-form-field select,
-.wp-alp-form-field textarea {
+.wp-alp-input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    padding: 12px 16px;
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
     font-size: 16px;
-    color: #333;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    color: #222;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
-.wp-alp-form-field input[type="text"]:focus,
-.wp-alp-form-field input[type="email"]:focus,
-.wp-alp-form-field input[type="password"]:focus,
-.wp-alp-form-field input[type="tel"]:focus,
-.wp-alp-form-field input[type="number"]:focus,
-.wp-alp-form-field input[type="date"]:focus,
-.wp-alp-form-field select:focus,
-.wp-alp-form-field textarea:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+.wp-alp-input:focus {
+    border-color: #222;
     outline: none;
 }
 
-.wp-alp-form-field .required {
-    color: #e74c3c;
+.wp-alp-input.error {
+    border-color: #FF385C;
 }
 
-/* Form Row (Two columns) */
-.wp-alp-form-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -0.75rem;
-    margin-right: -0.75rem;
-}
-
-.wp-alp-form-field-half {
-    flex: 0 0 calc(50% - 1.5rem);
-    margin-left: 0.75rem;
-    margin-right: 0.75rem;
-}
-
-@media (max-width: 576px) {
-    .wp-alp-form-field-half {
-        flex: 0 0 100%;
-    }
-}
-
-/* Checkbox Fields */
-.wp-alp-checkbox-field {
-    display: flex;
-    align-items: flex-start;
-}
-
-.wp-alp-checkbox-field input[type="checkbox"] {
-    margin-top: 0.25rem;
-    margin-right: 0.75rem;
-}
-
-.wp-alp-checkbox-field label {
-    margin-bottom: 0;
+.wp-alp-toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 38px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
     font-size: 14px;
-    font-weight: normal;
-}
-
-/* Password Strength Meter */
-.wp-alp-password-strength {
-    margin-top: 0.5rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 12px;
+    color: #717171;
     font-weight: 500;
 }
 
-.wp-alp-password-strength.weak {
-    background-color: #ffebee;
-    color: #e53935;
+.wp-alp-disabled .wp-alp-input {
+    background-color: #f7f7f7;
+    color: #717171;
 }
 
-.wp-alp-password-strength.medium {
-    background-color: #fff8e1;
-    color: #ff8f00;
+.wp-alp-button-group {
+    margin-top: 24px;
 }
 
-.wp-alp-password-strength.strong {
-    background-color: #e8f5e9;
-    color: #43a047;
-}
-
-/* Buttons */
 .wp-alp-button {
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #4a90e2;
-    color: #fff;
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
     font-size: 16px;
     font-weight: 500;
-    text-align: center;
-    text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-}
-
-.wp-alp-button:hover {
-    background-color: #3a7bc8;
-    color: #fff;
-    text-decoration: none;
+    border: none;
+    transition: transform 0.1s;
 }
 
 .wp-alp-button:active {
-    transform: translateY(1px);
+    transform: scale(0.98);
 }
 
-.wp-alp-button-secondary {
-    background-color: #f3f3f3;
-    color: #666;
+.wp-alp-primary-button {
+    background-color: #FF385C;
+    color: white;
 }
 
-.wp-alp-button-secondary:hover {
-    background-color: #e1e1e1;
-    color: #333;
+.wp-alp-primary-button:hover {
+    background-color: #E31C5F;
 }
 
-.wp-alp-button-loading {
+.wp-alp-secondary-button {
+    background-color: #fff;
+    color: #222;
+    border: 1px solid #b0b0b0;
+}
+
+.wp-alp-secondary-button:hover {
+    border-color: #222;
+}
+
+.wp-alp-divider {
+    text-align: center;
+    margin: 16px 0;
     position: relative;
-    color: transparent;
-    pointer-events: none;
 }
 
-.wp-alp-button-loading::after {
+.wp-alp-divider::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin-top: -10px;
-    margin-left: -10px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: wp-alp-spin 0.8s infinite linear;
-}
-
-@keyframes wp-alp-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.wp-alp-form-submit {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 2rem;
-}
-
-.wp-alp-form-submit button {
-    min-width: 150px;
-}
-
-/* Form Links */
-.wp-alp-form-links {
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    color: #666;
-    font-size: 14px;
-}
-
-.wp-alp-link {
-    color: #4a90e2;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.wp-alp-link:hover {
-    color: #3a7bc8;
-    text-decoration: underline;
-}
-
-.wp-alp-separator {
-    margin: 0 0.5rem;
-    color: #ddd;
-}
-
-/* Social Login */
-.wp-alp-social-login {
-    margin-top: 2rem;
-}
-
-.wp-alp-separator-text {
-    position: relative;
-    text-align: center;
-    margin-bottom: 1.5rem;
-}
-
-.wp-alp-separator-text::before {
-    content: "";
-    position: absolute;
-    top: 50%;
     left: 0;
     right: 0;
+    top: 50%;
     height: 1px;
-    background-color: #eee;
+    background-color: #e4e4e4;
     z-index: 1;
 }
 
-.wp-alp-separator-text span {
+.wp-alp-divider span {
     position: relative;
-    display: inline-block;
-    padding: 0 1rem;
     background-color: #fff;
-    color: #999;
+    padding: 0 16px;
     font-size: 14px;
+    color: #717171;
     z-index: 2;
 }
 
-.wp-alp-social-buttons {
+/* Estilos para login social */
+.wp-alp-social-login {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .wp-alp-social-button {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #fff;
-    color: #333;
-    font-size: 14px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 16px;
     font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    background-color: #fff;
+    color: #222;
+    border: 1px solid #b0b0b0;
+    cursor: pointer;
+    transition: transform 0.1s, border-color 0.2s;
+}
+
+.wp-alp-social-button:hover {
+    border-color: #222;
+}
+
+.wp-alp-social-button:active {
+    transform: scale(0.98);
 }
 
 .wp-alp-social-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 0.75rem;
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.wp-alp-google .wp-alp-google-icon {
-    background-image: url('../images/google-icon.svg');
+.google-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCI+PHBhdGggZmlsbD0iI0ZGQzEwNyIgZD0iTTQzLjYxMSwyMC4wODNIMTEuNzZ2Ny45MzFoMTguODEzYy0wLjE4NywxLjY3MS0wLjY1NywzLjIzOC0xLjM4LDQuNjc1aDkuNTk0QzQxLjIxNiwzMC41NzYsNDMuMjcsMjYuNDc2LDQzLjYxMSwyMC4wODN6Ii8+PHBhdGggZmlsbD0iI0ZGNjY1QyIgZD0iTTEyLjcxNSwzNS42OTJjMS4yNTUsMi4wNiwzLjA5NCwzLjY4Niw1LjMwMyw0Ljc0N2w4LjM1LTcuNzM0Yy0xLjQyMS0xLjE2NC0yLjQ0OS0yLjczOS0yLjk2MS00LjcxOGgtOS41OTRDMTIuOTUsMzAuMDY1LDEyLjcxNSwzMi44NTksMTIuNzE1LDM1LjY5MnoiLz48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNMTcuOTk5LDQzLjU0MWMyLjA2MywwLjk1Nyw0LjQ2MiwxLjUzNyw3LjAwMSwxLjUzN2MzLjM0LDAsNi4yNjYtMC45NDQsOC41NzktMi41NTMgbC04LjM1LTcuNzM0Yy0yLjI2NywxLjE5LTUuMDk5LDEuNTM4LTcuODgsMC44NDRMMTcuOTk5LDQzLjU0MXoiLz48cGF0aCBmaWxsPSIjNDI4NUY0IiBkPSJNMjUsMTFjNC4zLDAsNy44NywxLjQ0MywxMC41NzcsMy43NzVsOC4wOC03LjQ4M0MzOS4wMjQsMy4wMSwzMi41MDEsMCwyNSwwIGMtOC4yNzUsMC0xNS40NDksNC40NjktMTkuMzgxLDExLjA4N2w4LjMzMyw3LjcwNkMxNi4yNjMsMTMuNDU5LDIwLjMzNSwxMSwyNSwxMXoiLz48L3N2Zz4=');
 }
 
-.wp-alp-facebook .wp-alp-facebook-icon {
-    background-image: url('../images/facebook-icon.svg');
+.facebook-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj48cGF0aCBmaWxsPSIjMzk1MTlCIiBkPSJNMjE4Ljc3NCwxMjVjMCw1MS44ODQtNDIuNTYsOTMuOTI3LTk1LjM1NSw5My45MjdjLTUyLjUyNiwwLTk1LjE5My00Mi4wNDMtOTUuMTkzLTkzLjkyNyBjMC01Mi4wMTUsNDIuNjY3LTk0LjAyOCw5NS4xOTMtOTQuMDI4UzIxOC43NzQsNzIuOTg1LDIxOC43NzQsMTI1eiIvPjxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0xNzEuOTUsOTIuMzk5aC0xMy4yNzZjLTEuNzQsMC0yLjY3OCwwLjI0LTIuNjc4LDIuNjA4djExLjc5MWgxNS45NTR2MTcuMDU3aC0xNS45NTR2NDIuODc0aC0xOS45NjkgVjEyMy45aC0xMC41ODJ2LTE3LjEwM2gxMC41ODJWOTN2LTAuNTc2YzAtOC4zOTMsMy4wOTEtMTYuMDc2LDExLjkyLTE2LjA3Nmg2LjQ2MmM3LjM5MiwwLDExLjU5OSwxLjU4NSwxNi44NjgsNC44MTVWOTZ2LTAuMjQgYzAsMCwwLDAsMCwwTDE3MS45NSw5Mi4zOTl6Ii8+PC9zdmc+');
 }
 
-.wp-alp-apple .wp-alp-apple-icon {
-    background-image: url('../images/apple-icon.svg');
+.apple-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCAzMCI+PHBhdGggZD0iTTE4LjM3NSwxMi44NzJjLTAuMDc4LTEuNDM4LDAuNy0yLjc3NCwxLjYtMy4zMzhjMC44OTctMC42MjgsMi4wMTktMC45NDQsMy4wMjYtMC45NDRjMC4wODcsMS40NzYtMC42NjUsMi43MzgtMS41NzEsMy40Yy0wLjg3NSwwLjYwMy0yLjAwNiwwLjk5OC0zLjA1NiwwLjg4MVoiLz48cGF0aCBkPSJNMjIuOTA4LDkuNDY2YzEuNTYtMC4xNjYsMi45MzMsMC41MzEsMy44MzQsMS4zNjhjLTEuNTU4LDAuOTE4LTIuNDkxLDIuMjMzLTIuMjc3LDQuNDI1LDEuNjA0LDAuMTQ5LDIuNTMxLDEuMDQxLDMuMDk1LDIuMzQ5YzAuNTQ2LDEuMjQ5LDAuMzIzLDIuOTg0LTAuMDE5LDQuMDg4Yy0wLjM2LDEuMDcyLTAuNzgyLDEuOTg1LTEuMzksMi44MDVoLTAuMDVsLTAuMDc0LDBhMC4xMzcsMC4xMzcsMCwwLDEtLjA0OS0uMDE5Yy0wLjAwNi0uMDI2LTAuMDQ1LTAuMDE2LTAuMDI1LTAuMWExOC40MSwxOC40MSwwLDAsMCwuOTE5LTMuNzQ0Yy0wLjExNi0xLjA4OC0uNDY1LTIuMDY2LTEuMjY0LTIuOTIzLTAuNzY2LS44MjktMS42ODMtMS40MjMtMy42MDUtMS4yNjNhMi4zMDcsMi4zMDcsMCwwLDAtLjMxOS0wLjE1NEMxOS42MjcsMTQuNTMxLDE5LjMsMTIuNjk0LDIyLjkwOCw5LjQ2NloiLz48cGF0aCBkPSJNMjIuMzYzLDIyLjE1M2MtMC4wMTksMS40OTcuNTgyLDIuNDQ3LDEuNTE1LDMuMDE0YTE1Ljc0OCwxNS43NDgsMCwwLDEtMS41MTQsMS44MDMsMS43NDEsMS43NDEsMCwwLDEtMi40NDktLjEyNEExMC42OTEsMTAuNjkxLDAsMCwxLDE3Ljk3MSwyNS4wN2EzLjAyMSwzLjAyMSwwLDAsMS0yLjc3NiwxLjU3OCwyLjgzMiwyLjgzMiwwLDAsMS0yLjQzNi0xLjQyOCwzLjM0MiwzLjM0MiwwLDAsMS0uNTgyLTEuNzUzQzEyLjEyMiwyMS45MTMsMTMuNDUzLDIwLjUyMiwxNSwyMGEzLjc4NCwzLjc4NCwwLDAsMSwxLjgyNy4zODZjMC41OTEsMC4zMSwxLjA1NiwwLjc1NiwxLjY4NywwLjc1NmExLjg5NCwxLjg5NCwwLDAsMCwxLjQ1My0uODA2QzE5LjMyNCwyMC4wMDYsMTguMzY3LDE5LjQ4NiwxNy45NjUsMTlBNC4yNzcsNC4yNzcsMCwwLDEsMTYuNDk0LDE0LjksMi43NzgsMi43NzgsMCwwLDEsMTkuMDU1LDEyLjJjMS4xODYsMC4xNDQsMi4wMjUsMC45MzMsMi41MDgsMi4xMzQsMC40NjYsMS4xNjMuMzI5LDMuMzYyLDAuODEsNC4xNjNBMy41NjksMy41NjksMCwwLDEsMjIuMzYzLDIyLjE1M1oiLz48L3N2Zz4=');
 }
 
-.wp-alp-linkedin .wp-alp-linkedin-icon {
-    background-image: url('../images/linkedin-icon.svg');
+.phone-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzIyMiIgZD0iTTYuNjIgMTAuNzljLjE0Ny42MS42MTggMS4zNyAxLjE4MiAxLjkzMi41NjUuNTYzIDEuMzI2IDEuMDM1IDEuOTM0IDEuMTguNTA0LjEyMSAxLjE0LjA5IDEuNzkzLS4wOTYuMzg0LS4xMDcuNzktLjAyMyAxLjA3LjI1N2wuMTI3LjEyOGMuMzA4LjMwOCAxLjMzOSAxLjM0IDIuMTg1IDIuMTg1LjE0Ni4xNDYuMjcuMzEzLjM2MS40ODguOTI1IDEuNzctLjQ4IDMuNTQtMi43NTUgMy41NC0xLjcwOCAwLTMuNzA3LS42MTUtNS41OTQtMi4yLTEuNzc2LTEuNDg3LTMuMzYtMy4zMDctNC41MzMtNS44MjctLjzODQtLjc0OC0uNzgtMS43MzYtLjc4LTIuNzRDMiA4LjI4NCAzLjY4NiA2LjA1NyA1LjY0NCA3LjA4M2MuMTcuMDg5LjMzNi4yMTMuNDgyLjM1OS44NTUuODU1IDEuODc1IDEuODc1IDIuMTg1IDIuMTg1bC4xMi4xMjVjLjI4Mi4yOC4zNjYuNjg2LjI2IDEuMDcxLS4xODcuNjUzLS4yMiAxLjI5LS4wOTggMS43OTR6Ii8+PC9zdmc+');
 }
 
-.wp-alp-google {
-    border-color: #4285f4;
-    color: #4285f4;
+.email-icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iIzIyMiIgZD0iTTQgM2gxNmEyIDIgMCAwIDEgMiAydjE0YTIgMiAwIDAgMS0yIDJINGEyIDIgMCAwIDEtMi0yVjVhMiAyIDAgMCAxIDItMnptMCAzLjNWMThoMTZWNi4zbC04IDZLNCG2LjN6bTAgMi40TDEyIDEybDgtNlY1SDR2Mi43eiIvPjwvc3ZnPg==');
 }
 
-.wp-alp-google:hover {
-    background-color: #f1f5fe;
+/* Verificación de código */
+.wp-alp-verification-code-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 24px 0;
 }
 
-.wp-alp-facebook {
-    border-color: #3b5998;
-    color: #3b5998;
+.wp-alp-verification-digit {
+    width: 40px;
+    height: 48px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #b0b0b0;
+    border-radius: 8px;
 }
 
-.wp-alp-facebook:hover {
-    background-color: #f0f2f7;
+.wp-alp-verification-digit:focus {
+    border-color: #222;
+    outline: none;
 }
 
-.wp-alp-apple {
-    border-color: #000;
-    color: #000;
-}
-
-.wp-alp-apple:hover {
-    background-color: #f5f5f5;
-}
-
-.wp-alp-linkedin {
-    border-color: #0077b5;
-    color: #0077b5;
-}
-
-.wp-alp-linkedin:hover {
-    background-color: #f0f7fb;
-}
-
-/* Messages */
-.wp-alp-form-messages {
-    margin-top: 1.5rem;
-}
-
-.wp-alp-message {
-    padding: 1rem;
-    border-radius: 4px;
+.wp-alp-verification-text {
     font-size: 14px;
-    margin-bottom: 1rem;
+    color: #717171;
+    margin-bottom: 16px;
 }
 
-.wp-alp-message-success {
-    background-color: #e8f5e9;
-    color: #43a047;
-    border: 1px solid #c8e6c9;
-}
-
-.wp-alp-message-error {
-    background-color: #ffebee;
-    color: #e53935;
-    border: 1px solid #ffcdd2;
-}
-
-.wp-alp-message-info {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    border: 1px solid #bbdefb;
-}
-
-/* reCAPTCHA Field */
-.wp-alp-recaptcha-field {
-    margin-bottom: 1.5rem;
-}
-
-/* Logged In View */
-.wp-alp-logged-in {
+.wp-alp-resend-code {
+    margin-top: 16px;
     text-align: center;
 }
 
-.wp-alp-logged-in p {
-    margin-bottom: 1rem;
-    font-size: 16px;
-    color: #333;
+.wp-alp-resend-code a {
+    color: #222;
+    text-decoration: underline;
+    font-size: 14px;
 }
 
-.wp-alp-logout-button {
-    min-width: 120px;
+/* Formulario de perfil */
+.wp-alp-user-info-section, 
+.wp-alp-event-info-section {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e4e4e4;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 767px) {
-    .wp-alp-form-container {
-        padding: 1.5rem;
+.wp-alp-user-info-section h3,
+.wp-alp-event-info-section h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 16px;
+}
+
+.wp-alp-help-text {
+    font-size: 12px;
+    color: #717171;
+    margin-top: 8px;
+}
+
+.wp-alp-terms-section {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.wp-alp-terms-text {
+    font-size: 12px;
+    color: #717171;
+    line-height: 1.6;
+}
+
+.wp-alp-terms-text a {
+    color: #222;
+    text-decoration: underline;
+}
+
+/* Mensajes de error y éxito */
+.wp-alp-error-message,
+.wp-alp-success-message {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.wp-alp-error-message {
+    background-color: #FFF0F0;
+    color: #C13515;
+    border: 1px solid #FFC7C7;
+}
+
+.wp-alp-success-message {
+    background-color: #F0FFF4;
+    color: #276749;
+    border: 1px solid #C6F6D5;
+}
+
+/* Estilo de título modal */
+.wp-alp-modal-title {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 20px 0;
+    border-bottom: 1px solid #e4e4e4;
+    margin: 0;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+    .wp-alp-modal-container {
+        width: 95%;
+        max-height: 85vh;
     }
-    
-    .wp-alp-form-title {
+}
+
+@media (max-width: 480px) {
+    .wp-alp-verification-digit {
+        width: 30px;
+        height: 40px;
         font-size: 20px;
-    }
-    
-    .wp-alp-button {
-        padding: 0.75rem 1rem;
-        font-size: 14px;
-    }
-    
-    .wp-alp-form-submit {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .wp-alp-form-submit button,
-    .wp-alp-form-submit a {
-        width: 100%;
     }
 }
