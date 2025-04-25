@@ -6,7 +6,7 @@
  * Adaptado al estilo de Airbnb
  */
 
-get_header(); ?>
+?>
 
 <div class="wp-alp-vendor-form-page">
     <!-- Contenedor principal para la página inicial y el primer paso -->
@@ -89,51 +89,51 @@ get_header(); ?>
                 </div>
             </div>
 
-            <!-- Paso 1: Configurado al estilo Airbnb -->
+            <!-- Paso 1: Al estilo exacto de Airbnb -->
             <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
-                <div class="wp-alp-step-wrapper">
-                    <!-- Etiqueta del paso -->
-                    <div class="wp-alp-step-label">
+                <!-- Contenedor del paso -->
+                <div class="wp-alp-airbnb-step">
+                    <!-- Etiqueta dorada superior -->
+                    <div class="wp-alp-airbnb-step-label">
                         <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
                     </div>
                     
-                    <!-- Título del paso -->
-                    <h1 class="wp-alp-step-heading">
+                    <!-- Título principal -->
+                    <h1 class="wp-alp-airbnb-step-title">
                         <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your product/service' : 'Describe tu producto/servicio'); ?>
                     </h1>
                     
-                    <!-- Descripción del paso -->
-                    <p class="wp-alp-step-description-large">
+                    <!-- Descripción -->
+                    <div class="wp-alp-airbnb-step-description">
                         <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
-                    </p>
-                    
-                    <!-- Imagen ilustrativa -->
-                    <div class="wp-alp-step-illustration">
-                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
                     </div>
                     
-                    <!-- Barra de progreso de 3 segmentos -->
-                    <div class="wp-alp-step-progress-container">
-                        <div class="wp-alp-step-progress-bar">
-                            <div class="wp-alp-progress-segment active"></div>
-                            <div class="wp-alp-progress-segment"></div>
-                            <div class="wp-alp-progress-segment"></div>
-                        </div>
+                    <!-- Imagen central -->
+                    <div class="wp-alp-airbnb-step-image">
+                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                    </div>
+                </div>
+                
+                <!-- Barra de progreso fija en la parte inferior -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con 3 segmentos -->
+                    <div class="wp-alp-airbnb-progress">
+                        <div class="wp-alp-airbnb-progress-segment active"></div>
+                        <div class="wp-alp-airbnb-progress-segment"></div>
+                        <div class="wp-alp-airbnb-progress-segment"></div>
                     </div>
                     
                     <!-- Botones de navegación -->
-                    <div class="wp-alp-step-navigation">
-                        <a href="#" class="wp-alp-back-button" id="back-button">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back" id="back-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>
                         </a>
-                        <a href="#" class="wp-alp-next-button" id="next-button">
+                        <a href="#" class="wp-alp-airbnb-next" id="next-btn">
                             <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
                         </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Los demás pasos se implementarían de manera similar -->
         </div>
     </div>
     
@@ -186,29 +186,6 @@ jQuery(document).ready(function($) {
         // Mostrar el paso seleccionado
         $('#step-' + step).show();
         
-        // Actualizar la barra de progreso si estamos en un paso del formulario
-        if (step > 0) {
-            // Actualizar segmentos activos en la barra de progreso
-            $('.wp-alp-progress-segment').removeClass('active');
-            for (var i = 0; i < step; i++) {
-                $('.wp-alp-progress-segment').eq(i).addClass('active');
-            }
-            
-            // Actualizar estado del botón Atrás
-            if (step === 1) {
-                $('#back-button').text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>');
-            } else {
-                $('#back-button').text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>');
-            }
-            
-            // Actualizar texto del botón Siguiente en el último paso
-            if (step === totalSteps) {
-                $('#next-button').text('<?php echo esc_js(get_locale() == 'en_US' ? 'Publish' : 'Publicar'); ?>');
-            } else {
-                $('#next-button').text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
-            }
-        }
-        
         // Actualizar la URL
         updateUrl(step);
         
@@ -217,12 +194,12 @@ jQuery(document).ready(function($) {
     }
     
     // Manejar clics en botones de navegación
-    $('.wp-alp-next-button').on('click', function(e) {
+    $('#next-btn').on('click', function(e) {
         e.preventDefault();
         goToStep(currentStep + 1);
     });
     
-    $('.wp-alp-back-button').on('click', function(e) {
+    $('#back-btn').on('click', function(e) {
         e.preventDefault();
         goToStep(currentStep - 1);
     });
@@ -249,5 +226,3 @@ jQuery(document).ready(function($) {
     }
 });
 </script>
-
-<?php get_footer(); ?>
