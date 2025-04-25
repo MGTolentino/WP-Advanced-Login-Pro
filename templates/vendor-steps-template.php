@@ -72,6 +72,11 @@ get_header(); ?>
                             </div>
                         </div>
                         
+                        <!-- Barra de progreso simple (solo línea gris) que siempre está visible en la página inicial -->
+                        <div class="wp-alp-simple-progress">
+                            <div class="wp-alp-simple-progress-line"></div>
+                        </div>
+                        
                         <div class="wp-alp-steps-action">
                             <button type="button" class="wp-alp-steps-button" id="start-registration">
                                 <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
@@ -98,8 +103,8 @@ get_header(); ?>
         </div>
     </div>
     
-    <!-- Barra de progreso con botones de navegación -->
-    <div class="wp-alp-progress-bar" id="progress-bar">
+    <!-- Barra de navegación con botones (aparece solo en los pasos, no en la página inicial) -->
+    <div class="wp-alp-navigation-bar" id="navigation-bar" style="display: none;">
         <div class="wp-alp-progress-divider"></div>
         <div class="wp-alp-container">
             <div class="wp-alp-progress-inner">
@@ -132,15 +137,10 @@ jQuery(document).ready(function($) {
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
-    var $progressBar = $('#progress-bar');
+    var $navigationBar = $('#navigation-bar');
     var $backButton = $('#back-button');
     var $nextButton = $('#next-button');
     var $currentStepInput = $('#current-step');
-    
-    // Inicialmente ocultamos la barra de progreso en el paso 0
-    if (currentStep === 0) {
-        $progressBar.hide();
-    }
     
     // Botón de inicio de registro
     $('#start-registration').on('click', function() {
@@ -172,16 +172,17 @@ jQuery(document).ready(function($) {
         // Mostrar el paso seleccionado
         $('#step-' + step).show();
         
-        // Gestionar la barra de progreso
-
-            // Estamos en un paso del formulario, mostrar la barra de progreso
-            $progressBar.show();
+        // Gestionar la barra de navegación (NO la barra de progreso simple)
+        if (step === 0) {
+            // Estamos en la página inicial, ocultar la barra de navegación
+            $navigationBar.hide();
+        } else {
+            // Estamos en un paso del formulario, mostrar la barra de navegación
+            $navigationBar.show();
             
             // Agregar consultas de depuración
-            console.log('Mostrando barra de progreso');
-            console.log('Estado de visibilidad:', $progressBar.is(':visible'));
-            console.log('Altura de la barra:', $progressBar.outerHeight());
-            console.log('Posición Y de la barra:', $progressBar.offset().top);
+            console.log('Mostrando barra de navegación');
+            console.log('Estado de visibilidad:', $navigationBar.is(':visible'));
             
             // Actualizar estado del botón Atrás
             if (step === 1) {
@@ -196,7 +197,7 @@ jQuery(document).ready(function($) {
             } else {
                 $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
             }
-        
+        }
         
         // Actualizar la URL
         updateUrl(step);

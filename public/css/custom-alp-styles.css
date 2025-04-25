@@ -794,3 +794,92 @@ button.wp-alp-vendor-button {
         padding: 10px 16px !important;
     }
 }
+
+/* Estilos para la barra de progreso simple que aparece en la página inicial */
+.wp-alp-simple-progress {
+    width: 100% !important;
+    margin: 30px 0 !important;
+    padding: 0 !important;
+}
+
+.wp-alp-simple-progress-line {
+    height: 4px !important;
+    background-color: #dddddd !important;
+    width: 100% !important;
+    border-radius: 2px !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Estilos para la barra de navegación con botones que aparece en los pasos */
+.wp-alp-navigation-bar {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background-color: white !important;
+    z-index: 1000 !important;
+    box-shadow: 0 -1px 10px rgba(0,0,0,0.05) !important;
+}
+
+/* Resto de los estilos se mantienen igual que en la versión anterior */
+.wp-alp-progress-divider {
+    height: 1px !important;
+    background-color: #dddddd !important;
+    width: 100% !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.wp-alp-progress-inner {
+    padding: 20px 0 !important;
+    width: 100% !important;
+}
+
+.wp-alp-progress-buttons {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 24px !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+}
+
+.wp-alp-back-button {
+    color: #222222 !important;
+    text-decoration: underline !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    cursor: pointer !important;
+}
+
+.wp-alp-next-button {
+    background-color: #222222 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 14px 24px !important;
+    text-decoration: none !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    display: inline-block !important;
+    border: none !important;
+    white-space: nowrap !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.wp-alp-next-button:hover {
+    background-color: #000000 !important;
+    text-decoration: none !important;
+    color: white !important;
+}
