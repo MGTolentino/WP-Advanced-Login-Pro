@@ -75,6 +75,11 @@ get_header(); ?>
                             </div>
                         </div>
                         
+                        <!-- Barra de progreso ANTES del botón Get Started -->
+                        <div class="wp-alp-full-width-progress">
+                            <div class="wp-alp-progress-line"></div>
+                        </div>
+                        
                         <div class="wp-alp-steps-action">
                             <button type="button" class="wp-alp-steps-button" id="start-registration">
                                 <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
@@ -82,43 +87,46 @@ get_header(); ?>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Barra de progreso a ancho completo -->
-                <div class="wp-alp-full-width-progress">
-                    <div class="wp-alp-progress-line"></div>
-                </div>
             </div>
 
-            <!-- Paso 1: Al estilo exacto de Airbnb -->
+            <!-- Paso 1: Versión de dos columnas -->
             <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
-                <!-- Contenedor del paso -->
-                <div class="wp-alp-airbnb-step">
+                <!-- Contenedor del paso con layout de dos columnas -->
+                <div class="wp-alp-airbnb-step-two-col">
                     <!-- Etiqueta dorada superior -->
                     <div class="wp-alp-airbnb-step-label">
                         <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
                     </div>
                     
-                    <!-- Título principal -->
-                    <h1 class="wp-alp-airbnb-step-title">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your product/service' : 'Describe tu producto/servicio'); ?>
-                    </h1>
-                    
-                    <!-- Descripción -->
-                    <div class="wp-alp-airbnb-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
-                    </div>
-                    
-                    <!-- Imagen central -->
-                    <div class="wp-alp-airbnb-step-image">
-                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                    <!-- Contenido de dos columnas -->
+                    <div class="wp-alp-airbnb-columns">
+                        <!-- Columna izquierda: texto -->
+                        <div class="wp-alp-airbnb-column-left">
+                            <!-- Título principal -->
+                            <h1 class="wp-alp-airbnb-step-title">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your product/service' : 'Describe tu producto/servicio'); ?>
+                            </h1>
+                            
+                            <!-- Descripción -->
+                            <div class="wp-alp-airbnb-step-description">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
+                            </div>
+                        </div>
+                        
+                        <!-- Columna derecha: imagen -->
+                        <div class="wp-alp-airbnb-column-right">
+                            <div class="wp-alp-airbnb-step-image">
+                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Barra de progreso fija en la parte inferior -->
                 <div class="wp-alp-airbnb-footer">
-                    <!-- Barra de progreso con 3 segmentos -->
+                    <!-- Barra de progreso con 3 segmentos, todos grises -->
                     <div class="wp-alp-airbnb-progress">
-                        <div class="wp-alp-airbnb-progress-segment active"></div>
+                        <div class="wp-alp-airbnb-progress-segment"></div>
                         <div class="wp-alp-airbnb-progress-segment"></div>
                         <div class="wp-alp-airbnb-progress-segment"></div>
                     </div>
