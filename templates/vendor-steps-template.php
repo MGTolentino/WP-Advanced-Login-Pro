@@ -9,11 +9,6 @@
 get_header(); ?>
 
 <div class="wp-alp-vendor-form-page">
-    <!-- Barra de progreso simple a ancho completo (fuera del contenedor principal) -->
-    <div class="wp-alp-simple-progress">
-        <div class="wp-alp-simple-progress-line"></div>
-    </div>
-    
     <!-- Contenedor principal para la página inicial y el primer paso -->
     <div class="wp-alp-form-content">
         <div class="wp-alp-container">
@@ -75,6 +70,11 @@ get_header(); ?>
                                     <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step3.png'); ?>" alt="Step 3">
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Barra de progreso simple (solo línea gris) justo antes del botón Get Started -->
+                        <div class="wp-alp-simple-progress">
+                            <div class="wp-alp-simple-progress-line"></div>
                         </div>
                         
                         <div class="wp-alp-steps-action">
