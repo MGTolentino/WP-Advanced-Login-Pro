@@ -173,10 +173,7 @@ jQuery(document).ready(function($) {
         $('#step-' + step).show();
         
         // Gestionar la barra de progreso
-        if (step === 0) {
-            // Estamos en la página inicial, ocultar la barra de progreso
-            $progressBar.hide();
-        } else {
+
             // Estamos en un paso del formulario, mostrar la barra de progreso
             $progressBar.show();
             
@@ -199,7 +196,7 @@ jQuery(document).ready(function($) {
             } else {
                 $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
             }
-        }
+        
         
         // Actualizar la URL
         updateUrl(step);
