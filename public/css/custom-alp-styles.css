@@ -484,17 +484,21 @@ button.wp-alp-vendor-button {
 .wp-alp-column-left {
     flex: 1 !important;
     padding-right: 40px !important;
-    max-width: 40% !important; /* Aproximadamente la mitad izquierda */
+    max-width: 40% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important; /* Centra verticalmente el contenido */
+    min-height: 300px !important; /* Asegura que hay suficiente altura para centrar */
 }
 
-.wp-alp-steps-heading {
-    font-size: 36px !important;
-    font-weight: 600 !important;
-    color: #222222 !important;
-    line-height: 1.2 !important;
-    margin-top: 0 !important;
-    text-align: left !important;
-}
+    .wp-alp-steps-heading {
+        font-size: 36px !important;
+        font-weight: 600 !important;
+        color: #222222 !important;
+        line-height: 1.2 !important;
+        margin: 0 !important; /* Quita márgenes para mejor centrado */
+        text-align: left !important;
+    }
 
 /* Columna derecha con los pasos */
 .wp-alp-column-right {
@@ -513,6 +517,10 @@ button.wp-alp-vendor-button {
     padding-bottom: 48px !important;
     border-bottom: 1px solid #DDDDDD !important;
     align-items: center !important;
+}
+
+.wp-alp-step-item {
+    border-bottom: 1px solid #DDDDDD !important;
 }
 
 .wp-alp-step-item:last-child {
@@ -564,7 +572,7 @@ button.wp-alp-vendor-button {
 /* Barra de progreso a ancho completo */
 .wp-alp-full-width-progress {
     width: 100% !important;
-    margin: 0 0 30px 0 !important;
+    margin: 0 !important;
     padding: 0 !important;
 }
 
@@ -579,11 +587,14 @@ button.wp-alp-vendor-button {
 }
 
 /* Botón Get Started */
-.wp-alp-steps-action {
+.wp-alp-progress-line {
+    height: 6px !important;
+    background-color: #bbbbbb !important;
     width: 100% !important;
-    text-align: center !important;
-    margin-top: 30px !important;
-    padding-top: 0 !important;
+    border-radius: 0 !important; /* Quita los bordes redondeados */
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .wp-alp-steps-button {
