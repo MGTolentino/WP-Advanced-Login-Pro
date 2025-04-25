@@ -75,17 +75,17 @@ get_header(); ?>
                             </div>
                         </div>
                         
-                        <!-- Barra de progreso ANTES del botón Get Started -->
-                        <div class="wp-alp-full-width-progress">
-                            <div class="wp-alp-progress-line"></div>
-                        </div>
-                        
                         <div class="wp-alp-steps-action">
                             <button type="button" class="wp-alp-steps-button" id="start-registration">
                                 <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
                             </button>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Barra de progreso a ancho completo DESPUÉS del layout de dos columnas -->
+                <div class="wp-alp-full-width-progress">
+                    <div class="wp-alp-progress-line"></div>
                 </div>
             </div>
 
