@@ -1,265 +1,244 @@
 <?php
 /**
- * Template Name: Vendor Steps Template
+ * Template Name: Pasos para Vendedores WP-ALP
  * 
- * A clean implementation of the Airbnb-style vendor steps process
+ * Template para la página de pasos del proceso de convertirse en vendedor
+ * Adaptado al estilo de Airbnb
  */
 
 get_header(); ?>
 
-<div class="wp-alp-vendor-steps-page">
-    <!-- Main Content Container -->
-    <div class="wp-alp-main-container">
-        <!-- Step Overview Page (Initial Page) -->
-        <div class="wp-alp-step-overview" id="step-overview">
-            <!-- Left Column with Main Title -->
-            <div class="wp-alp-overview-left">
-                <h1 class="wp-alp-overview-title">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
-                </h1>
+<div class="wp-alp-vendor-form-page">
+    <!-- Contenedor principal para la página inicial y el primer paso -->
+    <div class="wp-alp-form-content">
+        <div class="wp-alp-container">
+            <!-- Paso Inicial: Información sobre los pasos -->
+            <div class="wp-alp-form-step" id="step-0" data-step="0">
+                <div class="wp-alp-steps-container">
+                    <div class="wp-alp-steps-left">
+                        <h1 class="wp-alp-steps-heading">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
+                        </h1>
+                    </div>
+                    
+                    <div class="wp-alp-steps-right">
+                        <div class="wp-alp-steps-list">
+                            <!-- Step 1 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">1</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step1.png'); ?>" alt="Step 1">
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">2</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add at least five photos, a title, and a description. We\'ll help you.' : 'Agrega al menos cinco fotos, un título y una descripción. Nosotros te ayudamos.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step2.png'); ?>" alt="Step 2">
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">3</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set an initial price, check some details and publish your listing.' : 'Establece un precio inicial, verifica algunos detalles y publica tu anuncio.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step3.png'); ?>" alt="Step 3">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="wp-alp-steps-action">
+                            <button type="button" class="wp-alp-steps-button" id="start-registration">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <!-- Right Column with Steps List -->
-            <div class="wp-alp-overview-right">
-                <!-- Step 1 -->
-                <div class="wp-alp-overview-step">
-                    <div class="wp-alp-overview-step-header">
-                        <span class="wp-alp-step-number">1</span>
-                        <h2 class="wp-alp-step-title">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
-                        </h2>
-                    </div>
-                    <p class="wp-alp-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
-                    </p>
-                    <div class="wp-alp-step-divider"></div>
-                </div>
-                
-                <!-- Step 2 -->
-                <div class="wp-alp-overview-step">
-                    <div class="wp-alp-overview-step-header">
-                        <span class="wp-alp-step-number">2</span>
-                        <h2 class="wp-alp-step-title">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
-                        </h2>
-                    </div>
-                    <p class="wp-alp-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add at least five photos, a title, and a description. We\'ll help you.' : 'Agrega al menos cinco fotos, un título y una descripción. Nosotros te ayudamos.'); ?>
-                    </p>
-                    <div class="wp-alp-step-divider"></div>
-                </div>
-                
-                <!-- Step 3 -->
-                <div class="wp-alp-overview-step">
-                    <div class="wp-alp-overview-step-header">
-                        <span class="wp-alp-step-number">3</span>
-                        <h2 class="wp-alp-step-title">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
-                        </h2>
-                    </div>
-                    <p class="wp-alp-step-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set an initial price, check some details and publish your listing.' : 'Establece un precio inicial, verifica algunos detalles y publica tu anuncio.'); ?>
-                    </p>
-                </div>
-            </div>
-        </div>
 
-        <!-- Progress Bar (Simple line initially) -->
-    <div class="wp-alp-progress-container">
-        <div class="wp-alp-progress-bar">
-            <div class="wp-alp-progress-section" data-section="1"></div>
-            <div class="wp-alp-progress-section" data-section="2"></div>
-            <div class="wp-alp-progress-section" data-section="3"></div>
-        </div>
-    </div>
-        
-        <!-- "Get Started" Button -->
-        <div class="wp-alp-get-started-container">
-            <button type="button" class="wp-alp-get-started-button" id="get-started-button">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
-            </button>
+            <!-- Paso 1: Simplificado a solo un texto HTML -->
+            <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
+                <div class="wp-alp-step-wrapper">
+                    <div class="wp-alp-step-label">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+                    </div>
+                    <h1 class="wp-alp-step-heading">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+                    </h1>
+                    <p class="wp-alp-step-description">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'This is the simplified first step.' : 'Este es el primer paso simplificado.'); ?>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
     
+    <!-- Barra de progreso con botones de navegación -->
+    <div class="wp-alp-progress-bar" id="progress-bar">
+        <div class="wp-alp-progress-divider"></div>
+        <div class="wp-alp-container">
+            <div class="wp-alp-progress-inner">
+                <div class="wp-alp-progress-buttons">
+                    <a href="#" class="wp-alp-back-button" id="back-button">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                    </a>
+                    <a href="#" class="wp-alp-next-button" id="next-button">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     
+    <!-- Formulario oculto para almacenar todos los datos -->
+    <form id="vendor-form-data" style="display: none;">
+        <?php wp_nonce_field('wp_alp_vendor_form_nonce', 'vendor_form_nonce'); ?>
+        <input type="hidden" name="action" value="wp_alp_save_vendor_form">
+        <input type="hidden" name="current_step" id="current-step" value="0">
+    </form>
 </div>
 
-<!-- Add custom styles inline to ensure they take precedence -->
-<style>
-/* Reset styles to prevent theme conflicts */
-.wp-alp-vendor-steps-page * {
-    box-sizing: border-box !important;
-}
-
-/* Main container */
-.wp-alp-vendor-steps-page {
-    font-family: 'Circular', -apple-system, BlinkMacSystemFont, Roboto, Helvetica Neue, sans-serif !important;
-    color: #222222 !important;
-    max-width: 1200px !important;
-    margin: 0 auto !important;
-    padding: 48px 24px 100px !important;
-    position: relative !important;
-}
-
-/* Main layout */
-.wp-alp-main-container {
-    display: flex !important;
-    flex-direction: column !important;
-    min-height: 70vh !important;
-}
-
-/* Overview page layout */
-.wp-alp-step-overview {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 48px !important;
-    margin-bottom: 40px !important;
-}
-
-/* Left column */
-.wp-alp-overview-left {
-    flex: 1 !important;
-    min-width: 280px !important;
-}
-
-.wp-alp-overview-title {
-    font-size: 36px !important;
-    font-weight: 600 !important;
-    color: #222222 !important;
-    line-height: 1.2 !important;
-    margin: 0 0 24px !important;
-}
-
-/* Right column */
-.wp-alp-overview-right {
-    flex: 2 !important;
-    min-width: 320px !important;
-}
-
-/* Individual step in overview */
-.wp-alp-overview-step {
-    margin-bottom: 32px !important;
-}
-
-.wp-alp-overview-step-header {
-    display: flex !important;
-    align-items: baseline !important;
-    gap: 16px !important;
-    margin-bottom: 8px !important;
-}
-
-.wp-alp-step-number {
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    color: #222222 !important;
-}
-
-.wp-alp-step-title {
-    font-size: 22px !important;
-    font-weight: 600 !important;
-    color: #222222 !important;
-    margin: 0 !important;
-}
-
-.wp-alp-step-description {
-    font-size: 16px !important;
-    color: #717171 !important;
-    line-height: 1.5 !important;
-    margin: 0 0 24px !important;
-}
-
-.wp-alp-step-divider {
-    height: 1px !important;
-    background-color: #EBEBEB !important;
-    margin-bottom: 32px !important;
-}
-
-/* Get Started button container */
-.wp-alp-get-started-container {
-    display: flex !important;
-    justify-content: flex-end !important;
-    margin-top: auto !important;
-}
-
-.wp-alp-get-started-button {
-    background-color: #FF385C !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: 14px 32px !important;
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    transition: background-color 0.2s ease !important;
-}
-
-.wp-alp-get-started-button:hover {
-    background-color: #E31C5F !important;
-}
-
-/* Progress bar container */
-.wp-alp-progress-container {
-    width: 100% !important;
-    margin: 20px 0 !important;
-    padding: 0 !important;
-    display: block !important;
-}
-
-/* Progress bar - inicialmente solo una línea sólida */
-.wp-alp-progress-bar {
-    width: 100% !important;
-    height: 6px !important;
-    background-color: #DDDDDD !important;
-    display: flex !important;
-}
-
-/* Progress sections (invisible initially) */
-.wp-alp-progress-section {
-    flex: 1 !important;
-    height: 100% !important;
-}
-
-/* Mobile styles */
-@media (max-width: 768px) {
-    .wp-alp-vendor-steps-page {
-        padding: 24px 16px 100px !important;
-    }
-    
-    .wp-alp-overview-title {
-        font-size: 28px !important;
-    }
-    
-    .wp-alp-step-number {
-        font-size: 16px !important;
-    }
-    
-    .wp-alp-step-title {
-        font-size: 20px !important;
-    }
-}
-
-/* Barra de emergencia - usada para depuración */
-body:after {
-    content: "";
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: #DDDDDD;
-    z-index: 999999;
-}
-</style>
-
-<!-- Custom JavaScript to handle interactions -->
+<!-- JavaScript para la navegación SPA -->
 <script>
 jQuery(document).ready(function($) {
-    // Get Started button click event
-    $('#get-started-button').on('click', function() {
-        // For now, just log that the button was clicked
-        console.log('Get Started button clicked');
-        // You can add the actual navigation logic here later
+    // Variables para la navegación
+    var currentStep = 0;
+    var totalSteps = 1; // Solo tenemos 2 pasos: inicial y step 1
+    
+    // Elementos del DOM
+    var $steps = $('.wp-alp-form-step');
+    var $progressBar = $('#progress-bar');
+    var $backButton = $('#back-button');
+    var $nextButton = $('#next-button');
+    var $currentStepInput = $('#current-step');
+    
+    // Inicialmente ocultamos la barra de progreso en el paso 0
+    if (currentStep === 0) {
+        $progressBar.hide();
+    }
+    
+    // Botón de inicio de registro
+    $('#start-registration').on('click', function() {
+        goToStep(1);
     });
+    
+    // Función para actualizar la URL sin recargar la página
+    function updateUrl(step) {
+        var newUrl = window.location.pathname;
+        if (step > 0) {
+            newUrl += '?step=' + step;
+        }
+        history.pushState({step: step}, '', newUrl);
+    }
+    
+    // Función para mostrar un paso específico
+    function goToStep(step) {
+        // Validar límites
+        if (step < 0) step = 0;
+        if (step > totalSteps) step = totalSteps;
+        
+        // Guardar el paso actual
+        currentStep = step;
+        $currentStepInput.val(step);
+        
+        // Ocultar todos los pasos
+        $steps.hide();
+        
+        // Mostrar el paso seleccionado
+        $('#step-' + step).show();
+        
+        // Gestionar la barra de progreso
+        if (step === 0) {
+            // Estamos en la página inicial, ocultar la barra de progreso
+            $progressBar.hide();
+        } else {
+            // Estamos en un paso del formulario, mostrar la barra de progreso
+            $progressBar.show();
+            
+            // Agregar consultas de depuración
+            console.log('Mostrando barra de progreso');
+            console.log('Estado de visibilidad:', $progressBar.is(':visible'));
+            console.log('Altura de la barra:', $progressBar.outerHeight());
+            console.log('Posición Y de la barra:', $progressBar.offset().top);
+            
+            // Actualizar estado del botón Atrás
+            if (step === 1) {
+                $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>');
+            } else {
+                $backButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>');
+            }
+            
+            // Actualizar texto del botón Siguiente en el último paso
+            if (step === totalSteps) {
+                $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Publish' : 'Publicar'); ?>');
+            } else {
+                $nextButton.text('<?php echo esc_js(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>');
+            }
+        }
+        
+        // Actualizar la URL
+        updateUrl(step);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    }
+    
+    // Manejar clics en botones de navegación
+    $nextButton.on('click', function(e) {
+        e.preventDefault();
+        goToStep(currentStep + 1);
+    });
+    
+    $backButton.on('click', function(e) {
+        e.preventDefault();
+        goToStep(currentStep - 1);
+    });
+    
+    // Manejo de navegación del historial del navegador
+    window.onpopstate = function(event) {
+        if (event.state && typeof event.state.step !== 'undefined') {
+            goToStep(event.state.step);
+        } else {
+            goToStep(0);
+        }
+    };
+    
+    // Inicialización: verificar si hay un paso en la URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var stepParam = urlParams.get('step');
+    
+    // Si hay un paso en la URL y es válido, ir a ese paso
+    if (stepParam !== null && !isNaN(parseInt(stepParam))) {
+        goToStep(parseInt(stepParam));
+    } else {
+        // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
+        goToStep(0);
+    }
 });
 </script>
 
