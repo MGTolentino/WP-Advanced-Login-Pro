@@ -6,7 +6,7 @@
  * Adaptado al estilo de Airbnb
  */
 
-?>
+get_header(); ?>
 
 <div class="wp-alp-vendor-form-page">
     <!-- Contenedor principal para la página inicial y el primer paso -->
@@ -226,3 +226,5 @@ jQuery(document).ready(function($) {
     }
 });
 </script>
+
+<?php get_footer(); ?>
