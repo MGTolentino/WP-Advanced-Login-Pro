@@ -658,33 +658,7 @@ button.wp-alp-vendor-button {
     margin: 0 auto !important;
 }
 
-.wp-alp-back-button {
-    color: #222222 !important;
-    text-decoration: underline !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    white-space: nowrap !important;
-    display: inline-block !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 8px 16px !important;
-    cursor: pointer !important;
-}
 
-.wp-alp-next-button {
-    background-color: #222222 !important;
-    color: white !important;
-    border-radius: 8px !important;
-    padding: 14px 24px !important;
-    text-decoration: none !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    display: inline-block !important;
-    border: none !important;
-    white-space: nowrap !important;
-    cursor: pointer !important;
-    transition: background-color 0.2s ease !important;
-}
 
 .wp-alp-next-button:hover {
     background-color: #000000 !important;
@@ -694,26 +668,134 @@ button.wp-alp-vendor-button {
 
 /* Estilos para el paso individual */
 .wp-alp-step-wrapper {
-    max-width: 980px !important;
+    max-width: 1120px !important;
     margin: 0 auto !important;
-    padding: 0 24px !important;
-    text-align: center !important;
+    padding: 40px 24px 80px !important; /* Mayor padding inferior para la barra y botones */
+    position: relative !important;
 }
 
+/* Etiqueta del paso (pequeño texto "Step 1" en la parte superior) */
 .wp-alp-step-label {
-    font-size: 18px !important;
-    font-weight: 600 !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    color: #CBB781 !important; /* Color dorado similar a Airbnb */
     margin-bottom: 8px !important;
-    color: #CBB781 !important;
+    display: block !important;
 }
 
+/* Título principal del paso */
 .wp-alp-step-heading {
     font-size: 32px !important;
     font-weight: 600 !important;
-    margin: 0 0 16px 0 !important;
     color: #222222 !important;
-    line-height: 1.25 !important;
+    margin: 0 0 20px 0 !important;
+    line-height: 1.3 !important;
 }
+
+/* Descripción grande del paso */
+.wp-alp-step-description-large {
+    font-size: 18px !important;
+    color: #222222 !important;
+    line-height: 1.5 !important;
+    margin-bottom: 30px !important;
+    max-width: 700px !important;
+}
+
+/* Imagen ilustrativa del paso */
+.wp-alp-step-illustration {
+    margin: 20px 0 40px !important;
+    text-align: center !important;
+}
+
+.wp-alp-step-illustration img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Contenedor de la barra de progreso */
+.wp-alp-step-progress-container {
+    width: 100% !important;
+    margin: 40px 0 20px !important;
+    padding: 0 !important;
+}
+
+/* Barra de progreso con 3 segmentos */
+.wp-alp-step-progress-bar {
+    display: flex !important;
+    width: 100% !important;
+    height: 4px !important;
+    background-color: transparent !important;
+    margin-bottom: 30px !important;
+}
+
+/* Cada segmento de la barra de progreso */
+.wp-alp-progress-segment {
+    flex: 1 !important;
+    height: 4px !important;
+    background-color: #d1d8e0 !important; /* Color que solicitaste */
+    margin: 0 2px !important;
+    border-radius: 2px !important;
+}
+
+/* Segmento activo de la barra de progreso */
+.wp-alp-progress-segment.active {
+    background-color: #222222 !important; /* Negro para segmentos activos */
+}
+
+/* Navegación con botones */
+.wp-alp-step-navigation {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+/* Botón de atrás */
+.wp-alp-back-button {
+    color: #222222 !important;
+    text-decoration: underline !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 10px 20px 10px 0 !important;
+}
+
+/* Botón de siguiente */
+.wp-alp-next-button {
+    background-color: #222222 !important;
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+}
+
+.wp-alp-next-button:hover {
+    background-color: #000000 !important;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .wp-alp-step-heading {
+        font-size: 24px !important;
+    }
+    
+    .wp-alp-step-description-large {
+        font-size: 16px !important;
+    }
+    
+    .wp-alp-step-illustration {
+        margin: 15px 0 30px !important;
+    }
+}
+
 
 /* Ajustes para dispositivos móviles */
 @media (max-width: 768px) {
