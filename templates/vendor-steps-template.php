@@ -14,61 +14,64 @@ get_header(); ?>
         <div class="wp-alp-container">
             <!-- Paso Inicial: Información sobre los pasos -->
             <div class="wp-alp-form-step" id="step-0" data-step="0">
-                <!-- Título principal en la parte superior -->
-                <div class="wp-alp-main-title">
-                    <h1 class="wp-alp-steps-heading">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
-                    </h1>
-                </div>
-                
-                <!-- Contenedor de los pasos -->
-                <div class="wp-alp-steps-list-container">
-                    <div class="wp-alp-steps-list">
-                        <!-- Step 1 -->
-                        <div class="wp-alp-step-item">
-                            <div class="wp-alp-step-content">
-                                <span class="wp-alp-step-number">1</span>
-                                <h2 class="wp-alp-step-title">
-                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
-                                </h2>
-                                <p class="wp-alp-step-description">
-                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
-                                </p>
+                <!-- Estructura de dos columnas -->
+                <div class="wp-alp-two-column-layout">
+                    <!-- Columna izquierda: título principal -->
+                    <div class="wp-alp-column-left">
+                        <h1 class="wp-alp-steps-heading">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
+                        </h1>
+                    </div>
+                    
+                    <!-- Columna derecha: lista de pasos -->
+                    <div class="wp-alp-column-right">
+                        <div class="wp-alp-steps-list">
+                            <!-- Step 1 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">1</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step1.png'); ?>" alt="Step 1">
+                                </div>
                             </div>
-                            <div class="wp-alp-step-image">
-                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step1.png'); ?>" alt="Step 1">
+                            
+                            <!-- Step 2 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">2</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add at least five photos, a title, and a description. We\'ll help you.' : 'Agrega al menos cinco fotos, un título y una descripción. Nosotros te ayudamos.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step2.png'); ?>" alt="Step 2">
+                                </div>
                             </div>
-                        </div>
-                        
-                        <!-- Step 2 -->
-                        <div class="wp-alp-step-item">
-                            <div class="wp-alp-step-content">
-                                <span class="wp-alp-step-number">2</span>
-                                <h2 class="wp-alp-step-title">
-                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
-                                </h2>
-                                <p class="wp-alp-step-description">
-                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Add at least five photos, a title, and a description. We\'ll help you.' : 'Agrega al menos cinco fotos, un título y una descripción. Nosotros te ayudamos.'); ?>
-                                </p>
-                            </div>
-                            <div class="wp-alp-step-image">
-                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step2.png'); ?>" alt="Step 2">
-                            </div>
-                        </div>
-                        
-                        <!-- Step 3 -->
-                        <div class="wp-alp-step-item">
-                            <div class="wp-alp-step-content">
-                                <span class="wp-alp-step-number">3</span>
-                                <h2 class="wp-alp-step-title">
-                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
-                                </h2>
-                                <p class="wp-alp-step-description">
-                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Set an initial price, check some details and publish your listing.' : 'Establece un precio inicial, verifica algunos detalles y publica tu anuncio.'); ?>
-                                </p>
-                            </div>
-                            <div class="wp-alp-step-image">
-                                <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step3.png'); ?>" alt="Step 3">
+                            
+                            <!-- Step 3 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">3</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set an initial price, check some details and publish your listing.' : 'Establece un precio inicial, verifica algunos detalles y publica tu anuncio.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step3.png'); ?>" alt="Step 3">
+                                </div>
                             </div>
                         </div>
                     </div>
