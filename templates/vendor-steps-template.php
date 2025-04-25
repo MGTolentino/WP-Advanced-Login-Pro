@@ -9,7 +9,7 @@
 get_header(); ?>
 
 <div class="wp-alp-vendor-form-page">
-    <!-- Contenedor principal para la página inicial y el primer paso -->
+    <!-- Contenedor principal para la página inicial y los pasos -->
     <div class="wp-alp-form-content">
         <div class="wp-alp-container">
             <!-- Paso Inicial: Información sobre los pasos -->
@@ -74,24 +74,67 @@ get_header(); ?>
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Barra de progreso -->
+                        <div class="wp-alp-full-width-progress">
+                            <div class="wp-alp-progress-line"></div>
+                        </div>
+                        
+                        <!-- Botón de acción -->
+                        <div class="wp-alp-steps-action">
+                            <button type="button" class="wp-alp-steps-button" id="start-registration">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'GET STARTED' : 'EMPEZAR'); ?>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                
-                <!-- Barra de progreso -->
-                <div class="wp-alp-full-width-progress">
-                    <div class="wp-alp-progress-line"></div>
-                </div>
-                
-                <!-- Botón de acción -->
-                <div class="wp-alp-steps-action">
-                    <button type="button" class="wp-alp-steps-button" id="start-registration">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'GET STARTED' : 'EMPEZAR'); ?>
-                    </button>
                 </div>
             </div>
 
-            <!-- Paso 1: Vista de categorías de alojamiento -->
+            <!-- Paso 1: "Describe tu espacio" - Mantenemos este paso como estaba originalmente -->
             <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
+                <div class="wp-alp-step-wrapper">
+                    <!-- Etiqueta del paso -->
+                    <div class="wp-alp-step-label">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+                    </div>
+                    
+                    <!-- Título del paso -->
+                    <h1 class="wp-alp-step-heading">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your space' : 'Describe tu espacio'); ?>
+                    </h1>
+                    
+                    <!-- Descripción del paso -->
+                    <p class="wp-alp-step-description-large">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
+                    </p>
+                    
+                    <!-- Imagen ilustrativa -->
+                    <div class="wp-alp-step-illustration">
+                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                    </div>
+                </div>
+                
+                <!-- Barra de progreso y navegación en la parte inferior -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 20%;"></div>
+                    </div>
+                    
+                    <!-- Navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-overview-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="go-to-categories-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Paso 1.1: Vista de categorías de alojamiento (subpaso de Paso 1) -->
+            <div class="wp-alp-form-step" id="step-1-categories" data-step="1.1" style="display: none;">
                 <!-- Header con opciones de ayuda -->
                 <div class="wp-alp-airbnb-help-header">
                     <div class="wp-alp-airbnb-help-links">
@@ -173,15 +216,17 @@ get_header(); ?>
                     
                     <!-- Botones de navegación -->
                     <div class="wp-alp-airbnb-nav">
-                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-btn">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step1-btn">
                             <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
                         </a>
-                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-btn">
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-categories-btn">
                             <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
                         </a>
                     </div>
                 </div>
             </div>
+
+            <!-- Aquí podrían ir más pasos... -->
         </div>
     </div>
 </div>
@@ -195,11 +240,62 @@ jQuery(document).ready(function($) {
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
-    var $currentStepInput = $('#current-step');
     
-    // Botón de inicio de registro
+    // Botón de inicio de registro (página principal -> paso 1)
     $('#start-registration').on('click', function() {
-        goToStep(1);
+        goToStep(1); // Va a "Describe tu espacio"
+    });
+    
+   // Botón de siguiente en paso 1 (lleva a categorías)
+   $('#go-to-categories-btn').on('click', function(e) {
+        e.preventDefault();
+        $('#step-1').hide();
+        $('#step-1-categories').show();
+        
+        // Actualizar URL sin cambiar el número de paso principal
+        var currentUrl = window.location.pathname;
+        var newUrl = currentUrl + '?step=1&substep=categories';
+        history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    });
+    
+    // Botón de volver desde categorías a paso 1
+    $('#back-to-step1-btn').on('click', function(e) {
+        e.preventDefault();
+        $('#step-1-categories').hide();
+        $('#step-1').show();
+        
+        // Actualizar URL
+        var currentUrl = window.location.pathname;
+        var newUrl = currentUrl + '?step=1';
+        history.pushState({step: 1}, '', newUrl);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    });
+    
+    // Botón de volver desde paso 1 a visión general
+    $('#back-to-overview-btn').on('click', function(e) {
+        e.preventDefault();
+        goToStep(0); // Volver a la visión general
+    });
+    
+    // Botón de siguiente desde categorías
+    $('#next-from-categories-btn').on('click', function(e) {
+        e.preventDefault();
+        // Verificar si hay una categoría seleccionada
+        if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
+            var selectedTermId = $('.wp-alp-airbnb-category-item.selected').data('term-id');
+            console.log('Categoría seleccionada: ' + selectedTermId);
+            
+            // Aquí iríamos al siguiente paso (paso 2)
+            // Por ahora solo mostramos un mensaje
+            alert('Categoría seleccionada: ' + selectedTermId + '\nIríamos al paso 2');
+        } else {
+            alert('Por favor, selecciona una opción antes de continuar.');
+        }
     });
     
     // Selección de categorías
@@ -239,31 +335,38 @@ jQuery(document).ready(function($) {
         $('html, body').scrollTop(0);
     }
     
-    // Manejar clics en botones de navegación
-    $('#next-btn').on('click', function(e) {
-        e.preventDefault();
-        // Verificar si hay una opción seleccionada
-        if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
-            var selectedTermId = $('.wp-alp-airbnb-category-item.selected').data('term-id');
-            console.log('Categoría seleccionada: ' + selectedTermId);
-            goToStep(currentStep + 1);
+    // Manejo de navegación del historial del navegador
+    window.onpopstate = function(event) {
+        if (event.state) {
+            if (event.state.substep === 'categories') {
+                // Mostrar el subpaso de categorías
+                $steps.hide();
+                $('#step-1-categories').show();
+            } else if (typeof event.state.step !== 'undefined') {
+                goToStep(event.state.step);
+            }
         } else {
-            alert('Por favor, selecciona una opción antes de continuar.');
+            goToStep(0);
         }
-    });
-    
-    $('#back-btn').on('click', function(e) {
-        e.preventDefault();
-        goToStep(currentStep - 1);
-    });
+    };
     
     // Inicialización: verificar si hay un paso en la URL
     var urlParams = new URLSearchParams(window.location.search);
     var stepParam = urlParams.get('step');
+    var substepParam = urlParams.get('substep');
     
     // Si hay un paso en la URL y es válido, ir a ese paso
     if (stepParam !== null && !isNaN(parseInt(stepParam))) {
-        goToStep(parseInt(stepParam));
+        var stepNum = parseInt(stepParam);
+        
+        // Verificar si hay un subpaso especificado
+        if (substepParam === 'categories' && stepNum === 1) {
+            // Mostrar el subpaso de categorías
+            $steps.hide();
+            $('#step-1-categories').show();
+        } else {
+            goToStep(stepNum);
+        }
     } else {
         // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
         goToStep(0);
@@ -271,4 +374,5 @@ jQuery(document).ready(function($) {
 });
 </script>
 
-<?php get_footer(); ?>
+<?php get_footer(); ?> // Botón de siguiente en paso 1 (lleva a categorías)
+    $('#go-to-categories-btn').on
