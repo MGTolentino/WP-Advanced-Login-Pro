@@ -74,23 +74,25 @@ get_header(); ?>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="wp-alp-steps-action">
-                            <button type="button" class="wp-alp-steps-button" id="start-registration">
-                                <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
-                            </button>
-                        </div>
                     </div>
                 </div>
                 
-                <!-- Barra de progreso a ancho completo DESPUÉS del layout de dos columnas -->
+                <!-- Barra de progreso a ancho completo ABAJO del todo, después del two-column layout -->
                 <div class="wp-alp-full-width-progress">
                     <div class="wp-alp-progress-line"></div>
                 </div>
+                
+                <!-- Botón Get Started DEBAJO de la barra, como en la imagen -->
+                <div class="wp-alp-steps-action">
+                    <button type="button" class="wp-alp-steps-button" id="start-registration">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'GET STARTED' : 'EMPEZAR'); ?>
+                    </button>
+                </div>
             </div>
 
-            <!-- Paso 1: Versión de dos columnas -->
+            <!-- Paso 1 (igual que antes, sin cambios) -->
             <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
+                <!-- ... sin cambios ... -->
                 <!-- Contenedor del paso con layout de dos columnas -->
                 <div class="wp-alp-airbnb-step-two-col">
                     <!-- Etiqueta dorada superior -->
@@ -142,6 +144,8 @@ get_header(); ?>
                     </div>
                 </div>
             </div>
+            
+            <!-- Resto de pasos... -->
         </div>
     </div>
     
@@ -153,7 +157,7 @@ get_header(); ?>
     </form>
 </div>
 
-<!-- JavaScript para la navegación SPA -->
+<!-- JavaScript sin cambios -->
 <script>
 jQuery(document).ready(function($) {
     // Variables para la navegación
