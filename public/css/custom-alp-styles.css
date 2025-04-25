@@ -795,21 +795,25 @@ button.wp-alp-vendor-button {
     }
 }
 
-/* Estilos para la barra de progreso simple que aparece en la página inicial */
+/* Estilos para la barra de progreso simple a ancho completo */
 .wp-alp-simple-progress {
     width: 100% !important;
-    margin: 30px 0 !important;
+    margin: 0 0 30px 0 !important;
     padding: 0 !important;
+    position: relative !important;
 }
 
 .wp-alp-simple-progress-line {
-    height: 4px !important;
+    height: 6px !important; /* 2px más ancha que antes */
     background-color: #dddddd !important;
     width: 100% !important;
-    border-radius: 2px !important;
+    border-radius: 3px !important;
     display: block !important;
     margin: 0 !important;
     padding: 0 !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
 }
 
 /* Estilos para la barra de navegación con botones que aparece en los pasos */

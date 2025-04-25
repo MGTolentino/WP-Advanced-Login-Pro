@@ -9,6 +9,11 @@
 get_header(); ?>
 
 <div class="wp-alp-vendor-form-page">
+    <!-- Barra de progreso simple a ancho completo (fuera del contenedor principal) -->
+    <div class="wp-alp-simple-progress">
+        <div class="wp-alp-simple-progress-line"></div>
+    </div>
+    
     <!-- Contenedor principal para la página inicial y el primer paso -->
     <div class="wp-alp-form-content">
         <div class="wp-alp-container">
@@ -70,11 +75,6 @@ get_header(); ?>
                                     <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step3.png'); ?>" alt="Step 3">
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Barra de progreso simple (solo línea gris) que siempre está visible en la página inicial -->
-                        <div class="wp-alp-simple-progress">
-                            <div class="wp-alp-simple-progress-line"></div>
                         </div>
                         
                         <div class="wp-alp-steps-action">
@@ -179,10 +179,6 @@ jQuery(document).ready(function($) {
         } else {
             // Estamos en un paso del formulario, mostrar la barra de navegación
             $navigationBar.show();
-            
-            // Agregar consultas de depuración
-            console.log('Mostrando barra de navegación');
-            console.log('Estado de visibilidad:', $navigationBar.is(':visible'));
             
             // Actualizar estado del botón Atrás
             if (step === 1) {
