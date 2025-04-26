@@ -1316,3 +1316,181 @@ button.wp-alp-vendor-button {
         font-size: 16px !important;
     }
 }
+
+/* Estilos para la pantalla de ubicación */
+.wp-alp-airbnb-category-subtitle {
+    font-size: 16px !important;
+    color: #717171 !important;
+    text-align: center !important;
+    margin: 0 auto 40px !important;
+    max-width: 720px !important;
+}
+
+.wp-alp-location-options {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    max-width: 720px !important;
+    margin: 0 auto 32px !important;
+}
+
+.wp-alp-location-option {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 24px !important;
+    border: 1px solid #DDDDDD !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.wp-alp-location-option:hover {
+    border-color: #222222 !important;
+}
+
+.wp-alp-location-option.selected {
+    border-color: #222222 !important;
+    border-width: 2px !important;
+}
+
+.wp-alp-location-option-header {
+    flex: 1 !important;
+}
+
+.wp-alp-location-option-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+    margin: 0 0 8px !important;
+}
+
+.wp-alp-location-option-subtitle {
+    font-size: 14px !important;
+    color: #717171 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.wp-alp-location-option-radio {
+    margin-left: 16px !important;
+}
+
+.wp-alp-location-option-radio input[type="radio"] {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+/* Contenedor del mapa */
+.wp-alp-location-specific-container {
+    max-width: 720px !important;
+    margin: 24px auto 0 !important;
+}
+
+.wp-alp-map-container {
+    margin-bottom: 24px !important;
+}
+
+.wp-alp-map-search {
+    position: relative !important;
+    margin-top: 16px !important;
+}
+
+.wp-alp-search-icon {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #717171 !important;
+}
+
+.wp-alp-address-input {
+    width: 100% !important;
+    padding: 16px 16px 16px 44px !important;
+    border: 1px solid #DDDDDD !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+    color: #222222 !important;
+}
+
+.wp-alp-address-input:focus {
+    border-color: #222222 !important;
+    outline: none !important;
+}
+
+/* Contenedor de múltiples ubicaciones */
+.wp-alp-location-multiple-container {
+    max-width: 720px !important;
+    margin: 24px auto 0 !important;
+}
+
+.wp-alp-locations-checkboxes {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+}
+
+.wp-alp-location-checkbox-item {
+    display: flex !important;
+    align-items: center !important;
+    padding: 8px 0 !important;
+}
+
+.wp-alp-location-checkbox-item input[type="checkbox"] {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 12px !important;
+}
+
+.wp-alp-location-checkbox-item label {
+    font-size: 16px !important;
+    color: #222222 !important;
+    cursor: pointer !important;
+}
+
+.wp-alp-location-other {
+    margin-top: 16px !important;
+    border-top: 1px solid #EBEBEB !important;
+    padding-top: 16px !important;
+}
+
+.wp-alp-location-other-input {
+    margin-top: 12px !important;
+    margin-left: 32px !important;
+}
+
+.wp-alp-location-other-input input {
+    width: 100% !important;
+    padding: 12px !important;
+    border: 1px solid #DDDDDD !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+}
+
+.wp-alp-location-validation {
+    color: #c13515 !important;
+    background-color: #FFF8F6 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    margin-top: 24px !important;
+    text-align: center !important;
+    max-width: 720px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .wp-alp-locations-checkboxes {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .wp-alp-location-option {
+        padding: 16px !important;
+    }
+    
+    .wp-alp-location-option-title {
+        font-size: 16px !important;
+    }
+}
