@@ -504,8 +504,8 @@ jQuery(document).ready(function($) {
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
     
-   // Botón de inicio de registro (página principal -> paso 1)
-   $('#start-registration').on('click', function() {
+    // Botón de inicio de registro (página principal -> paso 1)
+    $('#start-registration').on('click', function() {
         goToStep(1); // Va a "Describe tu espacio"
     });
     
@@ -547,15 +547,89 @@ jQuery(document).ready(function($) {
     
     // Botón de siguiente desde categorías
     $('#next-from-categories-btn').on('click', function(e) {
-    e.preventDefault();
-    // Verificar si hay una categoría seleccionada
-    if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
-        var selectedCategory = $('.wp-alp-airbnb-category-item.selected');
-        var selectedName = selectedCategory.data('name');
-        console.log('Categoría seleccionada: ' + selectedName);
+        e.preventDefault();
+        // Verificar si hay una categoría seleccionada
+        if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
+            var selectedCategory = $('.wp-alp-airbnb-category-item.selected');
+            var selectedName = selectedCategory.data('name');
+            console.log('Categoría seleccionada: ' + selectedName);
+            
+            // En lugar de mostrar alert, ocultamos paso actual y mostramos el siguiente
+            $('#step-1-categories').hide();
+            $('#step-1-service-type').show();
+            
+            // Actualizar URL
+            var currentUrl = window.location.pathname;
+            var newUrl = currentUrl + '?step=1&substep=service-type';
+            history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
+            
+            // Desplazarse al inicio de la página
+            $('html, body').scrollTop(0);
+        } else {
+            // Si no hay categoría seleccionada, mostrar mensaje pero no alert
+            $('.wp-alp-airbnb-category-validation').fadeIn();
+        }
+    });
+    
+    // Selección de categorías
+    $('.wp-alp-airbnb-category-item').on('click', function() {
+        $('.wp-alp-airbnb-category-item').removeClass('selected');
+        $(this).addClass('selected');
+    });
+    
+    // Selección de tipo de servicio
+    $('.wp-alp-airbnb-service-option').on('click', function() {
+        $('.wp-alp-airbnb-service-option').removeClass('selected');
+        $(this).addClass('selected');
+        // Ocultar mensaje de validación si estaba visible
+        $('.wp-alp-airbnb-service-validation').hide();
+    });
+    
+    // Botón de volver desde tipo de servicio a categorías
+    $('#back-to-categories-btn').on('click', function(e) {
+        e.preventDefault();
+        $('#step-1-service-type').hide();
+        $('#step-1-categories').show();
         
-        // En lugar de mostrar alert, ocultamos paso actual y mostramos el siguiente
-        $('#step-1-categories').hide();
+        // Actualizar URL
+        var currentUrl = window.location.pathname;
+        var newUrl = currentUrl + '?step=1&substep=categories';
+        history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    });
+    
+    // Botón para ir a la ubicación desde el tipo de servicio
+    $('#next-from-service-type-btn').on('click', function(e) {
+        e.preventDefault();
+        // Verificar si hay un tipo de servicio seleccionado
+        if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
+            var selectedService = $('.wp-alp-airbnb-service-option.selected');
+            var selectedValue = selectedService.data('value');
+            console.log('Tipo de servicio seleccionado: ' + selectedValue);
+            
+            // Ocultar paso actual y mostrar paso de ubicación
+            $('#step-1-service-type').hide();
+            $('#step-1-location').show();
+            
+            // Actualizar URL
+            var currentUrl = window.location.pathname;
+            var newUrl = currentUrl + '?step=1&substep=location';
+            history.pushState({step: 1, substep: 'location'}, '', newUrl);
+            
+            // Desplazarse al inicio de la página
+            $('html, body').scrollTop(0);
+        } else {
+            // Mostrar mensaje de validación
+            $('.wp-alp-airbnb-service-validation').fadeIn();
+        }
+    });
+    
+    // Botón para volver al tipo de servicio desde la ubicación
+    $('#back-to-service-type-btn').on('click', function(e) {
+        e.preventDefault();
+        $('#step-1-location').hide();
         $('#step-1-service-type').show();
         
         // Actualizar URL
@@ -565,16 +639,97 @@ jQuery(document).ready(function($) {
         
         // Desplazarse al inicio de la página
         $('html, body').scrollTop(0);
-    } else {
-        // Si no hay categoría seleccionada, mostrar mensaje pero no alert
-        $('.wp-alp-airbnb-category-validation').fadeIn();
-    }
-});
+    });
     
-    // Selección de categorías
-    $('.wp-alp-airbnb-category-item').on('click', function() {
-        $('.wp-alp-airbnb-category-item').removeClass('selected');
-        $(this).addClass('selected');
+    // Selección de tipo de ubicación
+    $('.wp-alp-location-option').on('click', function() {
+        var $this = $(this);
+        var option = $this.data('option');
+        
+        // Actualizar selección visual
+        $('.wp-alp-location-option').removeClass('selected');
+        $this.addClass('selected');
+        
+        // Marcar el radio button
+        $('#location-' + option).prop('checked', true);
+        
+        // Mostrar el contenedor correspondiente
+        if (option === 'specific') {
+            $('.wp-alp-location-specific-container').show();
+            $('.wp-alp-location-multiple-container').hide();
+            
+            // Inicializar el mapa si existe la función
+            if (typeof initMap === 'function') {
+                setTimeout(function() {
+                    initMap();
+                }, 100);
+            }
+        } else if (option === 'multiple') {
+            $('.wp-alp-location-specific-container').hide();
+            $('.wp-alp-location-multiple-container').show();
+        }
+        
+        // Ocultar mensaje de validación si estaba visible
+        $('.wp-alp-location-validation').hide();
+    });
+    
+    // Manejo de la opción "Otro"
+    $('#location-other').on('change', function() {
+        if ($(this).is(':checked')) {
+            $('.wp-alp-location-other-input').show();
+        } else {
+            $('.wp-alp-location-other-input').hide();
+        }
+    });
+    
+    // Botón de siguiente desde la ubicación
+    $('#next-from-location-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        // Verificar si se ha seleccionado una ubicación
+        var isSpecific = $('#location-specific').is(':checked');
+        var isMultiple = $('#location-multiple').is(':checked');
+        
+        if (!isSpecific && !isMultiple) {
+            // No se ha seleccionado un tipo de ubicación
+            $('.wp-alp-location-validation').fadeIn();
+            return;
+        }
+        
+        // Validar según el tipo seleccionado
+        if (isSpecific) {
+            var address = $('#wp-alp-address-input').val().trim();
+            if (!address) {
+                $('.wp-alp-location-validation').fadeIn();
+                return;
+            }
+        } else if (isMultiple) {
+            var hasChecked = $('.wp-alp-locations-checkboxes input:checked').length > 0 || $('#location-other').is(':checked');
+            if (!hasChecked) {
+                $('.wp-alp-location-validation').fadeIn();
+                return;
+            }
+            
+            // Si "Otro" está marcado, verificar que se haya ingresado texto
+            if ($('#location-other').is(':checked')) {
+                var otherLocation = $('#wp-alp-other-location').val().trim();
+                if (!otherLocation) {
+                    $('.wp-alp-location-validation').fadeIn();
+                    return;
+                }
+            }
+        }
+        
+        // Si llegamos aquí, todo está validado
+        console.log('Ubicación validada, continuar al siguiente paso');
+        
+        // Aquí deberías agregar la navegación al siguiente paso
+        // Por ahora, mostramos un mensaje temporal
+        alert('Ubicación validada. Continuaríamos al siguiente paso.');
+        
+        // El código para mostrar el siguiente paso sería algo así:
+        // $('#step-1-location').hide();
+        // $('#step-1-next-page').show();
     });
     
     // Función para actualizar la URL sin recargar la página
@@ -609,23 +764,27 @@ jQuery(document).ready(function($) {
     }
     
     // Manejo de navegación del historial del navegador
-window.onpopstate = function(event) {
-    if (event.state) {
-        if (event.state.substep === 'categories') {
-            // Mostrar el subpaso de categorías
-            $steps.hide();
-            $('#step-1-categories').show();
-        } else if (event.state.substep === 'service-type') {
-            // Mostrar el subpaso de tipo de servicio
-            $steps.hide();
-            $('#step-1-service-type').show();
-        } else if (typeof event.state.step !== 'undefined') {
-            goToStep(event.state.step);
+    window.onpopstate = function(event) {
+        if (event.state) {
+            if (event.state.substep === 'categories') {
+                // Mostrar el subpaso de categorías
+                $steps.hide();
+                $('#step-1-categories').show();
+            } else if (event.state.substep === 'service-type') {
+                // Mostrar el subpaso de tipo de servicio
+                $steps.hide();
+                $('#step-1-service-type').show();
+            } else if (event.state.substep === 'location') {
+                // Mostrar el subpaso de ubicación
+                $steps.hide();
+                $('#step-1-location').show();
+            } else if (typeof event.state.step !== 'undefined') {
+                goToStep(event.state.step);
+            }
+        } else {
+            goToStep(0);
         }
-    } else {
-        goToStep(0);
-    }
-};
+    };
     
     // Inicialización: verificar si hay un paso en la URL
     var urlParams = new URLSearchParams(window.location.search);
@@ -641,6 +800,14 @@ window.onpopstate = function(event) {
             // Mostrar el subpaso de categorías
             $steps.hide();
             $('#step-1-categories').show();
+        } else if (substepParam === 'service-type' && stepNum === 1) {
+            // Mostrar el subpaso de tipo de servicio
+            $steps.hide();
+            $('#step-1-service-type').show();
+        } else if (substepParam === 'location' && stepNum === 1) {
+            // Mostrar el subpaso de ubicación
+            $steps.hide();
+            $('#step-1-location').show();
         } else {
             goToStep(stepNum);
         }
@@ -648,257 +815,63 @@ window.onpopstate = function(event) {
         // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
         goToStep(0);
     }
-});
-
-// Selección de tipo de servicio
-$('.wp-alp-airbnb-service-option').on('click', function() {
-    $('.wp-alp-airbnb-service-option').removeClass('selected');
-    $(this).addClass('selected');
-    // Ocultar mensaje de validación si estaba visible
-    $('.wp-alp-airbnb-service-validation').hide();
-});
-
-// Botón de volver desde tipo de servicio a categorías
-$('#back-to-categories-btn').on('click', function(e) {
-    e.preventDefault();
-    $('#step-1-service-type').hide();
-    $('#step-1-categories').show();
     
-    // Actualizar URL
-    var currentUrl = window.location.pathname;
-    var newUrl = currentUrl + '?step=1&substep=categories';
-    history.pushState({step: 1, substep: 'categories'}, '', newUrl);
-    
-    // Desplazarse al inicio de la página
-    $('html, body').scrollTop(0);
-});
-
-// Botón de siguiente desde tipo de servicio
-$('#next-from-service-type-btn').on('click', function(e) {
-    e.preventDefault();
-    // Verificar si hay un tipo de servicio seleccionado
-    if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
-        var selectedService = $('.wp-alp-airbnb-service-option.selected');
-        var selectedValue = selectedService.data('value');
-        console.log('Tipo de servicio seleccionado: ' + selectedValue);
-        
-        // Aquí añadirías la navegación al siguiente paso
-        // Por ahora solo mostramos un mensaje, pero deberías reemplazar esto
-        alert('Has seleccionado: ' + selectedValue + '\nEsta alerta es temporal y deberías continuar con la implementación del siguiente paso.');
-        
-        // El código para mostrar el siguiente paso sería algo así:
-        // $('#step-1-service-type').hide();
-        // $('#step-1-next-page').show();
-        
-    } else {
-        // Mostrar mensaje de validación
-        $('.wp-alp-airbnb-service-validation').fadeIn();
-    }
-});
-
-// Botón para ir a la ubicación desde el tipo de servicio
-$('#next-from-service-type-btn').on('click', function(e) {
-    e.preventDefault();
-    // Verificar si hay un tipo de servicio seleccionado
-    if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
-        var selectedService = $('.wp-alp-airbnb-service-option.selected');
-        var selectedValue = selectedService.data('value');
-        console.log('Tipo de servicio seleccionado: ' + selectedValue);
-        
-        // Ocultar paso actual y mostrar paso de ubicación
-        $('#step-1-service-type').hide();
-        $('#step-1-location').show();
-        
-        // Actualizar URL
-        var currentUrl = window.location.pathname;
-        var newUrl = currentUrl + '?step=1&substep=location';
-        history.pushState({step: 1, substep: 'location'}, '', newUrl);
-        
-        // Desplazarse al inicio de la página
-        $('html, body').scrollTop(0);
-    } else {
-        // Mostrar mensaje de validación
-        $('.wp-alp-airbnb-service-validation').fadeIn();
-    }
-});
-
-// Botón para volver al tipo de servicio desde la ubicación
-$('#back-to-service-type-btn').on('click', function(e) {
-    e.preventDefault();
-    $('#step-1-location').hide();
-    $('#step-1-service-type').show();
-    
-    // Actualizar URL
-    var currentUrl = window.location.pathname;
-    var newUrl = currentUrl + '?step=1&substep=service-type';
-    history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
-    
-    // Desplazarse al inicio de la página
-    $('html, body').scrollTop(0);
-});
-
-// Selección de tipo de ubicación
-$('.wp-alp-location-option').on('click', function() {
-    var $this = $(this);
-    var option = $this.data('option');
-    
-    // Actualizar selección visual
-    $('.wp-alp-location-option').removeClass('selected');
-    $this.addClass('selected');
-    
-    // Marcar el radio button
-    $('#location-' + option).prop('checked', true);
-    
-    // Mostrar el contenedor correspondiente
-    if (option === 'specific') {
-        $('.wp-alp-location-specific-container').show();
-        $('.wp-alp-location-multiple-container').hide();
-    } else if (option === 'multiple') {
-        $('.wp-alp-location-specific-container').hide();
-        $('.wp-alp-location-multiple-container').show();
-    }
-    
-    // Ocultar mensaje de validación si estaba visible
-    $('.wp-alp-location-validation').hide();
-});
-
-// Manejo de la opción "Otro"
-$('#location-other').on('change', function() {
-    if ($(this).is(':checked')) {
-        $('.wp-alp-location-other-input').show();
-    } else {
-        $('.wp-alp-location-other-input').hide();
-    }
-});
-
-// Botón de siguiente desde la ubicación
-$('#next-from-location-btn').on('click', function(e) {
-    e.preventDefault();
-    
-    // Verificar si se ha seleccionado una ubicación
-    var isSpecific = $('#location-specific').is(':checked');
-    var isMultiple = $('#location-multiple').is(':checked');
-    
-    if (!isSpecific && !isMultiple) {
-        // No se ha seleccionado un tipo de ubicación
-        $('.wp-alp-location-validation').fadeIn();
-        return;
-    }
-    
-    // Validar según el tipo seleccionado
-    if (isSpecific) {
-        var address = $('#wp-alp-address-input').val().trim();
-        if (!address) {
-            $('.wp-alp-location-validation').fadeIn();
-            return;
-        }
-    } else if (isMultiple) {
-        var hasChecked = $('.wp-alp-locations-checkboxes input:checked').length > 0 || $('#location-other').is(':checked');
-        if (!hasChecked) {
-            $('.wp-alp-location-validation').fadeIn();
-            return;
-        }
-        
-        // Si "Otro" está marcado, verificar que se haya ingresado texto
-        if ($('#location-other').is(':checked')) {
-            var otherLocation = $('#wp-alp-other-location').val().trim();
-            if (!otherLocation) {
-                $('.wp-alp-location-validation').fadeIn();
-                return;
-            }
-        }
-    }
-    
-    // Si llegamos aquí, todo está validado
-    console.log('Ubicación validada, continuar al siguiente paso');
-    
-    // Aquí deberías agregar la navegación al siguiente paso
-    // Por ahora, mostramos un mensaje temporal
-    alert('Ubicación validada. Continuaríamos al siguiente paso.');
-    
-    // El código para mostrar el siguiente paso sería algo así:
-    // $('#step-1-location').hide();
-    // $('#step-1-next-page').show();
-});
-
-// Actualizar el manejador de estados del navegador para incluir el paso de ubicación
-window.onpopstate = function(event) {
-    if (event.state) {
-        if (event.state.substep === 'categories') {
-            // Mostrar el subpaso de categorías
-            $steps.hide();
-            $('#step-1-categories').show();
-        } else if (event.state.substep === 'service-type') {
-            // Mostrar el subpaso de tipo de servicio
-            $steps.hide();
-            $('#step-1-service-type').show();
-        } else if (event.state.substep === 'location') {
-            // Mostrar el subpaso de ubicación
-            $steps.hide();
-            $('#step-1-location').show();
-        } else if (typeof event.state.step !== 'undefined') {
-            goToStep(event.state.step);
-        }
-    } else {
-        goToStep(0);
-    }
-};
-
-// Inicializar el mapa cuando se selecciona la opción de ubicación específica
-function initMap() {
-    if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-        var map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
-            center: {lat: 25.6866, lng: -100.3161}, // Coordenadas de ejemplo
-            zoom: 13,
-            mapTypeControl: false,
-            fullscreenControl: false
-        });
-        
-        // Agregar el autocomplete para la dirección
-        var input = document.getElementById('wp-alp-address-input');
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        
-        // Bias hacia el área del mapa visible
-        autocomplete.bindTo('bounds', map);
-        
-        // Marcador para la ubicación seleccionada
-        var marker = new google.maps.Marker({
-            map: map,
-            anchorPoint: new google.maps.Point(0, -29)
-        });
-        
-        // Manejar la selección de lugar
-        autocomplete.addListener('place_changed', function() {
-            marker.setVisible(false);
-            var place = autocomplete.getPlace();
+    // Inicializar el mapa cuando se selecciona la opción de ubicación específica
+    function initMap() {
+        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+            var map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
+                center: {lat: 25.6866, lng: -100.3161}, // Coordenadas de ejemplo
+                zoom: 13,
+                mapTypeControl: false,
+                fullscreenControl: false
+            });
             
-            if (!place.geometry) {
-                window.alert("No hay detalles disponibles para: '" + place.name + "'");
-                return;
-            }
+            // Agregar el autocomplete para la dirección
+            var input = document.getElementById('wp-alp-address-input');
+            var autocomplete = new google.maps.places.Autocomplete(input);
             
-            // Si el lugar tiene una geometría, mostrarla en el mapa
-            if (place.geometry.viewport) {
-                map.fitBounds(place.geometry.viewport);
-            } else {
-                map.setCenter(place.geometry.location);
-                map.setZoom(17);
-            }
+            // Bias hacia el área del mapa visible
+            autocomplete.bindTo('bounds', map);
             
-            marker.setPosition(place.geometry.location);
-            marker.setVisible(true);
-        });
+            // Marcador para la ubicación seleccionada
+            var marker = new google.maps.Marker({
+                map: map,
+                anchorPoint: new google.maps.Point(0, -29)
+            });
+            
+            // Manejar la selección de lugar
+            autocomplete.addListener('place_changed', function() {
+                marker.setVisible(false);
+                var place = autocomplete.getPlace();
+                
+                if (!place.geometry) {
+                    window.alert("No hay detalles disponibles para: '" + place.name + "'");
+                    return;
+                }
+                
+                // Si el lugar tiene una geometría, mostrarla en el mapa
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                }
+                
+                marker.setPosition(place.geometry.location);
+                marker.setVisible(true);
+            });
+        }
     }
-}
-
-// Llamar a initMap cuando se selecciona la opción específica
-$('#location-specific').on('change', function() {
-    if ($(this).is(':checked')) {
-        // Permitir que el DOM se actualice primero
-        setTimeout(function() {
-            initMap();
-        }, 100);
-    }
+    
+    // Llamar a initMap cuando se selecciona la opción específica mediante el radio button
+    $('#location-specific').on('change', function() {
+        if ($(this).is(':checked')) {
+            // Permitir que el DOM se actualice primero
+            setTimeout(function() {
+                initMap();
+            }, 100);
+        }
+    });
 });
 </script>
 
