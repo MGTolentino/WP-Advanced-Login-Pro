@@ -1102,10 +1102,15 @@ jQuery(document).ready(function($) {
     }
     
     // Inicializar el mapa
-    function initMap() {
-        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-            try {
-
+function initMap() {
+    if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+        try {
+            // Verificar Places API explícitamente
+            if (!google.maps.places) {
+                console.error("Error: Google Maps Places API no está disponible");
+                return;
+            }
+            
             // Coordenadas por defecto (puedes cambiarlas)
             var defaultLocation = {lat: 25.6866, lng: -100.3161};
             
@@ -1120,12 +1125,6 @@ jQuery(document).ready(function($) {
                     position: google.maps.ControlPosition.RIGHT_TOP
                 }
             });
-
-             // Verificar Places API explícitamente
-             if (!google.maps.places) {
-                    console.error("Error: Google Maps Places API no está disponible");
-                    return;
-                }
             
             // Inicializar geocoder y servicios de lugares
             geocoder = new google.maps.Geocoder();
@@ -1226,15 +1225,14 @@ jQuery(document).ready(function($) {
             $('#house-marker').show();
             
             // Mostrar el círculo de ubicación aproximada (inicialmente)
-            circle.setVisible(true);  
+            circle.setVisible(true);
         } catch (error) {
-                console.error("Error al inicializar el mapa:", error);
-            }
-        } else {
-            console.error("Google Maps API no está disponible");
+            console.error("Error al inicializar el mapa:", error);
         }
-        }
+    } else {
+        console.error("Google Maps API no está disponible");
     }
+}
     
     // Cuando se selecciona la opción de ubicación específica
     $('#location-specific').on('change', function() {
