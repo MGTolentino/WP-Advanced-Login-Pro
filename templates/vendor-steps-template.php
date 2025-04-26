@@ -74,51 +74,56 @@ get_header(); ?>
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Barra de progreso -->
-                        <div class="wp-alp-full-width-progress">
-                            <div class="wp-alp-progress-line"></div>
-                        </div>
-                        
-                        <!-- Botón de acción -->
-                        <div class="wp-alp-steps-action">
-                            <button type="button" class="wp-alp-steps-button" id="start-registration">
-                                <?php echo esc_html(get_locale() == 'en_US' ? 'GET STARTED' : 'EMPEZAR'); ?>
-                            </button>
-                        </div>
                     </div>
+                </div>
+                
+                <!-- Barra de progreso a ancho completo DESPUÉS de two-column-layout -->
+                <div class="wp-alp-full-width-progress">
+                    <div class="wp-alp-progress-line"></div>
+                </div>
+                
+                <!-- Botón de acción -->
+                <div class="wp-alp-steps-action">
+                    <button type="button" class="wp-alp-steps-button" id="start-registration">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'GET STARTED' : 'EMPEZAR'); ?>
+                    </button>
                 </div>
             </div>
 
-            <!-- Paso 1: "Describe tu espacio" - Mantenemos este paso como estaba originalmente -->
+            <!-- Paso 1: "Describe tu espacio" con dos columnas -->
             <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
-                <div class="wp-alp-step-wrapper">
-                    <!-- Etiqueta del paso -->
-                    <div class="wp-alp-step-label">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+                <div class="wp-alp-dual-column-container">
+                    <!-- Columna izquierda con texto -->
+                    <div class="wp-alp-dual-column-left">
+                        <!-- Etiqueta del paso -->
+                        <div class="wp-alp-step-label">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+                        </div>
+                        
+                        <!-- Título del paso -->
+                        <h1 class="wp-alp-step-heading">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your space' : 'Describe tu espacio'); ?>
+                        </h1>
+                        
+                        <!-- Descripción del paso -->
+                        <p class="wp-alp-step-description-large">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
+                        </p>
                     </div>
                     
-                    <!-- Título del paso -->
-                    <h1 class="wp-alp-step-heading">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your space' : 'Describe tu espacio'); ?>
-                    </h1>
-                    
-                    <!-- Descripción del paso -->
-                    <p class="wp-alp-step-description-large">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
-                    </p>
-                    
-                    <!-- Imagen ilustrativa -->
-                    <div class="wp-alp-step-illustration">
-                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                    <!-- Columna derecha con imagen -->
+                    <div class="wp-alp-dual-column-right">
+                        <div class="wp-alp-step-illustration">
+                            <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Barra de progreso y navegación en la parte inferior -->
                 <div class="wp-alp-airbnb-footer">
-                    <!-- Barra de progreso con avance -->
+                    <!-- Barra de progreso sin avance (toda gris) -->
                     <div class="wp-alp-airbnb-progress-bar">
-                        <div class="wp-alp-airbnb-progress-completed" style="width: 20%;"></div>
+                        <!-- No progreso, solo barra gris -->
                     </div>
                     
                     <!-- Navegación -->
@@ -193,7 +198,7 @@ get_header(); ?>
                         foreach ($sample_options as $index => $option) {
                             $selected = ($index === 8) ? 'selected' : ''; // Supongamos que Castillo (índice 8) está seleccionado
                             ?>
-                            <div class="wp-alp-airbnb-category-item <?php echo esc_attr($selected); ?>" data-term-id="<?php echo isset($option['term_id']) ? esc_attr($option['term_id']) : ''; ?>">
+                            <div class="wp-alp-airbnb-category-item <?php echo esc_attr($selected); ?>" data-term-id="<?php echo isset($option['term_id']) ? esc_attr($option['term_id']) : ''; ?>" data-name="<?php echo esc_attr($option['name']); ?>">
                                 <div class="wp-alp-airbnb-category-icon">
                                     <?php echo $option['icon']; ?>
                                 </div>
@@ -241,13 +246,13 @@ jQuery(document).ready(function($) {
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
     
-    // Botón de inicio de registro (página principal -> paso 1)
-    $('#start-registration').on('click', function() {
+   // Botón de inicio de registro (página principal -> paso 1)
+   $('#start-registration').on('click', function() {
         goToStep(1); // Va a "Describe tu espacio"
     });
     
-   // Botón de siguiente en paso 1 (lleva a categorías)
-   $('#go-to-categories-btn').on('click', function(e) {
+    // Botón de siguiente en paso 1 (lleva a categorías)
+    $('#go-to-categories-btn').on('click', function(e) {
         e.preventDefault();
         $('#step-1').hide();
         $('#step-1-categories').show();
@@ -287,12 +292,13 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         // Verificar si hay una categoría seleccionada
         if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
-            var selectedTermId = $('.wp-alp-airbnb-category-item.selected').data('term-id');
-            console.log('Categoría seleccionada: ' + selectedTermId);
+            var selectedCategory = $('.wp-alp-airbnb-category-item.selected');
+            var selectedName = selectedCategory.data('name');
+            console.log('Categoría seleccionada: ' + selectedName);
             
             // Aquí iríamos al siguiente paso (paso 2)
             // Por ahora solo mostramos un mensaje
-            alert('Categoría seleccionada: ' + selectedTermId + '\nIríamos al paso 2');
+            alert('Has seleccionado: ' + selectedName + '\nPasaríamos al paso 2');
         } else {
             alert('Por favor, selecciona una opción antes de continuar.');
         }
@@ -374,5 +380,4 @@ jQuery(document).ready(function($) {
 });
 </script>
 
-<?php get_footer(); ?> // Botón de siguiente en paso 1 (lleva a categorías)
-    $('#go-to-categories-btn').on
+<?php get_footer(); ?>

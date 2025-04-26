@@ -574,10 +574,10 @@ button.wp-alp-vendor-button {
     border-radius: 12px !important;
 }
 
-/* Barra de progreso a ancho completo */
+/* Página principal: barra de progreso a ancho completo */
 .wp-alp-full-width-progress {
     width: 100% !important;
-    margin: 30px 0 20px 0 !important; /* Espacio arriba y abajo */
+    margin: 30px 0 20px 0 !important;
     padding: 0 !important;
     clear: both !important; /* Asegura que ocupe todo el ancho */
 }
@@ -598,6 +598,30 @@ button.wp-alp-vendor-button {
     margin: 0 auto !important;
     padding: 60px 24px 120px !important; /* Padding inferior para el footer fijo */
 }
+
+.wp-alp-dual-column-container {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    max-width: 1120px !important;
+    margin: 80px auto 100px !important;
+    padding: 0 24px !important;
+    gap: 40px !important;
+}
+
+.wp-alp-dual-column-left {
+    flex: 1 !important;
+    max-width: 50% !important;
+}
+
+.wp-alp-dual-column-right {
+    flex: 1 !important;
+    max-width: 50% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
 
 .wp-alp-steps-button {
     display: inline-block !important;
@@ -671,31 +695,27 @@ button.wp-alp-vendor-button {
     position: relative !important;
 }
 
-/* Etiqueta del paso (pequeño texto "Step 1" en la parte superior) */
 .wp-alp-step-label {
     font-size: 16px !important;
-    font-weight: 500 !important;
-    color: #CBB781 !important; /* Color dorado similar a Airbnb */
-    margin-bottom: 8px !important;
-    display: block !important;
+    font-weight: 600 !important;
+    color: #CBB781 !important; /* Color dorado */
+    margin-bottom: 16px !important;
 }
 
-/* Título principal del paso */
 .wp-alp-step-heading {
-    font-size: 32px !important;
+    font-size: 36px !important;
     font-weight: 600 !important;
     color: #222222 !important;
-    margin: 0 0 20px 0 !important;
-    line-height: 1.3 !important;
+    margin: 0 0 20px !important;
+    line-height: 1.25 !important;
 }
 
 /* Descripción grande del paso */
 .wp-alp-step-description-large {
     font-size: 18px !important;
-    color: #222222 !important;
     line-height: 1.5 !important;
-    margin-bottom: 30px !important;
-    max-width: 700px !important;
+    color: #222222 !important;
+    margin: 0 !important;
 }
 
 /* Imagen ilustrativa del paso */
@@ -708,7 +728,6 @@ button.wp-alp-vendor-button {
     max-width: 100% !important;
     height: auto !important;
     border-radius: 12px !important;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1) !important;
 }
 
 /* Contenedor de la barra de progreso */
@@ -1058,7 +1077,7 @@ button.wp-alp-vendor-button {
     background-color: #F7F7F7 !important;
 }
 
-/* Contenido principal de categorías */
+* Contenido principal de categorías */
 .wp-alp-airbnb-category-content {
     max-width: 1120px !important;
     margin: 80px auto 0 !important;
@@ -1133,7 +1152,7 @@ button.wp-alp-vendor-button {
 .wp-alp-airbnb-progress-bar {
     width: 100% !important;
     height: 4px !important;
-    background-color: #DDDDDD !important;
+    background-color: #d1d8e0 !important;
     position: relative !important;
 }
 
@@ -1185,6 +1204,19 @@ button.wp-alp-vendor-button {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .wp-alp-dual-column-container {
+        flex-direction: column !important;
+    }
+    
+    .wp-alp-dual-column-left,
+    .wp-alp-dual-column-right {
+        max-width: 100% !important;
+    }
+    
+    .wp-alp-step-heading {
+        font-size: 28px !important;
+    }
+    
     .wp-alp-airbnb-category-title {
         font-size: 28px !important;
     }
@@ -1195,16 +1227,6 @@ button.wp-alp-vendor-button {
     
     .wp-alp-airbnb-help-header {
         padding: 16px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .wp-alp-airbnb-category-content {
-        padding: 0 16px 80px !important;
-    }
-    
-    .wp-alp-airbnb-category-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
     }
     
     .wp-alp-airbnb-nav {
