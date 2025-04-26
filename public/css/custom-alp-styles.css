@@ -1233,3 +1233,86 @@ button.wp-alp-vendor-button {
         padding: 16px !important;
     }
 }
+
+/* Estilos para la pantalla de tipo de servicio */
+.wp-alp-airbnb-service-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    max-width: 720px !important;
+    margin: 0 auto !important;
+}
+
+.wp-alp-airbnb-service-option {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 24px !important;
+    border: 1px solid #DDDDDD !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.wp-alp-airbnb-service-option:hover {
+    border-color: #222222 !important;
+}
+
+.wp-alp-airbnb-service-option.selected {
+    border-color: #222222 !important;
+    border-width: 2px !important;
+}
+
+.wp-alp-airbnb-service-info {
+    flex: 1 !important;
+}
+
+.wp-alp-airbnb-service-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+    margin: 0 0 8px !important;
+}
+
+.wp-alp-airbnb-service-description {
+    font-size: 14px !important;
+    color: #717171 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.wp-alp-airbnb-service-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 64px !important;
+    height: 64px !important;
+    color: #222222 !important;
+}
+
+.wp-alp-airbnb-service-validation {
+    color: #c13515 !important;
+    background-color: #FFF8F6 !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    margin-top: 24px !important;
+    text-align: center !important;
+    max-width: 720px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .wp-alp-airbnb-service-grid {
+        gap: 12px !important;
+    }
+    
+    .wp-alp-airbnb-service-option {
+        padding: 16px !important;
+    }
+    
+    .wp-alp-airbnb-service-title {
+        font-size: 16px !important;
+    }
+}

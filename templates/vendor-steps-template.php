@@ -231,6 +231,101 @@ get_header(); ?>
                 </div>
             </div>
 
+            <!-- Paso 1.2: Tipo de servicio (subpaso de Paso 1) -->
+<div class="wp-alp-form-step" id="step-1-service-type" data-step="1.2" style="display: none;">
+    <!-- Header con opciones de ayuda -->
+    <div class="wp-alp-airbnb-help-header">
+        <div class="wp-alp-airbnb-help-links">
+            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+        </div>
+    </div>
+    
+    <!-- Título de la página -->
+    <div class="wp-alp-airbnb-category-content">
+        <h1 class="wp-alp-airbnb-category-title">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'What type of service do you offer to guests?' : '¿Qué tipo de servicio ofreces a los clientes?'); ?>
+        </h1>
+        
+        <!-- Grid de tipos de servicio -->
+        <div class="wp-alp-airbnb-service-grid">
+            <!-- Opción 1: Servicio por Día -->
+            <div class="wp-alp-airbnb-service-option" data-value="day">
+                <div class="wp-alp-airbnb-service-info">
+                    <h2 class="wp-alp-airbnb-service-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Day' : 'Servicio por Día'); ?>
+                    </h2>
+                    <p class="wp-alp-airbnb-service-description">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service for one or more full days.' : 'Los clientes contratan tu servicio por uno o más días completos.'); ?>
+                    </p>
+                </div>
+                <div class="wp-alp-airbnb-service-icon">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                        <path d="M12 0v2h8V0h2v2h6a2 2 0 0 1 1.995 1.85L30 4v24a2 2 0 0 1-1.85 1.995L28 30H4a2 2 0 0 1-1.995-1.85L2 28V4a2 2 0 0 1 1.85-1.995L4 2h6V0h2zm16 10H4v18h24V10zm-8 2v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Opción 2: Servicio por Hora -->
+            <div class="wp-alp-airbnb-service-option" data-value="hour">
+                <div class="wp-alp-airbnb-service-info">
+                    <h2 class="wp-alp-airbnb-service-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Hour' : 'Servicio por Hora'); ?>
+                    </h2>
+                    <p class="wp-alp-airbnb-service-description">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service by the hour, ideal for shorter events.' : 'Los clientes contratan tu servicio por hora, ideal para eventos más cortos.'); ?>
+                    </p>
+                </div>
+                <div class="wp-alp-airbnb-service-icon">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                        <path d="M16 0a16 16 0 1 1 0 32 16 16 0 0 1 0-32zm0 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 6a2 2 0 0 1 1.985 1.75L18 10l-.001 5.584.25.25a2 2 0 0 1 .565 1.32l-.009.131-.016.116-.012.09a2 2 0 0 1-.244.578l-.067.109-.08.115-.09.1-.067.074-.115.109-.12.1-.094.07-.124.08-.098.054-.136.065-.11.044-.133.044-.11.03-.134.03-.136.022-.13.013-.134.008L17 19l-.127-.007-.134-.008-.131-.013-.135-.022-.134-.029-.138-.044-.113-.043-.134-.065-.1-.054-.122-.08-.095-.07-.12-.1-.115-.109-.066-.074-.09-.1-.082-.115-.068-.11a2 2 0 0 1-.242-.577l-.039-.2-.008-.122L15 17.165 15 10a2 2 0 0 1 1-1.732V8a1 1 0 0 0-1.993.117L14 8.225v.613a3.984 3.984 0 0 0-2.997 3.745L11 12.771V14H9v-1.23a6.002 6.002 0 0 1 4.088-5.69l.237-.078A3.001 3.001 0 0 1 16 8zm-4 14v2H8v-2h4zm8 0v2h-4v-2h4zm4 0v2h-1v-2h1z"></path>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Opción 3: Servicio Completo para Evento -->
+            <div class="wp-alp-airbnb-service-option" data-value="complete">
+                <div class="wp-alp-airbnb-service-info">
+                    <h2 class="wp-alp-airbnb-service-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Complete Event Service' : 'Servicio Completo para Evento'); ?>
+                    </h2>
+                    <p class="wp-alp-airbnb-service-description">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Clients receive all necessary elements for their event, including setup and breakdown.' : 'Los clientes reciben todos los elementos necesarios para su evento, incluyendo montaje y desmontaje.'); ?>
+                    </p>
+                </div>
+                <div class="wp-alp-airbnb-service-icon">
+                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                        <path d="M22.999 18V13.5A12 12 0 0 0 15 2.292a15 15 0 0 0-4.000 1.333A12 12 0 0 0 2.998 1.811L2.999 2v15.5C2.999 25.5 11 29 11 29s8-3.5 8-11.5V13l5 4.997L25.503 15l-2.504-2 2.504-2-1.504-2-5 4zM11 26c-4.693-1.97-6-6.678-6-8.5v-12c0-.745 3-2 6-2s6 1.255 6 2v12c0 1.822-1.307 6.53-6 8.5zm.691-6.051a.929.929 0 0 0 1.312 0l6.969-6.97a.93.93 0 0 0-1.312-1.313L12 18.327l-2.659-2.66a.93.93 0 1 0-1.312 1.313l3.315 3.317a.91.91 0 0 0 .657.272.9.9 0 0 0 .657-.272z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mensaje de validación (inicialmente oculto) -->
+        <div class="wp-alp-airbnb-service-validation" style="display: none;">
+            <p>Por favor, selecciona un tipo de servicio para continuar.</p>
+        </div>
+    </div>
+    
+    <!-- Barra de navegación fija -->
+    <div class="wp-alp-airbnb-footer">
+        <!-- Barra de progreso con avance -->
+        <div class="wp-alp-airbnb-progress-bar">
+            <div class="wp-alp-airbnb-progress-completed" style="width: 40%;"></div>
+        </div>
+        
+        <!-- Botones de navegación -->
+        <div class="wp-alp-airbnb-nav">
+            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-categories-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+            </a>
+            <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-service-type-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+            </a>
+        </div>
+    </div>
+</div>
+
             <!-- Aquí podrían ir más pasos... -->
         </div>
     </div>
@@ -289,20 +384,29 @@ jQuery(document).ready(function($) {
     
     // Botón de siguiente desde categorías
     $('#next-from-categories-btn').on('click', function(e) {
-        e.preventDefault();
-        // Verificar si hay una categoría seleccionada
-        if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
-            var selectedCategory = $('.wp-alp-airbnb-category-item.selected');
-            var selectedName = selectedCategory.data('name');
-            console.log('Categoría seleccionada: ' + selectedName);
-            
-            // Aquí iríamos al siguiente paso (paso 2)
-            // Por ahora solo mostramos un mensaje
-            alert('Has seleccionado: ' + selectedName + '\nPasaríamos al paso 2');
-        } else {
-            alert('Por favor, selecciona una opción antes de continuar.');
-        }
-    });
+    e.preventDefault();
+    // Verificar si hay una categoría seleccionada
+    if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
+        var selectedCategory = $('.wp-alp-airbnb-category-item.selected');
+        var selectedName = selectedCategory.data('name');
+        console.log('Categoría seleccionada: ' + selectedName);
+        
+        // En lugar de mostrar alert, ocultamos paso actual y mostramos el siguiente
+        $('#step-1-categories').hide();
+        $('#step-1-service-type').show();
+        
+        // Actualizar URL
+        var currentUrl = window.location.pathname;
+        var newUrl = currentUrl + '?step=1&substep=service-type';
+        history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    } else {
+        // Si no hay categoría seleccionada, mostrar mensaje pero no alert
+        $('.wp-alp-airbnb-category-validation').fadeIn();
+    }
+});
     
     // Selección de categorías
     $('.wp-alp-airbnb-category-item').on('click', function() {
@@ -342,19 +446,23 @@ jQuery(document).ready(function($) {
     }
     
     // Manejo de navegación del historial del navegador
-    window.onpopstate = function(event) {
-        if (event.state) {
-            if (event.state.substep === 'categories') {
-                // Mostrar el subpaso de categorías
-                $steps.hide();
-                $('#step-1-categories').show();
-            } else if (typeof event.state.step !== 'undefined') {
-                goToStep(event.state.step);
-            }
-        } else {
-            goToStep(0);
+window.onpopstate = function(event) {
+    if (event.state) {
+        if (event.state.substep === 'categories') {
+            // Mostrar el subpaso de categorías
+            $steps.hide();
+            $('#step-1-categories').show();
+        } else if (event.state.substep === 'service-type') {
+            // Mostrar el subpaso de tipo de servicio
+            $steps.hide();
+            $('#step-1-service-type').show();
+        } else if (typeof event.state.step !== 'undefined') {
+            goToStep(event.state.step);
         }
-    };
+    } else {
+        goToStep(0);
+    }
+};
     
     // Inicialización: verificar si hay un paso en la URL
     var urlParams = new URLSearchParams(window.location.search);
@@ -376,6 +484,52 @@ jQuery(document).ready(function($) {
     } else {
         // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
         goToStep(0);
+    }
+});
+
+// Selección de tipo de servicio
+$('.wp-alp-airbnb-service-option').on('click', function() {
+    $('.wp-alp-airbnb-service-option').removeClass('selected');
+    $(this).addClass('selected');
+    // Ocultar mensaje de validación si estaba visible
+    $('.wp-alp-airbnb-service-validation').hide();
+});
+
+// Botón de volver desde tipo de servicio a categorías
+$('#back-to-categories-btn').on('click', function(e) {
+    e.preventDefault();
+    $('#step-1-service-type').hide();
+    $('#step-1-categories').show();
+    
+    // Actualizar URL
+    var currentUrl = window.location.pathname;
+    var newUrl = currentUrl + '?step=1&substep=categories';
+    history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+    
+    // Desplazarse al inicio de la página
+    $('html, body').scrollTop(0);
+});
+
+// Botón de siguiente desde tipo de servicio
+$('#next-from-service-type-btn').on('click', function(e) {
+    e.preventDefault();
+    // Verificar si hay un tipo de servicio seleccionado
+    if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
+        var selectedService = $('.wp-alp-airbnb-service-option.selected');
+        var selectedValue = selectedService.data('value');
+        console.log('Tipo de servicio seleccionado: ' + selectedValue);
+        
+        // Aquí añadirías la navegación al siguiente paso
+        // Por ahora solo mostramos un mensaje, pero deberías reemplazar esto
+        alert('Has seleccionado: ' + selectedValue + '\nEsta alerta es temporal y deberías continuar con la implementación del siguiente paso.');
+        
+        // El código para mostrar el siguiente paso sería algo así:
+        // $('#step-1-service-type').hide();
+        // $('#step-1-next-page').show();
+        
+    } else {
+        // Mostrar mensaje de validación
+        $('.wp-alp-airbnb-service-validation').fadeIn();
     }
 });
 </script>
