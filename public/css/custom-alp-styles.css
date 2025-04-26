@@ -1494,3 +1494,262 @@ button.wp-alp-vendor-button {
         font-size: 16px !important;
     }
 }
+
+/* Estilos para el toggle switch */
+.wp-alp-location-toggle {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    margin-bottom: 24px !important;
+    background-color: #fff !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+.wp-alp-toggle-text {
+    flex: 1 !important;
+    padding-right: 16px !important;
+}
+
+.wp-alp-toggle-text span {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+    display: block !important;
+    margin-bottom: 8px !important;
+}
+
+.wp-alp-toggle-description {
+    font-size: 14px !important;
+    color: #717171 !important;
+    margin: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.wp-alp-more-info {
+    color: #222222 !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+    margin-left: 4px !important;
+}
+
+/* Estilo para el Switch */
+.wp-alp-switch {
+    position: relative !important;
+    display: inline-block !important;
+    width: 50px !important;
+    height: 24px !important;
+}
+
+.wp-alp-switch input {
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+}
+
+.wp-alp-slider {
+    position: absolute !important;
+    cursor: pointer !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: #ccc !important;
+    transition: .4s !important;
+}
+
+.wp-alp-slider:before {
+    position: absolute !important;
+    content: "" !important;
+    height: 20px !important;
+    width: 20px !important;
+    left: 2px !important;
+    bottom: 2px !important;
+    background-color: white !important;
+    transition: .4s !important;
+}
+
+input:checked + .wp-alp-slider {
+    background-color: #222222 !important;
+}
+
+input:checked + .wp-alp-slider:before {
+    transform: translateX(26px) !important;
+}
+
+.wp-alp-slider.round {
+    border-radius: 34px !important;
+}
+
+.wp-alp-slider.round:before {
+    border-radius: 50% !important;
+}
+
+/* Mapa y marcador */
+.wp-alp-map-container {
+    position: relative !important;
+    margin-bottom: 16px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+.wp-alp-map-wrapper {
+    height: 400px !important;
+    width: 100% !important;
+    background-color: #f8f8f8 !important;
+}
+
+.wp-alp-house-marker {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 10 !important;
+}
+
+.wp-alp-marker-icon {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    background-color: #E41D57 !important; /* Color rojo de Airbnb */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Tooltip de ubicación aproximada */
+.wp-alp-approximate-tooltip {
+    position: absolute !important;
+    top: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background-color: white !important;
+    border-radius: 28px !important;
+    padding: 12px 24px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+    z-index: 5 !important;
+}
+
+.wp-alp-approximate-tooltip p {
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #222222 !important;
+}
+
+/* Botón de confirmación de dirección */
+.wp-alp-confirm-address-btn {
+    margin-top: 24px !important;
+    text-align: right !important;
+}
+
+.wp-alp-btn {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 10px 16px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    border: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.wp-alp-btn-secondary {
+    background-color: #222222 !important;
+    color: white !important;
+}
+
+.wp-alp-btn-secondary:hover {
+    background-color: #000000 !important;
+}
+
+.wp-alp-btn-primary {
+    background-color: #E41D57 !important; /* Color rojo de Airbnb */
+    color: white !important;
+}
+
+.wp-alp-btn-primary:hover {
+    background-color: #D81C54 !important;
+}
+
+.wp-alp-btn-text {
+    background-color: transparent !important;
+    color: #222222 !important;
+    text-decoration: underline !important;
+}
+
+/* Estilos para el formulario detallado de dirección */
+.wp-alp-address-form-container {
+    max-width: 720px !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+}
+
+.wp-alp-address-form-title {
+    font-size: 28px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+    margin: 0 0 16px 0 !important;
+}
+
+.wp-alp-address-form-subtitle {
+    font-size: 16px !important;
+    color: #717171 !important;
+    margin: 0 0 32px 0 !important;
+    line-height: 1.4 !important;
+}
+
+.wp-alp-address-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+}
+
+.wp-alp-form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.wp-alp-form-label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #222222 !important;
+}
+
+.wp-alp-form-input,
+.wp-alp-form-select {
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 16px !important;
+    border: 1px solid #DDDDDD !important;
+    border-radius: 8px !important;
+    background-color: white !important;
+    color: #222222 !important;
+}
+
+.wp-alp-form-input:focus,
+.wp-alp-form-select:focus {
+    border-color: #222222 !important;
+    outline: none !important;
+}
+
+.wp-alp-address-form-buttons {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-top: 16px !important;
+}
+
+/* Círculo rojo para la ubicación aproximada */
+.wp-alp-location-circle {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 200px !important;
+    height: 200px !important;
+    border-radius: 50% !important;
+    background-color: rgba(228, 29, 87, 0.2) !important; /* Color rojo de Airbnb semitransparente */
+    z-index: 4 !important;
+}

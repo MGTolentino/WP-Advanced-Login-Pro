@@ -378,23 +378,148 @@ get_header(); ?>
             </div>
         </div>
         
-        <!-- Contenedor para la ubicación específica (mapa) - inicialmente oculto -->
         <div class="wp-alp-location-specific-container" style="display: none;">
-            <div class="wp-alp-map-container">
-                <div class="wp-alp-map-wrapper">
-                    <!-- Aquí va el mapa usando tu API -->
-                    <div id="wp-alp-location-map" style="width: 100%; height: 300px; background-color: #f8f8f8; border-radius: 12px;"></div>
-                </div>
-                <div class="wp-alp-map-search">
-                    <div class="wp-alp-search-icon">
-                        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
-                            <path d="M16 0c-5.523 0-10 4.477-10 10 0 10 10 22 10 22s10-12 10-22c0-5.523-4.477-10-10-10zm0 16c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"></path>
-                        </svg>
-                    </div>
-                    <input type="text" id="wp-alp-address-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Enter your address' : 'Ingresa tu dirección'); ?>" class="wp-alp-address-input">
-                </div>
+    <!-- Toggle para mostrar ubicación exacta -->
+    <div class="wp-alp-location-toggle">
+        <div class="wp-alp-toggle-text">
+            <span><?php echo esc_html(get_locale() == 'en_US' ? 'Show your exact location' : 'Mostrar tu ubicación exacta'); ?></span>
+            <p class="wp-alp-toggle-description">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Clearly indicate to guests where your place is located. We will only provide your address when the reservation is confirmed.' : 'Indica claramente a los huéspedes dónde se encuentra tu alojamiento. Solo les facilitaremos tu dirección cuando su reservación esté confirmada.'); ?>
+                <a href="#" class="wp-alp-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
+            </p>
+        </div>
+        <div class="wp-alp-toggle-switch">
+            <label class="wp-alp-switch">
+                <input type="checkbox" id="exact-location-toggle">
+                <span class="wp-alp-slider round"></span>
+            </label>
+        </div>
+    </div>
+    
+    <!-- Contenedor del mapa -->
+    <div class="wp-alp-map-container">
+        <div id="wp-alp-location-map" class="wp-alp-map-wrapper"></div>
+        
+        <!-- Tooltip de ubicación aproximada (inicialmente visible) -->
+        <div class="wp-alp-approximate-tooltip" id="approximate-tooltip">
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'We will share your approximate location.' : 'Compartiremos tu ubicación aproximada.'); ?></p>
+        </div>
+        
+        <!-- Marcador de casa (se moverá con el mapa) -->
+        <div class="wp-alp-house-marker" id="house-marker" style="display: none;">
+            <div class="wp-alp-marker-icon">
+                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: white;">
+                    <path d="M17.954 2.781l.175.164 13.072 12.842-1.402 1.426-1.8-1.768L28 29a2 2 0 0 1-1.85 1.994L26 31H6a2 2 0 0 1-1.995-1.85L4 29V15.446l-1.8 1.767-1.4-1.426L13.856 2.958a3 3 0 0 1 4.098-.177zM16 17a5 5 0 0 0-5 5v7h14v-7a5 5 0 0 0-4.783-4.995L20 17h-4z"></path>
+                </svg>
             </div>
         </div>
+    </div>
+    
+    <!-- Barra de búsqueda de dirección -->
+    <div class="wp-alp-map-search">
+        <div class="wp-alp-search-icon">
+            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 18px; width: 18px; fill: currentcolor;">
+                <path d="M13 0c7.18 0 13 5.82 13 13 0 2.868-.929 5.519-2.502 7.669l7.916 7.917-2.122 2.121-7.916-7.916A12.942 12.942 0 0 1 13 26C5.82 26 0 20.18 0 13S5.82 0 13 0zm0 2a11 11 0 1 0 0 22 11 11 0 0 0 0-22z"></path>
+            </svg>
+        </div>
+        <input type="text" id="wp-alp-address-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Enter your address' : 'Ingresa tu dirección'); ?>" class="wp-alp-address-input">
+    </div>
+    
+    <!-- Botón para confirmación de dirección detallada (inicialmente oculto) -->
+    <div class="wp-alp-confirm-address-btn" style="display: none;">
+        <button type="button" id="confirm-address-btn" class="wp-alp-btn wp-alp-btn-secondary">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm address' : 'Confirmar dirección'); ?>
+        </button>
+    </div>
+</div>
+
+<!-- Formulario detallado de dirección (inicialmente oculto) -->
+<div class="wp-alp-address-form-container" id="address-form-container" style="display: none;">
+    <h2 class="wp-alp-address-form-title">
+        <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm your address' : 'Confirma tu dirección'); ?>
+    </h2>
+    <p class="wp-alp-address-form-subtitle">
+        <?php echo esc_html(get_locale() == 'en_US' ? 'We will only share the address with guests after they have made the reservation.' : 'Solo compartiremos la dirección con los huéspedes después de que hayan hecho la reservación.'); ?>
+    </p>
+    
+    <form id="wp-alp-detailed-address" class="wp-alp-address-form">
+        <!-- País -->
+        <div class="wp-alp-form-group">
+            <label for="country" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Country/Region' : 'País o región'); ?>
+            </label>
+            <select id="country" name="country" class="wp-alp-form-select">
+                <option value="MX" selected>México - MX</option>
+                <option value="US">Estados Unidos - US</option>
+                <option value="CA">Canadá - CA</option>
+                <!-- Agrega más países según sea necesario -->
+            </select>
+        </div>
+        
+        <!-- Dirección principal -->
+        <div class="wp-alp-form-group">
+            <label for="street" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Address' : 'Dirección'); ?>
+            </label>
+            <input type="text" id="street" name="street" class="wp-alp-form-input">
+        </div>
+        
+        <!-- Apartamento, habitación, etc. -->
+        <div class="wp-alp-form-group">
+            <label for="apt" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Apt, suite, etc. (if applicable)' : 'Departamento, habitación, etc. (si corresponde)'); ?>
+            </label>
+            <input type="text" id="apt" name="apt" class="wp-alp-form-input">
+        </div>
+        
+        <!-- Zona o barrio -->
+        <div class="wp-alp-form-group">
+            <label for="neighborhood" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Area (if applicable)' : 'Zona (si corresponde)'); ?>
+            </label>
+            <input type="text" id="neighborhood" name="neighborhood" class="wp-alp-form-input">
+        </div>
+        
+        <!-- Código postal -->
+        <div class="wp-alp-form-group">
+            <label for="zipcode" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Postal code' : 'Código postal'); ?>
+            </label>
+            <input type="text" id="zipcode" name="zipcode" class="wp-alp-form-input">
+        </div>
+        
+        <!-- Ciudad -->
+        <div class="wp-alp-form-group">
+            <label for="city" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'City/town' : 'Ciudad / municipio'); ?>
+            </label>
+            <input type="text" id="city" name="city" class="wp-alp-form-input">
+        </div>
+        
+        <!-- Estado -->
+        <div class="wp-alp-form-group">
+            <label for="state" class="wp-alp-form-label">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'State' : 'Estado'); ?>
+            </label>
+            <select id="state" name="state" class="wp-alp-form-select">
+                <option value="NL" selected>Nuevo León</option>
+                <option value="CDMX">Ciudad de México</option>
+                <option value="JAL">Jalisco</option>
+                <!-- Agrega más estados según sea necesario -->
+            </select>
+        </div>
+        
+        <!-- Botones de navegación -->
+        <div class="wp-alp-address-form-buttons">
+            <button type="button" id="back-to-map-btn" class="wp-alp-btn wp-alp-btn-text">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+            </button>
+            <button type="button" id="save-address-btn" class="wp-alp-btn wp-alp-btn-primary">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm' : 'Confirmar'); ?>
+            </button>
+        </div>
+    </form>
+</div>
         
         <!-- Contenedor para múltiples ubicaciones - inicialmente oculto -->
         <div class="wp-alp-location-multiple-container" style="display: none;">
@@ -500,6 +625,9 @@ jQuery(document).ready(function($) {
     // Variables para la navegación
     var currentStep = 0;
     var totalSteps = 3; // Total de pasos implementados
+    var selectedLocation = null;
+    var isExactLocation = false;
+    var map, marker, circle, geocoder, placesService;
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
@@ -662,6 +790,14 @@ jQuery(document).ready(function($) {
             if (typeof initMap === 'function') {
                 setTimeout(function() {
                     initMap();
+                    
+                    // Crear el elemento de círculo rojo si no existe
+                    if ($('.wp-alp-location-circle').length === 0) {
+                        $('.wp-alp-map-container').append('<div class="wp-alp-location-circle"></div>');
+                    }
+                    
+                    // Mostrar elementos correctos
+                    $('.wp-alp-house-marker, .wp-alp-approximate-tooltip').show();
                 }, 100);
             }
         } else if (option === 'multiple') {
@@ -673,7 +809,7 @@ jQuery(document).ready(function($) {
         $('.wp-alp-location-validation').hide();
     });
     
-    // Manejo de la opción "Otro"
+    // Manejar la opción "Otro"
     $('#location-other').on('change', function() {
         if ($(this).is(':checked')) {
             $('.wp-alp-location-other-input').show();
@@ -682,28 +818,152 @@ jQuery(document).ready(function($) {
         }
     });
     
+    // Manejar el toggle de ubicación exacta
+    $('#exact-location-toggle').on('change', function() {
+        isExactLocation = $(this).is(':checked');
+        
+        if (isExactLocation) {
+            // Cambiar a ubicación exacta
+            $('#approximate-tooltip').fadeOut(200);
+            if (selectedLocation && selectedLocation.geometry) {
+                updateLocationDisplay(selectedLocation.geometry.location);
+            } else if (map) {
+                updateLocationDisplay(map.getCenter());
+            }
+        } else {
+            // Cambiar a ubicación aproximada
+            $('#approximate-tooltip').fadeIn(200);
+            if (selectedLocation && selectedLocation.geometry) {
+                updateLocationDisplay(selectedLocation.geometry.location);
+            } else if (map) {
+                updateLocationDisplay(map.getCenter());
+            }
+        }
+    });
+    
+    // Botón para confirmar dirección y mostrar el formulario detallado
+    $('#confirm-address-btn').on('click', function() {
+        // Ocultar la vista del mapa
+        $('.wp-alp-location-specific-container').hide();
+        
+        // Mostrar el formulario de dirección detallada
+        $('#address-form-container').show();
+        
+        // Desplazarse al inicio del contenedor
+        $('html, body').animate({
+            scrollTop: $('#address-form-container').offset().top - 100
+        }, 300);
+    });
+    
+    // Botón para volver al mapa desde el formulario detallado
+    $('#back-to-map-btn').on('click', function() {
+        // Ocultar el formulario
+        $('#address-form-container').hide();
+        
+        // Mostrar la vista del mapa
+        $('.wp-alp-location-specific-container').show();
+        
+        // Desplazarse al inicio del contenedor
+        $('html, body').animate({
+            scrollTop: $('.wp-alp-location-specific-container').offset().top - 100
+        }, 300);
+    });
+    
+    // Botón para guardar la dirección y continuar
+    $('#save-address-btn').on('click', function() {
+        // Validar que los campos requeridos estén completos
+        var street = $('#street').val().trim();
+        var city = $('#city').val().trim();
+        var zipcode = $('#zipcode').val().trim();
+        
+        if (!street || !city || !zipcode) {
+            alert('Por favor completa los campos obligatorios: Dirección, Ciudad y Código Postal.');
+            return;
+        }
+        
+        // Recopilar todos los datos del formulario
+        var addressData = {
+            country: $('#country').val(),
+            street: street,
+            apt: $('#apt').val().trim(),
+            neighborhood: $('#neighborhood').val().trim(),
+            zipcode: zipcode,
+            city: city,
+            state: $('#state').val(),
+            isExactLocation: isExactLocation
+        };
+        
+        // Guardar los datos (puedes usar localStorage o enviarlos mediante AJAX)
+        console.log('Datos de dirección guardados:', addressData);
+        
+        // Continuar al siguiente paso
+        goToNextStep();
+    });
+    
     // Botón de siguiente desde la ubicación
     $('#next-from-location-btn').on('click', function(e) {
         e.preventDefault();
         
-        // Verificar si se ha seleccionado una ubicación
-        var isSpecific = $('#location-specific').is(':checked');
-        var isMultiple = $('#location-multiple').is(':checked');
+        // Verificar qué tipo de ubicación se ha seleccionado
+        var isSpecificLocation = $('#location-specific').is(':checked');
+        var isMultipleLocation = $('#location-multiple').is(':checked');
         
-        if (!isSpecific && !isMultiple) {
+        if (!isSpecificLocation && !isMultipleLocation) {
             // No se ha seleccionado un tipo de ubicación
             $('.wp-alp-location-validation').fadeIn();
             return;
         }
         
-        // Validar según el tipo seleccionado
-        if (isSpecific) {
-            var address = $('#wp-alp-address-input').val().trim();
-            if (!address) {
-                $('.wp-alp-location-validation').fadeIn();
-                return;
+        // Si se seleccionó ubicación específica y hay datos de dirección guardados
+        if (isSpecificLocation) {
+            // Verificar si se completó el formulario detallado
+            if ($('#address-form-container').is(':visible')) {
+                // Validar campos requeridos
+                var street = $('#street').val().trim();
+                var city = $('#city').val().trim();
+                var zipcode = $('#zipcode').val().trim();
+                
+                if (!street || !city || !zipcode) {
+                    alert('Por favor completa los campos obligatorios: Dirección, Ciudad y Código Postal.');
+                    return;
+                }
+                
+                // Recopilar todos los datos del formulario
+                var addressData = {
+                    country: $('#country').val(),
+                    street: street,
+                    apt: $('#apt').val().trim(),
+                    neighborhood: $('#neighborhood').val().trim(),
+                    zipcode: zipcode,
+                    city: city,
+                    state: $('#state').val(),
+                    isExactLocation: isExactLocation
+                };
+                
+                // Guardar los datos (puedes usar localStorage o enviarlos mediante AJAX)
+                console.log('Datos de dirección guardados:', addressData);
+                
+                // Continuar al siguiente paso
+                goToNextStep();
+            } else {
+                // Verificar si se ha ingresado una dirección
+                var address = $('#wp-alp-address-input').val().trim();
+                if (!address || !selectedLocation) {
+                    $('.wp-alp-location-validation').fadeIn();
+                    return;
+                }
+                
+                // Mostrar formulario detallado de dirección
+                $('.wp-alp-location-specific-container').hide();
+                $('#address-form-container').show();
+                
+                // Desplazarse al inicio del contenedor
+                $('html, body').animate({
+                    scrollTop: $('#address-form-container').offset().top - 100
+                }, 300);
             }
-        } else if (isMultiple) {
+        } else if (isMultipleLocation) {
+            // Verificar selección para ubicaciones múltiples
             var hasChecked = $('.wp-alp-locations-checkboxes input:checked').length > 0 || $('#location-other').is(':checked');
             if (!hasChecked) {
                 $('.wp-alp-location-validation').fadeIn();
@@ -718,18 +978,257 @@ jQuery(document).ready(function($) {
                     return;
                 }
             }
+            
+            // Recopilar datos de ubicaciones múltiples
+            var selectedLocations = [];
+            $('.wp-alp-locations-checkboxes input:checked').each(function() {
+                selectedLocations.push($(this).val());
+            });
+            
+            if ($('#location-other').is(':checked')) {
+                selectedLocations.push('other: ' + $('#wp-alp-other-location').val().trim());
+            }
+            
+            // Guardar los datos
+            console.log('Ubicaciones múltiples seleccionadas:', selectedLocations);
+            
+            // Continuar al siguiente paso
+            goToNextStep();
+        }
+    });
+    
+    // Función para ir al siguiente paso
+    function goToNextStep() {
+        // Ocultar paso actual
+        $('#step-1-location').hide();
+        
+        // Aquí deberías mostrar el siguiente paso
+        // $('#step-1-next-page').show();
+        
+        // Por ahora, solo mostramos un mensaje
+        alert('Ubicación guardada correctamente. Continuaríamos al siguiente paso.');
+        
+        // Actualizar URL
+        var currentUrl = window.location.pathname;
+        var newUrl = currentUrl + '?step=1&substep=next-page'; // Cambiar a tu siguiente subpaso
+        history.pushState({step: 1, substep: 'next-page'}, '', newUrl);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    }
+    
+    // Función para actualizar la visualización de ubicación (exacta o aproximada)
+    function updateLocationDisplay(location) {
+        if (isExactLocation) {
+            // Mostrar el marcador exacto
+            marker.setPosition(location);
+            marker.setVisible(true);
+            circle.setVisible(false);
+        } else {
+            // Mostrar el círculo de ubicación aproximada
+            circle.setCenter(location);
+            circle.setVisible(true);
+            marker.setVisible(false);
+        }
+    }
+    
+    // Función para extraer componentes de dirección para el formulario
+    function extractAddressComponents(place) {
+        // Reiniciar todos los campos
+        $('#street, #apt, #neighborhood, #zipcode, #city').val('');
+        
+        // Si no hay componentes de dirección, salir
+        if (!place.address_components) return;
+        
+        // Mapeo de tipos de componentes a campos del formulario
+        var componentMapping = {
+            street_number: 'street_number',
+            route: 'street_name',
+            sublocality_level_1: 'neighborhood',
+            locality: 'city',
+            administrative_area_level_1: 'state',
+            country: 'country',
+            postal_code: 'zipcode'
+        };
+        
+        // Datos extraídos
+        var extractedData = {};
+        
+        // Recorrer componentes y extraer información
+        place.address_components.forEach(function(component) {
+            component.types.forEach(function(type) {
+                if (componentMapping[type]) {
+                    extractedData[componentMapping[type]] = component.long_name;
+                }
+            });
+        });
+        
+        // Combinar número de calle y nombre de calle para la dirección
+        if (extractedData.street_number && extractedData.street_name) {
+            $('#street').val(extractedData.street_number + ' ' + extractedData.street_name);
+        } else if (extractedData.street_name) {
+            $('#street').val(extractedData.street_name);
         }
         
-        // Si llegamos aquí, todo está validado
-        console.log('Ubicación validada, continuar al siguiente paso');
+        // Completar el resto de campos
+        if (extractedData.neighborhood) $('#neighborhood').val(extractedData.neighborhood);
+        if (extractedData.zipcode) $('#zipcode').val(extractedData.zipcode);
+        if (extractedData.city) $('#city').val(extractedData.city);
         
-        // Aquí deberías agregar la navegación al siguiente paso
-        // Por ahora, mostramos un mensaje temporal
-        alert('Ubicación validada. Continuaríamos al siguiente paso.');
+        // Seleccionar país y estado en los selectores si existen
+        if (extractedData.country) {
+            $('#country option').each(function() {
+                if ($(this).text().indexOf(extractedData.country) !== -1) {
+                    $(this).prop('selected', true);
+                }
+            });
+        }
         
-        // El código para mostrar el siguiente paso sería algo así:
-        // $('#step-1-location').hide();
-        // $('#step-1-next-page').show();
+        if (extractedData.state) {
+            $('#state option').each(function() {
+                if ($(this).text().indexOf(extractedData.state) !== -1) {
+                    $(this).prop('selected', true);
+                }
+            });
+        }
+    }
+    
+    // Inicializar el mapa
+    function initMap() {
+        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+            // Coordenadas por defecto (puedes cambiarlas)
+            var defaultLocation = {lat: 25.6866, lng: -100.3161};
+            
+            // Inicializar el mapa
+            map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
+                center: defaultLocation,
+                zoom: 13,
+                mapTypeControl: false,
+                fullscreenControl: false,
+                streetViewControl: false,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_TOP
+                }
+            });
+            
+            // Inicializar geocoder y servicios de lugares
+            geocoder = new google.maps.Geocoder();
+            placesService = new google.maps.places.PlacesService(map);
+            
+            // Crear marcador (inicialmente oculto)
+            marker = new google.maps.Marker({
+                map: map,
+                position: defaultLocation,
+                visible: false
+            });
+            
+            // Crear círculo para ubicación aproximada
+            circle = new google.maps.Circle({
+                map: map,
+                center: defaultLocation,
+                radius: 500, // Radio en metros
+                fillColor: '#E41D57',
+                fillOpacity: 0.2,
+                strokeColor: '#E41D57',
+                strokeOpacity: 0.5,
+                strokeWeight: 1
+            });
+            
+            // Agregar el autocompletado para la dirección
+            var input = document.getElementById('wp-alp-address-input');
+            var autocomplete = new google.maps.places.Autocomplete(input);
+            
+            // Limitar las sugerencias a direcciones (no negocios)
+            autocomplete.setTypes(['address']);
+            
+            // Bias hacia el área del mapa visible
+            autocomplete.bindTo('bounds', map);
+            
+            // Manejar la selección de lugar
+            autocomplete.addListener('place_changed', function() {
+                var place = autocomplete.getPlace();
+                
+                if (!place.geometry) {
+                    window.alert("No hay detalles disponibles para: '" + place.name + "'");
+                    return;
+                }
+                
+                // Actualizar la ubicación seleccionada
+                selectedLocation = place;
+                
+                // Centrar el mapa en la ubicación seleccionada
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                }
+                
+                // Actualizar la posición del círculo y marcador
+                updateLocationDisplay(place.geometry.location);
+                
+                // Mostrar el botón de confirmación
+                $('.wp-alp-confirm-address-btn').show();
+                
+                // Extraer la información de la dirección para el formulario
+                extractAddressComponents(place);
+            });
+            
+            // Escuchar cambios en el mapa para actualizar la ubicación
+            map.addListener('center_changed', function() {
+                // Ocultar temporalmente el tooltip de ubicación aproximada
+                $('#approximate-tooltip').fadeOut(200);
+                
+                // Actualizar la posición del círculo y marcador después de un retraso
+                clearTimeout(map.centerChangedTimeout);
+                map.centerChangedTimeout = setTimeout(function() {
+                    var center = map.getCenter();
+                    updateLocationDisplay(center);
+                    
+                    // Mostrar nuevamente el tooltip si corresponde
+                    if (!isExactLocation) {
+                        $('#approximate-tooltip').fadeIn(200);
+                    }
+                    
+                    // Hacer geocoding inverso para obtener la dirección
+                    geocoder.geocode({'location': center}, function(results, status) {
+                        if (status === 'OK' && results[0]) {
+                            selectedLocation = results[0];
+                            extractAddressComponents(results[0]);
+                            
+                            // Actualizar el campo de dirección
+                            $('#wp-alp-address-input').val(results[0].formatted_address);
+                            
+                            // Mostrar el botón de confirmación
+                            $('.wp-alp-confirm-address-btn').show();
+                        }
+                    });
+                }, 300);
+            });
+            
+            // Mostrar el marcador inicial de casa
+            $('#house-marker').show();
+            
+            // Mostrar el círculo de ubicación aproximada (inicialmente)
+            circle.setVisible(true);
+        }
+    }
+    
+    // Cuando se selecciona la opción de ubicación específica
+    $('#location-specific').on('change', function() {
+        if ($(this).is(':checked')) {
+            setTimeout(function() {
+                initMap();
+                
+                // Crear el elemento de círculo rojo si no existe
+                if ($('.wp-alp-location-circle').length === 0) {
+                    $('.wp-alp-map-container').append('<div class="wp-alp-location-circle"></div>');
+                }
+                
+                // Mostrar elementos correctos
+                $('.wp-alp-house-marker, .wp-alp-approximate-tooltip').show();
+            }, 100);
+        }
     });
     
     // Función para actualizar la URL sin recargar la página
@@ -778,6 +1277,10 @@ jQuery(document).ready(function($) {
                 // Mostrar el subpaso de ubicación
                 $steps.hide();
                 $('#step-1-location').show();
+                
+                // Reiniciar estado del formulario de dirección
+                $('.wp-alp-location-specific-container').show();
+                $('#address-form-container').hide();
             } else if (typeof event.state.step !== 'undefined') {
                 goToStep(event.state.step);
             }
@@ -815,64 +1318,8 @@ jQuery(document).ready(function($) {
         // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
         goToStep(0);
     }
-    
-    // Inicializar el mapa cuando se selecciona la opción de ubicación específica
-    function initMap() {
-        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-            var map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
-                center: {lat: 25.6866, lng: -100.3161}, // Coordenadas de ejemplo
-                zoom: 13,
-                mapTypeControl: false,
-                fullscreenControl: false
-            });
-            
-            // Agregar el autocomplete para la dirección
-            var input = document.getElementById('wp-alp-address-input');
-            var autocomplete = new google.maps.places.Autocomplete(input);
-            
-            // Bias hacia el área del mapa visible
-            autocomplete.bindTo('bounds', map);
-            
-            // Marcador para la ubicación seleccionada
-            var marker = new google.maps.Marker({
-                map: map,
-                anchorPoint: new google.maps.Point(0, -29)
-            });
-            
-            // Manejar la selección de lugar
-            autocomplete.addListener('place_changed', function() {
-                marker.setVisible(false);
-                var place = autocomplete.getPlace();
-                
-                if (!place.geometry) {
-                    window.alert("No hay detalles disponibles para: '" + place.name + "'");
-                    return;
-                }
-                
-                // Si el lugar tiene una geometría, mostrarla en el mapa
-                if (place.geometry.viewport) {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(17);
-                }
-                
-                marker.setPosition(place.geometry.location);
-                marker.setVisible(true);
-            });
-        }
-    }
-    
-    // Llamar a initMap cuando se selecciona la opción específica mediante el radio button
-    $('#location-specific').on('change', function() {
-        if ($(this).is(':checked')) {
-            // Permitir que el DOM se actualice primero
-            setTimeout(function() {
-                initMap();
-            }, 100);
-        }
-    });
 });
+
 </script>
 
 <?php get_footer(); ?>
