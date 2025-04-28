@@ -122,7 +122,7 @@ get_header(); ?>
             <div class="wp-alp-gallery-grid">
     <div class="wp-alp-gallery-item">
         <div class="wp-alp-gallery-image">
-            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/gallery-music.png'); ?>" alt="Grupos musicales">
+            <img src="<?php echo esc_url(plugins_url('images/gallery-music.png', dirname(__FILE__))); ?>" alt="Grupos musicales">
         </div>
         <div class="wp-alp-gallery-caption">
             <h4>Grupos musicales</h4>
@@ -131,7 +131,7 @@ get_header(); ?>
     </div>
     <div class="wp-alp-gallery-item">
         <div class="wp-alp-gallery-image">
-            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/gallery-venue.png'); ?>" alt="Recintos para eventos">
+            <img src="<?php echo esc_url(plugins_url('images/gallery-venue.png', dirname(__FILE__))); ?>" alt="Recintos para eventos">
         </div>
         <div class="wp-alp-gallery-caption">
             <h4>Recintos para eventos</h4>
@@ -140,7 +140,7 @@ get_header(); ?>
     </div>
     <div class="wp-alp-gallery-item">
         <div class="wp-alp-gallery-image">
-            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/gallery-catering.png'); ?>" alt="Servicios de catering">
+            <img src="<?php echo esc_url(plugins_url('images/gallery-catering.png', dirname(__FILE__))); ?>" alt="Servicios de catering">
         </div>
         <div class="wp-alp-gallery-caption">
             <h4>Servicios de catering</h4>
