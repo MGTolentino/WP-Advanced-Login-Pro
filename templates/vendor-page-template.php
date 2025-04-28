@@ -73,11 +73,10 @@ get_header(); ?>
                     </div>
                 </div>
                 <div class="wp-alp-mobile-image">
-                    <!-- Espacio para la imagen del móvil que añadirás tú -->
-                    <div class="wp-alp-mobile-placeholder">
-                        <!-- Aquí puedes insertar tu imagen del móvil -->
-                    </div>
-                </div>
+    <div class="wp-alp-mobile-placeholder">
+        <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/mobile-app.png'); ?>" alt="Descripción de servicios en app móvil">
+    </div>
+</div>
             </div>
         </div>
     </section>
@@ -121,35 +120,34 @@ get_header(); ?>
         <div class="wp-alp-container">
             <h2>Servicios destacados en nuestra plataforma</h2>
             <div class="wp-alp-gallery-grid">
-                <!-- Las imágenes serán reemplazadas con tus propias imágenes -->
-                <div class="wp-alp-gallery-item">
-                    <div class="wp-alp-gallery-image">
-                        <!-- Placeholder para imagen de evento 1 -->
-                    </div>
-                    <div class="wp-alp-gallery-caption">
-                        <h4>Grupos musicales</h4>
-                        <p>Servicios de entretenimiento para todo tipo de eventos</p>
-                    </div>
-                </div>
-                <div class="wp-alp-gallery-item">
-                    <div class="wp-alp-gallery-image">
-                        <!-- Placeholder para imagen de evento 2 -->
-                    </div>
-                    <div class="wp-alp-gallery-caption">
-                        <h4>Recintos para eventos</h4>
-                        <p>Espacios exclusivos para celebraciones inolvidables</p>
-                    </div>
-                </div>
-                <div class="wp-alp-gallery-item">
-                    <div class="wp-alp-gallery-image">
-                        <!-- Placeholder para imagen de evento 3 -->
-                    </div>
-                    <div class="wp-alp-gallery-caption">
-                        <h4>Servicios de catering</h4>
-                        <p>Experiencias gastronómicas únicas para tus invitados</p>
-                    </div>
-                </div>
-            </div>
+    <div class="wp-alp-gallery-item">
+        <div class="wp-alp-gallery-image">
+            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/gallery-music.png'); ?>" alt="Grupos musicales">
+        </div>
+        <div class="wp-alp-gallery-caption">
+            <h4>Grupos musicales</h4>
+            <p>Servicios de entretenimiento para todo tipo de eventos</p>
+        </div>
+    </div>
+    <div class="wp-alp-gallery-item">
+        <div class="wp-alp-gallery-image">
+            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/gallery-venue.png'); ?>" alt="Recintos para eventos">
+        </div>
+        <div class="wp-alp-gallery-caption">
+            <h4>Recintos para eventos</h4>
+            <p>Espacios exclusivos para celebraciones inolvidables</p>
+        </div>
+    </div>
+    <div class="wp-alp-gallery-item">
+        <div class="wp-alp-gallery-image">
+            <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/gallery-catering.png'); ?>" alt="Servicios de catering">
+        </div>
+        <div class="wp-alp-gallery-caption">
+            <h4>Servicios de catering</h4>
+            <p>Experiencias gastronómicas únicas para tus invitados</p>
+        </div>
+    </div>
+</div>
         </div>
     </section>
 
