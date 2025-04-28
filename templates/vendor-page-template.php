@@ -74,7 +74,7 @@ get_header(); ?>
                 </div>
                 <div class="wp-alp-mobile-image">
     <div class="wp-alp-mobile-placeholder">
-        <img src="<?php echo esc_url(plugin_dir_url(__FILE__) . 'images/mobile-app.png'); ?>" alt="Descripción de servicios en app móvil">
+    <img src="<?php echo esc_url(plugins_url('images/mobile-app.png', dirname(__FILE__))); ?>" alt="...">
     </div>
 </div>
             </div>
