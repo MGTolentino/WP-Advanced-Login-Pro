@@ -34,27 +34,45 @@ class WP_ALP_Redirect_Protection {
             return;
         }
         
-        // No proteger la página de login
+        // Obtener el ID de la página de login
+        $login_page_id = get_option('wp_alp_login_page_id', 0);
+        
+        // No proteger la página de login (verificar por ID y template)
         global $post;
-        if ($post && has_shortcode($post->post_content, 'wp_alp_login_page')) {
-            return;
+        if ($post) {
+            // Verificar por ID
+            if ($post->ID == $login_page_id) {
+                return;
+            }
+            
+            // Verificar por shortcode
+            if (has_shortcode($post->post_content, 'wp_alp_login_page')) {
+                return;
+            }
+            
+            // Verificar por template
+            $template = get_page_template_slug($post->ID);
+            if ($template == 'templates/login-page-template.php' || $template == 'login-page-template.php') {
+                return;
+            }
         }
         
         // Verificar si el usuario está logueado
         if (!is_user_logged_in()) {
             // Obtener la página de login
-            $login_page_id = get_option('wp_alp_login_page_id', 0);
-            
-            // Si no hay página de login configurada, usar la página principal
             if (empty($login_page_id)) {
                 $redirect_url = home_url();
             } else {
                 $redirect_url = get_permalink($login_page_id);
             }
             
-            // Añadir parámetro de redirección
-            $current_url = esc_url((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-            $redirect_url = add_query_arg('redirect_to', urlencode($current_url), $redirect_url);
+            // Añadir parámetro de redirección (solo si no estamos ya en un bucle)
+            $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+            
+            // Verificar si ya estamos en un bucle de redirección
+            if (strpos($current_url, urlencode(get_permalink($login_page_id))) === false) {
+                $redirect_url = add_query_arg('redirect_to', urlencode($current_url), $redirect_url);
+            }
             
             // Redirigir
             wp_redirect($redirect_url);
@@ -69,9 +87,6 @@ class WP_ALP_Redirect_Protection {
         // Si es subscriber con perfil incompleto, redirigir a página de login
         if (current_user_can('subscriber') && ($user_type === '' || $profile_status === 'incomplete')) {
             // Obtener la página de login
-            $login_page_id = get_option('wp_alp_login_page_id', 0);
-            
-            // Si no hay página de login configurada, usar la página principal
             if (empty($login_page_id)) {
                 $redirect_url = home_url();
             } else {
