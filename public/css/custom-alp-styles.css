@@ -588,16 +588,21 @@ button.wp-alp-vendor-button {
     margin: 0 !important;
 }
 
+/* Para las imágenes en los pasos principales (pantalla inicial) */
 .wp-alp-step-image {
     flex: 2 !important;
     min-width: 120px !important;
     text-align: center !important;
+    max-width: 180px !important; /* Limitar ancho máximo */
 }
 
 .wp-alp-step-image img {
-    max-width: 100% !important;
-    height: auto !important;
+    width: 140px !important; /* Ancho fijo para consistencia */
+    height: 140px !important; /* Altura fija para consistencia */
+    object-fit: contain !important; /* Mantener proporción sin recortar */
     border-radius: 12px !important;
+    display: block !important;
+    margin: 0 auto !important;
 }
 
 /* Página principal: barra de progreso a ancho completo */
@@ -640,12 +645,12 @@ button.wp-alp-vendor-button {
     max-width: 50% !important;
 }
 
+/* Para asegurar que las columnas duales tengan el tamaño correcto */
 .wp-alp-dual-column-right {
-    flex: 1 !important;
-    max-width: 50% !important;
+    max-width: 320px !important;
     display: flex !important;
-    justify-content: center !important;
     align-items: center !important;
+    justify-content: center !important;
 }
 
 
@@ -744,15 +749,19 @@ button.wp-alp-vendor-button {
     margin: 0 !important;
 }
 
-/* Imagen ilustrativa del paso */
+/* Para la imagen grande del paso de descripción */
 .wp-alp-step-illustration {
     margin: 20px 0 40px !important;
     text-align: center !important;
+    max-width: 300px !important; /* Limitar ancho máximo */
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 .wp-alp-step-illustration img {
-    max-width: 100% !important;
-    height: auto !important;
+    width: 100% !important;
+    max-height: 280px !important; /* Altura máxima */
+    object-fit: contain !important; /* Mantener proporción */
     border-radius: 12px !important;
 }
 
@@ -914,6 +923,14 @@ button.wp-alp-vendor-button {
 .wp-alp-airbnb-column-right {
     flex: 1 !important;
     max-width: 50% !important;
+}
+
+/* Para las imágenes en columnas duales */
+.wp-alp-dual-column-right img {
+    max-width: 100% !important;
+    max-height: 280px !important;
+    object-fit: contain !important;
+    border-radius: 12px !important;
 }
 
 /* Título del paso */
