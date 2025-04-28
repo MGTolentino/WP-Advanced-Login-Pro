@@ -588,21 +588,21 @@ button.wp-alp-vendor-button {
     margin: 0 !important;
 }
 
-/* Para las imágenes en los pasos principales (pantalla inicial) */
+/* Ajustes para optimizar las imágenes en los pasos iniciales */
 .wp-alp-step-image {
-    flex: 2 !important;
-    min-width: 120px !important;
-    text-align: center !important;
-    max-width: 180px !important; /* Limitar ancho máximo */
+    flex: 1 !important;
+    min-width: 100px !important;
+    max-width: 120px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 
 .wp-alp-step-image img {
-    width: 140px !important; /* Ancho fijo para consistencia */
-    height: 140px !important; /* Altura fija para consistencia */
-    object-fit: contain !important; /* Mantener proporción sin recortar */
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: contain !important;
     border-radius: 12px !important;
-    display: block !important;
-    margin: 0 auto !important;
 }
 
 /* Página principal: barra de progreso a ancho completo */
@@ -633,24 +633,27 @@ button.wp-alp-vendor-button {
 .wp-alp-dual-column-container {
     display: flex !important;
     justify-content: space-between !important;
-    align-items: flex-start !important;
-    max-width: 1120px !important;
-    margin: 80px auto 100px !important;
-    padding: 0 24px !important;
-    gap: 40px !important;
+    align-items: center !important; /* Centra verticalmente */
+    max-width: 1080px !important;
+    margin: 60px auto 80px !important;
+    padding: 0 16px !important;
+    gap: 24px !important;
 }
 
+/* Ajustes para la columna izquierda (texto) */
 .wp-alp-dual-column-left {
-    flex: 1 !important;
-    max-width: 50% !important;
+    flex: 0 0 55% !important; /* No crece, no se encoge, ocupa 55% */
+    max-width: 55% !important;
+    padding-right: 20px !important;
 }
 
-/* Para asegurar que las columnas duales tengan el tamaño correcto */
+/* Ajustes para la columna derecha (imagen) */
 .wp-alp-dual-column-right {
-    max-width: 320px !important;
+    flex: 0 0 40% !important; /* No crece, no se encoge, ocupa 40% */
+    max-width: 40% !important;
     display: flex !important;
-    align-items: center !important;
     justify-content: center !important;
+    align-items: center !important;
 }
 
 
@@ -727,41 +730,35 @@ button.wp-alp-vendor-button {
 }
 
 .wp-alp-step-label {
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    color: #CBB781 !important; /* Color dorado */
-    margin-bottom: 16px !important;
+    margin-bottom: 12px !important;
 }
 
 .wp-alp-step-heading {
-    font-size: 36px !important;
-    font-weight: 600 !important;
-    color: #222222 !important;
-    margin: 0 0 20px !important;
-    line-height: 1.25 !important;
+    font-size: 32px !important;
+    line-height: 1.2 !important;
+    margin-bottom: 16px !important;
 }
 
-/* Descripción grande del paso */
 .wp-alp-step-description-large {
-    font-size: 18px !important;
+    font-size: 16px !important;
     line-height: 1.5 !important;
-    color: #222222 !important;
-    margin: 0 !important;
+    color: #717171 !important;
 }
 
-/* Para la imagen grande del paso de descripción */
+/* Contenedor de la imagen */
 .wp-alp-step-illustration {
-    margin: 20px 0 40px !important;
+    width: 100% !important;
+    max-width: 240px !important; /* Limitar ancho máximo */
+    margin: 0 !important;
     text-align: center !important;
-    max-width: 300px !important; /* Limitar ancho máximo */
-    margin-left: auto !important;
-    margin-right: auto !important;
 }
 
+/* Imagen principal de cada paso */
 .wp-alp-step-illustration img {
     width: 100% !important;
-    max-height: 280px !important; /* Altura máxima */
-    object-fit: contain !important; /* Mantener proporción */
+    height: auto !important;
+    max-height: 240px !important;
+    object-fit: contain !important;
     border-radius: 12px !important;
 }
 
@@ -830,6 +827,27 @@ button.wp-alp-vendor-button {
 
 .wp-alp-next-button:hover {
     background-color: #000000 !important;
+}
+
+/* Para pantallas medianas (tablets) - mantener dos columnas pero más compactas */
+@media (max-width: 992px) and (min-width: 769px) {
+    .wp-alp-dual-column-container {
+        gap: 16px !important;
+    }
+    
+    .wp-alp-dual-column-left {
+        flex: 0 0 60% !important;
+        max-width: 60% !important;
+    }
+    
+    .wp-alp-dual-column-right {
+        flex: 0 0 35% !important;
+        max-width: 35% !important;
+    }
+    
+    .wp-alp-step-heading {
+        font-size: 28px !important;
+    }
 }
 
 /* Estilos responsivos */
@@ -1245,37 +1263,30 @@ button.wp-alp-vendor-button {
     background-color: #000000 !important;
 }
 
-/* Responsive */
+/* Para pantallas pequeñas (móviles) - cambiar a una columna */
 @media (max-width: 768px) {
     .wp-alp-dual-column-container {
         flex-direction: column !important;
+        margin: 40px auto 60px !important;
     }
     
     .wp-alp-dual-column-left,
     .wp-alp-dual-column-right {
+        flex: 0 0 100% !important;
         max-width: 100% !important;
+        padding-right: 0 !important;
     }
     
-    .wp-alp-step-heading {
-        font-size: 28px !important;
+    .wp-alp-dual-column-left {
+        margin-bottom: 30px !important;
     }
     
-    .wp-alp-airbnb-category-title {
-        font-size: 28px !important;
-    }
-    
-    .wp-alp-airbnb-category-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-    
-    .wp-alp-airbnb-help-header {
-        padding: 16px !important;
-    }
-    
-    .wp-alp-airbnb-nav {
-        padding: 16px !important;
+    .wp-alp-step-illustration {
+        max-width: 200px !important;
+        margin: 0 auto !important;
     }
 }
+
 
 /* Estilos para la pantalla de tipo de servicio */
 .wp-alp-airbnb-service-grid {
