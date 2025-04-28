@@ -38,7 +38,7 @@ get_header(); ?>
                                     </p>
                                 </div>
                                 <div class="wp-alp-step-image">
-                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/images/vendor-step1.png'); ?>" alt="Step 1">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-step1.png'); ?>" alt="Step 1">
                                 </div>
                             </div>
                             
@@ -54,7 +54,7 @@ get_header(); ?>
                                     </p>
                                 </div>
                                 <div class="wp-alp-step-image">
-                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/images/vendor-step2.png'); ?>" alt="Step 2">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-step2.png'); ?>" alt="Step 2">
                                 </div>
                             </div>
                             
@@ -70,7 +70,7 @@ get_header(); ?>
                                     </p>
                                 </div>
                                 <div class="wp-alp-step-image">
-                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/images/vendor-step3.png'); ?>" alt="Step 3">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-step3.png'); ?>" alt="Step 3">
                                 </div>
                             </div>
                         </div>
@@ -114,7 +114,7 @@ get_header(); ?>
                     <!-- Columna derecha con imagen -->
                     <div class="wp-alp-dual-column-right">
                         <div class="wp-alp-step-illustration">
-                            <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-form-step1.png'); ?>" alt="Describe your service">
+                            <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-form-step1.png'); ?>" alt="Describe your service">
                         </div>
                     </div>
                 </div>
