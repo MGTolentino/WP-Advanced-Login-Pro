@@ -544,9 +544,12 @@ button.wp-alp-vendor-button {
 }
 
 .wp-alp-step-item {
-    border-bottom: 1px solid #DDDDDD !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     padding-bottom: 30px !important;
     margin-bottom: 30px !important;
+    border-bottom: 1px solid #DDDDDD !important;
 }
 
 /* Ajusta el espacio en la primera fila para compensar el movimiento del título */
@@ -561,10 +564,13 @@ button.wp-alp-vendor-button {
 }
 
 .wp-alp-step-content {
-    flex: 3 !important;
-    padding-right: 30px !important;
+    flex: 0 0 60% !important; /* No crece, no encoge, toma 60% del espacio */
+    max-width: 60% !important;
+    padding-right: 24px !important;
 }
 
+
+/* Ajuste para el número del paso */
 .wp-alp-step-number {
     display: inline-block !important;
     font-size: 24px !important;
@@ -573,12 +579,14 @@ button.wp-alp-vendor-button {
     margin-bottom: 16px !important;
 }
 
+/* Ajuste para el título del paso */
 .wp-alp-step-title {
-    font-size: 22px !important;
+    font-size: 20px !important;
     font-weight: 600 !important;
     color: #222222 !important;
     margin-top: 0 !important;
-    margin-bottom: 14px !important;
+    margin-bottom: 12px !important;
+    line-height: 1.2 !important;
 }
 
 .wp-alp-step-description {
@@ -586,21 +594,24 @@ button.wp-alp-vendor-button {
     color: #717171 !important;
     line-height: 1.5 !important;
     margin: 0 !important;
+    max-width: 90% !important; /* Para limitar el ancho del texto */
 }
+
 
 /* Ajustes para optimizar las imágenes en los pasos iniciales */
 .wp-alp-step-image {
-    flex: 1 !important;
-    min-width: 100px !important;
-    max-width: 120px !important;
+    flex: 0 0 35% !important; /* No crece, no encoge, toma 35% del espacio */
+    max-width: 35% !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
 }
 
 .wp-alp-step-image img {
-    width: 100px !important;
-    height: 100px !important;
+    width: 100% !important;
+    max-width: 140px !important;
+    height: auto !important;
+    max-height: 140px !important;
     object-fit: contain !important;
     border-radius: 12px !important;
 }
@@ -847,6 +858,46 @@ button.wp-alp-vendor-button {
     
     .wp-alp-step-heading {
         font-size: 28px !important;
+    }
+}
+
+/* Para pantallas medianas - mantener la estructura pero más compacta */
+@media (max-width: 992px) and (min-width: 769px) {
+    .wp-alp-step-content {
+        flex: 0 0 65% !important;
+        max-width: 65% !important;
+    }
+    
+    .wp-alp-step-image {
+        flex: 0 0 30% !important;
+        max-width: 30% !important;
+    }
+}
+
+/* Para pantallas pequeñas - cambiar a layout vertical */
+@media (max-width: 768px) {
+    .wp-alp-step-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    .wp-alp-step-content,
+    .wp-alp-step-image {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        padding-right: 0 !important;
+    }
+    
+    .wp-alp-step-content {
+        margin-bottom: 20px !important;
+    }
+    
+    .wp-alp-step-image {
+        align-self: center !important;
+    }
+    
+    .wp-alp-step-image img {
+        max-width: 120px !important;
     }
 }
 
