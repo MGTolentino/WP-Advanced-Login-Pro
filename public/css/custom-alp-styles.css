@@ -660,10 +660,10 @@ button.wp-alp-vendor-button {
 
 /* Ajustes para la columna derecha (imagen) */
 .wp-alp-dual-column-right {
-    flex: 0 0 40% !important; /* No crece, no se encoge, ocupa 40% */
-    max-width: 40% !important;
+    flex: 0 0 45% !important; /* No crece, no encoge, ocupa 45% del espacio */
+    max-width: 45% !important;
     display: flex !important;
-    justify-content: center !important;
+    justify-content: flex-end !important; /* Alinea a la derecha */
     align-items: center !important;
 }
 
@@ -756,21 +756,22 @@ button.wp-alp-vendor-button {
     color: #717171 !important;
 }
 
-/* Contenedor de la imagen */
+/* Ajustes para el contenedor de la imagen */
 .wp-alp-step-illustration {
     width: 100% !important;
-    max-width: 240px !important; /* Limitar ancho máximo */
-    margin: 0 !important;
+    max-width: 360px !important; /* Ancho máximo mayor */
+    margin: 0 !important; /* Elimina márgenes innecesarios */
     text-align: center !important;
 }
 
-/* Imagen principal de cada paso */
+/* Ajustes para la imagen */
 .wp-alp-step-illustration img {
     width: 100% !important;
     height: auto !important;
-    max-height: 240px !important;
-    object-fit: contain !important;
+    min-width: 280px !important; /* Asegura un tamaño mínimo */
+    max-height: none !important; /* Permite que la altura se ajuste según el ancho */
     border-radius: 12px !important;
+    object-fit: contain !important;
 }
 
 /* Contenedor de la barra de progreso */
