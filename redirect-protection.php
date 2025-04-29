@@ -33,57 +33,48 @@ class WP_ALP_Redirect_Protection {
         if (is_front_page() || is_home()) {
             return;
         }
-
-        // AÑADIR ESTA VERIFICACIÓN POR URL
-    $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-    $login_url = home_url('/login/'); // Ajusta esto a la URL exacta de tu página de login
-    $login_path = parse_url($login_url, PHP_URL_PATH);
-    $current_path = parse_url($current_url, PHP_URL_PATH);
-    
-    // Si la URL actual comienza con la URL de login, no aplicar protección
-    if ($current_path && $login_path && strpos($current_path, $login_path) === 0) {
-        return;
-    }
         
-        // Obtener el ID de la página de login
-        $login_page_id = get_option('wp_alp_login_page_id', 0);
+        // Obtener la URL actual
+        $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         
-        // No proteger la página de login (verificar por ID y template)
-        global $post;
-        if ($post) {
-            // Verificar por ID
-            if ($post->ID == $login_page_id) {
-                return;
+        // Verificar si la URL actual contiene "login"
+        if (strpos($current_url, '/login') !== false) {
+            return; // No proteger la página de login
+        }
+        
+        // Verificar si la URL actual es una de las que queremos proteger
+        $protected_patterns = array(
+            'contrata-el-servicio-de',
+            'book-service-for'
+        );
+        
+        $is_protected_url = false;
+        foreach ($protected_patterns as $pattern) {
+            if (strpos($current_url, $pattern) !== false) {
+                $is_protected_url = true;
+                break;
             }
-            
-            // Verificar por shortcode
-            if (has_shortcode($post->post_content, 'wp_alp_login_page')) {
-                return;
-            }
-            
-            // Verificar por template
-            $template = get_page_template_slug($post->ID);
-            if ($template == 'templates/login-page-template.php' || $template == 'login-page-template.php') {
-                return;
-            }
+        }
+        
+        // Si no es una URL protegida, no hacer nada
+        if (!$is_protected_url) {
+            return;
         }
         
         // Verificar si el usuario está logueado
         if (!is_user_logged_in()) {
             // Obtener la página de login
+            $login_page_id = get_option('wp_alp_login_page_id', 0);
+            
+            // Si no hay página de login configurada, usar la URL fija
             if (empty($login_page_id)) {
-                $redirect_url = home_url();
+                $redirect_url = home_url('/login/');
             } else {
                 $redirect_url = get_permalink($login_page_id);
             }
             
-            // Añadir parámetro de redirección (solo si no estamos ya en un bucle)
-            $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-            
-            // Verificar si ya estamos en un bucle de redirección
-            if (strpos($current_url, urlencode(get_permalink($login_page_id))) === false) {
-                $redirect_url = add_query_arg('redirect_to', urlencode($current_url), $redirect_url);
-            }
+            // Añadir parámetro de redirección
+            $redirect_url = add_query_arg('redirect_to', urlencode($current_url), $redirect_url);
             
             // Redirigir
             wp_redirect($redirect_url);
@@ -98,8 +89,11 @@ class WP_ALP_Redirect_Protection {
         // Si es subscriber con perfil incompleto, redirigir a página de login
         if (current_user_can('subscriber') && ($user_type === '' || $profile_status === 'incomplete')) {
             // Obtener la página de login
+            $login_page_id = get_option('wp_alp_login_page_id', 0);
+            
+            // Si no hay página de login configurada, usar la URL fija
             if (empty($login_page_id)) {
-                $redirect_url = home_url();
+                $redirect_url = home_url('/login/');
             } else {
                 $redirect_url = get_permalink($login_page_id);
             }
