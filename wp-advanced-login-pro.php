@@ -178,46 +178,6 @@ function wp_alp_login_form_shortcode($atts) {
 }
 add_shortcode('wp_alp_login_form', 'wp_alp_login_form_shortcode');
 
-/**
- * Redirigir usuarios no logueados a la página de login
- */
-function wp_alp_redirect_to_login() {
-    // No redirigir en la administración o si ya está logueado
-    if (is_admin() || is_user_logged_in()) {
-        return;
-    }
-    
-    // No redirigir en estas páginas
-    if (is_front_page() || is_home()) {
-        return;
-    }
-    
-    // Obtener la página de login
-    $login_page_id = get_option('wp_alp_login_page_id');
-    
-    if (!$login_page_id) {
-        // Buscar la página con la plantilla de login
-        $login_pages = get_pages(array(
-            'meta_key' => '_wp_page_template',
-            'meta_value' => 'templates/login-page-template.php'
-        ));
-        
-        if (!empty($login_pages)) {
-            $login_page_id = $login_pages[0]->ID;
-            update_option('wp_alp_login_page_id', $login_page_id);
-        }
-    }
-    
-    if ($login_page_id) {
-        $login_url = get_permalink($login_page_id);
-        $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        
-        // Redirigir a la página de login con la URL actual como parámetro
-        wp_redirect(add_query_arg('redirect_to', urlencode($current_url), $login_url));
-        exit;
-    }
-}
-add_action('template_redirect', 'wp_alp_redirect_to_login');
 
 // Agregar atributo data-wp-alp-trigger="login" a elementos con clase wp-alp-login-trigger
 function add_login_trigger_attribute($atts, $item, $args) {
