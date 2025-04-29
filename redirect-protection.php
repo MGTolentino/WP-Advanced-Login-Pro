@@ -33,6 +33,17 @@ class WP_ALP_Redirect_Protection {
         if (is_front_page() || is_home()) {
             return;
         }
+
+        // AÑADIR ESTA VERIFICACIÓN POR URL
+    $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+    $login_url = home_url('/login/'); // Ajusta esto a la URL exacta de tu página de login
+    $login_path = parse_url($login_url, PHP_URL_PATH);
+    $current_path = parse_url($current_url, PHP_URL_PATH);
+    
+    // Si la URL actual comienza con la URL de login, no aplicar protección
+    if ($current_path && $login_path && strpos($current_path, $login_path) === 0) {
+        return;
+    }
         
         // Obtener el ID de la página de login
         $login_page_id = get_option('wp_alp_login_page_id', 0);
