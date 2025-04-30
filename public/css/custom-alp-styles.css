@@ -1859,3 +1859,118 @@ input:checked + .wp-alp-slider:before {
     background-color: rgba(228, 29, 87, 0.2) !important; /* Color rojo de Airbnb semitransparente */
     z-index: 4 !important;
 }
+
+/* Estilos para los campos numéricos */
+.wp-alp-number-field {
+    margin-bottom: 24px;
+}
+
+.wp-alp-field-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.wp-alp-field-description {
+    font-size: 14px;
+    color: #717171;
+    margin-bottom: 8px;
+}
+
+.wp-alp-number-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #DDDDDD;
+    border-radius: 8px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.wp-alp-number-decrease,
+.wp-alp-number-increase {
+    border: none;
+    background: white;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wp-alp-number-input {
+    border: none;
+    text-align: center;
+    width: 60px;
+    height: 40px;
+    font-size: 16px;
+}
+
+/* Estilos para el toggle switch */
+.wp-alp-toggle-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-top: 8px;
+}
+
+.wp-alp-toggle-text {
+    flex: 1;
+}
+
+.wp-alp-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.wp-alp-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.wp-alp-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.wp-alp-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .wp-alp-slider {
+    background-color: #222222;
+}
+
+input:focus + .wp-alp-slider {
+    box-shadow: 0 0 1px #222222;
+}
+
+input:checked + .wp-alp-slider:before {
+    transform: translateX(26px);
+}
+
+.wp-alp-slider.round {
+    border-radius: 34px;
+}
+
+.wp-alp-slider.round:before {
+    border-radius: 50%;
+}

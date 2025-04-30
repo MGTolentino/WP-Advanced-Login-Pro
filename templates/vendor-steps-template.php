@@ -618,6 +618,130 @@ get_header(); ?>
     </div>
 </div>
 
+
+<!-- Paso 1.4: Datos básicos (subpaso de Paso 1) -->
+<div class="wp-alp-form-step" id="step-1-basic-info" data-step="1.4" style="display: none;">
+    <!-- Header con opciones de ayuda -->
+    <div class="wp-alp-airbnb-help-header">
+        <div class="wp-alp-airbnb-help-links">
+            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+        </div>
+    </div>
+    
+    <!-- Título y subtítulo de la página -->
+    <div class="wp-alp-airbnb-category-content">
+        <h1 class="wp-alp-airbnb-category-title">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic data about your space' : 'Agrega algunos datos básicos de tu espacio'); ?>
+        </h1>
+        <p class="wp-alp-airbnb-category-subtitle">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Later, you can add more details, like the types of amenities.' : 'Más adelante, podrás incluir otros detalles, como los tipos de servicios.'); ?>
+        </p>
+        
+        <!-- Contenedor de campos básicos -->
+        <div class="wp-alp-basic-info-container">
+            <!-- Campo: Capacidad máxima de invitados -->
+            <div class="wp-alp-number-field">
+                <label for="max_capacity" class="wp-alp-field-label">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Maximum Guest Capacity' : 'Capacidad Máxima de Invitados'); ?>
+                </label>
+                <div class="wp-alp-number-control">
+                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                        <span>−</span>
+                    </button>
+                    <input type="number" id="max_capacity" name="max_capacity" min="1" value="100" class="wp-alp-number-input">
+                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                        <span>+</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Campo: Capacidad mínima (solo se muestra si la categoría es Event Venue) -->
+            <div class="wp-alp-number-field event-venue-field">
+                <label for="min_capacity" class="wp-alp-field-label">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Minimum Capacity' : 'Capacidad Mínima'); ?>
+                </label>
+                <div class="wp-alp-number-control">
+                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                        <span>−</span>
+                    </button>
+                    <input type="number" id="min_capacity" name="min_capacity" min="1" value="10" class="wp-alp-number-input">
+                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                        <span>+</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Campo: Número de baños (solo se muestra si la categoría es Event Venue) -->
+            <div class="wp-alp-number-field event-venue-field">
+                <label for="restrooms" class="wp-alp-field-label">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Restrooms' : 'Baños'); ?>
+                </label>
+                <div class="wp-alp-number-control">
+                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                        <span>−</span>
+                    </button>
+                    <input type="number" id="restrooms" name="restrooms" min="1" value="2" class="wp-alp-number-input">
+                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                        <span>+</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Campo: Horas de servicio (solo se muestra si el tipo de servicio es por hora) -->
+            <div class="wp-alp-number-field hour-service-field" style="display: none;">
+                <label for="hours" class="wp-alp-field-label">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service Hours' : 'Horas de Servicio'); ?>
+                </label>
+                <div class="wp-alp-field-description">
+                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service hours included' : 'Horas de servicio incluidas'); ?>
+                </div>
+                <div class="wp-alp-number-control">
+                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                        <span>−</span>
+                    </button>
+                    <input type="number" id="hours" name="hours" min="1" max="24" value="4" class="wp-alp-number-input">
+                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                        <span>+</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Campo: Eventos simultáneos (toggle) -->
+            <div class="wp-alp-toggle-field">
+                <div class="wp-alp-toggle-text">
+                    <span>
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Does your venue host multiple events per day?' : '¿Tu espacio puede albergar varios eventos por día?'); ?>
+                    </span>
+                </div>
+                <div class="wp-alp-toggle-switch">
+                    <label class="wp-alp-switch">
+                        <input type="checkbox" id="host_more_than_one_ev" name="host_more_than_one_ev">
+                        <span class="wp-alp-slider round"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Barra de navegación fija -->
+    <div class="wp-alp-airbnb-footer">
+        <!-- Barra de progreso con avance -->
+        <div class="wp-alp-airbnb-progress-bar">
+            <div class="wp-alp-airbnb-progress-completed" style="width: 100%;"></div>
+        </div>
+        
+        <!-- Botones de navegación -->
+        <div class="wp-alp-airbnb-nav">
+            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-location-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+            </a>
+            <a href="#" class="wp-alp-airbnb-next-btn" id="finish-step-1-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+            </a>
+        </div>
+    </div>
+</div>
             <!-- Aquí podrían ir más pasos... -->
         </div>
     </div>
@@ -640,6 +764,8 @@ jQuery(document).ready(function($) {
     var selectedLocation = null;
     var isExactLocation = false;
     var map, marker, circle, geocoder, placesService;
+    var selectedCategory = null;
+    var selectedServiceType = null;
     
     // Elementos del DOM
     var $steps = $('.wp-alp-form-step');
@@ -690,7 +816,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         // Verificar si hay una categoría seleccionada
         if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
-            var selectedCategory = $('.wp-alp-airbnb-category-item.selected');
+            selectedCategory = $('.wp-alp-airbnb-category-item.selected');
             var selectedName = selectedCategory.data('name');
             console.log('Categoría seleccionada: ' + selectedName);
             
@@ -721,6 +847,7 @@ jQuery(document).ready(function($) {
     $('.wp-alp-airbnb-service-option').on('click', function() {
         $('.wp-alp-airbnb-service-option').removeClass('selected');
         $(this).addClass('selected');
+        selectedServiceType = $(this).data('value');
         // Ocultar mensaje de validación si estaba visible
         $('.wp-alp-airbnb-service-validation').hide();
     });
@@ -746,8 +873,8 @@ jQuery(document).ready(function($) {
         // Verificar si hay un tipo de servicio seleccionado
         if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
             var selectedService = $('.wp-alp-airbnb-service-option.selected');
-            var selectedValue = selectedService.data('value');
-            console.log('Tipo de servicio seleccionado: ' + selectedValue);
+            selectedServiceType = selectedService.data('value');
+            console.log('Tipo de servicio seleccionado: ' + selectedServiceType);
             
             // Ocultar paso actual y mostrar paso de ubicación
             $('#step-1-service-type').hide();
@@ -893,23 +1020,21 @@ jQuery(document).ready(function($) {
             return;
         }
         
-        // Recopilar todos los datos del formulario
-        var addressData = {
-            country: $('#country').val(),
-            street: street,
-            apt: $('#apt').val().trim(),
-            neighborhood: $('#neighborhood').val().trim(),
-            zipcode: zipcode,
-            city: city,
-            state: $('#state').val(),
-            isExactLocation: isExactLocation
-        };
+        // Pasar a datos básicos
+        $('#address-form-container').hide();
+        $('#step-1-location').hide();
+        $('#step-1-basic-info').show();
         
-        // Guardar los datos (puedes usar localStorage o enviarlos mediante AJAX)
-        console.log('Datos de dirección guardados:', addressData);
+        // Actualizar URL
+        var currentUrl = window.location.pathname;
+        var newUrl = currentUrl + '?step=1&substep=basic-info';
+        history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
         
-        // Continuar al siguiente paso
-        goToNextStep();
+        // Mostrar u ocultar campos según la categoría y tipo de servicio
+        updateBasicInfoFields();
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
     });
     
     // Botón de siguiente desde la ubicación
@@ -940,23 +1065,21 @@ jQuery(document).ready(function($) {
                     return;
                 }
                 
-                // Recopilar todos los datos del formulario
-                var addressData = {
-                    country: $('#country').val(),
-                    street: street,
-                    apt: $('#apt').val().trim(),
-                    neighborhood: $('#neighborhood').val().trim(),
-                    zipcode: zipcode,
-                    city: city,
-                    state: $('#state').val(),
-                    isExactLocation: isExactLocation
-                };
+                // Ir a datos básicos
+                $('#address-form-container').hide();
+                $('#step-1-location').hide();
+                $('#step-1-basic-info').show();
                 
-                // Guardar los datos (puedes usar localStorage o enviarlos mediante AJAX)
-                console.log('Datos de dirección guardados:', addressData);
+                // Actualizar URL
+                var currentUrl = window.location.pathname;
+                var newUrl = currentUrl + '?step=1&substep=basic-info';
+                history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
                 
-                // Continuar al siguiente paso
-                goToNextStep();
+                // Mostrar u ocultar campos según la categoría y tipo de servicio
+                updateBasicInfoFields();
+                
+                // Desplazarse al inicio de la página
+                $('html, body').scrollTop(0);
             } else {
                 // Verificar si se ha ingresado una dirección
                 var address = $('#wp-alp-address-input').val().trim();
@@ -991,42 +1114,95 @@ jQuery(document).ready(function($) {
                 }
             }
             
-            // Recopilar datos de ubicaciones múltiples
-            var selectedLocations = [];
-            $('.wp-alp-locations-checkboxes input:checked').each(function() {
-                selectedLocations.push($(this).val());
-            });
+            // Ir a datos básicos
+            $('#step-1-location').hide();
+            $('#step-1-basic-info').show();
             
-            if ($('#location-other').is(':checked')) {
-                selectedLocations.push('other: ' + $('#wp-alp-other-location').val().trim());
-            }
+            // Actualizar URL
+            var currentUrl = window.location.pathname;
+            var newUrl = currentUrl + '?step=1&substep=basic-info';
+            history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
             
-            // Guardar los datos
-            console.log('Ubicaciones múltiples seleccionadas:', selectedLocations);
+            // Mostrar u ocultar campos según la categoría y tipo de servicio
+            updateBasicInfoFields();
             
-            // Continuar al siguiente paso
-            goToNextStep();
+            // Desplazarse al inicio de la página
+            $('html, body').scrollTop(0);
         }
     });
     
-    // Función para ir al siguiente paso
-    function goToNextStep() {
-        // Ocultar paso actual
-        $('#step-1-location').hide();
-        
-        // Aquí deberías mostrar el siguiente paso
-        // $('#step-1-next-page').show();
-        
-        // Por ahora, solo mostramos un mensaje
-        alert('Ubicación guardada correctamente. Continuaríamos al siguiente paso.');
+    // Botón para volver a ubicación desde datos básicos
+    $('#back-to-location-btn').on('click', function(e) {
+        e.preventDefault();
+        $('#step-1-basic-info').hide();
+        $('#step-1-location').show();
         
         // Actualizar URL
         var currentUrl = window.location.pathname;
-        var newUrl = currentUrl + '?step=1&substep=next-page'; // Cambiar a tu siguiente subpaso
-        history.pushState({step: 1, substep: 'next-page'}, '', newUrl);
+        var newUrl = currentUrl + '?step=1&substep=location';
+        history.pushState({step: 1, substep: 'location'}, '', newUrl);
         
         // Desplazarse al inicio de la página
         $('html, body').scrollTop(0);
+    });
+    
+    // Botón para finalizar paso 1 (datos básicos)
+    $('#finish-step-1-btn').on('click', function(e) {
+        e.preventDefault();
+        
+        // Solo para la demo, volvemos a la visión general
+        goToStep(0);
+    });
+    
+    // Controles numéricos para incrementar/decrementar
+    $('.wp-alp-number-increase').on('click', function() {
+        var $input = $(this).siblings('input');
+        var max = parseInt($input.attr('max')) || 9999;
+        var currentVal = parseInt($input.val()) || 0;
+        
+        if (currentVal < max) {
+            $input.val(currentVal + 1);
+        }
+    });
+    
+    $('.wp-alp-number-decrease').on('click', function() {
+        var $input = $(this).siblings('input');
+        var min = parseInt($input.attr('min')) || 0;
+        var currentVal = parseInt($input.val()) || 0;
+        
+        if (currentVal > min) {
+            $input.val(currentVal - 1);
+        }
+    });
+    
+    // Función para mostrar u ocultar campos en datos básicos según el tipo de servicio y categoría
+    function updateBasicInfoFields() {
+        // Si es servicio por hora, mostrar campo de horas
+        if (selectedServiceType === 'hour') {
+            $('.hour-service-field').show();
+        } else {
+            $('.hour-service-field').hide();
+        }
+        
+        // Si la categoría es Event Venue, mostrar campos específicos
+        // Esto debería adaptarse a tu lógica de categorías
+        var isEventVenue = true; // Por defecto asumimos que es Event Venue
+        
+        if (selectedCategory) {
+            var categoryName = selectedCategory.data('name').toLowerCase();
+            // Esto es solo un ejemplo, ajusta según tus categorías reales
+            isEventVenue = categoryName.includes('event') || 
+                          categoryName.includes('venue') || 
+                          categoryName.includes('auditorium') ||
+                          categoryName.includes('hall') ||
+                          categoryName.includes('garden');
+        }
+        
+        if (isEventVenue) {
+            $('.event-venue-field').show();
+        } else {
+            $('.event-venue-field').hide();
+        }
     }
     
     // Función para actualizar la visualización de ubicación (exacta o aproximada)
@@ -1106,137 +1282,137 @@ jQuery(document).ready(function($) {
     }
     
     // Inicializar el mapa
-function initMap() {
-    if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
-        try {
-            // Verificar Places API explícitamente
-            if (!google.maps.places) {
-                console.error("Error: Google Maps Places API no está disponible");
-                return;
-            }
-            
-            // Coordenadas por defecto (puedes cambiarlas)
-            var defaultLocation = {lat: 25.6866, lng: -100.3161};
-            
-            // Inicializar el mapa
-            map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
-                center: defaultLocation,
-                zoom: 13,
-                mapTypeControl: false,
-                fullscreenControl: false,
-                streetViewControl: false,
-                zoomControlOptions: {
-                    position: google.maps.ControlPosition.RIGHT_TOP
-                }
-            });
-            
-            // Inicializar geocoder y servicios de lugares
-            geocoder = new google.maps.Geocoder();
-            placesService = new google.maps.places.PlacesService(map);
-            
-            // Crear marcador (inicialmente oculto)
-            marker = new google.maps.Marker({
-                map: map,
-                position: defaultLocation,
-                visible: false
-            });
-            
-            // Crear círculo para ubicación aproximada
-            circle = new google.maps.Circle({
-                map: map,
-                center: defaultLocation,
-                radius: 500, // Radio en metros
-                fillColor: '#E41D57',
-                fillOpacity: 0.2,
-                strokeColor: '#E41D57',
-                strokeOpacity: 0.5,
-                strokeWeight: 1
-            });
-            
-            // Agregar el autocompletado para la dirección
-            var input = document.getElementById('wp-alp-address-input');
-            var autocomplete = new google.maps.places.Autocomplete(input);
-            
-            // Limitar las sugerencias a direcciones (no negocios)
-            autocomplete.setTypes(['address']);
-            
-            // Bias hacia el área del mapa visible
-            autocomplete.bindTo('bounds', map);
-            
-            // Manejar la selección de lugar
-            autocomplete.addListener('place_changed', function() {
-                var place = autocomplete.getPlace();
-                
-                if (!place.geometry) {
-                    window.alert("No hay detalles disponibles para: '" + place.name + "'");
+    function initMap() {
+        if (typeof google !== 'undefined' && typeof google.maps !== 'undefined') {
+            try {
+                // Verificar Places API explícitamente
+                if (!google.maps.places) {
+                    console.error("Error: Google Maps Places API no está disponible");
                     return;
                 }
                 
-                // Actualizar la ubicación seleccionada
-                selectedLocation = place;
+                // Coordenadas por defecto (puedes cambiarlas)
+                var defaultLocation = {lat: 25.6866, lng: -100.3161};
                 
-                // Centrar el mapa en la ubicación seleccionada
-                if (place.geometry.viewport) {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(17);
-                }
+                // Inicializar el mapa
+                map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
+                    center: defaultLocation,
+                    zoom: 13,
+                    mapTypeControl: false,
+                    fullscreenControl: false,
+                    streetViewControl: false,
+                    zoomControlOptions: {
+                        position: google.maps.ControlPosition.RIGHT_TOP
+                    }
+                });
                 
-                // Actualizar la posición del círculo y marcador
-                updateLocationDisplay(place.geometry.location);
+                // Inicializar geocoder y servicios de lugares
+                geocoder = new google.maps.Geocoder();
+                placesService = new google.maps.places.PlacesService(map);
                 
-                // Mostrar el botón de confirmación
-                $('.wp-alp-confirm-address-btn').show();
+                // Crear marcador (inicialmente oculto)
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: defaultLocation,
+                    visible: false
+                });
                 
-                // Extraer la información de la dirección para el formulario
-                extractAddressComponents(place);
-            });
-            
-            // Escuchar cambios en el mapa para actualizar la ubicación
-            map.addListener('center_changed', function() {
-                // Ocultar temporalmente el tooltip de ubicación aproximada
-                $('#approximate-tooltip').fadeOut(200);
+                // Crear círculo para ubicación aproximada
+                circle = new google.maps.Circle({
+                    map: map,
+                    center: defaultLocation,
+                    radius: 500, // Radio en metros
+                    fillColor: '#E41D57',
+                    fillOpacity: 0.2,
+                    strokeColor: '#E41D57',
+                    strokeOpacity: 0.5,
+                    strokeWeight: 1
+                });
                 
-                // Actualizar la posición del círculo y marcador después de un retraso
-                clearTimeout(map.centerChangedTimeout);
-                map.centerChangedTimeout = setTimeout(function() {
-                    var center = map.getCenter();
-                    updateLocationDisplay(center);
+                // Agregar el autocompletado para la dirección
+                var input = document.getElementById('wp-alp-address-input');
+                var autocomplete = new google.maps.places.Autocomplete(input);
+                
+                // Limitar las sugerencias a direcciones (no negocios)
+                autocomplete.setTypes(['address']);
+                
+                // Bias hacia el área del mapa visible
+                autocomplete.bindTo('bounds', map);
+                
+                // Manejar la selección de lugar
+                autocomplete.addListener('place_changed', function() {
+                    var place = autocomplete.getPlace();
                     
-                    // Mostrar nuevamente el tooltip si corresponde
-                    if (!isExactLocation) {
-                        $('#approximate-tooltip').fadeIn(200);
+                    if (!place.geometry) {
+                        window.alert("No hay detalles disponibles para: '" + place.name + "'");
+                        return;
                     }
                     
-                    // Hacer geocoding inverso para obtener la dirección
-                    geocoder.geocode({'location': center}, function(results, status) {
-                        if (status === 'OK' && results[0]) {
-                            selectedLocation = results[0];
-                            extractAddressComponents(results[0]);
-                            
-                            // Actualizar el campo de dirección
-                            $('#wp-alp-address-input').val(results[0].formatted_address);
-                            
-                            // Mostrar el botón de confirmación
-                            $('.wp-alp-confirm-address-btn').show();
+                    // Actualizar la ubicación seleccionada
+                    selectedLocation = place;
+                    
+                    // Centrar el mapa en la ubicación seleccionada
+                    if (place.geometry.viewport) {
+                        map.fitBounds(place.geometry.viewport);
+                    } else {
+                        map.setCenter(place.geometry.location);
+                        map.setZoom(17);
+                    }
+                    
+                    // Actualizar la posición del círculo y marcador
+                    updateLocationDisplay(place.geometry.location);
+                    
+                    // Mostrar el botón de confirmación
+                    $('.wp-alp-confirm-address-btn').show();
+                    
+                    // Extraer la información de la dirección para el formulario
+                    extractAddressComponents(place);
+                });
+                
+                // Escuchar cambios en el mapa para actualizar la ubicación
+                map.addListener('center_changed', function() {
+                    // Ocultar temporalmente el tooltip de ubicación aproximada
+                    $('#approximate-tooltip').fadeOut(200);
+                    
+                    // Actualizar la posición del círculo y marcador después de un retraso
+                    clearTimeout(map.centerChangedTimeout);
+                    map.centerChangedTimeout = setTimeout(function() {
+                        var center = map.getCenter();
+                        updateLocationDisplay(center);
+                        
+                        // Mostrar nuevamente el tooltip si corresponde
+                        if (!isExactLocation) {
+                            $('#approximate-tooltip').fadeIn(200);
                         }
-                    });
-                }, 300);
-            });
-            
-            // Mostrar el marcador inicial de casa
-            $('#house-marker').show();
-            
-            // Mostrar el círculo de ubicación aproximada (inicialmente)
-            circle.setVisible(true);
-        } catch (error) {
-            console.error("Error al inicializar el mapa:", error);
+                        
+                        // Hacer geocoding inverso para obtener la dirección
+                        geocoder.geocode({'location': center}, function(results, status) {
+                            if (status === 'OK' && results[0]) {
+                                selectedLocation = results[0];
+                                extractAddressComponents(results[0]);
+                                
+                                // Actualizar el campo de dirección
+                                $('#wp-alp-address-input').val(results[0].formatted_address);
+                                
+                                // Mostrar el botón de confirmación
+                                $('.wp-alp-confirm-address-btn').show();
+                            }
+                        });
+                    }, 300);
+                });
+                
+                // Mostrar el marcador inicial de casa
+                $('#house-marker').show();
+                
+                // Mostrar el círculo de ubicación aproximada (inicialmente)
+                circle.setVisible(true);
+            } catch (error) {
+                console.error("Error al inicializar el mapa:", error);
+            }
+        } else {
+            console.error("Google Maps API no está disponible");
         }
-    } else {
-        console.error("Google Maps API no está disponible");
     }
-}
     
     // Cuando se selecciona la opción de ubicación específica
     $('#location-specific').on('change', function() {
@@ -1305,6 +1481,13 @@ function initMap() {
                 // Reiniciar estado del formulario de dirección
                 $('.wp-alp-location-specific-container').show();
                 $('#address-form-container').hide();
+            } else if (event.state.substep === 'basic-info') {
+                // Mostrar el subpaso de datos básicos
+                $steps.hide();
+                $('#step-1-basic-info').show();
+                
+                // Actualizar campos según la categoría y tipo de servicio
+                updateBasicInfoFields();
             } else if (typeof event.state.step !== 'undefined') {
                 goToStep(event.state.step);
             }
@@ -1335,6 +1518,12 @@ function initMap() {
             // Mostrar el subpaso de ubicación
             $steps.hide();
             $('#step-1-location').show();
+        } else if (substepParam === 'basic-info' && stepNum === 1) {
+            // Mostrar el subpaso de datos básicos
+            $steps.hide();
+            $('#step-1-basic-info').show();
+            // Actualizar campos según la categoría y tipo de servicio
+            updateBasicInfoFields();
         } else {
             goToStep(stepNum);
         }
