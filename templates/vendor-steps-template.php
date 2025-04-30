@@ -1346,4 +1346,20 @@ function initMap() {
 
 </script>
 
+<!-- Cargar Google Maps con Places API -->
+<script>
+// Eliminar cualquier instancia previa de Google Maps
+var oldScripts = document.querySelectorAll('script[src*="maps.googleapis.com"]');
+oldScripts.forEach(function(script) {
+    script.parentNode.removeChild(script);
+});
+
+// Cargar la API con Places incluido
+var script = document.createElement('script');
+script.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo GOOGLE_MAPS_API_KEY; ?>&libraries=places&callback=googleMapsCallback';
+script.async = true;
+script.defer = true;
+document.body.appendChild(script);
+</script>
+
 <?php get_footer(); ?>
