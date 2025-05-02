@@ -639,89 +639,123 @@ get_header(); ?>
         </p>
         
         <!-- Contenedor de campos básicos -->
-        <div class="wp-alp-basic-info-container">
-            <!-- Campo: Capacidad máxima de invitados -->
-            <div class="wp-alp-number-field">
-                <label for="max_capacity" class="wp-alp-field-label">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Maximum Guest Capacity' : 'Capacidad Máxima de Invitados'); ?>
-                </label>
-                <div class="wp-alp-number-control">
-                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                        <span>−</span>
-                    </button>
-                    <input type="number" id="max_capacity" name="max_capacity" min="1" value="100" class="wp-alp-number-input">
-                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                        <span>+</span>
-                    </button>
-                </div>
+        <!-- Contenedor de campos básicos -->
+<div class="wp-alp-basic-info-container">
+    <!-- Tarjeta de Capacidad -->
+    <div class="wp-alp-info-card">
+        <div class="wp-alp-card-header">
+            <i class="wp-alp-icon fas fa-users"></i>
+            <h3>Capacidad</h3>
+        </div>
+        
+        <!-- Campo: Capacidad máxima de invitados -->
+        <div class="wp-alp-number-field">
+            <label for="max_capacity" class="wp-alp-field-label">
+                Capacidad máxima de invitados
+                <span class="wp-alp-tooltip" data-tooltip="Número máximo de personas que puede albergar tu espacio">ⓘ</span>
+            </label>
+            <div class="wp-alp-number-control">
+                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                    <span>−</span>
+                </button>
+                <input type="number" id="max_capacity" name="max_capacity" min="1" value="300" class="wp-alp-number-input">
+                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                    <span>+</span>
+                </button>
             </div>
-            
-            <!-- Campo: Capacidad mínima (solo se muestra si la categoría es Event Venue) -->
-            <div class="wp-alp-number-field event-venue-field">
-                <label for="min_capacity" class="wp-alp-field-label">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Minimum Capacity' : 'Capacidad Mínima'); ?>
-                </label>
-                <div class="wp-alp-number-control">
-                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                        <span>−</span>
-                    </button>
-                    <input type="number" id="min_capacity" name="min_capacity" min="1" value="10" class="wp-alp-number-input">
-                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                        <span>+</span>
-                    </button>
-                </div>
+            <span class="wp-alp-input-suffix">Personas</span>
+        </div>
+        
+        <!-- Campo: Capacidad mínima -->
+        <div class="wp-alp-number-field event-venue-field">
+            <label for="min_capacity" class="wp-alp-field-label">
+                Capacidad mínima requerida
+                <span class="wp-alp-tooltip" data-tooltip="Mínimo de invitados para ofrecer el servicio">ⓘ</span>
+            </label>
+            <div class="wp-alp-number-control">
+                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                    <span>−</span>
+                </button>
+                <input type="number" id="min_capacity" name="min_capacity" min="1" value="10" class="wp-alp-number-input">
+                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                    <span>+</span>
+                </button>
             </div>
-            
-            <!-- Campo: Número de baños (solo se muestra si la categoría es Event Venue) -->
-            <div class="wp-alp-number-field event-venue-field">
-                <label for="restrooms" class="wp-alp-field-label">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Restrooms' : 'Baños'); ?>
-                </label>
-                <div class="wp-alp-number-control">
-                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                        <span>−</span>
-                    </button>
-                    <input type="number" id="restrooms" name="restrooms" min="1" value="2" class="wp-alp-number-input">
-                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                        <span>+</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Campo: Horas de servicio (solo se muestra si el tipo de servicio es por hora) -->
-            <div class="wp-alp-number-field hour-service-field" style="display: none;">
-                <label for="hours" class="wp-alp-field-label">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service Hours' : 'Horas de Servicio'); ?>
-                </label>
-                <div class="wp-alp-field-description">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service hours included' : 'Horas de servicio incluidas'); ?>
-                </div>
-                <div class="wp-alp-number-control">
-                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                        <span>−</span>
-                    </button>
-                    <input type="number" id="hours" name="hours" min="1" max="24" value="4" class="wp-alp-number-input">
-                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                        <span>+</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Campo: Eventos simultáneos (toggle) -->
-            <div class="wp-alp-toggle-field">
-                <div class="wp-alp-toggle-text">
-                    <span>
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Does your venue host multiple events per day?' : '¿Tu espacio puede albergar varios eventos por día?'); ?>
-                    </span>
-                </div>
-                <div class="wp-alp-toggle-switch">
-                    <label class="wp-alp-switch">
-                        <input type="checkbox" id="host_more_than_one_ev" name="host_more_than_one_ev">
-                        <span class="wp-alp-slider round"></span>
-                    </label>
-                </div>
+            <span class="wp-alp-input-suffix">Personas</span>
+        </div>
+    </div>
+    
+    <!-- Tarjeta de Instalaciones -->
+    <div class="wp-alp-info-card">
+        <div class="wp-alp-card-header">
+            <i class="wp-alp-icon fas fa-restroom"></i>
+            <h3>Instalaciones</h3>
+        </div>
+        
+        <!-- Campo: Número de baños -->
+        <div class="wp-alp-number-field event-venue-field">
+            <label for="restrooms" class="wp-alp-field-label">
+                Número de baños
+                <span class="wp-alp-tooltip" data-tooltip="Cantidad de baños disponibles para los invitados">ⓘ</span>
+            </label>
+            <div class="wp-alp-number-control">
+                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                    <span>−</span>
+                </button>
+                <input type="number" id="restrooms" name="restrooms" min="1" value="2" class="wp-alp-number-input">
+                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                    <span>+</span>
+                </button>
             </div>
         </div>
+    </div>
+    
+    <!-- Tarjeta de Servicio -->
+    <div class="wp-alp-info-card wp-alp-info-card-full">
+        <div class="wp-alp-card-header">
+            <i class="wp-alp-icon fas fa-cogs"></i>
+            <h3>Configuración de servicio</h3>
+        </div>
+        
+        <!-- Campo: Eventos simultáneos (toggle) -->
+        <div class="wp-alp-toggle-field">
+            <div class="wp-alp-toggle-text">
+                <span>
+                    ¿Tu espacio puede albergar varios eventos por día?
+                    <span class="wp-alp-tooltip" data-tooltip="Indica si puedes recibir más de un evento en el mismo día">ⓘ</span>
+                </span>
+            </div>
+            <div class="wp-alp-toggle-switch">
+                <label class="wp-alp-switch">
+                    <input type="checkbox" id="host_more_than_one_ev" name="host_more_than_one_ev">
+                    <span class="wp-alp-slider round"></span>
+                    <span class="wp-alp-toggle-labels">
+                        <span class="wp-alp-toggle-off">No</span>
+                        <span class="wp-alp-toggle-on">Sí</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Campo: Horas de servicio (solo se muestra si el tipo de servicio es por hora) -->
+        <div class="wp-alp-number-field hour-service-field" style="display: none;">
+            <label for="hours" class="wp-alp-field-label">
+                Horas de servicio incluidas
+                <span class="wp-alp-tooltip" data-tooltip="Duración en horas del servicio básico">ⓘ</span>
+            </label>
+            <div class="wp-alp-number-control">
+                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                    <span>−</span>
+                </button>
+                <input type="number" id="hours" name="hours" min="1" max="24" value="4" class="wp-alp-number-input">
+                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                    <span>+</span>
+                </button>
+            </div>
+            <span class="wp-alp-input-suffix">Horas</span>
+        </div>
+    </div>
+</div>
     </div>
     
     <!-- Barra de navegación fija -->
@@ -1177,33 +1211,34 @@ jQuery(document).ready(function($) {
     
     // Función para mostrar u ocultar campos en datos básicos según el tipo de servicio y categoría
     function updateBasicInfoFields() {
-        // Si es servicio por hora, mostrar campo de horas
-        if (selectedServiceType === 'hour') {
-            $('.hour-service-field').show();
-        } else {
-            $('.hour-service-field').hide();
-        }
-        
-        // Si la categoría es Event Venue, mostrar campos específicos
-        // Esto debería adaptarse a tu lógica de categorías
-        var isEventVenue = true; // Por defecto asumimos que es Event Venue
-        
-        if (selectedCategory) {
-            var categoryName = selectedCategory.data('name').toLowerCase();
-            // Esto es solo un ejemplo, ajusta según tus categorías reales
-            isEventVenue = categoryName.includes('event') || 
-                          categoryName.includes('venue') || 
-                          categoryName.includes('auditorium') ||
-                          categoryName.includes('hall') ||
-                          categoryName.includes('garden');
-        }
-        
-        if (isEventVenue) {
-            $('.event-venue-field').show();
-        } else {
-            $('.event-venue-field').hide();
-        }
+    // Mostrar/ocultar campo de horas según tipo de servicio
+    if (selectedServiceType === 'hour') {
+        $('.hour-service-field').show();
+    } else {
+        $('.hour-service-field').hide();
     }
+    
+    // Verificar si la categoría está relacionada con Event Venues
+    var showEventVenueFields = false;
+    
+    if (selectedCategory) {
+        var categoryId = selectedCategory.data('term-id');
+        var eventVenuesCategoryId = 26; // ID de la categoría "Event Venues" (ajustar según corresponda)
+        
+        // Verificar si es la misma categoría o una hija
+        showEventVenueFields = (categoryId === eventVenuesCategoryId) || 
+                              // Relación jerárquica - si es una subcategoría
+                              $('.wp-alp-airbnb-category-item[data-term-id="' + categoryId + '"]')
+                                .attr('data-parent') == eventVenuesCategoryId;
+    }
+    
+    // Mostrar campos específicos para Event Venues y sus subcategorías
+    if (showEventVenueFields) {
+        $('.event-venue-field').show();
+    } else {
+        $('.event-venue-field').hide();
+    }
+}
     
     // Función para actualizar la visualización de ubicación (exacta o aproximada)
     function updateLocationDisplay(location) {

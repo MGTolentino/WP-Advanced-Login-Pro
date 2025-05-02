@@ -1974,3 +1974,271 @@ input:checked + .wp-alp-slider:before {
 .wp-alp-slider.round:before {
     border-radius: 50%;
 }
+
+/* Contenedor principal de datos básicos */
+.wp-alp-basic-info-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+    .wp-alp-basic-info-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .wp-alp-info-card-full {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Tarjetas de información */
+.wp-alp-info-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 24px;
+    transition: box-shadow 0.3s ease;
+}
+
+.wp-alp-info-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.wp-alp-card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 12px;
+}
+
+.wp-alp-card-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.wp-alp-icon {
+    margin-right: 12px;
+    font-size: 20px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #222;
+}
+
+/* Campos numéricos */
+.wp-alp-number-field {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.wp-alp-field-label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: #484848;
+}
+
+.wp-alp-number-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #DDDDDD;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 280px;
+    height: 48px;
+    background: #fff;
+}
+
+.wp-alp-number-decrease,
+.wp-alp-number-increase {
+    border: none;
+    background: #f7f7f7;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    color: #222;
+}
+
+.wp-alp-number-decrease:hover,
+.wp-alp-number-increase:hover {
+    background: #eaeaea;
+}
+
+.wp-alp-number-decrease:active,
+.wp-alp-number-increase:active {
+    background: #e0e0e0;
+}
+
+.wp-alp-number-input {
+    border: none;
+    text-align: center;
+    flex: 1;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 8px;
+    background: transparent;
+}
+
+.wp-alp-input-suffix {
+    display: block;
+    margin-top: 6px;
+    font-size: 14px;
+    color: #717171;
+}
+
+/* Toggle switch mejorado */
+.wp-alp-toggle-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.wp-alp-toggle-text {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: #484848;
+}
+
+.wp-alp-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.wp-alp-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.wp-alp-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.wp-alp-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .wp-alp-slider {
+    background-color: #008489;
+}
+
+input:focus + .wp-alp-slider {
+    box-shadow: 0 0 1px #008489;
+}
+
+input:checked + .wp-alp-slider:before {
+    transform: translateX(26px);
+}
+
+.wp-alp-toggle-labels {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.wp-alp-toggle-off {
+    color: white;
+    margin-right: auto;
+}
+
+.wp-alp-toggle-on {
+    color: white;
+    margin-left: auto;
+    opacity: 0;
+}
+
+input:checked ~ .wp-alp-toggle-labels .wp-alp-toggle-off {
+    opacity: 0;
+}
+
+input:checked ~ .wp-alp-toggle-labels .wp-alp-toggle-on {
+    opacity: 1;
+}
+
+/* Tooltips */
+.wp-alp-tooltip {
+    display: inline-flex;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    color: #717171;
+    font-size: 12px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-left: 5px;
+    position: relative;
+}
+
+.wp-alp-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.wp-alp-tooltip:hover::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    z-index: 10;
+}
