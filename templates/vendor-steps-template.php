@@ -190,10 +190,17 @@ get_header(); ?>
                                     $icon = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;"><path d="M28 2a2 2 0 0 1 2 2v24a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h24zm0 2H4v15.499l3.5-3.5 3.5 3.5 8.5-8.5 8.5 8.5V4zm0 24v-2.961l-10-10-8.5 8.5-3.5-3.5-2 2V28h24zM18 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"></path></svg>';
                                 }
                                 
+                                // Obtener el ID de la categoría padre si existe
+                                $parent_id = '';
+                                if ($category->parent) {
+                                    $parent_id = $category->parent;
+                                }
+                                
                                 $sample_options[] = array(
                                     'name' => $category->name,
                                     'icon' => $icon,
-                                    'term_id' => $category->term_id
+                                    'term_id' => $category->term_id,
+                                    'parent' => $parent_id
                                 );
                             }
                         }
@@ -202,7 +209,7 @@ get_header(); ?>
                         foreach ($sample_options as $index => $option) {
                             $selected = ($index === 8) ? 'selected' : ''; // Supongamos que Castillo (índice 8) está seleccionado
                             ?>
-                            <div class="wp-alp-airbnb-category-item <?php echo esc_attr($selected); ?>" data-term-id="<?php echo isset($option['term_id']) ? esc_attr($option['term_id']) : ''; ?>" data-name="<?php echo esc_attr($option['name']); ?>">
+                            <div class="wp-alp-airbnb-category-item <?php echo esc_attr($selected); ?>" data-term-id="<?php echo isset($option['term_id']) ? esc_attr($option['term_id']) : ''; ?>" data-parent="<?php echo isset($option['parent']) ? esc_attr($option['parent']) : ''; ?>" data-name="<?php echo esc_attr($option['name']); ?>">
                                 <div class="wp-alp-airbnb-category-icon">
                                     <?php echo $option['icon']; ?>
                                 </div>
@@ -236,546 +243,545 @@ get_header(); ?>
             </div>
 
             <!-- Paso 1.2: Tipo de servicio (subpaso de Paso 1) -->
-<div class="wp-alp-form-step" id="step-1-service-type" data-step="1.2" style="display: none;">
-    <!-- Header con opciones de ayuda -->
-    <div class="wp-alp-airbnb-help-header">
-        <div class="wp-alp-airbnb-help-links">
-            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
-            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
-        </div>
-    </div>
-    
-    <!-- Título de la página -->
-    <div class="wp-alp-airbnb-category-content">
-        <h1 class="wp-alp-airbnb-category-title">
-            <?php echo esc_html(get_locale() == 'en_US' ? 'What type of service do you offer to guests?' : '¿Qué tipo de servicio ofreces a los clientes?'); ?>
-        </h1>
-        
-        <!-- Grid de tipos de servicio -->
-        <div class="wp-alp-airbnb-service-grid">
-            <!-- Opción 1: Servicio por Día -->
-            <div class="wp-alp-airbnb-service-option" data-value="day">
-                <div class="wp-alp-airbnb-service-info">
-                    <h2 class="wp-alp-airbnb-service-title">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Day' : 'Servicio por Día'); ?>
-                    </h2>
-                    <p class="wp-alp-airbnb-service-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service for one or more full days.' : 'Los clientes contratan tu servicio por uno o más días completos.'); ?>
-                    </p>
+            <div class="wp-alp-form-step" id="step-1-service-type" data-step="1.2" style="display: none;">
+                <!-- Header con opciones de ayuda -->
+                <div class="wp-alp-airbnb-help-header">
+                    <div class="wp-alp-airbnb-help-links">
+                        <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+                        <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+                    </div>
                 </div>
-                <div class="wp-alp-airbnb-service-icon">
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
-                        <path d="M12 0v2h8V0h2v2h6a2 2 0 0 1 1.995 1.85L30 4v24a2 2 0 0 1-1.85 1.995L28 30H4a2 2 0 0 1-1.995-1.85L2 28V4a2 2 0 0 1 1.85-1.995L4 2h6V0h2zm16 10H4v18h24V10zm-8 2v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8z"></path>
-                    </svg>
-                </div>
-            </div>
-            
-            <!-- Opción 2: Servicio por Hora -->
-            <div class="wp-alp-airbnb-service-option" data-value="hour">
-                <div class="wp-alp-airbnb-service-info">
-                    <h2 class="wp-alp-airbnb-service-title">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Hour' : 'Servicio por Hora'); ?>
-                    </h2>
-                    <p class="wp-alp-airbnb-service-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service by the hour, ideal for shorter events.' : 'Los clientes contratan tu servicio por hora, ideal para eventos más cortos.'); ?>
-                    </p>
-                </div>
-                <div class="wp-alp-airbnb-service-icon">
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
-                        <path d="M16 0a16 16 0 1 1 0 32 16 16 0 0 1 0-32zm0 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 6a2 2 0 0 1 1.985 1.75L18 10l-.001 5.584.25.25a2 2 0 0 1 .565 1.32l-.009.131-.016.116-.012.09a2 2 0 0 1-.244.578l-.067.109-.08.115-.09.1-.067.074-.115.109-.12.1-.094.07-.124.08-.098.054-.136.065-.11.044-.133.044-.11.03-.134.03-.136.022-.13.013-.134.008L17 19l-.127-.007-.134-.008-.131-.013-.135-.022-.134-.029-.138-.044-.113-.043-.134-.065-.1-.054-.122-.08-.095-.07-.12-.1-.115-.109-.066-.074-.09-.1-.082-.115-.068-.11a2 2 0 0 1-.242-.577l-.039-.2-.008-.122L15 17.165 15 10a2 2 0 0 1 1-1.732V8a1 1 0 0 0-1.993.117L14 8.225v.613a3.984 3.984 0 0 0-2.997 3.745L11 12.771V14H9v-1.23a6.002 6.002 0 0 1 4.088-5.69l.237-.078A3.001 3.001 0 0 1 16 8zm-4 14v2H8v-2h4zm8 0v2h-4v-2h4zm4 0v2h-1v-2h1z"></path>
-                    </svg>
-                </div>
-            </div>
-            
-            <!-- Opción 3: Servicio Completo para Evento -->
-            <div class="wp-alp-airbnb-service-option" data-value="complete">
-                <div class="wp-alp-airbnb-service-info">
-                    <h2 class="wp-alp-airbnb-service-title">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Complete Event Service' : 'Servicio Completo para Evento'); ?>
-                    </h2>
-                    <p class="wp-alp-airbnb-service-description">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Clients receive all necessary elements for their event, including setup and breakdown.' : 'Los clientes reciben todos los elementos necesarios para su evento, incluyendo montaje y desmontaje.'); ?>
-                    </p>
-                </div>
-                <div class="wp-alp-airbnb-service-icon">
-                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
-                        <path d="M22.999 18V13.5A12 12 0 0 0 15 2.292a15 15 0 0 0-4.000 1.333A12 12 0 0 0 2.998 1.811L2.999 2v15.5C2.999 25.5 11 29 11 29s8-3.5 8-11.5V13l5 4.997L25.503 15l-2.504-2 2.504-2-1.504-2-5 4zM11 26c-4.693-1.97-6-6.678-6-8.5v-12c0-.745 3-2 6-2s6 1.255 6 2v12c0 1.822-1.307 6.53-6 8.5zm.691-6.051a.929.929 0 0 0 1.312 0l6.969-6.97a.93.93 0 0 0-1.312-1.313L12 18.327l-2.659-2.66a.93.93 0 1 0-1.312 1.313l3.315 3.317a.91.91 0 0 0 .657.272.9.9 0 0 0 .657-.272z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Mensaje de validación (inicialmente oculto) -->
-        <div class="wp-alp-airbnb-service-validation" style="display: none;">
-            <p>Por favor, selecciona un tipo de servicio para continuar.</p>
-        </div>
-    </div>
-    
-    <!-- Barra de navegación fija -->
-    <div class="wp-alp-airbnb-footer">
-        <!-- Barra de progreso con avance -->
-        <div class="wp-alp-airbnb-progress-bar">
-            <div class="wp-alp-airbnb-progress-completed" style="width: 60%;"></div>
-        </div>
-        
-        <!-- Botones de navegación -->
-        <div class="wp-alp-airbnb-nav">
-            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-categories-btn">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-            </a>
-            <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-service-type-btn">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Paso 1.3: Ubicación del servicio (subpaso de Paso 1) -->
-<div class="wp-alp-form-step" id="step-1-location" data-step="1.3" style="display: none;">
-    <!-- Header con opciones de ayuda -->
-    <div class="wp-alp-airbnb-help-header">
-        <div class="wp-alp-airbnb-help-links">
-            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
-            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
-        </div>
-    </div>
-    
-    <!-- Título y subtítulo de la página -->
-    <div class="wp-alp-airbnb-category-content">
-        <h1 class="wp-alp-airbnb-category-title">
-            <?php echo esc_html(get_locale() == 'en_US' ? 'Where do you provide your service?' : '¿Dónde das el servicio?'); ?>
-        </h1>
-        <p class="wp-alp-airbnb-category-subtitle">
-            <?php echo esc_html(get_locale() == 'en_US' ? 'This location will be shown in your listing so customers can find you easily.' : 'Esta ubicación se mostrará en tu anuncio para que los clientes puedan encontrarte fácilmente.'); ?>
-        </p>
-        
-        <!-- Opciones de ubicación -->
-        <div class="wp-alp-location-options">
-            <!-- Opción 1: Ubicación específica -->
-            <div class="wp-alp-location-option" data-option="specific">
-                <div class="wp-alp-location-option-header">
-                    <h3 class="wp-alp-location-option-title">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Specific location' : 'Ubicación específica'); ?>
-                    </h3>
-                    <p class="wp-alp-location-option-subtitle">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Select the exact location where you offer your service.' : 'Selecciona la ubicación exacta donde ofreces tu servicio.'); ?>
-                    </p>
-                </div>
-                <div class="wp-alp-location-option-radio">
-                    <input type="radio" name="location-type" id="location-specific" value="specific">
-                </div>
-            </div>
-            
-            <!-- Opción 2: Múltiples ubicaciones -->
-            <div class="wp-alp-location-option" data-option="multiple">
-                <div class="wp-alp-location-option-header">
-                    <h3 class="wp-alp-location-option-title">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Multiple locations or service areas' : 'Múltiples ubicaciones o áreas de servicio'); ?>
-                    </h3>
-                    <p class="wp-alp-location-option-subtitle">
-                        <?php echo esc_html(get_locale() == 'en_US' ? 'Select all areas where you offer your services.' : 'Selecciona todas las áreas donde ofreces tus servicios.'); ?>
-                    </p>
-                </div>
-                <div class="wp-alp-location-option-radio">
-                    <input type="radio" name="location-type" id="location-multiple" value="multiple">
-                </div>
-            </div>
-        </div>
-        
-        <div class="wp-alp-location-specific-container" style="display: none;">
-    <!-- Toggle para mostrar ubicación exacta -->
-    <div class="wp-alp-location-toggle">
-        <div class="wp-alp-toggle-text">
-            <span><?php echo esc_html(get_locale() == 'en_US' ? 'Show your exact location' : 'Mostrar tu ubicación exacta'); ?></span>
-            <p class="wp-alp-toggle-description">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Clearly indicate to guests where your place is located. We will only provide your address when the reservation is confirmed.' : 'Indica claramente a los huéspedes dónde se encuentra tu alojamiento. Solo les facilitaremos tu dirección cuando su reservación esté confirmada.'); ?>
-                <a href="#" class="wp-alp-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
-            </p>
-        </div>
-        <div class="wp-alp-toggle-switch">
-            <label class="wp-alp-switch">
-                <input type="checkbox" id="exact-location-toggle">
-                <span class="wp-alp-slider round"></span>
-            </label>
-        </div>
-    </div>
-    
-    <!-- Contenedor del mapa -->
-    <div class="wp-alp-map-container">
-        <div id="wp-alp-location-map" class="wp-alp-map-wrapper"></div>
-        
-        <!-- Tooltip de ubicación aproximada (inicialmente visible) -->
-        <div class="wp-alp-approximate-tooltip" id="approximate-tooltip">
-            <p><?php echo esc_html(get_locale() == 'en_US' ? 'We will share your approximate location.' : 'Compartiremos tu ubicación aproximada.'); ?></p>
-        </div>
-        
-        <!-- Marcador de casa (se moverá con el mapa) -->
-        <div class="wp-alp-house-marker" id="house-marker" style="display: none;">
-            <div class="wp-alp-marker-icon">
-                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: white;">
-                    <path d="M17.954 2.781l.175.164 13.072 12.842-1.402 1.426-1.8-1.768L28 29a2 2 0 0 1-1.85 1.994L26 31H6a2 2 0 0 1-1.995-1.85L4 29V15.446l-1.8 1.767-1.4-1.426L13.856 2.958a3 3 0 0 1 4.098-.177zM16 17a5 5 0 0 0-5 5v7h14v-7a5 5 0 0 0-4.783-4.995L20 17h-4z"></path>
-                </svg>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Barra de búsqueda de dirección -->
-    <div class="wp-alp-map-search">
-        <div class="wp-alp-search-icon">
-            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 18px; width: 18px; fill: currentcolor;">
-                <path d="M13 0c7.18 0 13 5.82 13 13 0 2.868-.929 5.519-2.502 7.669l7.916 7.917-2.122 2.121-7.916-7.916A12.942 12.942 0 0 1 13 26C5.82 26 0 20.18 0 13S5.82 0 13 0zm0 2a11 11 0 1 0 0 22 11 11 0 0 0 0-22z"></path>
-            </svg>
-        </div>
-        <input type="text" id="wp-alp-address-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Enter your address' : 'Ingresa tu dirección'); ?>" class="wp-alp-address-input">
-    </div>
-    
-    <!-- Botón para confirmación de dirección detallada (inicialmente oculto) -->
-    <div class="wp-alp-confirm-address-btn" style="display: none;">
-        <button type="button" id="confirm-address-btn" class="wp-alp-btn wp-alp-btn-secondary">
-            <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm address' : 'Confirmar dirección'); ?>
-        </button>
-    </div>
-</div>
-
-<!-- Formulario detallado de dirección (inicialmente oculto) -->
-<div class="wp-alp-address-form-container" id="address-form-container" style="display: none;">
-    <h2 class="wp-alp-address-form-title">
-        <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm your address' : 'Confirma tu dirección'); ?>
-    </h2>
-    <p class="wp-alp-address-form-subtitle">
-        <?php echo esc_html(get_locale() == 'en_US' ? 'We will only share the address with guests after they have made the reservation.' : 'Solo compartiremos la dirección con los huéspedes después de que hayan hecho la reservación.'); ?>
-    </p>
-    
-    <form id="wp-alp-detailed-address" class="wp-alp-address-form">
-        <!-- País -->
-        <div class="wp-alp-form-group">
-            <label for="country" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Country/Region' : 'País o región'); ?>
-            </label>
-            <select id="country" name="country" class="wp-alp-form-select">
-                <option value="MX" selected>México - MX</option>
-                <option value="US">Estados Unidos - US</option>
-                <option value="CA">Canadá - CA</option>
-                <!-- Agrega más países según sea necesario -->
-            </select>
-        </div>
-        
-        <!-- Dirección principal -->
-        <div class="wp-alp-form-group">
-            <label for="street" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Address' : 'Dirección'); ?>
-            </label>
-            <input type="text" id="street" name="street" class="wp-alp-form-input">
-        </div>
-        
-        <!-- Apartamento, habitación, etc. -->
-        <div class="wp-alp-form-group">
-            <label for="apt" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Apt, suite, etc. (if applicable)' : 'Departamento, habitación, etc. (si corresponde)'); ?>
-            </label>
-            <input type="text" id="apt" name="apt" class="wp-alp-form-input">
-        </div>
-        
-        <!-- Zona o barrio -->
-        <div class="wp-alp-form-group">
-            <label for="neighborhood" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Area (if applicable)' : 'Zona (si corresponde)'); ?>
-            </label>
-            <input type="text" id="neighborhood" name="neighborhood" class="wp-alp-form-input">
-        </div>
-        
-        <!-- Código postal -->
-        <div class="wp-alp-form-group">
-            <label for="zipcode" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Postal code' : 'Código postal'); ?>
-            </label>
-            <input type="text" id="zipcode" name="zipcode" class="wp-alp-form-input">
-        </div>
-        
-        <!-- Ciudad -->
-        <div class="wp-alp-form-group">
-            <label for="city" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'City/town' : 'Ciudad / municipio'); ?>
-            </label>
-            <input type="text" id="city" name="city" class="wp-alp-form-input">
-        </div>
-        
-        <!-- Estado -->
-        <div class="wp-alp-form-group">
-            <label for="state" class="wp-alp-form-label">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'State' : 'Estado'); ?>
-            </label>
-            <select id="state" name="state" class="wp-alp-form-select">
-                <option value="NL" selected>Nuevo León</option>
-                <option value="CDMX">Ciudad de México</option>
-                <option value="JAL">Jalisco</option>
-                <!-- Agrega más estados según sea necesario -->
-            </select>
-        </div>
-        
-        <!-- Botones de navegación -->
-        <div class="wp-alp-address-form-buttons">
-            <button type="button" id="back-to-map-btn" class="wp-alp-btn wp-alp-btn-text">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-            </button>
-            <button type="button" id="save-address-btn" class="wp-alp-btn wp-alp-btn-primary">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm' : 'Confirmar'); ?>
-            </button>
-        </div>
-    </form>
-</div>
-        
-        <!-- Contenedor para múltiples ubicaciones - inicialmente oculto -->
-        <div class="wp-alp-location-multiple-container" style="display: none;">
-            <div class="wp-alp-locations-list">
-                <?php
-                // Intentar obtener las ubicaciones de hp_listing_location o hp_listing_ubicacion
-                $taxonomy = taxonomy_exists('hp_listing_location') ? 'hp_listing_location' : 
-                           (taxonomy_exists('hp_listing_ubicacion') ? 'hp_listing_ubicacion' : '');
                 
-                if (!empty($taxonomy)) {
-                    $locations = get_terms(array(
-                        'taxonomy' => $taxonomy,
-                        'hide_empty' => false,
-                    ));
+                <!-- Título de la página -->
+                <div class="wp-alp-airbnb-category-content">
+                    <h1 class="wp-alp-airbnb-category-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'What type of service do you offer to guests?' : '¿Qué tipo de servicio ofreces a los clientes?'); ?>
+                    </h1>
                     
-                    if (!empty($locations) && !is_wp_error($locations)) {
-                        echo '<div class="wp-alp-locations-checkboxes">';
-                        foreach ($locations as $location) {
-                            ?>
-                            <div class="wp-alp-location-checkbox-item">
-                                <input type="checkbox" id="location-<?php echo esc_attr($location->term_id); ?>" 
-                                       name="locations[]" value="<?php echo esc_attr($location->term_id); ?>">
-                                <label for="location-<?php echo esc_attr($location->term_id); ?>">
-                                    <?php echo esc_html($location->name); ?>
+                    <!-- Grid de tipos de servicio -->
+                    <div class="wp-alp-airbnb-service-grid">
+                        <!-- Opción 1: Servicio por Día -->
+                        <div class="wp-alp-airbnb-service-option" data-value="day">
+                            <div class="wp-alp-airbnb-service-info">
+                                <h2 class="wp-alp-airbnb-service-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Day' : 'Servicio por Día'); ?>
+                                </h2>
+                                <p class="wp-alp-airbnb-service-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service for one or more full days.' : 'Los clientes contratan tu servicio por uno o más días completos.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-airbnb-service-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                                    <path d="M12 0v2h8V0h2v2h6a2 2 0 0 1 1.995 1.85L30 4v24a2 2 0 0 1-1.85 1.995L28 30H4a2 2 0 0 1-1.995-1.85L2 28V4a2 2 0 0 1 1.85-1.995L4 2h6V0h2zm16 10H4v18h24V10zm-8 2v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Opción 2: Servicio por Hora -->
+                        <div class="wp-alp-airbnb-service-option" data-value="hour">
+                            <div class="wp-alp-airbnb-service-info">
+                                <h2 class="wp-alp-airbnb-service-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Hour' : 'Servicio por Hora'); ?>
+                                </h2>
+                                <p class="wp-alp-airbnb-service-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service by the hour, ideal for shorter events.' : 'Los clientes contratan tu servicio por hora, ideal para eventos más cortos.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-airbnb-service-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                                    <path d="M16 0a16 16 0 1 1 0 32 16 16 0 0 1 0-32zm0 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 6a2 2 0 0 1 1.985 1.75L18 10l-.001 5.584.25.25a2 2 0 0 1 .565 1.32l-.009.131-.016.116-.012.09a2 2 0 0 1-.244.578l-.067.109-.08.115-.09.1-.067.074-.115.109-.12.1-.094.07-.124.08-.098.054-.136.065-.11.044-.133.044-.11.03-.134.03-.136.022-.13.013-.134.008L17 19l-.127-.007-.134-.008-.131-.013-.135-.022-.134-.029-.138-.044-.113-.043-.134-.065-.1-.054-.122-.08-.095-.07-.12-.1-.115-.109-.066-.074-.09-.1-.082-.115-.068-.11a2 2 0 0 1-.242-.577l-.039-.2-.008-.122L15 17.165 15 10a2 2 0 0 1 1-1.732V8a1 1 0 0 0-1.993.117L14 8.225v.613a3.984 3.984 0 0 0-2.997 3.745L11 12.771V14H9v-1.23a6.002 6.002 0 0 1 4.088-5.69l.237-.078A3.001 3.001 0 0 1 16 8zm-4 14v2H8v-2h4zm8 0v2h-4v-2h4zm4 0v2h-1v-2h1z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Opción 3: Servicio Completo para Evento -->
+                        <div class="wp-alp-airbnb-service-option" data-value="complete">
+                            <div class="wp-alp-airbnb-service-info">
+                                <h2 class="wp-alp-airbnb-service-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Complete Event Service' : 'Servicio Completo para Evento'); ?>
+                                </h2>
+                                <p class="wp-alp-airbnb-service-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clients receive all necessary elements for their event, including setup and breakdown.' : 'Los clientes reciben todos los elementos necesarios para su evento, incluyendo montaje y desmontaje.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-airbnb-service-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                                    <path d="M22.999 18V13.5A12 12 0 0 0 15 2.292a15 15 0 0 0-4.000 1.333A12 12 0 0 0 2.998 1.811L2.999 2v15.5C2.999 25.5 11 29 11 29s8-3.5 8-11.5V13l5 4.997L25.503 15l-2.504-2 2.504-2-1.504-2-5 4zM11 26c-4.693-1.97-6-6.678-6-8.5v-12c0-.745 3-2 6-2s6 1.255 6 2v12c0 1.822-1.307 6.53-6 8.5zm.691-6.051a.929.929 0 0 0 1.312 0l6.969-6.97a.93.93 0 0 0-1.312-1.313L12 18.327l-2.659-2.66a.93.93 0 1 0-1.312 1.313l3.315 3.317a.91.91 0 0 0 .657.272.9.9 0 0 0 .657-.272z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje de validación (inicialmente oculto) -->
+                    <div class="wp-alp-airbnb-service-validation" style="display: none;">
+                        <p>Por favor, selecciona un tipo de servicio para continuar.</p>
+                    </div>
+                </div>
+                
+                <!-- Barra de navegación fija -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 60%;"></div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-categories-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-service-type-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 1.3: Ubicación del servicio (subpaso de Paso 1) -->
+            <div class="wp-alp-form-step" id="step-1-location" data-step="1.3" style="display: none;">
+                <!-- Header con opciones de ayuda -->
+                <div class="wp-alp-airbnb-help-header">
+                    <div class="wp-alp-airbnb-help-links">
+                        <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+                        <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+                    </div>
+                </div>
+                
+                <!-- Título y subtítulo de la página -->
+                <div class="wp-alp-airbnb-category-content">
+                    <h1 class="wp-alp-airbnb-category-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Where do you provide your service?' : '¿Dónde das el servicio?'); ?>
+                    </h1>
+                    <p class="wp-alp-airbnb-category-subtitle">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'This location will be shown in your listing so customers can find you easily.' : 'Esta ubicación se mostrará en tu anuncio para que los clientes puedan encontrarte fácilmente.'); ?>
+                    </p>
+                    
+                    <!-- Opciones de ubicación -->
+                    <div class="wp-alp-location-options">
+                        <!-- Opción 1: Ubicación específica -->
+                        <div class="wp-alp-location-option" data-option="specific">
+                            <div class="wp-alp-location-option-header">
+                                <h3 class="wp-alp-location-option-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Specific location' : 'Ubicación específica'); ?>
+                                </h3>
+                                <p class="wp-alp-location-option-subtitle">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Select the exact location where you offer your service.' : 'Selecciona la ubicación exacta donde ofreces tu servicio.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-location-option-radio">
+                                <input type="radio" name="location-type" id="location-specific" value="specific">
+                            </div>
+                        </div>
+                        
+                        <!-- Opción 2: Múltiples ubicaciones -->
+                        <div class="wp-alp-location-option" data-option="multiple">
+                            <div class="wp-alp-location-option-header">
+                                <h3 class="wp-alp-location-option-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Multiple locations or service areas' : 'Múltiples ubicaciones o áreas de servicio'); ?>
+                                </h3>
+                                <p class="wp-alp-location-option-subtitle">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Select all areas where you offer your services.' : 'Selecciona todas las áreas donde ofreces tus servicios.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-location-option-radio">
+                                <input type="radio" name="location-type" id="location-multiple" value="multiple">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="wp-alp-location-specific-container" style="display: none;">
+                        <!-- Toggle para mostrar ubicación exacta -->
+                        <div class="wp-alp-location-toggle">
+                            <div class="wp-alp-toggle-text">
+                                <span><?php echo esc_html(get_locale() == 'en_US' ? 'Show your exact location' : 'Mostrar tu ubicación exacta'); ?></span>
+                                <p class="wp-alp-toggle-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clearly indicate to guests where your place is located. We will only provide your address when the reservation is confirmed.' : 'Indica claramente a los huéspedes dónde se encuentra tu alojamiento. Solo les facilitaremos tu dirección cuando su reservación esté confirmada.'); ?>
+                                    <a href="#" class="wp-alp-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
+                                </p>
+                            </div>
+                            <div class="wp-alp-toggle-switch">
+                                <label class="wp-alp-switch">
+                                    <input type="checkbox" id="exact-location-toggle">
+                                    <span class="wp-alp-slider round"></span>
                                 </label>
                             </div>
+                        </div>
+                        
+                        <!-- Contenedor del mapa -->
+                        <div class="wp-alp-map-container">
+                            <div id="wp-alp-location-map" class="wp-alp-map-wrapper"></div>
+                            
+                            <!-- Tooltip de ubicación aproximada (inicialmente visible) -->
+                            <div class="wp-alp-approximate-tooltip" id="approximate-tooltip">
+                                <p><?php echo esc_html(get_locale() == 'en_US' ? 'We will share your approximate location.' : 'Compartiremos tu ubicación aproximada.'); ?></p>
+                            </div>
+                            
+                            <!-- Marcador de casa (se moverá con el mapa) -->
+                            <div class="wp-alp-house-marker" id="house-marker" style="display: none;">
+                                <div class="wp-alp-marker-icon">
+                                    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: white;">
+                                        <path d="M17.954 2.781l.175.164 13.072 12.842-1.402 1.426-1.8-1.768L28 29a2 2 0 0 1-1.85 1.994L26 31H6a2 2 0 0 1-1.995-1.85L4 29V15.446l-1.8 1.767-1.4-1.426L13.856 2.958a3 3 0 0 1 4.098-.177zM16 17a5 5 0 0 0-5 5v7h14v-7a5 5 0 0 0-4.783-4.995L20 17h-4z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Barra de búsqueda de dirección -->
+                        <div class="wp-alp-map-search">
+                            <div class="wp-alp-search-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 18px; width: 18px; fill: currentcolor;">
+                                    <path d="M13 0c7.18 0 13 5.82 13 13 0 2.868-.929 5.519-2.502 7.669l7.916 7.917-2.122 2.121-7.916-7.916A12.942 12.942 0 0 1 13 26C5.82 26 0 20.18 0 13S5.82 0 13 0zm0 2a11 11 0 1 0 0 22 11 11 0 0 0 0-22z"></path>
+                                </svg>
+                            </div>
+                            <input type="text" id="wp-alp-address-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Enter your address' : 'Ingresa tu dirección'); ?>" class="wp-alp-address-input">
+                        </div>
+                        
+                        <!-- Botón para confirmación de dirección detallada (inicialmente oculto) -->
+                        <div class="wp-alp-confirm-address-btn" style="display: none;">
+                            <button type="button" id="confirm-address-btn" class="wp-alp-btn wp-alp-btn-secondary">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm address' : 'Confirmar dirección'); ?>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Formulario detallado de dirección (inicialmente oculto) -->
+                    <div class="wp-alp-address-form-container" id="address-form-container" style="display: none;">
+                        <h2 class="wp-alp-address-form-title">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm your address' : 'Confirma tu dirección'); ?>
+                        </h2>
+                        <p class="wp-alp-address-form-subtitle">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'We will only share the address with guests after they have made the reservation.' : 'Solo compartiremos la dirección con los huéspedes después de que hayan hecho la reservación.'); ?>
+                        </p>
+                        
+                        <form id="wp-alp-detailed-address" class="wp-alp-address-form">
+                            <!-- País -->
+                            <div class="wp-alp-form-group">
+                                <label for="country" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Country/Region' : 'País o región'); ?>
+                                </label>
+                                <select id="country" name="country" class="wp-alp-form-select">
+                                    <option value="MX" selected>México - MX</option>
+                                    <option value="US">Estados Unidos - US</option>
+                                    <option value="CA">Canadá - CA</option>
+                                    <!-- Agrega más países según sea necesario -->
+                                </select>
+                            </div>
+                            
+                            <!-- Dirección principal -->
+                            <div class="wp-alp-form-group">
+                                <label for="street" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Address' : 'Dirección'); ?>
+                                </label>
+                                <input type="text" id="street" name="street" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Apartamento, habitación, etc. -->
+                            <div class="wp-alp-form-group">
+                                <label for="apt" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Apt, suite, etc. (if applicable)' : 'Departamento, habitación, etc. (si corresponde)'); ?>
+                                </label>
+                                <input type="text" id="apt" name="apt" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Zona o barrio -->
+                            <div class="wp-alp-form-group">
+                                <label for="neighborhood" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Area (if applicable)' : 'Zona (si corresponde)'); ?>
+                                </label>
+                                <input type="text" id="neighborhood" name="neighborhood" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Código postal -->
+                            <div class="wp-alp-form-group">
+                                <label for="zipcode" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Postal code' : 'Código postal'); ?>
+                                </label>
+                                <input type="text" id="zipcode" name="zipcode" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Ciudad -->
+                            <div class="wp-alp-form-group">
+                                <label for="city" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'City/town' : 'Ciudad / municipio'); ?>
+                                </label>
+                                <input type="text" id="city" name="city" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Estado -->
+                            <div class="wp-alp-form-group">
+                                <label for="state" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'State' : 'Estado'); ?>
+                                </label>
+                                <select id="state" name="state" class="wp-alp-form-select">
+                                    <option value="NL" selected>Nuevo León</option>
+                                    <option value="CDMX">Ciudad de México</option>
+                                    <option value="JAL">Jalisco</option>
+                                    <!-- Agrega más estados según sea necesario -->
+                                </select>
+                            </div>
+                            
+                            <!-- Botones de navegación -->
+                            <div class="wp-alp-address-form-buttons">
+                                <button type="button" id="back-to-map-btn" class="wp-alp-btn wp-alp-btn-text">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                                </button>
+                                <button type="button" id="save-address-btn" class="wp-alp-btn wp-alp-btn-primary">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm' : 'Confirmar'); ?>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Contenedor para múltiples ubicaciones - inicialmente oculto -->
+                    <div class="wp-alp-location-multiple-container" style="display: none;">
+                        <div class="wp-alp-locations-list">
                             <?php
-                        }
-                        echo '</div>';
-                    }
-                } else {
-                    // Ubicaciones de ejemplo si no hay taxonomías disponibles
-                    ?>
-                    <div class="wp-alp-locations-checkboxes">
-                        <div class="wp-alp-location-checkbox-item">
-                            <input type="checkbox" id="location-1" name="locations[]" value="1">
-                            <label for="location-1">Ciudad de México</label>
-                        </div>
-                        <div class="wp-alp-location-checkbox-item">
-                            <input type="checkbox" id="location-2" name="locations[]" value="2">
-                            <label for="location-2">Guadalajara</label>
-                        </div>
-                        <div class="wp-alp-location-checkbox-item">
-                            <input type="checkbox" id="location-3" name="locations[]" value="3">
-                            <label for="location-3">Monterrey</label>
-                        </div>
-                        <div class="wp-alp-location-checkbox-item">
-                            <input type="checkbox" id="location-4" name="locations[]" value="4">
-                            <label for="location-4">Cancún</label>
+                            // Intentar obtener las ubicaciones de hp_listing_location o hp_listing_ubicacion
+                            $taxonomy = taxonomy_exists('hp_listing_location') ? 'hp_listing_location' : 
+                                      (taxonomy_exists('hp_listing_ubicacion') ? 'hp_listing_ubicacion' : '');
+                            
+                            if (!empty($taxonomy)) {
+                                $locations = get_terms(array(
+                                    'taxonomy' => $taxonomy,
+                                    'hide_empty' => false,
+                                ));
+                                
+                                if (!empty($locations) && !is_wp_error($locations)) {
+                                    echo '<div class="wp-alp-locations-checkboxes">';
+                                    foreach ($locations as $location) {
+                                        ?>
+                                        <div class="wp-alp-location-checkbox-item">
+                                            <input type="checkbox" id="location-<?php echo esc_attr($location->term_id); ?>" 
+                                                  name="locations[]" value="<?php echo esc_attr($location->term_id); ?>">
+                                            <label for="location-<?php echo esc_attr($location->term_id); ?>">
+                                                <?php echo esc_html($location->name); ?>
+                                            </label>
+                                        </div>
+                                        <?php
+                                    }
+                                    echo '</div>';
+                                }
+                            } else {
+                                // Ubicaciones de ejemplo si no hay taxonomías disponibles
+                                ?>
+                                <div class="wp-alp-locations-checkboxes">
+                                    <div class="wp-alp-location-checkbox-item">
+                                        <input type="checkbox" id="location-1" name="locations[]" value="1">
+                                        <label for="location-1">Ciudad de México</label>
+                                    </div>
+                                    <div class="wp-alp-location-checkbox-item">
+                                        <input type="checkbox" id="location-2" name="locations[]" value="2">
+                                        <label for="location-2">Guadalajara</label>
+                                    </div>
+                                    <div class="wp-alp-location-checkbox-item">
+                                        <input type="checkbox" id="location-3" name="locations[]" value="3">
+                                        <label for="location-3">Monterrey</label>
+                                    </div>
+                                    <div class="wp-alp-location-checkbox-item">
+                                        <input type="checkbox" id="location-4" name="locations[]" value="4">
+                                        <label for="location-4">Cancún</label>
+                                    </div>
+                                </div>
+                                <?php
+                            }
+                            ?>
+                            <!-- Opción "Otro" con campo de texto -->
+                            <div class="wp-alp-location-other">
+                                <div class="wp-alp-location-checkbox-item">
+                                    <input type="checkbox" id="location-other" name="locations[]" value="other">
+                                    <label for="location-other">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Other location' : 'Otra ubicación'); ?>
+                                    </label>
+                                </div>
+                                <div class="wp-alp-location-other-input" style="display: none;">
+                                    <input type="text" id="wp-alp-other-location" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Specify the location' : 'Especifica la ubicación'); ?>">
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <?php
-                }
-                ?>
-                <!-- Opción "Otro" con campo de texto -->
-                <div class="wp-alp-location-other">
-                    <div class="wp-alp-location-checkbox-item">
-                        <input type="checkbox" id="location-other" name="locations[]" value="other">
-                        <label for="location-other">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Other location' : 'Otra ubicación'); ?>
-                        </label>
+                    
+                    <!-- Mensaje de validación (inicialmente oculto) -->
+                    <div class="wp-alp-location-validation" style="display: none;">
+                        <p><?php echo esc_html(get_locale() == 'en_US' ? 'Please select a location to continue.' : 'Por favor, selecciona una ubicación para continuar.'); ?></p>
                     </div>
-                    <div class="wp-alp-location-other-input" style="display: none;">
-                        <input type="text" id="wp-alp-other-location" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Specify the location' : 'Especifica la ubicación'); ?>">
+                </div>
+                
+                <!-- Barra de navegación fija -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 80%;"></div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-service-type-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-location-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Mensaje de validación (inicialmente oculto) -->
-        <div class="wp-alp-location-validation" style="display: none;">
-            <p><?php echo esc_html(get_locale() == 'en_US' ? 'Please select a location to continue.' : 'Por favor, selecciona una ubicación para continuar.'); ?></p>
-        </div>
-    </div>
-    
-    <!-- Barra de navegación fija -->
-    <div class="wp-alp-airbnb-footer">
-        <!-- Barra de progreso con avance -->
-        <div class="wp-alp-airbnb-progress-bar">
-            <div class="wp-alp-airbnb-progress-completed" style="width: 80%;"></div>
-        </div>
-        
-        <!-- Botones de navegación -->
-        <div class="wp-alp-airbnb-nav">
-            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-service-type-btn">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-            </a>
-            <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-location-btn">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-            </a>
-        </div>
-    </div>
-</div>
 
+            <!-- Paso 1.4: Datos básicos (subpaso de Paso 1) -->
+            <div class="wp-alp-form-step" id="step-1-basic-info" data-step="1.4" style="display: none;">
+                <!-- Header con opciones de ayuda -->
+                <div class="wp-alp-airbnb-help-header">
+                    <div class="wp-alp-airbnb-help-links">
+                        <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+                        <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+                    </div>
+                </div>
+                
+                <!-- Título y subtítulo de la página -->
+                <div class="wp-alp-airbnb-category-content">
+                    <h1 class="wp-alp-airbnb-category-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic data about your space' : 'Agrega algunos datos básicos de tu espacio'); ?>
+                    </h1>
+                    <p class="wp-alp-airbnb-category-subtitle">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Later, you can add more details, like the types of amenities.' : 'Más adelante, podrás incluir otros detalles, como los tipos de servicios.'); ?>
+                    </p>
+                    
+                    <!-- Contenedor de campos básicos -->
+                    <div class="wp-alp-basic-info-container">
+                        <!-- Tarjeta de Capacidad -->
+                        <div class="wp-alp-info-card">
+                            <div class="wp-alp-card-header">
+                                <i class="wp-alp-icon fas fa-users"></i>
+                                <h3><?php echo esc_html(get_locale() == 'en_US' ? 'Capacity' : 'Capacidad'); ?></h3>
+                            </div>
+                            
+                            <!-- Campo: Capacidad máxima de invitados -->
+                            <div class="wp-alp-number-field">
+                                <label for="max_capacity" class="wp-alp-field-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Maximum guest capacity' : 'Capacidad máxima de invitados'); ?>
+                                    <span class="wp-alp-tooltip" data-tooltip="<?php echo esc_attr(get_locale() == 'en_US' ? 'Maximum number of people your space can accommodate' : 'Número máximo de personas que puede albergar tu espacio'); ?>">ⓘ</span>
+                                </label>
+                                <div class="wp-alp-number-control">
+                                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                                        <span>−</span>
+                                    </button>
+                                    <input type="number" id="max_capacity" name="max_capacity" min="1" value="300" class="wp-alp-number-input">
+                                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                                        <span>+</span>
+                                    </button>
+                                </div>
+                                <span class="wp-alp-input-suffix"><?php echo esc_html(get_locale() == 'en_US' ? 'Guests' : 'Invitados'); ?></span>
+                            </div>
+                            
+                            <!-- Campo: Capacidad mínima -->
+                            <div class="wp-alp-number-field event-venue-field">
+                                <label for="min_capacity" class="wp-alp-field-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Minimum required capacity' : 'Capacidad mínima requerida'); ?>
+                                    <span class="wp-alp-tooltip" data-tooltip="<?php echo esc_attr(get_locale() == 'en_US' ? 'Minimum number of guests to offer the service' : 'Mínimo de invitados para ofrecer el servicio'); ?>">ⓘ</span>
+                                </label>
+                                <div class="wp-alp-number-control">
+                                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                                        <span>−</span>
+                                    </button>
+                                    <input type="number" id="min_capacity" name="min_capacity" min="1" value="10" class="wp-alp-number-input">
+                                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                                        <span>+</span>
+                                    </button>
+                                </div>
+                                <span class="wp-alp-input-suffix"><?php echo esc_html(get_locale() == 'en_US' ? 'Guests' : 'Invitados'); ?></span>
+                            </div>
+                        </div>
+                        
+                        <!-- Tarjeta de Instalaciones -->
+                        <div class="wp-alp-info-card">
+                            <div class="wp-alp-card-header">
+                                <i class="wp-alp-icon fas fa-restroom"></i>
+                                <h3><?php echo esc_html(get_locale() == 'en_US' ? 'Facilities' : 'Instalaciones'); ?></h3>
+                            </div>
+                            
+                            <!-- Campo: Número de baños -->
+                            <div class="wp-alp-number-field event-venue-field">
+                                <label for="restrooms" class="wp-alp-field-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Number of restrooms' : 'Número de baños'); ?>
+                                    <span class="wp-alp-tooltip" data-tooltip="<?php echo esc_attr(get_locale() == 'en_US' ? 'Number of restrooms available for guests' : 'Cantidad de baños disponibles para los invitados'); ?>">ⓘ</span>
+                                </label>
+                                <div class="wp-alp-number-control">
+                                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                                        <span>−</span>
+                                    </button>
+                                    <input type="number" id="restrooms" name="restrooms" min="1" value="2" class="wp-alp-number-input">
+                                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                                        <span>+</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Tarjeta de Servicio -->
+                        <div class="wp-alp-info-card wp-alp-info-card-full">
+                            <div class="wp-alp-card-header">
+                                <i class="wp-alp-icon fas fa-cogs"></i>
+                                <h3><?php echo esc_html(get_locale() == 'en_US' ? 'Service Configuration' : 'Configuración de servicio'); ?></h3>
+                            </div>
+                            
+                            <!-- Campo: Eventos simultáneos (toggle) -->
+                            <div class="wp-alp-toggle-field">
+                                <div class="wp-alp-toggle-text">
+                                    <span>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Does your venue host multiple events per day?' : '¿Tu espacio puede albergar varios eventos por día?'); ?>
+                                        <span class="wp-alp-tooltip" data-tooltip="<?php echo esc_attr(get_locale() == 'en_US' ? 'Indicate if you can receive more than one event on the same day' : 'Indica si puedes recibir más de un evento en el mismo día'); ?>">ⓘ</span>
+                                    </span>
+                                </div>
+                                <div class="wp-alp-toggle-switch">
+                                    <label class="wp-alp-switch">
+                                        <input type="checkbox" id="host_more_than_one_ev" name="host_more_than_one_ev">
+                                        <span class="wp-alp-slider round"></span>
+                                        <span class="wp-alp-toggle-labels">
+                                            <span class="wp-alp-toggle-off"><?php echo esc_html(get_locale() == 'en_US' ? 'No' : 'No'); ?></span>
+                                            <span class="wp-alp-toggle-on"><?php echo esc_html(get_locale() == 'en_US' ? 'Yes' : 'Sí'); ?></span>
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Campo: Horas de servicio (solo se muestra si el tipo de servicio es por hora) -->
+                            <div class="wp-alp-number-field hour-service-field" style="display: none;">
+                                <label for="hours" class="wp-alp-field-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service hours included' : 'Horas de servicio incluidas'); ?>
+                                    <span class="wp-alp-tooltip" data-tooltip="<?php echo esc_attr(get_locale() == 'en_US' ? 'Duration in hours of the basic service' : 'Duración en horas del servicio básico'); ?>">ⓘ</span>
+                                </label>
+                                <div class="wp-alp-number-control">
+                                    <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
+                                        <span>−</span>
+                                    </button>
+                                    <input type="number" id="hours" name="hours" min="1" max="24" value="4" class="wp-alp-number-input">
+                                    <button type="button" class="wp-alp-number-increase" aria-label="Increase">
+                                        <span>+</span>
+                                    </button>
+                                </div>
+                                <span class="wp-alp-input-suffix"><?php echo esc_html(get_locale() == 'en_US' ? 'Hours' : 'Horas'); ?></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Barra de navegación fija -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 100%;"></div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-location-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="finish-step-1-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-<!-- Paso 1.4: Datos básicos (subpaso de Paso 1) -->
-<div class="wp-alp-form-step" id="step-1-basic-info" data-step="1.4" style="display: none;">
-    <!-- Header con opciones de ayuda -->
-    <div class="wp-alp-airbnb-help-header">
-        <div class="wp-alp-airbnb-help-links">
-            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
-            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
-        </div>
-    </div>
-    
-    <!-- Título y subtítulo de la página -->
-    <div class="wp-alp-airbnb-category-content">
-        <h1 class="wp-alp-airbnb-category-title">
-            <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic data about your space' : 'Agrega algunos datos básicos de tu espacio'); ?>
-        </h1>
-        <p class="wp-alp-airbnb-category-subtitle">
-            <?php echo esc_html(get_locale() == 'en_US' ? 'Later, you can add more details, like the types of amenities.' : 'Más adelante, podrás incluir otros detalles, como los tipos de servicios.'); ?>
-        </p>
-        
-        <!-- Contenedor de campos básicos -->
-        <!-- Contenedor de campos básicos -->
-<div class="wp-alp-basic-info-container">
-    <!-- Tarjeta de Capacidad -->
-    <div class="wp-alp-info-card">
-        <div class="wp-alp-card-header">
-            <i class="wp-alp-icon fas fa-users"></i>
-            <h3>Capacidad</h3>
-        </div>
-        
-        <!-- Campo: Capacidad máxima de invitados -->
-        <div class="wp-alp-number-field">
-            <label for="max_capacity" class="wp-alp-field-label">
-                Capacidad máxima de invitados
-                <span class="wp-alp-tooltip" data-tooltip="Número máximo de personas que puede albergar tu espacio">ⓘ</span>
-            </label>
-            <div class="wp-alp-number-control">
-                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                    <span>−</span>
-                </button>
-                <input type="number" id="max_capacity" name="max_capacity" min="1" value="300" class="wp-alp-number-input">
-                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                    <span>+</span>
-                </button>
-            </div>
-            <span class="wp-alp-input-suffix">Personas</span>
-        </div>
-        
-        <!-- Campo: Capacidad mínima -->
-        <div class="wp-alp-number-field event-venue-field">
-            <label for="min_capacity" class="wp-alp-field-label">
-                Capacidad mínima requerida
-                <span class="wp-alp-tooltip" data-tooltip="Mínimo de invitados para ofrecer el servicio">ⓘ</span>
-            </label>
-            <div class="wp-alp-number-control">
-                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                    <span>−</span>
-                </button>
-                <input type="number" id="min_capacity" name="min_capacity" min="1" value="10" class="wp-alp-number-input">
-                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                    <span>+</span>
-                </button>
-            </div>
-            <span class="wp-alp-input-suffix">Personas</span>
-        </div>
-    </div>
-    
-    <!-- Tarjeta de Instalaciones -->
-    <div class="wp-alp-info-card">
-        <div class="wp-alp-card-header">
-            <i class="wp-alp-icon fas fa-restroom"></i>
-            <h3>Instalaciones</h3>
-        </div>
-        
-        <!-- Campo: Número de baños -->
-        <div class="wp-alp-number-field event-venue-field">
-            <label for="restrooms" class="wp-alp-field-label">
-                Número de baños
-                <span class="wp-alp-tooltip" data-tooltip="Cantidad de baños disponibles para los invitados">ⓘ</span>
-            </label>
-            <div class="wp-alp-number-control">
-                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                    <span>−</span>
-                </button>
-                <input type="number" id="restrooms" name="restrooms" min="1" value="2" class="wp-alp-number-input">
-                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                    <span>+</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Tarjeta de Servicio -->
-    <div class="wp-alp-info-card wp-alp-info-card-full">
-        <div class="wp-alp-card-header">
-            <i class="wp-alp-icon fas fa-cogs"></i>
-            <h3>Configuración de servicio</h3>
-        </div>
-        
-        <!-- Campo: Eventos simultáneos (toggle) -->
-        <div class="wp-alp-toggle-field">
-            <div class="wp-alp-toggle-text">
-                <span>
-                    ¿Tu espacio puede albergar varios eventos por día?
-                    <span class="wp-alp-tooltip" data-tooltip="Indica si puedes recibir más de un evento en el mismo día">ⓘ</span>
-                </span>
-            </div>
-            <div class="wp-alp-toggle-switch">
-                <label class="wp-alp-switch">
-                    <input type="checkbox" id="host_more_than_one_ev" name="host_more_than_one_ev">
-                    <span class="wp-alp-slider round"></span>
-                    <span class="wp-alp-toggle-labels">
-                        <span class="wp-alp-toggle-off">No</span>
-                        <span class="wp-alp-toggle-on">Sí</span>
-                    </span>
-                </label>
-            </div>
-        </div>
-        
-        <!-- Campo: Horas de servicio (solo se muestra si el tipo de servicio es por hora) -->
-        <div class="wp-alp-number-field hour-service-field" style="display: none;">
-            <label for="hours" class="wp-alp-field-label">
-                Horas de servicio incluidas
-                <span class="wp-alp-tooltip" data-tooltip="Duración en horas del servicio básico">ⓘ</span>
-            </label>
-            <div class="wp-alp-number-control">
-                <button type="button" class="wp-alp-number-decrease" aria-label="Decrease">
-                    <span>−</span>
-                </button>
-                <input type="number" id="hours" name="hours" min="1" max="24" value="4" class="wp-alp-number-input">
-                <button type="button" class="wp-alp-number-increase" aria-label="Increase">
-                    <span>+</span>
-                </button>
-            </div>
-            <span class="wp-alp-input-suffix">Horas</span>
-        </div>
-    </div>
-</div>
-    </div>
-    
-    <!-- Barra de navegación fija -->
-    <div class="wp-alp-airbnb-footer">
-        <!-- Barra de progreso con avance -->
-        <div class="wp-alp-airbnb-progress-bar">
-            <div class="wp-alp-airbnb-progress-completed" style="width: 100%;"></div>
-        </div>
-        
-        <!-- Botones de navegación -->
-        <div class="wp-alp-airbnb-nav">
-            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-location-btn">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-            </a>
-            <a href="#" class="wp-alp-airbnb-next-btn" id="finish-step-1-btn">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-            </a>
-        </div>
-    </div>
-</div>
             <!-- Aquí podrían ir más pasos... -->
         </div>
     </div>
@@ -839,7 +845,7 @@ jQuery(document).ready(function($) {
         $('html, body').scrollTop(0);
     });
     
-    // Botón de volver desde paso 1 a visión general
+    // Botón de volver desde paso
     $('#back-to-overview-btn').on('click', function(e) {
         e.preventDefault();
         goToStep(0); // Volver a la visión general
