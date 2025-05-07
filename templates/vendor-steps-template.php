@@ -1496,5 +1496,6 @@ $('#next-from-service-type-btn').on('click', function(e) {
         goToStep(0);
     }
 });
-
 </script>
+
+<?php get_footer(); ?>
