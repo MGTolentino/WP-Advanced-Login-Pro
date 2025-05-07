@@ -13,7 +13,7 @@ $steps = array(
 );
 
 // Obtener la ruta de las imágenes
-$plugin_url = plugin_dir_url(dirname(dirname(__FILE__))) . 'images/';
+$plugin_url = plugin_dir_url(dirname(__FILE__, 2)) . 'images/';
 
 // Obtener opciones guardadas
 $saved_vendor_data = get_user_meta(get_current_user_id(), 'vendor_data', true);
