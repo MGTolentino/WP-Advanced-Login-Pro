@@ -13,7 +13,7 @@ $steps = array(
 );
 
 // Obtener la ruta de las imágenes
-$plugin_url = plugins_url('/wp-advanced-login-pro/public/img/');
+$plugin_url = plugin_dir_url(dirname(dirname(__FILE__))) . 'images/';
 
 // Obtener opciones guardadas
 $saved_vendor_data = get_user_meta(get_current_user_id(), 'vendor_data', true);
@@ -341,8 +341,8 @@ function render_field($field_id, $field, $field_value = null) {
             </div>
 
             <div class="wp-alp-steps-action">
-                <button class="wp-alp-steps-button" onclick="showStep('category')"><?php _e('Empezar', 'wp-alp'); ?></button>
-            </div>
+    <button class="wp-alp-steps-button" id="start-button"><?php _e('Empezar', 'wp-alp'); ?></button>
+</div>
         </div>
     </div>
 </div>
@@ -874,6 +874,15 @@ function render_field($field_id, $field, $field_value = null) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+// Manejar el botón de inicio
+const startButton = document.getElementById('start-button');
+if (startButton) {
+    startButton.addEventListener('click', function() {
+        showStep('category');
+    });
+}
+
     // Estado del formulario
     const formState = {
         currentStep: 'intro',
