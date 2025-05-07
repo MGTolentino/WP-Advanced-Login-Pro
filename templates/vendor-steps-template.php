@@ -13,7 +13,7 @@ $steps = array(
 );
 
 // Obtener la ruta de las imágenes
-$plugin_url = plugin_dir_url(dirname(__FILE__, 2)) . 'images/';
+$plugin_url = WP_PLUGIN_URL . '/wp-advanced-login-pro/images/';
 
 // Obtener opciones guardadas
 $saved_vendor_data = get_user_meta(get_current_user_id(), 'vendor_data', true);
