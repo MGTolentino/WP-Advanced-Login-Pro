@@ -1490,3 +1490,217 @@ button.wp-alp-vendor-button {
 #wp-alp-google-btn.replaced {
     display: none !important;
 }
+
+/* Estilos mejorados para la sección de datos básicos */
+.wp-alp-basic-info-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 1080px;
+    margin: 40px auto 0;
+}
+
+.wp-alp-basic-info-card {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.wp-alp-basic-info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.wp-alp-card-header {
+    background-color: #f9f9f9;
+    padding: 18px 20px;
+    border-bottom: 1px solid #EBEBEB;
+    display: flex;
+    align-items: center;
+}
+
+.wp-alp-card-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #222222;
+}
+
+.wp-alp-card-icon svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.wp-alp-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #222222;
+    margin: 0;
+}
+
+.wp-alp-card-content {
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Estilos mejorados para campos numéricos */
+.wp-alp-number-field-improved {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wp-alp-field-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222222;
+}
+
+.wp-alp-field-hint {
+    font-size: 14px;
+    color: #717171;
+    margin-bottom: 8px;
+}
+
+.wp-alp-number-control-improved {
+    display: flex;
+    align-items: center;
+    border: 1px solid #DDDDDD;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 220px;
+}
+
+.wp-alp-number-decrease-improved,
+.wp-alp-number-increase-improved {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f7f7;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #222222;
+    transition: background-color 0.2s ease;
+}
+
+.wp-alp-number-decrease-improved:hover,
+.wp-alp-number-increase-improved:hover {
+    background-color: #e7e7e7;
+}
+
+.wp-alp-number-input-improved {
+    flex: 1;
+    text-align: center;
+    border: none;
+    font-size: 16px;
+    padding: 8px;
+    color: #222222;
+    min-width: 50px;
+    -moz-appearance: textfield;
+}
+
+.wp-alp-number-input-improved::-webkit-outer-spin-button,
+.wp-alp-number-input-improved::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Estilos mejorados para toggle switch */
+.wp-alp-toggle-field-improved {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.wp-alp-toggle-text-improved {
+    flex: 1;
+    padding-right: 16px;
+}
+
+.wp-alp-toggle-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222222;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.wp-alp-toggle-description-improved {
+    font-size: 14px;
+    color: #717171;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.wp-alp-switch-improved {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.wp-alp-switch-improved input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.wp-alp-slider-improved {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.wp-alp-slider-improved:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .wp-alp-slider-improved {
+    background-color: #E41D57;
+}
+
+input:checked + .wp-alp-slider-improved:before {
+    transform: translateX(22px);
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .wp-alp-basic-info-card-container {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+    }
+    
+    .wp-alp-card-content {
+        padding: 20px 16px;
+    }
+}
