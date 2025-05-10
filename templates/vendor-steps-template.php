@@ -2118,7 +2118,393 @@ jQuery(document).ready(function($) {
    });
    
    // Navegación del paso 1 (código existente)
-   // ... [mantener todo el código de navegación existente del paso 1] ...
+   // Botón de inicio de registro (página principal -> paso 1)
+   $('#start-registration').on('click', function() {
+       goToStep(1); // Va a "Describe tu espacio"
+   });
+   
+   // Botón de siguiente en paso 1 (lleva a categorías)
+   $('#go-to-categories-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1').hide();
+       $('#step-1-categories').show();
+       
+       // Actualizar URL sin cambiar el número de paso principal
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=categories';
+       history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+
+   // Botón de volver desde categorías a paso 1
+   $('#back-to-step1-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-categories').hide();
+       $('#step-1').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1';
+       history.pushState({step: 1}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón de volver desde paso 1 a visión general
+   $('#back-to-overview-btn').on('click', function(e) {
+       e.preventDefault();
+       goToStep(0); // Volver a la visión general
+   });
+   
+   // Botón de siguiente desde categorías
+   $('#next-from-categories-btn').on('click', function(e) {
+       e.preventDefault();
+       // Verificar si hay una categoría seleccionada
+       if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
+           selectedCategory = $('.wp-alp-airbnb-category-item.selected');
+           var selectedName = selectedCategory.data('name');
+           console.log('Categoría seleccionada: ' + selectedName);
+           
+           // En lugar de mostrar alert, ocultamos paso actual y mostramos el siguiente
+           $('#step-1-categories').hide();
+           $('#step-1-service-type').show();
+           
+           // Actualizar URL
+           var currentUrl = window.location.pathname;
+           var newUrl = currentUrl + '?step=1&substep=service-type';
+           history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
+           
+           // Desplazarse al inicio de la página
+           $('html, body').scrollTop(0);
+       } else {
+           // Si no hay categoría seleccionada, mostrar mensaje pero no alert
+           $('.wp-alp-airbnb-category-validation').fadeIn();
+       }
+   });
+   
+   // Selección de categorías
+   $('.wp-alp-airbnb-category-item').on('click', function() {
+       $('.wp-alp-airbnb-category-item').removeClass('selected');
+       $(this).addClass('selected');
+   });
+   
+   // Selección de tipo de servicio
+   $('.wp-alp-airbnb-service-option').on('click', function() {
+       $('.wp-alp-airbnb-service-option').removeClass('selected');
+       $(this).addClass('selected');
+       selectedServiceType = $(this).data('value');
+       // Ocultar mensaje de validación si estaba visible
+       $('.wp-alp-airbnb-service-validation').hide();
+   });
+   
+   // Botón de volver desde tipo de servicio a categorías
+   $('#back-to-categories-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-service-type').hide();
+       $('#step-1-categories').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=categories';
+       history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón para ir a la ubicación desde el tipo de servicio
+   $('#next-from-service-type-btn').on('click', function(e) {
+       e.preventDefault();
+       // Verificar si hay un tipo de servicio seleccionado
+       if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
+           var selectedService = $('.wp-alp-airbnb-service-option.selected');
+           selectedServiceType = selectedService.data('value');
+           console.log('Tipo de servicio seleccionado: ' + selectedServiceType);
+           
+           // Ocultar paso actual y mostrar paso de ubicación
+           $('#step-1-service-type').hide();
+           $('#step-1-location').show();
+           
+           // Actualizar URL
+           var currentUrl = window.location.pathname;
+           var newUrl = currentUrl + '?step=1&substep=location';
+           history.pushState({step: 1, substep: 'location'}, '', newUrl);
+           
+           // Desplazarse al inicio de la página
+           $('html, body').scrollTop(0);
+       } else {
+           // Mostrar mensaje de validación
+           $('.wp-alp-airbnb-service-validation').fadeIn();
+       }
+   });
+   
+   // Botón para volver al tipo de servicio desde la ubicación
+   $('#back-to-service-type-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-location').hide();
+       $('#step-1-service-type').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=service-type';
+       history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Selección de tipo de ubicación
+   $('.wp-alp-location-option').on('click', function() {
+       var $this = $(this);
+       var option = $this.data('option');
+       
+       // Actualizar selección visual
+       $('.wp-alp-location-option').removeClass('selected');
+       $this.addClass('selected');
+       
+       // Marcar el radio button
+       $('#location-' + option).prop('checked', true);
+       
+       // Mostrar el contenedor correspondiente
+       if (option === 'specific') {
+           $('.wp-alp-location-specific-container').show();
+           $('.wp-alp-location-multiple-container').hide();
+           
+           // Inicializar el mapa si existe la función
+           if (typeof initMap === 'function') {
+               setTimeout(function() {
+                   initMap();
+                   
+                   // Crear el elemento de círculo rojo si no existe
+                   if ($('.wp-alp-location-circle').length === 0) {
+                       $('.wp-alp-map-container').append('<div class="wp-alp-location-circle"></div>');
+                   }
+                   
+                   // Mostrar elementos correctos
+                   $('.wp-alp-house-marker, .wp-alp-approximate-tooltip').show();
+               }, 100);
+           }
+       } else if (option === 'multiple') {
+           $('.wp-alp-location-specific-container').hide();
+           $('.wp-alp-location-multiple-container').show();
+       }
+       
+       // Ocultar mensaje de validación si estaba visible
+       $('.wp-alp-location-validation').hide();
+   });
+   
+   // Manejar la opción "Otro"
+   $('#location-other').on('change', function() {
+       if ($(this).is(':checked')) {
+           $('.wp-alp-location-other-input').show();
+       } else {
+           $('.wp-alp-location-other-input').hide();
+       }
+   });
+   
+   // Manejar el toggle de ubicación exacta
+   $('#exact-location-toggle').on('change', function() {
+       isExactLocation = $(this).is(':checked');
+       
+       if (isExactLocation) {
+           // Cambiar a ubicación exacta
+           $('#approximate-tooltip').fadeOut(200);
+           if (selectedLocation && selectedLocation.geometry) {
+               updateLocationDisplay(selectedLocation.geometry.location);
+           } else if (map) {
+               updateLocationDisplay(map.getCenter());
+           }
+       } else {
+           // Cambiar a ubicación aproximada
+           $('#approximate-tooltip').fadeIn(200);
+           if (selectedLocation && selectedLocation.geometry) {
+               updateLocationDisplay(selectedLocation.geometry.location);
+           } else if (map) {
+               updateLocationDisplay(map.getCenter());
+           }
+       }
+   });
+   
+   // Botón para confirmar dirección y mostrar el formulario detallado
+   $('#confirm-address-btn').on('click', function() {
+       // Ocultar la vista del mapa
+       $('.wp-alp-location-specific-container').hide();
+       
+       // Mostrar el formulario de dirección detallada
+       $('#address-form-container').show();
+       
+       // Desplazarse al inicio del contenedor
+       $('html, body').animate({
+           scrollTop: $('#address-form-container').offset().top - 100
+       }, 300);
+   });
+   
+   // Botón para volver al mapa desde el formulario detallado
+   $('#back-to-map-btn').on('click', function() {
+       // Ocultar el formulario
+       $('#address-form-container').hide();
+       
+       // Mostrar la vista del mapa
+       $('.wp-alp-location-specific-container').show();
+       
+       // Desplazarse al inicio del contenedor
+       $('html, body').animate({
+           scrollTop: $('.wp-alp-location-specific-container').offset().top - 100
+       }, 300);
+   });
+   
+   // Botón para guardar la dirección y continuar hacia datos básicos
+   $('#save-address-btn').on('click', function() {
+       // Ocultar formulario y pasar a datos básicos
+       $('#address-form-container').hide();
+       $('#step-1-location').hide();
+       $('#step-1-basic-info').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=basic-info';
+       history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+       
+       // Mostrar u ocultar campos según la categoría y tipo de servicio
+       updateBasicInfoFields();
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón de siguiente desde la ubicación hacia datos básicos
+   $('#next-from-location-btn').on('click', function(e) {
+       e.preventDefault();
+       
+       // Verificar qué tipo de ubicación se ha seleccionado
+       var isSpecificLocation = $('#location-specific').is(':checked');
+       var isMultipleLocation = $('#location-multiple').is(':checked');
+       
+       if (!isSpecificLocation && !isMultipleLocation) {
+           // No se ha seleccionado un tipo de ubicación
+           $('.wp-alp-location-validation').fadeIn();
+           return;
+       }
+       
+       // Si se seleccionó ubicación específica
+       if (isSpecificLocation) {
+           // Verificar si se completó el formulario detallado
+           if ($('#address-form-container').is(':visible')) {
+               // Ir directamente a datos básicos
+               $('#address-form-container').hide();
+               $('#step-1-location').hide();
+               $('#step-1-basic-info').show();
+               
+               // Actualizar URL
+               var currentUrl = window.location.pathname;
+               var newUrl = currentUrl + '?step=1&substep=basic-info';
+               history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+               
+               // Mostrar u ocultar campos según la categoría y tipo de servicio
+               updateBasicInfoFields();
+               
+               // Desplazarse al inicio de la página
+               $('html, body').scrollTop(0);
+           } else {
+               // Verificar si se ha ingresado una dirección
+               var address = $('#wp-alp-address-input').val().trim();
+               if (!address || !selectedLocation) {
+                   $('.wp-alp-location-validation').fadeIn();
+                   return;
+               }
+               
+               // Mostrar formulario detallado de dirección
+               $('.wp-alp-location-specific-container').hide();
+               $('#address-form-container').show();
+               
+               // Desplazarse al inicio del contenedor
+               $('html, body').animate({
+                   scrollTop: $('#address-form-container').offset().top - 100
+               }, 300);
+           }
+       } else if (isMultipleLocation) {
+           // Verificar selección para ubicaciones múltiples
+           var hasChecked = $('.wp-alp-locations-checkboxes input:checked').length > 0 || $('#location-other').is(':checked');
+           if (!hasChecked) {
+               $('.wp-alp-location-validation').fadeIn();
+               return;
+           }
+           
+           // Si "Otro" está marcado, verificar que se haya ingresado texto
+           if ($('#location-other').is(':checked')) {
+               var otherLocation = $('#wp-alp-other-location').val().trim();
+               if (!otherLocation) {
+                   $('.wp-alp-location-validation').fadeIn();
+                   return;
+               }
+           }
+           
+           // Ir a datos básicos
+           $('#step-1-location').hide();
+           $('#step-1-basic-info').show();
+           
+           // Actualizar URL
+           var currentUrl = window.location.pathname;
+           var newUrl = currentUrl + '?step=1&substep=basic-info';
+           history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+           
+           // Mostrar u ocultar campos según la categoría y tipo de servicio
+           updateBasicInfoFields();
+           
+           // Desplazarse al inicio de la página
+           $('html, body').scrollTop(0);
+       }
+   });
+   
+   // Botón para volver a ubicación desde datos básicos
+   $('#back-to-location-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-basic-info').hide();
+       $('#step-1-location').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=location';
+       history.pushState({step: 1, substep: 'location'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón para finalizar paso 1 (datos básicos) y continuar al paso 2
+   $('#finish-step-1-btn').on('click', function(e) {
+       e.preventDefault();
+       
+       // Recopilar todos los datos del paso 1
+       var step1Data = {
+           category: selectedCategory ? selectedCategory.data('term-id') : null,
+           service_type: selectedServiceType,
+           location_type: $('input[name="location-type"]:checked').val(),
+           max_capacity: $('#max_capacity').val(),
+           min_capacity: $('#min_capacity').val(),
+           restrooms: $('#restrooms').val(),
+           hours: $('#hours').val(),
+           host_more_than_one_ev: $('#host_more_than_one_ev').is(':checked')
+       };
+       
+       // Guardar datos en sessionStorage para usarlos después
+       sessionStorage.setItem('step1Data', JSON.stringify(step1Data));
+       
+       // Ir al paso 2 intro
+       $('#step-1-basic-info').hide();
+       $('#step-2-intro').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=2';
+       history.pushState({step: 2}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
    
    // Navegación del paso 2
    $('#go-to-step-2-listing-btn').on('click', function(e) {
