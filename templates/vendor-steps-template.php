@@ -794,6 +794,94 @@ get_header(); ?>
 </div>
 
             <!-- Aquí podrían ir más pasos... -->
+
+            <!-- Paso 2: Listing Submit Form -->
+<div class="wp-alp-form-step" id="step-2" data-step="2" style="display: none;">
+    <!-- Header con opciones de ayuda -->
+    <div class="wp-alp-airbnb-help-header">
+        <div class="wp-alp-airbnb-help-links">
+            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+        </div>
+    </div>
+    
+    <!-- Contenedor para el formulario de HivePress -->
+    <div class="wp-alp-airbnb-category-content">
+        <h1 class="wp-alp-airbnb-category-title">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Complete your listing details' : 'Completa los detalles de tu anuncio'); ?>
+        </h1>
+        
+        <!-- Contenedor donde se renderizará el formulario -->
+        <div id="hivepress-listing-form" class="wp-alp-hivepress-form-container">
+            <?php
+            // Verificar si HivePress está activo
+            if (class_exists('HivePress\Core')) {
+                // Verificar si el usuario está loggeado
+                if (is_user_logged_in()) {
+                    // Crear modelo de listing (nuevo o existente)
+                    $listing_id = isset($_GET['listing_id']) ? absint($_GET['listing_id']) : null;
+                    
+                    if ($listing_id) {
+                        // Cargar listing existente
+                        $listing = \HivePress\Models\Listing::query()->get_by_id($listing_id);
+                    } else {
+                        // Crear nuevo listing
+                        $listing = new \HivePress\Models\Listing([
+                            'status' => 'draft',
+                            'user' => get_current_user_id(),
+                        ]);
+                        
+                        // Guardar para obtener ID
+                        $listing->save();
+                    }
+                    
+                    if ($listing) {
+                        // Crear el formulario de HivePress
+                        $form = \HivePress\Helpers\Factory::get_form(
+                            'listing_submit',
+                            [
+                                'model' => $listing,
+                                'redirect' => false, // Evitar redirección automática
+                            ]
+                        );
+                        
+                        // Renderizar el formulario
+                        if ($form) {
+                            echo $form->render();
+                        } else {
+                            echo '<p>' . esc_html__('Error al cargar el formulario.', 'tu-textdomain') . '</p>';
+                        }
+                    } else {
+                        echo '<p>' . esc_html__('Error al crear el listing.', 'tu-textdomain') . '</p>';
+                    }
+                } else {
+                    echo '<p>' . esc_html__('Debes iniciar sesión para continuar.', 'tu-textdomain') . '</p>';
+                }
+            } else {
+                echo '<p>' . esc_html__('HivePress no está instalado o activo.', 'tu-textdomain') . '</p>';
+            }
+            ?>
+        </div>
+    </div>
+    
+    <!-- Barra de navegación fija -->
+    <div class="wp-alp-airbnb-footer">
+        <!-- Barra de progreso con avance (33% para step 2/3) -->
+        <div class="wp-alp-airbnb-progress-bar">
+            <div class="wp-alp-airbnb-progress-completed" style="width: 33%;"></div>
+        </div>
+        
+        <!-- Botones de navegación -->
+        <div class="wp-alp-airbnb-nav">
+            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step-1-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+            </a>
+            <a href="#" class="wp-alp-airbnb-next-btn" id="next-to-step-3-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+            </a>
+        </div>
+    </div>
+</div>
         </div>
     </div>
 </div>
@@ -811,7 +899,7 @@ function googleMapsCallback() {
 jQuery(document).ready(function($) {
     // Variables para la navegación
     var currentStep = 0;
-    var totalSteps = 3; // Total de pasos implementados
+    var totalSteps = 3; // Total de pasos implementados (incluye el nuevo paso 2)
     var selectedLocation = null;
     var isExactLocation = false;
     var map, marker, circle, geocoder, placesService;
@@ -1222,13 +1310,28 @@ $('#next-from-service-type-btn').on('click', function(e) {
         $('html, body').scrollTop(0);
     });
     
-    // Botón para finalizar paso 1 (datos básicos)
-    $('#finish-step-1-btn').on('click', function(e) {
-        e.preventDefault();
-        
-        // Por ahora simplemente volvemos a la visión general
-        goToStep(0);
-    });
+   // Botón para finalizar paso 1 (datos básicos) y continuar al paso 2
+$('#finish-step-1-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    // Recopilar todos los datos del paso 1
+    var step1Data = {
+        category: selectedCategory ? selectedCategory.data('term-id') : null,
+        service_type: selectedServiceType,
+        location_type: $('input[name="location-type"]:checked').val(),
+        max_capacity: $('#max_capacity').val(),
+        min_capacity: $('#min_capacity').val(),
+        restrooms: $('#restrooms').val(),
+        hours: $('#hours').val(),
+        host_more_than_one_ev: $('#host_more_than_one_ev').is(':checked')
+    };
+    
+    // Guardar datos en sessionStorage para usarlos después
+    sessionStorage.setItem('step1Data', JSON.stringify(step1Data));
+    
+    // Ir al paso 2 (Listing Submit)
+    goToStep(2);
+});
     
     // Controles numéricos para incrementar/decrementar
     $('.wp-alp-number-increase').on('click', function() {
@@ -1548,6 +1651,10 @@ $('#next-from-service-type-btn').on('click', function(e) {
                 
                 // Actualizar campos según la categoría y tipo de servicio
                 updateBasicInfoFields();
+            } else if (event.state.step === 2) {
+    // Mostrar el paso 2
+    $steps.hide();
+    $('#step-2').show();
             } else if (typeof event.state.step !== 'undefined') {
                 goToStep(event.state.step);
             }
@@ -1555,6 +1662,48 @@ $('#next-from-service-type-btn').on('click', function(e) {
             goToStep(0);
         }
     };
+
+    // Botón para volver del paso 2 al paso 1
+$('#back-to-step-1-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    // Volver al último subpaso del paso 1 (datos básicos)
+    $('#step-2').hide();
+    $('#step-1-basic-info').show();
+    
+    // Actualizar URL
+    var currentUrl = window.location.pathname;
+    var newUrl = currentUrl + '?step=1&substep=basic-info';
+    history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+    
+    // Desplazarse al inicio de la página
+    $('html, body').scrollTop(0);
+});
+
+// Botón para continuar del paso 2 al paso 3
+$('#next-to-step-3-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    // Aquí podrías validar el formulario de HivePress antes de continuar
+    var formValid = true; // Por ahora asumimos que es válido
+    
+    if (formValid) {
+        // Por ahora simplemente mostramos un mensaje ya que el paso 3 no está implementado
+        alert('Paso 3 aún no implementado');
+    } else {
+        alert('Por favor, completa todos los campos requeridos.');
+    }
+});
+
+// Manejar el envío del formulario de HivePress
+$(document).on('submit', 'form.hp-form--listing-submit', function(e) {
+    // Prevenir el envío normal del formulario
+    e.preventDefault();
+    
+    // Aquí podrías manejar el envío vía AJAX o permitir el envío normal
+    // Por ahora, solo continuamos al siguiente paso
+    $('#next-to-step-3-btn').click();
+});
     
     // Inicialización: verificar si hay un paso en la URL
     var urlParams = new URLSearchParams(window.location.search);
