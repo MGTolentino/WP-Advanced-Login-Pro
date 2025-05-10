@@ -837,13 +837,7 @@ get_header(); ?>
                     
                     if ($listing) {
                         // Crear el formulario de HivePress
-                        $form = \HivePress\Helpers\Factory::get_form(
-                            'listing_submit',
-                            [
-                                'model' => $listing,
-                                'redirect' => false, // Evitar redirección automática
-                            ]
-                        );
+                        $form = \HivePress\Helpers\create_class_instance('\HivePress\Forms\Listing_Submit', [['model' => $listing, 'redirect' => false]]);
                         
                         // Renderizar el formulario
                         if ($form) {
