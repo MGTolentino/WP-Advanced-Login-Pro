@@ -1914,6 +1914,67 @@ jQuery(document).ready(function($) {
    // Elementos del DOM
    var $steps = $('.wp-alp-form-step');
    var $hiddenForm = $('#wp-alp-hidden-hivepress-form');
+
+   // Función para actualizar la URL sin recargar la página
+   function updateUrl(step) {
+        var newUrl = window.location.pathname;
+        if (step > 0) {
+            newUrl += '?step=' + step;
+        }
+        history.pushState({step: step}, '', newUrl);
+    }
+    
+    // Función para mostrar un paso específico
+    function goToStep(step) {
+        // Validar límites
+        if (step < 0) step = 0;
+        if (step > totalSteps) step = totalSteps;
+        
+        // Guardar el paso actual
+        currentStep = step;
+        
+        // Ocultar todos los pasos
+        $steps.hide();
+        
+        // Mostrar el paso seleccionado
+        $('#step-' + step).show();
+        
+        // Actualizar la URL
+        updateUrl(step);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    }
+    
+    // Manejo de navegación del historial del navegador
+    window.onpopstate = function(event) {
+        if (event.state) {
+            if (event.state.substep === 'categories') {
+                // Mostrar el subpaso de categorías
+                $steps.hide();
+                $('#step-1-categories').show();
+            } else if (event.state.substep === 'service-type') {
+                // Mostrar el subpaso de tipo de servicio
+                $steps.hide();
+                $('#step-1-service-type').show();
+            } else if (event.state.substep === 'location') {
+                // Mostrar el subpaso de ubicación
+                $steps.hide();
+                $('#step-1-location').show();
+            } else if (event.state.substep === 'basic-info') {
+                // Mostrar el subpaso de datos básicos
+                $steps.hide();
+                $('#step-1-basic-info').show();
+                
+                // Actualizar campos según la categoría y tipo de servicio
+                updateBasicInfoFields();
+            } else if (typeof event.state.step !== 'undefined') {
+                goToStep(event.state.step);
+            }
+        } else {
+            goToStep(0);
+        }
+    };
    
    // Función para actualizar campos del formulario oculto
    function updateHiddenFormField(fieldName, value) {
@@ -2258,6 +2319,16 @@ jQuery(document).ready(function($) {
        
        $('#listing-review-summary').html(summary);
    }
+
+   // Función para actualizar la función updateBasicInfoFields
+   function updateBasicInfoFields() {
+        // Si es servicio por hora, mostrar campo de horas
+        if (selectedServiceType === 'hour') {
+            $('.hour-service-field').show();
+        } else {
+            $('.hour-service-field').hide();
+        }
+    }
    
    // Zona de arrastre para fotos
    $('#photo-upload-zone').on('click', function() {
@@ -2333,6 +2404,42 @@ jQuery(document).ready(function($) {
        
        // Otras inicializaciones...
    }
+
+   // Inicialización: verificar si hay un paso en la URL
+   var urlParams = new URLSearchParams(window.location.search);
+    var stepParam = urlParams.get('step');
+    var substepParam = urlParams.get('substep');
+    
+    // Si hay un paso en la URL y es válido, ir a ese paso
+    if (stepParam !== null && !isNaN(parseInt(stepParam))) {
+        var stepNum = parseInt(stepParam);
+        
+        // Verificar si hay un subpaso especificado
+        if (substepParam === 'categories' && stepNum === 1) {
+            // Mostrar el subpaso de categorías
+            $steps.hide();
+            $('#step-1-categories').show();
+        } else if (substepParam === 'service-type' && stepNum === 1) {
+            // Mostrar el subpaso de tipo de servicio
+            $steps.hide();
+            $('#step-1-service-type').show();
+        } else if (substepParam === 'location' && stepNum === 1) {
+            // Mostrar el subpaso de ubicación
+            $steps.hide();
+            $('#step-1-location').show();
+        } else if (substepParam === 'basic-info' && stepNum === 1) {
+            // Mostrar el subpaso de datos básicos
+            $steps.hide();
+            $('#step-1-basic-info').show();
+            // Actualizar campos según la categoría y tipo de servicio
+            updateBasicInfoFields();
+        } else {
+            goToStep(stepNum);
+        }
+    } else {
+        // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
+        goToStep(0);
+    }
 });
 </script>
 
