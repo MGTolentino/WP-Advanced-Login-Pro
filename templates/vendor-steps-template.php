@@ -1900,6 +1900,21 @@ function googleMapsCallback() {
 }
 
 jQuery(document).ready(function($) {
+
+// Prevenir múltiples event listeners
+$.fn.singleClick = function(callback) {
+    return this.each(function() {
+        var element = this;
+        var $element = $(element);
+        
+        // Remover cualquier handler previo
+        $element.off('click.singleClick');
+        
+        // Añadir el nuevo handler
+        $element.on('click.singleClick', callback);
+    });
+};
+
    // Variables para la navegación
    var currentStep = 0;
    var totalSteps = 3; // Total de pasos implementados
@@ -2015,29 +2030,30 @@ jQuery(document).ready(function($) {
    });
    
    // Paso 2.2: Fotos
-   $('#photo-input').on('change', function(e) {
-       var files = e.target.files;
-       if (files.length > 0) {
-           // Aquí manejarías la carga de archivos
-           // Por ahora, solo mostramos una vista previa
-           Array.from(files).forEach(function(file) {
-               if (file.type.startsWith('image/')) {
-                   var reader = new FileReader();
-                   reader.onload = function(e) {
-                       var preview = $('<div class="wp-alp-photo-preview-item">' +
-                           '<img src="' + e.target.result + '" alt="Preview">' +
-                           '<button type="button" class="wp-alp-photo-remove-btn">×</button>' +
-                           '</div>');
-                       $('#photos-preview').append(preview);
-                   };
-                   reader.readAsDataURL(file);
-               }
-           });
-           
-           // Actualizar el campo de imágenes del formulario oculto
-           // Esto requeriría implementación adicional para manejar archivos
-       }
-   });
+$('#photo-input').on('change', function(e) {
+    e.stopPropagation(); // Añadir esta línea
+    var files = e.target.files;
+    if (files.length > 0) {
+        // Aquí manejarías la carga de archivos
+        // Por ahora, solo mostramos una vista previa
+        Array.from(files).forEach(function(file) {
+            if (file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var preview = $('<div class="wp-alp-photo-preview-item">' +
+                        '<img src="' + e.target.result + '" alt="Preview">' +
+                        '<button type="button" class="wp-alp-photo-remove-btn">×</button>' +
+                        '</div>');
+                    $('#photos-preview').append(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Actualizar el campo de imágenes del formulario oculto
+        // Esto requeriría implementación adicional para manejar archivos
+    }
+});
    
    $('#video-url').on('change blur', function() {
        updateHiddenFormField('video', $(this).val());
@@ -2717,31 +2733,58 @@ jQuery(document).ready(function($) {
     }
    
    // Zona de arrastre para fotos
-   $('#photo-upload-zone').on('click', function() {
-       $('#photo-input').click();
-   });
-   
-   $('#photo-upload-zone').on('dragover', function(e) {
-       e.preventDefault();
-       e.stopPropagation();
-       $(this).css('border-color', '#222');
-   });
-   
-   $('#photo-upload-zone').on('dragleave', function(e) {
-       e.preventDefault();
-       e.stopPropagation();
-       $(this).css('border-color', '#ddd');
-   });
-   
-   $('#photo-upload-zone').on('drop', function(e) {
-       e.preventDefault();
-       e.stopPropagation();
-       $(this).css('border-color', '#ddd');
-       
-       var files = e.originalEvent.dataTransfer.files;
-       $('#photo-input')[0].files = files;
-       $('#photo-input').trigger('change');
-   });
+    // Manejadores de arrastre y soltar
+$('#photo-upload-zone').on('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#222');
+    $(this).css('background-color', '#f9f9f9');
+});
+
+$('#photo-upload-zone').on('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#ddd');
+    $(this).css('background-color', 'transparent');
+});
+
+$('#photo-upload-zone').on('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#ddd');
+    $(this).css('background-color', 'transparent');
+    
+    var files = e.originalEvent.dataTransfer.files;
+    if (files.length > 0) {
+        // Crear un DataTransfer para poder asignar archivos al input
+        var dataTransfer = new DataTransfer();
+        Array.from(files).forEach(file => dataTransfer.items.add(file));
+        $('#photo-input')[0].files = dataTransfer.files;
+        $('#photo-input').trigger('change');
+    }
+});
+
+   // Manejador específico para el botón de upload
+$('#select-photos-btn').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#photo-input').click();
+});
+
+// Prevenir que los clics en el input file se propaguen al contenedor
+$('#photo-input').on('click', function(e) {
+    e.stopPropagation();
+});
+
+// Manejador para el área de arrastre (solo para el arrastre, no para clics)
+$('#photo-upload-zone').on('click', function(e) {
+    // Solo responder al clic si no fue en el botón o en un elemento hijo
+    if (e.target === this) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#photo-input').click();
+    }
+});
    
    // Remover fotos
    $(document).on('click', '.wp-alp-photo-remove-btn', function() {
