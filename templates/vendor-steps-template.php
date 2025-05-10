@@ -2060,27 +2060,65 @@ $('#photo-input').on('change', function(e) {
    });
    
    // Paso 2.3: Precios
-   $('#add-daily-price').on('click', function() {
-       var template = '<div class="wp-alp-repeater-item">' +
-           '<button type="button" class="wp-alp-remove-item">×</button>' +
-           '<select name="daily_days[]" class="wp-alp-form-select" style="margin-bottom: 12px;">' +
-               '<option value="0">' + (get_locale() == 'en_US' ? 'Sunday' : 'Domingo') + '</option>' +
-               '<option value="1">' + (get_locale() == 'en_US' ? 'Monday' : 'Lunes') + '</option>' +
-               '<option value="2">' + (get_locale() == 'en_US' ? 'Tuesday' : 'Martes') + '</option>' +
-               '<option value="3">' + (get_locale() == 'en_US' ? 'Wednesday' : 'Miércoles') + '</option>' +
-               '<option value="4">' + (get_locale() == 'en_US' ? 'Thursday' : 'Jueves') + '</option>' +
-               '<option value="5">' + (get_locale() == 'en_US' ? 'Friday' : 'Viernes') + '</option>' +
-               '<option value="6">' + (get_locale() == 'en_US' ? 'Saturday' : 'Sábado') + '</option>' +
-           '</select>' +
-           '<input type="number" name="daily_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0">' +
-           '</div>';
-       $(this).before(template);
-   });
-   
-   // Delegación de eventos para remover items dinámicos
-   $(document).on('click', '.wp-alp-remove-item', function() {
-       $(this).closest('.wp-alp-repeater-item').remove();
-   });
+$('#add-daily-price').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<select name="daily_days[]" class="wp-alp-form-select" style="margin-bottom: 12px;">' +
+            '<option value="0">' + (get_locale() == 'en_US' ? 'Sunday' : 'Domingo') + '</option>' +
+            '<option value="1">' + (get_locale() == 'en_US' ? 'Monday' : 'Lunes') + '</option>' +
+            '<option value="2">' + (get_locale() == 'en_US' ? 'Tuesday' : 'Martes') + '</option>' +
+            '<option value="3">' + (get_locale() == 'en_US' ? 'Wednesday' : 'Miércoles') + '</option>' +
+            '<option value="4">' + (get_locale() == 'en_US' ? 'Thursday' : 'Jueves') + '</option>' +
+            '<option value="5">' + (get_locale() == 'en_US' ? 'Friday' : 'Viernes') + '</option>' +
+            '<option value="6">' + (get_locale() == 'en_US' ? 'Saturday' : 'Sábado') + '</option>' +
+        '</select>' +
+        '<input type="number" name="daily_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0">' +
+        '</div>';
+    $(this).before(template);
+});
+
+// AGREGA ESTOS EVENT LISTENERS AQUÍ:
+
+// Price Tiers
+$('#add-price-tier').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<input type="text" name="tier_name[]" placeholder="' + (get_locale() == 'en_US' ? 'Title' : 'Título') + '" class="wp-alp-form-input" style="margin-bottom: 12px;">' +
+        '<input type="number" name="tier_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0" style="margin-bottom: 12px;">' +
+        '<input type="text" name="tier_description[]" placeholder="' + (get_locale() == 'en_US' ? 'Description' : 'Descripción') + '" class="wp-alp-form-input">' +
+        '</div>';
+    $(this).before(template);
+});
+
+// Extras
+$('#add-extra').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<input type="text" name="extra_name[]" placeholder="' + (get_locale() == 'en_US' ? 'Title' : 'Título') + '" class="wp-alp-form-input" style="margin-bottom: 12px;">' +
+        '<input type="number" name="extra_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0" style="margin-bottom: 12px;">' +
+        '<textarea name="extra_description[]" placeholder="' + (get_locale() == 'en_US' ? 'Description' : 'Descripción') + '" class="wp-alp-form-input" rows="3" style="margin-bottom: 12px;"></textarea>' +
+        '<label class="wp-alp-checkbox-item">' +
+            '<input type="checkbox" name="extra_required[]" value="1">' +
+            '<span>' + (get_locale() == 'en_US' ? 'Required' : 'Requerido') + '</span>' +
+        '</label>' +
+        '</div>';
+    $(this).before(template);
+});
+
+// Discounts
+$('#add-discount').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<input type="number" name="discount_quantity[]" placeholder="' + (get_locale() == 'en_US' ? 'Quantity' : 'Cantidad') + '" class="wp-alp-form-input" min="1" max="1000" style="margin-bottom: 12px;">' +
+        '<input type="number" name="discount_percentage[]" placeholder="' + (get_locale() == 'en_US' ? 'Percentage' : 'Porcentaje') + '" class="wp-alp-form-input" min="1" max="100" style="margin-bottom: 12px;">' +
+        '</div>';
+    $(this).before(template);
+});
+
+// Delegación de eventos para remover items dinámicos
+$(document).on('click', '.wp-alp-remove-item', function() {
+    $(this).closest('.wp-alp-repeater-item').remove();
+});
    
    // Paso 2.4: Disponibilidad
    $('#booking-min-time').on('change blur', function() {
