@@ -916,7 +916,7 @@ get_header(); ?>
                        <div class="wp-alp-field-hint">
                            <?php echo esc_html(get_locale() == 'en_US' ? 'Create a catchy title that describes your service' : 'Crea un título atractivo que describa tu servicio'); ?>
                        </div>
-                       <input type="text" id="listing-title" name="title" class="wp-alp-form-input" maxlength="256" required>
+                       <input type="text" id="listing-title" name="title" class="wp-alp-form-input" maxlength="256" >
                    </div>
                    
                    <!-- Precio base -->
@@ -927,7 +927,7 @@ get_header(); ?>
                        <div class="wp-alp-field-hint">
                            <?php echo esc_html(get_locale() == 'en_US' ? 'Set your starting price' : 'Establece tu precio inicial'); ?>
                        </div>
-                       <input type="number" id="listing-price" name="price" step="0.01" min="0" class="wp-alp-form-input" required>
+                       <input type="number" id="listing-price" name="price" step="0.01" min="0" class="wp-alp-form-input" >
                    </div>
                </div>
            </div>
@@ -950,7 +950,7 @@ get_header(); ?>
                        <div class="wp-alp-field-hint">
                            <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service in detail. Highlight what makes it unique.' : 'Describe tu servicio en detalle. Destaca lo que lo hace único.'); ?>
                        </div>
-                       <textarea id="listing-description" name="description" rows="8" class="wp-alp-form-input" maxlength="10240" required></textarea>
+                       <textarea id="listing-description" name="description" rows="8" class="wp-alp-form-input" maxlength="10240"></textarea>
                    </div>
                </div>
            </div>
@@ -1208,14 +1208,14 @@ get_header(); ?>
                        <label for="booking-min-time" class="wp-alp-field-label">
                            <?php echo esc_html(get_locale() == 'en_US' ? 'Available From' : 'Disponible Desde'); ?>
                        </label>
-                       <input type="time" id="booking-min-time" name="booking_min_time" class="wp-alp-form-input" required>
-                   </div>
+                    <input type="time" id="booking-min-time" name="booking_min_time" class="wp-alp-form-input">
+                    </div>
                    
                    <div class="wp-alp-form-group">
                        <label for="booking-max-time" class="wp-alp-field-label">
                            <?php echo esc_html(get_locale() == 'en_US' ? 'Available To' : 'Disponible Hasta'); ?>
                        </label>
-                       <input type="time" id="booking-max-time" name="booking_max_time" class="wp-alp-form-input" required>
+                       <input type="time" id="booking-max-time" name="booking_max_time" class="wp-alp-form-input">
                    </div>
                    
                    <!-- Duración del slot -->
@@ -1230,7 +1230,7 @@ get_header(); ?>
                            <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
                                <span>−</span>
                            </button>
-                           <input type="number" id="booking-slot-duration" name="booking_slot_duration" min="5" max="720" value="60" class="wp-alp-number-input-improved" required>
+                           <input type="number" id="booking-slot-duration" name="booking_slot_duration" min="5" max="720" value="60" class="wp-alp-number-input-improved">
                            <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
                                <span>+</span>
                            </button>
@@ -1618,7 +1618,7 @@ get_header(); ?>
            <!-- Términos y condiciones -->
            <div class="wp-alp-terms-section">
                <label class="wp-alp-checkbox-item">
-                   <input type="checkbox" id="terms-checkbox" name="_terms" value="1" required>
+                   <input type="checkbox" id="terms-checkbox" name="_terms" value="1" >
                    <span>
                        <?php echo sprintf(
                            esc_html(get_locale() == 'en_US' ? 
@@ -1900,6 +1900,10 @@ function googleMapsCallback() {
 }
 
 jQuery(document).ready(function($) {
+
+    // Variables globales para AJAX
+var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+var vendor_nonce = '<?php echo wp_create_nonce('create_vendor_nonce'); ?>';
 
 // Prevenir múltiples event listeners
 $.fn.singleClick = function(callback) {
@@ -2637,22 +2641,20 @@ $(document).on('click', '.wp-alp-remove-item', function() {
    });
    
    $('#next-to-features-btn').on('click', function(e) {
-       e.preventDefault();
-       
-       // Validar campos requeridos
-       var minTime = $('#booking-min-time').val();
-       var maxTime = $('#booking-max-time').val();
-       var slotDuration = $('#booking-slot-duration').val();
-       
-       if (!minTime || !maxTime || !slotDuration) {
-           alert(get_locale() == 'en_US' ? 'Please fill in all required fields.' : 'Por favor, completa todos los campos requeridos.');
-           return;
-       }
-       
-       $('#step-2-availability').hide();
-       $('#step-2-features').show();
-       $('html, body').scrollTop(0);
-   });
+    e.preventDefault();
+    
+    // Solo validar booking_slot_duration que es requerido
+    var slotDuration = $('#booking-slot-duration').val();
+    
+    if (!slotDuration) {
+        alert(get_locale() == 'en_US' ? 'Please set the booking slot duration.' : 'Por favor, establece la duración del slot de reserva.');
+        return;
+    }
+    
+    $('#step-2-availability').hide();
+    $('#step-2-features').show();
+    $('html, body').scrollTop(0);
+});
    
    $('#back-to-pricing-btn').on('click', function(e) {
        e.preventDefault();
@@ -2718,47 +2720,221 @@ $(document).on('click', '.wp-alp-remove-item', function() {
    });
    
    // Enviar el formulario
-   $('#submit-listing-btn').on('click', function(e) {
-       e.preventDefault();
-       
-       // Enviar el formulario oculto de HivePress
-       var $form = $hiddenForm.find('form');
-       if ($form.length) {
-           // Simular el envío del formulario
-           $.ajax({
-               url: $form.attr('action'),
-               type: 'POST',
-               data: $form.serialize(),
-               success: function(response) {
-                   // Mostrar pantalla de éxito
-                   $('#step-3-review').hide();
-                   $('#step-success').show();
-                   $('html, body').scrollTop(0);
-               },
-               error: function(xhr, status, error) {
-                   alert(get_locale() == 'en_US' ? 'An error occurred while publishing your listing.' : 'Ocurrió un error al publicar tu anuncio.');
-               }
-           });
-       }
-   });
-   
+$('#submit-listing-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    // Mostrar indicador de carga (opcional)
+    var $button = $(this);
+    $button.prop('disabled', true);
+    $button.text(get_locale() == 'en_US' ? 'Publishing...' : 'Publicando...');
+    
+    // Primero, verificar si necesitamos crear un hp_vendor
+    $.ajax({
+        url: ajaxurl, // Define esta variable globalmente al inicio
+        type: 'POST',
+        data: {
+            action: 'check_create_vendor', // Debes crear esta acción en el archivo functions.php
+            nonce: vendor_nonce, // Define esta variable globalmente al inicio
+        },
+        success: function(vendorResponse) {
+            // Ahora que tenemos el vendor (existente o nuevo), enviamos el listing
+            var $form = $hiddenForm.find('form');
+            if ($form.length) {
+                $.ajax({
+                    url: $form.attr('action') || ajaxurl,
+                    type: 'POST',
+                    data: $form.serialize(),
+                    success: function(response) {
+                        // Guardar el ID del listing creado/actualizado
+                        try {
+                            var result = JSON.parse(response);
+                            if (result && result.redirect) {
+                                listingId = result.redirect.match(/(\d+)/)[0];
+                                // Actualizar URL del botón "View Listing"
+                                $('#view-listing-btn').attr('href', result.redirect);
+                            }
+                        } catch (e) {
+                            // Si no se puede parsear, ignoramos
+                        }
+                        
+                        // Mostrar pantalla de éxito
+                        $('#step-3-review').hide();
+                        $('#step-success').show();
+                        $('html, body').scrollTop(0);
+                    },
+                    error: function(xhr, status, error) {
+                        $button.prop('disabled', false);
+                        $button.text(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio');
+                        alert(get_locale() == 'en_US' ? 'An error occurred while publishing your listing.' : 'Ocurrió un error al publicar tu anuncio.');
+                    }
+                });
+            } else {
+                $button.prop('disabled', false);
+                $button.text(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio');
+                alert(get_locale() == 'en_US' ? 'Form not found.' : 'Formulario no encontrado.');
+            }
+        },
+        error: function(xhr, status, error) {
+            $button.prop('disabled', false);
+            $button.text(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio');
+            alert(get_locale() == 'en_US' ? 'An error occurred while creating your vendor account.' : 'Ocurrió un error al crear tu cuenta de vendedor.');
+        }
+    });
+});
    // Función para generar el resumen de revisión
-   function generateReviewSummary() {
-       var summary = '<div class="wp-alp-review-sections">';
-       
-       // Información básica
-       summary += '<div class="wp-alp-review-section">';
-       summary += '<h3>' + (get_locale() == 'en_US' ? 'Basic Information' : 'Información Básica') + '</h3>';
-       summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Title:' : 'Título:') + '</strong> ' + $('#listing-title').val() + '</p>';
-       summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Price:' : 'Precio:') + '</strong> $' + $('#listing-price').val() + '</p>';
-       summary += '</div>';
-       
-       // Más secciones del resumen...
-       
-       summary += '</div>';
-       
-       $('#listing-review-summary').html(summary);
-   }
+function generateReviewSummary() {
+    var summary = '<div class="wp-alp-review-sections">';
+    
+    // Información básica
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Basic Information' : 'Información Básica') + '</h3>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Title:' : 'Título:') + '</strong> ' + escapeHtml($('#listing-title').val()) + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Price:' : 'Precio:') + '</strong> $' + escapeHtml($('#listing-price').val()) + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Category:' : 'Categoría:') + '</strong> ' + (selectedCategory ? escapeHtml(selectedCategory.data('name')) : '') + '</p>';
+    
+    // Descripción
+    var description = $('#listing-description').val();
+    if (description) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Description:' : 'Descripción:') + '</strong></p>';
+        summary += '<p class="wp-alp-review-description">' + escapeHtml(description.substring(0, 150)) + (description.length > 150 ? '...' : '') + '</p>';
+    }
+    summary += '</div>';
+    
+    // Fotos
+    var photoCount = $('#photos-preview .wp-alp-photo-preview-item').length;
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Media' : 'Multimedia') + '</h3>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Photos:' : 'Fotos:') + '</strong> ' + photoCount + '</p>';
+    
+    var videoUrl = $('#video-url').val();
+    if (videoUrl) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Video URL:' : 'URL de video:') + '</strong> ' + escapeHtml(videoUrl) + '</p>';
+    }
+    summary += '</div>';
+    
+    // Precios adicionales
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Pricing Options' : 'Opciones de Precio') + '</h3>';
+    
+    // Contar elementos de cada tipo
+    var dailyPriceCount = $('#daily-prices-container .wp-alp-repeater-item').length;
+    var tierCount = $('#price-tiers-container .wp-alp-repeater-item').length;
+    var extraCount = $('#extras-container .wp-alp-repeater-item').length;
+    var discountCount = $('#discounts-container .wp-alp-repeater-item').length;
+    
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Daily Prices:' : 'Precios Diarios:') + '</strong> ' + dailyPriceCount + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Price Tiers:' : 'Niveles de Precio:') + '</strong> ' + tierCount + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Extra Services:' : 'Servicios Adicionales:') + '</strong> ' + extraCount + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Discounts:' : 'Descuentos:') + '</strong> ' + discountCount + '</p>';
+    summary += '</div>';
+    
+    // Disponibilidad
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Availability' : 'Disponibilidad') + '</h3>';
+    
+    var minTime = $('#booking-min-time').val();
+    var maxTime = $('#booking-max-time').val();
+    var slotDuration = $('#booking-slot-duration').val();
+    
+    if (minTime) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Available From:' : 'Disponible Desde:') + '</strong> ' + formatTime(minTime) + '</p>';
+    }
+    if (maxTime) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Available To:' : 'Disponible Hasta:') + '</strong> ' + formatTime(maxTime) + '</p>';
+    }
+    if (slotDuration) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Slot Duration:' : 'Duración del Slot:') + '</strong> ' + slotDuration + (get_locale() == 'en_US' ? ' minutes' : ' minutos') + '</p>';
+    }
+    
+    var bookingModerated = $('#booking-moderated').is(':checked');
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Manual Approval:' : 'Aprobación Manual:') + '</strong> ' + 
+        (bookingModerated ? (get_locale() == 'en_US' ? 'Yes' : 'Sí') : (get_locale() == 'en_US' ? 'No' : 'No')) + '</p>';
+    summary += '</div>';
+    
+    // Características
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Features & Services' : 'Características y Servicios') + '</h3>';
+    
+    // Obtener características seleccionadas
+    var features = [];
+    $('input[name="service_features_even[]"]:checked').each(function() {
+        features.push($(this).siblings('span').text());
+    });
+    
+    if (features.length > 0) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Features:' : 'Características:') + '</strong> ' + escapeHtml(features.join(', ')) + '</p>';
+    }
+    
+    // Obtener tags seleccionados
+    var tags = [];
+    $('#tags-select option:selected').each(function() {
+        tags.push($(this).text());
+    });
+    
+    if (tags.length > 0) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Tags:' : 'Etiquetas:') + '</strong> ' + escapeHtml(tags.join(', ')) + '</p>';
+    }
+    
+    // Nota de reserva
+    var purchaseNote = $('#purchase-note').val();
+    if (purchaseNote) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Booking Note:' : 'Nota de Reserva:') + '</strong></p>';
+        summary += '<p class="wp-alp-review-description">' + escapeHtml(purchaseNote.substring(0, 100)) + (purchaseNote.length > 100 ? '...' : '') + '</p>';
+    }
+    summary += '</div>';
+    
+    // Contacto
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Contact Information' : 'Información de Contacto') + '</h3>';
+    
+    var contactInfo = $('#contact-information').val();
+    if (contactInfo) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Provider Details:' : 'Detalles del Proveedor:') + '</strong></p>';
+        summary += '<p class="wp-alp-review-description">' + escapeHtml(contactInfo).replace(/\n/g, '<br>') + '</p>';
+    }
+    
+    var whatsappUrl = $('#whatsapp-url').val();
+    if (whatsappUrl) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'WhatsApp URL:' : 'URL de WhatsApp:') + '</strong> ' + escapeHtml(whatsappUrl) + '</p>';
+    }
+    summary += '</div>';
+    
+    summary += '</div>';
+    
+    $('#listing-review-summary').html(summary);
+}
+
+// Función auxiliar para escapar HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+// Función auxiliar para formatear tiempo
+function formatTime(timeString) {
+    if (!timeString) return '';
+    try {
+        var timeParts = timeString.split(':');
+        var hour = parseInt(timeParts[0]);
+        var minute = timeParts[1];
+        var period = hour >= 12 ? 'PM' : 'AM';
+        
+        // Convertir a formato 12 horas
+        hour = hour % 12;
+        hour = hour ? hour : 12; // 0 = 12
+        
+        return hour + ':' + minute + ' ' + period;
+    } catch (e) {
+        return timeString;
+    }
+}
 
    // Función para actualizar la función updateBasicInfoFields
    function updateBasicInfoFields() {
