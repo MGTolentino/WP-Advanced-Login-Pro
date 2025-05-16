@@ -1,3 +1,5 @@
+<?php
+
 /**
  * Verifica y crea un vendor si es necesario
  */
