@@ -61,11 +61,14 @@
      */
     function initModalListeners() {
 
-          // Abrir modal con botones o enlaces específicos (usando clase o atributo)
-    $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger', function(e) {
-        e.preventDefault();
-        openModal();
-    });
+        // Abrir modal con botones o enlaces específicos (usando clase o atributo)
+        // Mejorado para prevenir comportamiento nativo incluso en clics rápidos
+        $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Detener propagación del evento
+            openModal();
+            return false; // Asegurar que no ocurra la navegación
+        });
 
         // Cerrar modal con botón de cierre o click fuera
         modal.closeBtn.on('click', closeModal);
@@ -295,21 +298,46 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
 
     /**
      * Abre el modal.
+     * Versión mejorada para una carga más rápida y fluida
      */
     function openModal() {
         console.log('Función openModal ejecutándose');
 
-        modal.overlay.fadeIn(300);
+        // Preparar el modal antes de mostrarlo
         modal.content.html('');
         showLoader();
         
-        // Cargar formulario inicial
-        loadInitialForm();
-        
-        // Notificar a social-login.js que el modal está abierto
-        if (typeof window.socialLoginModalOpened === 'function') {
-            window.socialLoginModalOpened();
-        }
+        // Precarga el formulario inicial antes de mostrar el modal
+        $.ajax({
+            url: wp_alp_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wp_alp_get_form',
+                form: 'initial',
+                nonce: wp_alp_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Cuando ya tenemos el contenido, mostramos el modal
+                    modal.overlay.fadeIn(200);
+                    updateModalContent(response.data.html);
+                    
+                    // Notificar a social-login.js que el modal está abierto
+                    if (typeof window.socialLoginModalOpened === 'function') {
+                        window.socialLoginModalOpened();
+                    }
+                } else {
+                    // Mostrar el modal con formulario de respaldo en caso de error
+                    modal.overlay.fadeIn(200);
+                    loadInitialForm();
+                }
+            },
+            error: function() {
+                // En caso de error, mostrar el modal con formulario de respaldo
+                modal.overlay.fadeIn(200);
+                loadInitialForm();
+            }
+        });
     }
 
     /**
@@ -459,13 +487,20 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
 
     /**
      * Actualiza el contenido del modal.
+     * Versión mejorada para evitar parpadeos y proporcionar transiciones más suaves
      */
     function updateModalContent(html) {
-        // Actualizar con animación suave
-        modal.content.fadeOut(150, function() {
-            modal.content.html(html).fadeIn(150);
-            hideLoader();
-        });
+        // Crear temporalmente el nuevo contenido sin mostrarlo
+        var newContent = $(html).css('opacity', 0);
+        
+        // Ocultar loader inmediatamente
+        hideLoader();
+        
+        // Reemplazar el contenido existente sin animación
+        modal.content.html(newContent);
+        
+        // Animar la opacidad para una transición suave
+        newContent.animate({opacity: 1}, 200);
     }
 
     /**
