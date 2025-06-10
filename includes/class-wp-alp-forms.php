@@ -22,8 +22,9 @@ public static function get_initial_form() {
             <h2><?php _e('¡Te damos la bienvenida!', 'wp-alp'); ?></h2>
             
             <div class="wp-alp-input-group">
-                <label for="wp-alp-identifier"><?php _e('Correo electrónico', 'wp-alp'); ?></label>
-                <input type="text" id="wp-alp-identifier" name="identifier" class="wp-alp-input" placeholder="<?php _e('Correo electrónico', 'wp-alp'); ?>" />
+                <label for="wp-alp-identifier"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
+                <input type="text" id="wp-alp-identifier" name="identifier" class="wp-alp-input" placeholder="<?php _e('Correo electrónico o teléfono', 'wp-alp'); ?>" />
+                <div class="wp-alp-input-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
             </div>
             
             <div class="wp-alp-button-group">
@@ -58,10 +59,7 @@ public static function get_initial_form() {
                 </button>
                 <?php endif; ?>
                 
-                <button type="button" class="wp-alp-social-button" id="wp-alp-phone-btn">
-                    <span class="wp-alp-social-icon phone-icon"></span>
-                    <span><?php _e('Continuar con el número de teléfono', 'wp-alp'); ?></span>
-                </button>
+                <!-- Botón de teléfono eliminado ya que la funcionalidad está integrada en el campo principal -->
             </div>
         </div>
     </div>

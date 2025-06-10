@@ -116,16 +116,23 @@
         $(document).on('click', '#wp-alp-continue-btn', function() {
             var identifier = $('#wp-alp-identifier').val().trim();
             if (!identifier) {
-                showError(wp_alp_ajax.translations.invalid_email);
+                showError('Por favor, introduce un correo electrónico o número de teléfono.');
                 return;
             }
+            
+            // Detectar si es correo o teléfono
+            var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+            var isPhone = /^[0-9]{8,15}$/.test(identifier.replace(/[\s-]+/g, ''));
+            
+            if (!isEmail && !isPhone) {
+                showError('Por favor, introduce un correo electrónico o número de teléfono válido.');
+                return;
+            }
+            
             validateUser(identifier);
         });
 
-        // Botón para teléfono en formulario inicial
-        $(document).on('click', '#wp-alp-phone-btn', function() {
-            loadPhoneForm();
-        });
+        // Ya no necesitamos el manejador del botón de teléfono porque la funcionalidad está integrada
 
         // Botón continuar en formulario de teléfono
         $(document).on('click', '#wp-alp-phone-continue-btn', function() {

@@ -16,7 +16,7 @@
         googleButtonRendered: false
     };
 
-    console.log('social-login.js cargado');
+    // Inicialización del módulo de login social
 
 
     // Marcar que esta implementación está activa
@@ -59,19 +59,45 @@
         loadAppleAPI();
     };
     
-    // Escuchar el evento de apertura del modal
+    // Variable para evitar múltiples inicializaciones
+    var isProcessingModalOpen = false;
+    
+    // Escuchar el evento de apertura del modal - con protección contra múltiples disparos
     $(document).on('wp_alp_modal_opened', function() {
-        window.socialLoginModalOpened();
+        if (isProcessingModalOpen) return;
+        isProcessingModalOpen = true;
+        
+        // Reiniciar el estado del botón para evitar problemas
+        socialLoginState.googleButtonRendered = false;
+        
+        // Inicializar con delay para evitar condiciones de carrera
+        setTimeout(function() {
+            window.socialLoginModalOpened();
+            isProcessingModalOpen = false;
+        }, 100);
     });
+    
+    // Variable para controlar tiempo entre actualizaciones
+    var lastContentUpdate = 0;
     
     // Escuchar el evento de actualización de contenido para re-renderizar botones
     $(document).on('wp_alp_content_updated', function() {
-        if (document.getElementById('wp-alp-google-btn')) {
-            // Solo renderizar si la API ya está cargada
-            if (socialLoginState.googleInitialized) {
-                socialLoginState.googleButtonRendered = false;
-                renderGoogleButton();
-            }
+        // Evitar actualizaciones demasiado frecuentes (debe haber al menos 300ms entre cada una)
+        var now = Date.now();
+        if (now - lastContentUpdate < 300) return;
+        lastContentUpdate = now;
+        
+        // Renderizar botón de Google solo si es necesario
+        if (document.getElementById('wp-alp-google-btn') && !document.getElementById('google-btn-container')) {
+            // Reiniciar estado para permitir un nuevo renderizado
+            socialLoginState.googleButtonRendered = false;
+            
+            // Retrasar ligeramente para asegurar que el DOM esté estable
+            setTimeout(function() {
+                if (socialLoginState.googleInitialized) {
+                    renderGoogleButton();
+                }
+            }, 150);
         }
     });
 
@@ -80,10 +106,10 @@
      * Versión mejorada que precargar la API antes de que sea necesaria
      */
     function loadGoogleAPI() {
-        console.log('loadGoogleAPI llamado');
+        // Cargar la API de Google si no está ya cargada
 
         if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.google_client_id) {
-            console.error('Plugin WP-ALP: ID de cliente de Google no configurado');
+            // Cliente de Google no configurado
             return;
         }
 
@@ -118,17 +144,17 @@
         };
         
         document.head.appendChild(googleScript);
-        console.log('API de Google cargada');
+        // Iniciar carga de la API
     }
 
     /**
      * Inicializa la API de Google Identity Services
      */
     function initializeGoogleIdentity() {
-        console.log('initializeGoogleIdentity llamado');
+        // Inicializar autenticación con Google
 
         if (typeof google === 'undefined' || !google.accounts) {
-            console.error('API de Google no disponible');
+            // API de Google no disponible
             return;
         }
 
@@ -220,7 +246,7 @@
      * Versión mejorada que evita parpadeos y mantiene la consistencia visual
      */
     function renderGoogleButton() {
-        console.log('renderGoogleButton llamado');
+        // Función para renderizar el botón de Google
         
         // Solo proceder si la API está inicializada
         if (!socialLoginState.googleInitialized || typeof google === 'undefined' || !google.accounts) {
@@ -238,7 +264,7 @@
         
         // Evitar renderizar múltiples veces
         if (socialLoginState.googleButtonRendered || document.getElementById('google-btn-container')) {
-            console.log('Botón ya renderizado o contenedor existente');
+            // Botón ya renderizado, evitar duplicación
             return;
         }
         
@@ -287,10 +313,10 @@
             }, 50);
             
             socialLoginState.googleButtonRendered = true;
-            console.log('Botón de Google renderizado correctamente');
+            // Botón renderizado exitosamente
             
         } catch (e) {
-            console.error('Error al renderizar botón de Google:', e);
+            // Error en renderizado, mostrar botón original
             // Si hay error, mostrar el botón original como respaldo
             if (originalBtn) {
                 originalBtn.style.display = 'block';
@@ -383,7 +409,7 @@
      */
     function loadFacebookAPI() {
         if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.facebook_app_id) {
-            console.error('Plugin WP-ALP: ID de aplicación de Facebook no configurado');
+            // ID de aplicación de Facebook no configurado
             return;
         }
 
@@ -408,7 +434,7 @@
             });
             
             socialLoginState.facebookInitialized = true;
-            console.log('Facebook SDK inicializado');
+            // Facebook SDK inicializado correctamente
         };
 
         // Cargar el script de Facebook
@@ -523,7 +549,7 @@
                 }, {scope: 'public_profile,email'});
             });
         } catch (e) {
-            console.error('Error en Facebook Login:', e);
+            // Error en proceso de login con Facebook
             window.wpAlp.hideLoader();
             window.wpAlp.showError('Error en el inicio de sesión con Facebook: ' + e.message);
         }
@@ -534,7 +560,7 @@
      */
     function loadAppleAPI() {
         if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.apple_client_id) {
-            console.error('Plugin WP-ALP: ID de cliente de Apple no configurado');
+            // Cliente de Apple no configurado
             return;
         }
 

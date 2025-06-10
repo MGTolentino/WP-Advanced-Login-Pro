@@ -375,15 +375,77 @@
     transform: scale(0.98) !important;
 }
 
+/* Mejora para el botón de regreso */
+.wp-alp-back-button {
+    position: absolute !important;
+    left: 15px !important;
+    top: 15px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 8px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: 14px !important;
+    color: #222 !important;
+    transition: all 0.2s ease !important;
+}
+
+.wp-alp-back-button:before {
+    content: '\2190' !important; /* Flecha izquierda Unicode */
+    margin-right: 5px !important;
+    font-size: 18px !important;
+}
+
+.wp-alp-back-button:after {
+    content: 'Atrás' !important;
+    font-weight: 500 !important;
+}
+
+.wp-alp-back-button:hover {
+    color: #FF385C !important;
+}
+
+/* Reposicionar botón de cierre al lado derecho */
+.wp-alp-close-modal {
+    position: absolute !important;
+    right: 15px !important;
+    top: 15px !important;
+    left: auto !important; /* Asegurar que no esté en la izquierda */
+    background: transparent !important;
+    border: none !important;
+    padding: 8px !important;
+    cursor: pointer !important;
+    z-index: 100 !important;
+    transition: transform 0.2s ease !important;
+}
+
+.wp-alp-close-modal:hover {
+    transform: rotate(90deg) !important;
+}
+
 /* Mejora para los inputs */
 .wp-alp-input {
     transition: border-color 0.2s, box-shadow 0.2s !important;
+    width: 100% !important;
+    padding: 12px 15px !important;
+    border-radius: 8px !important;
+    border: 1px solid #dbdbdb !important;
+    font-size: 16px !important;
 }
 
 .wp-alp-input:focus {
     border-color: #222 !important;
     box-shadow: 0 0 0 2px rgba(34, 34, 34, 0.1) !important;
     outline: none !important;
+}
+
+/* Texto de información debajo del campo */
+.wp-alp-input-info {
+    font-size: 12px !important;
+    color: #717171 !important;
+    margin-top: 5px !important;
+    margin-bottom: 15px !important;
 }
 
 /* Ajustes de responsividad */
