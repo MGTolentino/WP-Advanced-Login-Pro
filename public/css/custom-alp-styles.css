@@ -204,6 +204,36 @@
     transition: opacity 0.3s ease;
 }
 
+/* Loader de contenido para mejorar la experiencia */
+.wp-alp-content-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    border-radius: 8px;
+}
+
+/* Spinner mejorado */
+.wp-alp-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 56, 92, 0.1);
+    border-radius: 50%;
+    border-top-color: #FF385C;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* Mejora para los botones de login */
 .wp-alp-social-button {
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -256,6 +286,26 @@
     display: none !important;
 }
 
+/* Botón de Google con transición suave */
+#google-btn-container {
+    transition: opacity 0.3s ease-in-out !important;
+}
+
+/* Estilos para el placeholder de Google */
+#google-btn-placeholder {
+    margin-bottom: 12px !important;
+    width: 100% !important;
+    height: 46px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1px solid #dadce0 !important;
+    border-radius: 4px !important;
+    background-color: #fff !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
 /* Mejora para los títulos en el modal */
 .wp-alp-form-container h2 {
     transition: opacity 0.3s ease;
@@ -282,6 +332,32 @@
 .wp-alp-button-group,
 .wp-alp-social-login {
     transition: opacity 0.3s ease;
+}
+
+/* Contenedor para el nuevo contenido durante la transición */
+.wp-alp-new-content {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Estilos para el placeholder del botón de Google */
+.wp-alp-google-placeholder {
+    transition: opacity 0.3s ease;
+}
+
+.google-loading-bar {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Asegurar que no haya saltos en el layout durante las transiciones */
+.wp-alp-form-container {
+    min-height: 300px;
+    position: relative;
 }
 
 /* Mejora para los botones principales */
