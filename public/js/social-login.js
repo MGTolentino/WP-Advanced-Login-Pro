@@ -161,7 +161,7 @@
     // Eliminamos la función placeholderGoogleButton para evitar parpadeos y botones duplicados
     
     /**
-     * Renderiza el botón de Google en el formulario - versión simplificada
+     * Renderiza el botón de Google en el formulario - versión que muestra el botón de la API (en inglés)
      */
     function renderGoogleButton() {
         // Solo proceder si la API está inicializada
@@ -180,7 +180,7 @@
             return;
         }
         
-        // Crear contenedor directamente donde está el botón original
+        // Crear contenedor para el botón de la API
         var container = document.createElement('div');
         container.id = 'google-btn-container';
         container.style.width = '100%';
@@ -188,9 +188,10 @@
         container.style.marginBottom = '10px';
         
         // Reemplazar el botón original con el contenedor
-        originalBtn.parentNode.replaceChild(container, originalBtn);
+        originalBtn.style.display = 'none'; // Ocultar el botón original
+        originalBtn.parentNode.insertBefore(container, originalBtn);
         
-        // Renderizar el botón de Google
+        // Renderizar el botón de Google (en inglés)
         try {
             google.accounts.id.renderButton(
                 document.getElementById('google-btn-container'),
@@ -198,19 +199,20 @@
                     type: 'standard',
                     theme: 'outline',
                     size: 'large',
-                    text: 'signin_with', // 'continue_with' en inglés, 'signin_with' es más consistente
+                    text: 'continue_with',  // Usar 'continue_with' para que aparezca en inglés
                     shape: 'rectangular',
                     logo_alignment: 'center',
-                    width: '100%',
-                    locale: 'es_ES' // Forzar idioma español
+                    width: '100%'
                 }
             );
             
+            // Marcar como renderizado
             socialLoginState.googleButtonRendered = true;
         } catch (e) {
-            // En caso de error, restaurar el botón original
+            // En caso de error, mostrar el botón original
+            originalBtn.style.display = 'block';
             if (container && container.parentNode) {
-                container.parentNode.replaceChild(originalBtn, container);
+                container.parentNode.removeChild(container);
             }
         }
     }
