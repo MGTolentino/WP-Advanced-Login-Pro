@@ -108,28 +108,24 @@ class WP_ALP_Social {
      * @return WP_REST_Response La respuesta REST.
      */
     public function handle_google_callback($request) {
-        // Agregar log para diagnosticar
-        error_log('Google Auth Callback recibido: ' . json_encode($_GET));
+        // Procesar callback de Google
         
         $code = $request->get_param('code');
         $state = $request->get_param('state');
         
         if (empty($code)) {
-            error_log('Google Auth: Código faltante');
             return new WP_REST_Response(array('error' => 'Falta código de autorización'), 400);
         }
         
         // Intercambiar código por token
         $token_data = $this->get_google_token($code);
         if (isset($token_data['error'])) {
-            error_log('Google Auth: Error al obtener token: ' . json_encode($token_data));
             return new WP_REST_Response($token_data, 400);
         }
         
         // Obtener datos del usuario
         $user_data = $this->get_google_user_data($token_data['access_token']);
         if (isset($user_data['error'])) {
-            error_log('Google Auth: Error al obtener datos de usuario: ' . json_encode($user_data));
             return new WP_REST_Response($user_data, 400);
         }
         
@@ -174,7 +170,7 @@ class WP_ALP_Social {
             'grant_type' => 'authorization_code',
         );
         
-        error_log('Google Auth: Solicitando token con parámetros: ' . json_encode($params));
+        // Solicitar token con parámetros
         
         $response = wp_remote_post('https://oauth2.googleapis.com/token', array(
             'body' => $params,
@@ -182,12 +178,10 @@ class WP_ALP_Social {
         ));
         
         if (is_wp_error($response)) {
-            error_log('Google Auth: Error en solicitud: ' . $response->get_error_message());
             return array('error' => $response->get_error_message());
         }
         
         $body = json_decode(wp_remote_retrieve_body($response), true);
-        error_log('Google Auth: Respuesta de token: ' . json_encode($body));
         
         if (isset($body['error'])) {
             return array('error' => $body['error_description'] ?? $body['error']);
@@ -477,9 +471,6 @@ public function process_social_data_ajax($data) {
     $provider = sanitize_text_field($data['provider']);
     $token = sanitize_text_field($data['token']);
     
-    // Registrar datos para debugging
-    error_log('WP_ALP: Procesando datos sociales para proveedor: ' . $provider);
-    
     switch ($provider) {
         case 'google':
             // Para Google, estamos recibiendo un JWT (token ID) en lugar de un token de acceso
@@ -499,7 +490,7 @@ public function process_social_data_ajax($data) {
                             'picture' => isset($payload['picture']) ? $payload['picture'] : '',
                         );
                         
-                        error_log('WP_ALP: Datos de usuario de Google JWT: ' . json_encode($user_data));
+                        // Datos de usuario obtenidos correctamente
                     } else {
                         return array(
                             'success' => false,

@@ -17,14 +17,10 @@
     };
 
     // Inicialización del módulo de login social
-
-
-    // Marcar que esta implementación está activa
     window.socialLoginInitialized = true;
 
     // Cargar las APIs cuando el documento esté listo
     $(document).ready(function() {
-        // Inicializar handlers
         initSocialLoginButtons();
     });
 
@@ -103,13 +99,10 @@
 
     /**
      * Carga la API de Google Identity Services de manera optimizada
-     * Versión mejorada que precargar la API antes de que sea necesaria
+     * Versión mejorada que precarga la API inmediatamente
      */
     function loadGoogleAPI() {
-        // Cargar la API de Google si no está ya cargada
-
         if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.google_client_id) {
-            // Cliente de Google no configurado
             return;
         }
 
@@ -127,15 +120,11 @@
             return;
         }
         
-        // Mostrar botón de carga mientras se inicializa Google
-        placeholderGoogleButton();
-
-        // Crear el script
+        // Cargar la API inmediatamente
         var googleScript = document.createElement('script');
         googleScript.id = 'google-api-script';
         googleScript.src = 'https://accounts.google.com/gsi/client';
-        googleScript.async = true;
-        googleScript.defer = true;
+        googleScript.async = false; // Cargar de forma síncrona para evitar retrasos
         
         // Cuando el script se carga, inicializar Google Identity
         googleScript.onload = function() {
@@ -144,7 +133,6 @@
         };
         
         document.head.appendChild(googleScript);
-        // Iniciar carga de la API
     }
 
     /**
@@ -170,119 +158,37 @@
         renderGoogleButton();
     }
 
-    /**
-     * Crea un botón de Google temporal mientras se carga la API
-     * Esto evita el parpadeo al sustituir el botón
-     */
-    function placeholderGoogleButton() {
-        // Solo mostrar placeholder si existe el botón original
-        var originalBtn = document.getElementById('wp-alp-google-btn');
-        if (!originalBtn || originalBtn.classList.contains('replaced')) {
-            return;
-        }
-        
-        // Ocultar el botón original
-        originalBtn.style.display = 'none';
-        originalBtn.classList.add('replaced');
-        
-        // Crear un botón de carga temporal con apariencia similar al botón de Google
-        var placeholderBtn = document.createElement('div');
-        placeholderBtn.id = 'google-btn-placeholder';
-        placeholderBtn.className = 'wp-alp-google-placeholder';
-        placeholderBtn.style.width = '100%';
-        placeholderBtn.style.height = '40px';
-        placeholderBtn.style.marginBottom = '10px';
-        placeholderBtn.style.border = '1px solid #dadce0';
-        placeholderBtn.style.borderRadius = '4px';
-        placeholderBtn.style.backgroundColor = '#fff';
-        placeholderBtn.style.display = 'flex';
-        placeholderBtn.style.alignItems = 'center';
-        placeholderBtn.style.justifyContent = 'center';
-        placeholderBtn.style.fontFamily = 'Roboto, Arial, sans-serif';
-        placeholderBtn.style.fontSize = '14px';
-        placeholderBtn.style.fontWeight = '500';
-        placeholderBtn.style.color = '#3c4043';
-        placeholderBtn.style.position = 'relative';
-        placeholderBtn.style.overflow = 'hidden';
-        
-        // Logo de Google
-        var logoSpan = document.createElement('div');
-        logoSpan.style.width = '18px';
-        logoSpan.style.height = '18px';
-        logoSpan.style.marginRight = '8px';
-        logoSpan.style.background = 'url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=") no-repeat center';
-        
-        // Texto
-        var textSpan = document.createElement('span');
-        textSpan.textContent = 'Continuar con Google';
-        
-        // Indicador de carga
-        var loadingBar = document.createElement('div');
-        loadingBar.style.position = 'absolute';
-        loadingBar.style.bottom = '0';
-        loadingBar.style.left = '0';
-        loadingBar.style.height = '2px';
-        loadingBar.style.width = '0%';
-        loadingBar.style.backgroundColor = '#4285f4';
-        loadingBar.style.transition = 'width 1s ease-in-out';
-        loadingBar.className = 'google-loading-bar';
-        
-        // Agregar elementos al botón
-        placeholderBtn.appendChild(logoSpan);
-        placeholderBtn.appendChild(textSpan);
-        placeholderBtn.appendChild(loadingBar);
-        
-        // Insertar el placeholder antes del botón original
-        originalBtn.parentNode.insertBefore(placeholderBtn, originalBtn);
-        
-        // Animar la barra de carga
-        setTimeout(function() {
-            loadingBar.style.width = '70%';
-        }, 50);
-    }
+    // Eliminamos la función placeholderGoogleButton para evitar parpadeos y botones duplicados
     
     /**
-     * Renderiza el botón de Google en el formulario
-     * Versión mejorada que evita parpadeos y mantiene la consistencia visual
+     * Renderiza el botón de Google en el formulario - versión simplificada
      */
     function renderGoogleButton() {
-        // Función para renderizar el botón de Google
-        
         // Solo proceder si la API está inicializada
         if (!socialLoginState.googleInitialized || typeof google === 'undefined' || !google.accounts) {
             return;
         }
         
-        // Solo renderizar si existe el botón original o el placeholder
+        // Verificar si existe el botón original
         var originalBtn = document.getElementById('wp-alp-google-btn');
-        var placeholder = document.getElementById('google-btn-placeholder');
-        
-        if (!originalBtn && !placeholder) {
-            console.log('No se encontró ni el botón original ni el placeholder');
+        if (!originalBtn) {
             return;
         }
         
         // Evitar renderizar múltiples veces
         if (socialLoginState.googleButtonRendered || document.getElementById('google-btn-container')) {
-            // Botón ya renderizado, evitar duplicación
             return;
         }
         
-        // Preparar el contenedor (preferir usar el espacio del placeholder)
+        // Crear contenedor directamente donde está el botón original
         var container = document.createElement('div');
         container.id = 'google-btn-container';
         container.style.width = '100%';
         container.style.height = '40px';
         container.style.marginBottom = '10px';
-        container.style.opacity = '0';
-        container.style.transition = 'opacity 0.3s ease-in-out';
         
-        // Insertar el contenedor donde corresponda
-        if (placeholder) {
-            placeholder.parentNode.insertBefore(container, placeholder);
-        } else if (originalBtn) {
-            originalBtn.parentNode.insertBefore(container, originalBtn);
-        }
+        // Reemplazar el botón original con el contenedor
+        originalBtn.parentNode.replaceChild(container, originalBtn);
         
         // Renderizar el botón de Google
         try {
@@ -292,38 +198,19 @@
                     type: 'standard',
                     theme: 'outline',
                     size: 'large',
-                    text: 'continue_with',
+                    text: 'signin_with', // 'continue_with' en inglés, 'signin_with' es más consistente
                     shape: 'rectangular',
                     logo_alignment: 'center',
-                    width: '100%'
+                    width: '100%',
+                    locale: 'es_ES' // Forzar idioma español
                 }
             );
             
-            // Mostrar el botón con una transición suave
-            setTimeout(function() {
-                container.style.opacity = '1';
-                
-                // Remover el placeholder después de la transición
-                setTimeout(function() {
-                    if (placeholder) {
-                        placeholder.style.display = 'none';
-                        placeholder.parentNode.removeChild(placeholder);
-                    }
-                }, 300);
-            }, 50);
-            
             socialLoginState.googleButtonRendered = true;
-            // Botón renderizado exitosamente
-            
         } catch (e) {
-            // Error en renderizado, mostrar botón original
-            // Si hay error, mostrar el botón original como respaldo
-            if (originalBtn) {
-                originalBtn.style.display = 'block';
-                originalBtn.classList.remove('replaced');
-            }
-            if (container) {
-                container.parentNode.removeChild(container);
+            // En caso de error, restaurar el botón original
+            if (container && container.parentNode) {
+                container.parentNode.replaceChild(originalBtn, container);
             }
         }
     }

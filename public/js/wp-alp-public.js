@@ -22,12 +22,6 @@
      * Inicialización cuando el DOM está listo.
      */
     $(document).ready(function() {
-
-        console.log('Document ready ejecutado');
-
-        console.log('Botones de login encontrados:', $('[data-wp-alp-trigger="login"]').length);
-    console.log('Botones con clase wp-alp-login-trigger:', $('.wp-alp-login-trigger').length);
-    console.log('Elemento del botón:', $('[data-wp-alp-trigger="login"]')[0]);
     
         // Agregamos estilos dinámicos para el nuevo loader de contenido
         $('<style>\n\
@@ -322,23 +316,18 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     function initSocialLogin() {
         // Esta función está vacía intencionalmente
         // La implementación real está en social-login.js
-        console.log('La implementación de login social se ha movido a social-login.js');
     }
 
     /**
-     * Abre el modal con una experiencia fluida.
-     * Versión mejorada que muestra el modal inmediatamente con un loader
-     * y carga el contenido después para mejorar la percepción de velocidad.
+     * Abre el modal con una experiencia fluida y rápida.
      */
     function openModal() {
-        console.log('Función openModal ejecutándose');
-
-        // Primero mostramos el modal con un loader
+        // Mostrar el modal inmediatamente con un loader
         var initialLoader = $('<div class="wp-alp-initial-loader"><div class="wp-alp-spinner"></div></div>');
         modal.content.html(initialLoader);
-        modal.overlay.fadeIn(200);
+        modal.overlay.fadeIn(150); // Reducción de tiempo de fade para mayor rapidez
         
-        // Luego cargamos el contenido (mejor UX porque el usuario ve una respuesta inmediata)
+        // Precarga del contenido
         $.ajax({
             url: wp_alp_ajax.ajax_url,
             type: 'POST',
@@ -349,19 +338,15 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
             },
             success: function(response) {
                 if (response.success) {
-                    // Actualizar el contenido con transición suave
+                    // Actualizar el contenido rápidamente
                     updateModalContent(response.data.html);
-                    
-                    // Notificar a social-login.js que el modal está abierto
-                    // Este evento ahora lo detectaremos mediante el evento personalizado
+                    // Notificar que el modal está abierto
                     $(document).trigger('wp_alp_modal_opened');
                 } else {
-                    // En caso de error de respuesta, cargar formulario de respaldo
                     loadInitialForm();
                 }
             },
             error: function() {
-                // En caso de error de conexión, cargar formulario de respaldo
                 loadInitialForm();
             }
         });
@@ -526,64 +511,19 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     }
 
     /**
-     * Actualiza el contenido del modal con una transición suave.
-     * Versión mejorada que mantiene el modal visible y realiza una transición fluida
-     * entre el contenido actual y el nuevo.
+     * Actualiza el contenido del modal de forma rápida y eficiente.
      */
     function updateModalContent(html) {
-        // Preparar el nuevo contenido
-        var newContentWrapper = $('<div class="wp-alp-new-content"></div>').html(html).css({
-            'position': 'absolute',
-            'top': '0',
-            'left': '0',
-            'width': '100%',
-            'height': '100%',
-            'opacity': '0',
-            'z-index': '2'
-        });
-        
         // Ocultar loader
         hideLoader();
         
-        // Si es el primer contenido, simplemente mostrarlo sin animación
-        if (modal.content.children().length === 0 || modal.content.children().length === 1 && $('#wp-alp-content-loader').length === 1) {
-            modal.content.empty().append($(html));
-            
-            // Notificar que se actualizó el contenido para inicializar componentes externos
-            setTimeout(function() {
-                $(document).trigger('wp_alp_content_updated');
-            }, 50);
-            return;
-        }
+        // Reemplazar contenido directamente para mayor velocidad
+        modal.content.empty().append($(html));
         
-        // Añadir el nuevo contenido sin afectar al actual
-        modal.content.append(newContentWrapper);
-        
-        // Realizar una transición suave
+        // Notificar que se actualizó el contenido para inicializar componentes externos
         setTimeout(function() {
-            newContentWrapper.animate({ opacity: 1 }, 300, function() {
-                // Una vez que el nuevo contenido es visible, reemplazar todo
-                modal.content.children().not(newContentWrapper).remove();
-                var finalContent = newContentWrapper.children();
-                
-                // Colocar el contenido final directamente en el contenedor
-                finalContent.css({
-                    'position': '',
-                    'top': '',
-                    'left': '',
-                    'width': '',
-                    'height': '',
-                    'opacity': '',
-                    'z-index': ''
-                });
-                
-                modal.content.append(finalContent);
-                newContentWrapper.remove();
-                
-                // Notificar que se actualizó el contenido para inicializar componentes externos
-                $(document).trigger('wp_alp_content_updated');
-            });
-        }, 50);
+            $(document).trigger('wp_alp_content_updated');
+        }, 10);
     }
 
     /**

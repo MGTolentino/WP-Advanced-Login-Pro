@@ -226,13 +226,23 @@ public function login_page_shortcode($atts) {
     }
 
     /**
- * Outputea el script de inicialización social en el footer.
+ * Inicializa scripts sociales en el footer y precarga APIs
  */
 public function initialize_social_scripts() {
     if (get_option('wp_alp_enable_social_login', true)) {
         ?>
         <script>
+            // Precarga de APIs sociales para mejorar rendimiento
             jQuery(document).ready(function($) {
+                // Precargar Google API inmediatamente
+                if (typeof wp_alp_ajax !== 'undefined' && wp_alp_ajax.google_client_id) {
+                    var googleScript = document.createElement('script');
+                    googleScript.id = 'google-api-script';
+                    googleScript.src = 'https://accounts.google.com/gsi/client';
+                    document.head.appendChild(googleScript);
+                }
+                
+                // Evento de apertura modal
                 $(document).on('wp_alp_modal_opened', function() {
                     if (typeof window.socialLoginModalOpened === 'function') {
                         window.socialLoginModalOpened();

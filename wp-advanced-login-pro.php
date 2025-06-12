@@ -98,6 +98,7 @@ add_filter('theme_page_templates', 'wp_alp_register_templates');
 
 /**
  * Carga la plantilla correcta si se selecciona una del plugin.
+ * Prioridad 20 para ejecutar después de otros filtros pero antes de renderizar.
  */
 function wp_alp_load_template($template) {
     global $post;
@@ -105,38 +106,26 @@ function wp_alp_load_template($template) {
     if ($post && is_page()) {
         $template_name = get_post_meta($post->ID, '_wp_page_template', true);
         
-        error_log('Template solicitada: ' . $template_name);
-        
-        // Verificar si es una de nuestras plantillas
-        if (!empty($template_name) && (
-            strpos($template_name, 'login-page-template.php') !== false ||
-            strpos($template_name, 'vendor-page-template.php') !== false ||
-            strpos($template_name, 'seller-page-template.php') !== false ||
-            strpos($template_name, 'vendor-steps-template.php') !== false ||
-            strpos($template_name, 'vendor-form-step1-template.php') !== false
-        )) {
-            // Determinar qué archivo de plantilla cargar
-            $template_file = '';
+        // Verificar si es una de nuestras plantillas con un mapa optimizado
+        if (!empty($template_name)) {
+            // Mapeo directo de nombres de plantilla a archivos
+            $template_map = [
+                'login-page-template.php' => 'login-page-template.php',
+                'vendor-page-template.php' => 'vendor-page-template.php',
+                'seller-page-template.php' => 'vendor-page-template.php',
+                'vendor-steps-template.php' => 'vendor-steps-template.php',
+                'vendor-form-step1-template.php' => 'vendor-form-step1-template.php'
+            ];
             
-            if (strpos($template_name, 'login-page-template.php') !== false) {
-                $template_file = 'login-page-template.php';
-            } else if (strpos($template_name, 'vendor-page-template.php') !== false || 
-                       strpos($template_name, 'seller-page-template.php') !== false) {
-                $template_file = 'vendor-page-template.php';
-            } else if (strpos($template_name, 'vendor-steps-template.php') !== false) {
-                $template_file = 'vendor-steps-template.php';
-            } else if (strpos($template_name, 'vendor-form-step1-template.php') !== false) {
-                $template_file = 'vendor-form-step1-template.php';
-            }
-            
-            if (!empty($template_file)) {
-                $file = plugin_dir_path(__FILE__) . 'templates/' . $template_file;
-                
-                error_log('Ruta corregida de plantilla: ' . $file);
-                error_log('¿Existe el archivo? ' . (file_exists($file) ? 'SÍ' : 'NO'));
-                
-                if (file_exists($file)) {
-                    return $file;
+            // Buscar coincidencia en nuestro mapa
+            foreach ($template_map as $template_key => $template_file) {
+                if (strpos($template_name, $template_key) !== false) {
+                    $file = plugin_dir_path(__FILE__) . 'templates/' . $template_file;
+                    
+                    if (file_exists($file)) {
+                        return $file;
+                    }
+                    break;
                 }
             }
         }
@@ -144,7 +133,8 @@ function wp_alp_load_template($template) {
     
     return $template;
 }
-add_filter('template_include', 'wp_alp_load_template');
+// Aumentamos la prioridad para asegurarnos que se ejecuta antes que la plantilla genérica
+add_filter('template_include', 'wp_alp_load_template', 20);
 
 /**
  * Shortcode para incluir el formulario de login en cualquier página
