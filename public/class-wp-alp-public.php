@@ -36,6 +36,7 @@ class WP_ALP_Public {
  * Registra los estilos para el lado público.
  */
 public function enqueue_styles() {
+    // Siempre enqueuar los estilos principales
     wp_enqueue_style(
         $this->plugin_name,
         plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
@@ -52,6 +53,67 @@ public function enqueue_styles() {
         $this->version,
         'all'
     );
+    
+    // Verificar si estamos en una página que usa nuestras templates
+    global $post;
+    if ($post && is_page()) {
+        $template_name = get_post_meta($post->ID, '_wp_page_template', true);
+        
+        // Lista de nuestras templates
+        $our_templates = array(
+            'login-page-template.php',
+            'vendor-page-template.php',
+            'vendor-steps-template.php',
+            'vendor-form-step1-template.php'
+        );
+        
+        // Verificar si es una de nuestras templates
+        $is_our_template = false;
+        foreach ($our_templates as $template) {
+            if (strpos($template_name, $template) !== false) {
+                $is_our_template = true;
+                break;
+            }
+        }
+        
+        // Si es nuestra template, aplicar prioridad alta a los estilos
+        if ($is_our_template) {
+            // Desenqueuar y volver a enqueuar con prioridad alta para evitar conflictos
+            wp_dequeue_style($this->plugin_name);
+            wp_dequeue_style($this->plugin_name . '-custom');
+            
+            wp_enqueue_style(
+                $this->plugin_name,
+                plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
+                array(),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            wp_enqueue_style(
+                $this->plugin_name . '-custom',
+                plugin_dir_url(__FILE__) . 'css/custom-alp-styles.css',
+                array($this->plugin_name),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            // Añadir estilos inline con !important para aumentar prioridad
+            $custom_css = "
+                .wp-alp-vendor-form-page {
+                    --wp-alp-spacing-base: 24px !important;
+                    --wp-alp-spacing-large: 48px !important;
+                    --wp-alp-spacing-small: 16px !important;
+                    --wp-alp-border-radius: 12px !important;
+                    --wp-alp-color-primary: #FF385C !important;
+                    --wp-alp-color-text: #222 !important;
+                    --wp-alp-color-background: #fff !important;
+                    --wp-alp-color-border: #e4e4e4 !important;
+                }
+            ";
+            wp_add_inline_style($this->plugin_name . '-custom', $custom_css);
+        }
+    }
 }
 
     /**

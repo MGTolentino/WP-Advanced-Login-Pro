@@ -6,7 +6,133 @@
  * Adaptado al estilo de Airbnb
  */
 
-get_header(); ?>
+get_header();
+
+// Asegurar que los estilos se carguen explícitamente en esta página
+wp_enqueue_style('wp-advanced-login-pro', plugin_dir_url(dirname(__FILE__)) . 'public/css/wp-alp-public.css', array(), '1.0.0', 'all');
+wp_enqueue_style('wp-advanced-login-pro-custom', plugin_dir_url(dirname(__FILE__)) . 'public/css/custom-alp-styles.css', array('wp-advanced-login-pro'), '1.0.0', 'all');
+?>
+
+<!-- Estilos críticos inline para asegurar apariencia correcta -->
+<style>
+    .wp-alp-vendor-form-page {
+        --wp-alp-spacing-base: 24px;
+        --wp-alp-spacing-large: 48px;
+        --wp-alp-spacing-small: 16px;
+        --wp-alp-border-radius: 12px;
+        --wp-alp-color-primary: #FF385C;
+        --wp-alp-color-text: #222;
+        --wp-alp-color-background: #fff;
+        --wp-alp-color-border: #e4e4e4;
+        margin: 0 auto;
+        max-width: 1200px;
+        padding: 24px;
+    }
+    .wp-alp-two-column-layout {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -15px;
+    }
+    .wp-alp-column-left, .wp-alp-column-right {
+        flex: 1;
+        min-width: 300px;
+        padding: 0 15px;
+    }
+    .wp-alp-steps-heading {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 24px;
+        color: var(--wp-alp-color-text);
+    }
+    .wp-alp-steps-list {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+    }
+    .wp-alp-step-item {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+    .wp-alp-step-content {
+        flex: 2;
+    }
+    .wp-alp-step-image {
+        flex: 1;
+        text-align: center;
+    }
+    .wp-alp-step-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+    .wp-alp-step-number {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        background-color: var(--wp-alp-color-primary);
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 32px;
+        margin-bottom: 12px;
+    }
+    .wp-alp-step-title {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--wp-alp-color-text);
+    }
+    .wp-alp-step-description {
+        font-size: 16px;
+        color: #666;
+    }
+    .wp-alp-steps-action {
+        margin-top: 48px;
+        text-align: center;
+    }
+    .wp-alp-steps-button {
+        background-color: var(--wp-alp-color-primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .wp-alp-steps-button:hover {
+        background-color: #E31C5F;
+    }
+    .wp-alp-airbnb-footer {
+        position: sticky;
+        bottom: 0;
+        background-color: white;
+        border-top: 1px solid var(--wp-alp-color-border);
+        padding: 16px 0;
+        margin-top: 32px;
+    }
+    .wp-alp-airbnb-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 24px;
+    }
+    .wp-alp-airbnb-back-btn,
+    .wp-alp-airbnb-next-btn {
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+    }
+    .wp-alp-airbnb-back-btn {
+        color: var(--wp-alp-color-text);
+    }
+    .wp-alp-airbnb-next-btn {
+        background-color: var(--wp-alp-color-primary);
+        color: white;
+    }
+</style>
 
 <div class="wp-alp-vendor-form-page">
     <!-- Contenedor principal para la página inicial y los pasos -->

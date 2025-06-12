@@ -123,6 +123,26 @@ function wp_alp_load_template($template) {
                     $file = plugin_dir_path(__FILE__) . 'templates/' . $template_file;
                     
                     if (file_exists($file)) {
+                        // Asegurar que los estilos del plugin se carguen para esta página
+                        add_action('wp_enqueue_scripts', function() {
+                            // Asegurarnos que estos estilos tengan prioridad alta (cargar tarde)
+                            wp_enqueue_style(
+                                'wp-alp-template-styles',
+                                plugin_dir_url(__FILE__) . 'public/css/wp-alp-public.css',
+                                array(),
+                                WP_ALP_VERSION . '.' . time(),
+                                'all'
+                            );
+                            
+                            wp_enqueue_style(
+                                'wp-alp-template-custom',
+                                plugin_dir_url(__FILE__) . 'public/css/custom-alp-styles.css',
+                                array('wp-alp-template-styles'),
+                                WP_ALP_VERSION . '.' . time(),
+                                'all'
+                            );
+                        }, 999); // Prioridad muy alta para cargar después de otros estilos
+                        
                         return $file;
                     }
                     break;
