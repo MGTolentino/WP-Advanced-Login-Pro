@@ -232,20 +232,22 @@ public function initialize_social_scripts() {
     if (get_option('wp_alp_enable_social_login', true)) {
         ?>
         <script>
-            // Precarga de APIs sociales para mejorar rendimiento
+            console.log('Inicializando scripts sociales...');
+            // Evento de apertura modal
             jQuery(document).ready(function($) {
-                // Precargar Google API inmediatamente
-                if (typeof wp_alp_ajax !== 'undefined' && wp_alp_ajax.google_client_id) {
-                    var googleScript = document.createElement('script');
-                    googleScript.id = 'google-api-script';
-                    googleScript.src = 'https://accounts.google.com/gsi/client';
-                    document.head.appendChild(googleScript);
-                }
+                console.log('Document ready en initialize_social_scripts');
+                console.log('Google Client ID: ' + (typeof wp_alp_ajax !== 'undefined' ? (wp_alp_ajax.google_client_id ? 'Configurado' : 'No configurado') : 'wp_alp_ajax no definido'));
+                
+                // NO precargar Google API aquí - dejar que lo haga social-login.js
                 
                 // Evento de apertura modal
                 $(document).on('wp_alp_modal_opened', function() {
+                    console.log('Evento wp_alp_modal_opened detectado');
                     if (typeof window.socialLoginModalOpened === 'function') {
+                        console.log('Llamando a socialLoginModalOpened()...');
                         window.socialLoginModalOpened();
+                    } else {
+                        console.error('socialLoginModalOpened no es una función o no está definida');
                     }
                 });
             });

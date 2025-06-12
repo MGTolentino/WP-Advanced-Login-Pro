@@ -18,10 +18,21 @@
 
     // Inicialización del módulo de login social
     window.socialLoginInitialized = true;
+    console.log('Inicializando módulo de login social...');
 
     // Cargar las APIs cuando el documento esté listo
     $(document).ready(function() {
+        console.log('Document ready en social-login.js');
         initSocialLoginButtons();
+        
+        // Cargar Google API inmediatamente sin esperar a que se abra el modal
+        if (typeof wp_alp_ajax !== 'undefined' && wp_alp_ajax.google_client_id) {
+            console.log('Cargando Google API inmediatamente...');
+            loadGoogleAPI();
+        } else {
+            console.error('No se puede cargar Google API: ' + 
+                          (typeof wp_alp_ajax === 'undefined' ? 'wp_alp_ajax no definido' : 'google_client_id no configurado'));
+        }
     });
 
     /**
@@ -98,16 +109,19 @@
     });
 
     /**
-     * Carga la API de Google Identity Services de manera optimizada
-     * Versión mejorada que precarga la API inmediatamente
+     * Carga la API de Google Identity Services
      */
     function loadGoogleAPI() {
         if (typeof wp_alp_ajax === 'undefined' || !wp_alp_ajax.google_client_id) {
             return;
         }
 
+        // Verificar y reportar estado
+        console.log('Iniciando carga de Google API, cliente ID: ' + wp_alp_ajax.google_client_id.substring(0, 5) + '...');
+
         // Evitar carga duplicada
         if (socialLoginState.googleInitialized) {
+            console.log('Google API ya inicializada');
             // La API ya está cargada, solo renderizar el botón si es necesario
             if (!socialLoginState.googleButtonRendered) {
                 renderGoogleButton();
@@ -117,45 +131,68 @@
 
         // Verificar si el script ya fue cargado
         if (document.getElementById('google-api-script')) {
+            console.log('Script de Google ya existe en el DOM');
             return;
         }
         
-        // Cargar la API inmediatamente
+        console.log('Cargando script de Google API...');
+        
+        // Cargar la API
         var googleScript = document.createElement('script');
         googleScript.id = 'google-api-script';
         googleScript.src = 'https://accounts.google.com/gsi/client';
-        googleScript.async = false; // Cargar de forma síncrona para evitar retrasos
+        googleScript.async = true;
+        googleScript.defer = true;
         
         // Cuando el script se carga, inicializar Google Identity
         googleScript.onload = function() {
+            console.log('Script de Google cargado exitosamente');
             socialLoginState.googleInitialized = true;
             initializeGoogleIdentity();
         };
         
+        googleScript.onerror = function() {
+            console.error('Error al cargar script de Google API');
+        };
+        
         document.head.appendChild(googleScript);
+        console.log('Script de Google API agregado al DOM');
     }
 
     /**
      * Inicializa la API de Google Identity Services
      */
     function initializeGoogleIdentity() {
-        // Inicializar autenticación con Google
+        console.log('Iniciando inicialización de Google Identity...');
 
-        if (typeof google === 'undefined' || !google.accounts) {
-            // API de Google no disponible
+        if (typeof google === 'undefined') {
+            console.error('Objeto google no disponible');
+            return;
+        }
+        
+        if (!google.accounts) {
+            console.error('google.accounts no disponible');
             return;
         }
 
-        // Inicializar el cliente de Google
-        google.accounts.id.initialize({
-            client_id: wp_alp_ajax.google_client_id,
-            callback: handleGoogleCredentialResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true
-        });
+        console.log('Inicializando cliente de Google con client_id...');
         
-        // Renderizar el botón
-        renderGoogleButton();
+        // Inicializar el cliente de Google
+        try {
+            google.accounts.id.initialize({
+                client_id: wp_alp_ajax.google_client_id,
+                callback: handleGoogleCredentialResponse,
+                auto_select: false,
+                cancel_on_tap_outside: true
+            });
+            
+            console.log('Cliente de Google inicializado correctamente');
+            
+            // Renderizar el botón
+            renderGoogleButton();
+        } catch (e) {
+            console.error('Error al inicializar Google Identity:', e);
+        }
     }
 
     // Eliminamos la función placeholderGoogleButton para evitar parpadeos y botones duplicados
