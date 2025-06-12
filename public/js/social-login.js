@@ -198,7 +198,7 @@
     // Eliminamos la función placeholderGoogleButton para evitar parpadeos y botones duplicados
     
     /**
-     * Renderiza el botón de Google en el formulario - versión que muestra el botón de la API (en inglés)
+     * Renderiza el botón de Google en el formulario - solo deja el botón que funciona
      */
     function renderGoogleButton() {
         // Solo proceder si la API está inicializada
@@ -224,9 +224,10 @@
         container.style.height = '40px';
         container.style.marginBottom = '10px';
         
-        // Reemplazar el botón original con el contenedor
-        originalBtn.style.display = 'none'; // Ocultar el botón original
-        originalBtn.parentNode.insertBefore(container, originalBtn);
+        // Reemplazar completamente el botón original con el contenedor
+        if (originalBtn.parentNode) {
+            originalBtn.parentNode.replaceChild(container, originalBtn);
+        }
         
         // Renderizar el botón de Google (en inglés)
         try {
@@ -239,18 +240,15 @@
                     text: 'continue_with',  // Usar 'continue_with' para que aparezca en inglés
                     shape: 'rectangular',
                     logo_alignment: 'center',
-                    width: '100%'
+                    width: 250  // Valor fijo para evitar el error de ancho inválido
                 }
             );
             
             // Marcar como renderizado
             socialLoginState.googleButtonRendered = true;
         } catch (e) {
-            // En caso de error, mostrar el botón original
-            originalBtn.style.display = 'block';
-            if (container && container.parentNode) {
-                container.parentNode.removeChild(container);
-            }
+            console.error('Error al renderizar botón de Google:', e);
+            // No hay necesidad de restaurar el botón original ya que no funciona
         }
     }
 
