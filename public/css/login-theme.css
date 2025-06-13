@@ -1,0 +1,81 @@
+/**
+ * Estilos específicos para el modal de login que se adaptarán al tema
+ * Este archivo será cargado después de los otros CSS para sobrescribir colores
+ */
+
+:root {
+    --wp-alp-primary-color: #FF385C;  /* Color predeterminado */
+    --wp-alp-primary-hover: #E31C5F;  /* Versión más oscura para hover */
+    --wp-alp-text-color: #222222;
+    --wp-alp-border-color: #e4e4e4;
+    --wp-alp-background: #ffffff;
+}
+
+/* Botón primario */
+.wp-alp-primary-button {
+    background-color: var(--wp-alp-primary-color) !important;
+    color: white !important;
+}
+
+.wp-alp-primary-button:hover {
+    background-color: var(--wp-alp-primary-hover) !important;
+}
+
+/* Spinner/Loader */
+.wp-alp-spinner {
+    border-top-color: var(--wp-alp-primary-color) !important;
+}
+
+/* Focus en inputs */
+.wp-alp-input:focus {
+    border-color: var(--wp-alp-primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(var(--wp-alp-primary-color-rgb, 255, 56, 92), 0.1) !important;
+}
+
+/* Input en error */
+.wp-alp-input.error {
+    border-color: var(--wp-alp-primary-color) !important;
+}
+
+/* Mensajes de error */
+.wp-alp-error-message {
+    background-color: #ffebee !important;
+    color: var(--wp-alp-primary-color) !important;
+    border-left: 4px solid var(--wp-alp-primary-color) !important;
+    padding: 10px 15px !important;
+    margin-bottom: 15px !important;
+    border-radius: 4px !important;
+}
+
+/* Mensajes de éxito */
+.wp-alp-success-message {
+    background-color: #e8f5e9 !important;
+    color: #388e3c !important;
+    border-left: 4px solid #388e3c !important;
+    padding: 10px 15px !important;
+    margin-bottom: 15px !important;
+    border-radius: 4px !important;
+}
+
+/* Verificación de código */
+.wp-alp-verification-digit {
+    border-color: #ddd !important;
+}
+
+.wp-alp-verification-digit:focus {
+    border-color: var(--wp-alp-primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(var(--wp-alp-primary-color-rgb, 255, 56, 92), 0.1) !important;
+}
+
+/* Enlaces */
+.wp-alp-link {
+    color: var(--wp-alp-primary-color) !important;
+    text-decoration: none !important;
+}
+
+.wp-alp-link:hover {
+    text-decoration: underline !important;
+}
+
+/* Script para detectar el color primario del tema */
+/* Este script detectará el color primario del tema y actualizará las variables CSS */

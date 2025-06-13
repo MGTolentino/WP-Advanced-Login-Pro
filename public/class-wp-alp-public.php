@@ -54,6 +54,15 @@ public function enqueue_styles() {
         'all'
     );
     
+    // Cargar estilos específicos para el login que se adaptarán al tema
+    wp_enqueue_style(
+        $this->plugin_name . '-login-theme',
+        plugin_dir_url(__FILE__) . 'css/login-theme.css',
+        array($this->plugin_name, $this->plugin_name . '-custom'),
+        $this->version,
+        'all'
+    );
+    
     // Verificar si estamos en una página que usa nuestras templates
     global $post;
     if ($post && is_page()) {
@@ -81,6 +90,7 @@ public function enqueue_styles() {
             // Desenqueuar y volver a enqueuar con prioridad alta para evitar conflictos
             wp_dequeue_style($this->plugin_name);
             wp_dequeue_style($this->plugin_name . '-custom');
+            wp_dequeue_style($this->plugin_name . '-login-theme');
             
             wp_enqueue_style(
                 $this->plugin_name,
@@ -94,6 +104,14 @@ public function enqueue_styles() {
                 $this->plugin_name . '-custom',
                 plugin_dir_url(__FILE__) . 'css/custom-alp-styles.css',
                 array($this->plugin_name),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            wp_enqueue_style(
+                $this->plugin_name . '-login-theme',
+                plugin_dir_url(__FILE__) . 'css/login-theme.css',
+                array($this->plugin_name, $this->plugin_name . '-custom'),
                 $this->version . '.' . time(), // Forzar recarga evitando caché
                 'all'
             );
@@ -114,7 +132,123 @@ public function enqueue_styles() {
             wp_add_inline_style($this->plugin_name . '-custom', $custom_css);
         }
     }
+    
+    // Detectar y aplicar los colores del tema actual para el login
+    add_action('wp_head', [$this, 'detect_theme_colors']);
 }
+
+    /**
+     * Detecta y aplica los colores del tema actual para el login.
+     */
+    public function detect_theme_colors() {
+        // Script en línea para detectar y aplicar los colores del tema
+        ?>
+        <script>
+        (function() {
+            // Función para convertir RGB a Hex
+            function rgbToHex(rgb) {
+                // Si ya es hex, devolverlo
+                if (rgb.startsWith('#')) return rgb;
+                
+                // Obtener los valores RGB
+                var rgbArr = rgb.match(/\d+/g);
+                if (!rgbArr || rgbArr.length < 3) return null;
+                
+                // Convertir a hex
+                return '#' + ((1 << 24) + (parseInt(rgbArr[0]) << 16) + (parseInt(rgbArr[1]) << 8) + parseInt(rgbArr[2])).toString(16).slice(1);
+            }
+            
+            // Función para calcular el color de hover (más oscuro)
+            function darkenColor(hex, percent) {
+                hex = hex.replace('#', '');
+                var r = parseInt(hex.substring(0, 2), 16);
+                var g = parseInt(hex.substring(2, 4), 16);
+                var b = parseInt(hex.substring(4, 6), 16);
+                
+                r = Math.max(0, r - percent);
+                g = Math.max(0, g - percent);
+                b = Math.max(0, b - percent);
+                
+                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+            
+            // Convertir color hex a componentes RGB
+            function hexToRgb(hex) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                } : null;
+            }
+            
+            // Función para detectar el color primario del tema
+            function detectPrimaryColor() {
+                // Intentar detectar el color de botones en el tema
+                var buttons = document.querySelectorAll('button.elementor-button, a.elementor-button, button.wp-element-button');
+                if (buttons.length > 0) {
+                    // Obtener el color de fondo del primer botón
+                    var buttonStyle = window.getComputedStyle(buttons[0]);
+                    var bgColor = buttonStyle.backgroundColor;
+                    if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+                        return rgbToHex(bgColor);
+                    }
+                }
+                
+                // Intentar detectar colores de acentuación en el tema
+                var links = document.querySelectorAll('a:not(.wp-alp-link):not(.wp-alp-button)');
+                if (links.length > 0) {
+                    // Muestrear varios enlaces para encontrar un color consistente
+                    var colorCount = {};
+                    var maxCount = 0;
+                    var dominantColor = null;
+                    
+                    for (var i = 0; i < Math.min(links.length, 10); i++) {
+                        var linkStyle = window.getComputedStyle(links[i]);
+                        var color = rgbToHex(linkStyle.color);
+                        
+                        if (color && color !== '#000000' && color !== '#ffffff') {
+                            if (!colorCount[color]) colorCount[color] = 0;
+                            colorCount[color]++;
+                            
+                            if (colorCount[color] > maxCount) {
+                                maxCount = colorCount[color];
+                                dominantColor = color;
+                            }
+                        }
+                    }
+                    
+                    if (dominantColor) return dominantColor;
+                }
+                
+                // Si no se pudo detectar, devolver el color predeterminado
+                return '#FF385C';
+            }
+            
+            // Detectar el color primario
+            var primaryColor = detectPrimaryColor();
+            var primaryHover = darkenColor(primaryColor, 20);
+            var rgbValues = hexToRgb(primaryColor);
+            var rgbString = rgbValues ? rgbValues.r + ',' + rgbValues.g + ',' + rgbValues.b : '255,56,92';
+            
+            // Crear el CSS personalizado
+            var customCSS = `
+                :root {
+                    --wp-alp-primary-color: ${primaryColor};
+                    --wp-alp-primary-hover: ${primaryHover};
+                    --wp-alp-primary-color-rgb: ${rgbString};
+                }
+            `;
+            
+            // Insertar el CSS en el head
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.appendChild(document.createTextNode(customCSS));
+            document.head.appendChild(style);
+        })();
+        </script>
+        <?php
+    }
 
     /**
      * Registra los scripts para el lado público.
@@ -465,16 +599,24 @@ public function initialize_social_scripts() {
      * Verifica un código de verificación vía AJAX.
      */
     public function verify_code_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación de nonce con opción de fallar silenciosamente (no terminar ejecución)
+        $nonce_valid = check_ajax_referer('wp_alp_nonce', 'nonce', false);
+        
+        // Log para depuración
+        error_log('WP_ALP: Verificando código, nonce válido: ' . ($nonce_valid ? 'Sí' : 'No'));
         
         if (!isset($_POST['code']) || empty($_POST['code']) || !isset($_POST['user_id']) || empty($_POST['user_id'])) {
             wp_send_json_error(array(
                 'message' => __('El código de verificación y el ID de usuario son obligatorios.', 'wp-alp'),
             ));
+            return;
         }
         
         $code = sanitize_text_field($_POST['code']);
         $user_id = intval($_POST['user_id']);
+        
+        // Más logs para depuración
+        error_log('WP_ALP: Verificando código ' . $code . ' para usuario ' . $user_id);
         
         $result = WP_ALP_Forms::process_verification_code($user_id, $code);
         
@@ -483,9 +625,13 @@ public function initialize_social_scripts() {
             $user_type = get_user_meta($user_id, 'wp_alp_user_type', true);
             $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
             
+            // Generar un nuevo nonce válido para el usuario actual
+            $new_nonce = wp_create_nonce('wp_alp_nonce');
+            
             $response = array(
                 'success' => true,
                 'message' => $result['message'],
+                'new_nonce' => $new_nonce
             );
             
             if ($user_type === '' || $profile_status === 'incomplete') {
@@ -495,8 +641,10 @@ public function initialize_social_scripts() {
                 $response['redirect'] = get_option('wp_alp_redirect_after_login', home_url());
             }
             
+            error_log('WP_ALP: Verificación exitosa, enviando respuesta');
             wp_send_json_success($response);
         } else {
+            error_log('WP_ALP: Verificación fallida: ' . $result['message']);
             wp_send_json_error(array(
                 'message' => $result['message'],
             ));

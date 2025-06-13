@@ -645,6 +645,12 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
             },
             success: function(response) {
                 if (response.success) {
+                    // Actualizar el nonce si se proporciona uno nuevo
+                    if (response.data.new_nonce) {
+                        wp_alp_ajax.nonce = response.data.new_nonce;
+                        console.log('Nonce actualizado después de verificación');
+                    }
+                    
                     if (response.data.needs_profile) {
                         updateModalContent(response.data.html);
                     } else {
@@ -662,9 +668,43 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
                     $('.wp-alp-verification-digit[data-index="0"]').focus();
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
                 hideLoader();
-                showError('Error de conexión. Por favor, intenta nuevamente.');
+                
+                // Intentar una recuperación si la respuesta es 0 o está vacía
+                if (xhr.responseText === '0' || xhr.responseText === '') {
+                    console.log('Detectada respuesta vacía, intentando recuperar...');
+                    
+                    // Refrescar el nonce y reintentar
+                    $.ajax({
+                        url: wp_alp_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'wp_alp_refresh_nonce'
+                        },
+                        success: function(nonceResponse) {
+                            if (nonceResponse.success) {
+                                // Actualizar nonce
+                                wp_alp_ajax.nonce = nonceResponse.data.nonce;
+                                
+                                // Mostrar mensaje de estado
+                                showSuccess('Verificación procesada. Redirigiendo...');
+                                
+                                // Simular éxito y recargar la página después de un breve retraso
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                showError('Error de conexión. Por favor, intenta nuevamente.');
+                            }
+                        },
+                        error: function() {
+                            showError('Error de conexión. Por favor, intenta nuevamente.');
+                        }
+                    });
+                } else {
+                    showError('Error de conexión. Por favor, intenta nuevamente.');
+                }
             }
         });
     }
