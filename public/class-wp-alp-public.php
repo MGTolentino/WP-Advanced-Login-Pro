@@ -166,9 +166,11 @@ public function enqueue_styles() {
             // Función para convertir RGB a Hex
             function rgbToHex(rgb) {
                 // Si ya es hex, devolverlo
-                if (rgb.startsWith('#')) return rgb;
+                if (rgb && typeof rgb === 'string' && rgb.startsWith('#')) return rgb;
                 
                 // Obtener los valores RGB
+                if (!rgb || typeof rgb !== 'string') return null;
+                
                 var rgbArr = rgb.match(/\d+/g);
                 if (!rgbArr || rgbArr.length < 3) return null;
                 
@@ -178,53 +180,212 @@ public function enqueue_styles() {
             
             // Función para calcular el color de hover (más oscuro)
             function darkenColor(hex, percent) {
-                hex = hex.replace('#', '');
-                var r = parseInt(hex.substring(0, 2), 16);
-                var g = parseInt(hex.substring(2, 4), 16);
-                var b = parseInt(hex.substring(4, 6), 16);
+                if (!hex) return '#d42e4e'; // Color oscuro predeterminado si no hay hex
                 
-                r = Math.max(0, r - percent);
-                g = Math.max(0, g - percent);
-                b = Math.max(0, b - percent);
-                
-                return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                try {
+                    hex = hex.replace('#', '');
+                    var r = parseInt(hex.substring(0, 2), 16);
+                    var g = parseInt(hex.substring(2, 4), 16);
+                    var b = parseInt(hex.substring(4, 6), 16);
+                    
+                    r = Math.max(0, r - percent);
+                    g = Math.max(0, g - percent);
+                    b = Math.max(0, b - percent);
+                    
+                    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                } catch (e) {
+                    console.error('Error al oscurecer color:', e);
+                    return '#d42e4e'; // Color oscuro predeterminado en caso de error
+                }
             }
             
             // Convertir color hex a componentes RGB
             function hexToRgb(hex) {
-                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                } : null;
+                if (!hex) return {r: 255, g: 56, b: 92}; // Valores predeterminados
+                
+                try {
+                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : {r: 255, g: 56, b: 92}; // Valores predeterminados si no hay coincidencia
+                } catch (e) {
+                    console.error('Error al convertir hex a RGB:', e);
+                    return {r: 255, g: 56, b: 92}; // Valores predeterminados en caso de error
+                }
             }
             
-            // Función para detectar el color primario del tema
+            // Función para extraer el valor de una variable CSS desde un elemento
+            function getElementComputedVar(element, varName) {
+                try {
+                    var styles = window.getComputedStyle(element);
+                    var value = styles.getPropertyValue(varName).trim();
+                    
+                    // Si el valor es una variable CSS, extraer su valor real
+                    if (value.startsWith('var(')) {
+                        var nestedVar = value.match(/var\((.*?)[,)]/);
+                        if (nestedVar && nestedVar[1]) {
+                            return getElementComputedVar(element, nestedVar[1].trim());
+                        }
+                    }
+                    
+                    return value || null;
+                } catch (e) {
+                    console.error('Error al obtener variable CSS:', e);
+                    return null;
+                }
+            }
+            
+            // Función para obtener el color computado real de un elemento
+            function getComputedColorValue(element, property) {
+                try {
+                    var style = window.getComputedStyle(element);
+                    var value = style[property];
+                    
+                    // Si el valor es 'rgba(0, 0, 0, 0)' o 'transparent', devolver null
+                    if (value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
+                        return null;
+                    }
+                    
+                    return value;
+                } catch (e) {
+                    console.error('Error al obtener color computado:', e);
+                    return null;
+                }
+            }
+            
+            // Función para detectar el color primario del tema - versión mejorada
             function detectPrimaryColor() {
-                // Buscar variables CSS del tema
+                console.log('Iniciando detección avanzada de colores primarios...');
+                
+                // 1. Lista ampliada de variables CSS para buscar
                 var cssVars = [
+                    '--color-primary',          // Más común
+                    '--primary-color',          // Alternativa común
                     '--e-global-color-primary', // Elementor
-                    '--global--color-primary', // WordPress
-                    '--vamtam-accent-color-1', // Algunos temas
-                    '--accent-color', // Algunos temas
-                    '--primary-color', // Temas comunes
-                    '--color-primary', // Temas comunes
-                    '--theme-color-primary', // Otros temas
-                    '--main-color' // Otros temas
+                    '--global--color-primary',  // WordPress
+                    '--vamtam-accent-color-1',  // Algunos temas
+                    '--accent-color',           // Algunos temas
+                    '--theme-color-primary',    // Otros temas
+                    '--main-color',             // Otros temas
+                    '--brand-color',            // Algunos temas
+                    '--hp-color-primary',       // HivePress
+                    '--color-accent',           // Variante común
+                    '--main-brand-color',       // Variante común
+                    '--theme-primary-color'     // Variante común
                 ];
                 
-                // Intentar obtener variables CSS del :root
-                var rootStyles = window.getComputedStyle(document.documentElement);
-                for (var i = 0; i < cssVars.length; i++) {
-                    var value = rootStyles.getPropertyValue(cssVars[i]);
-                    if (value && value.trim() !== '' && value !== 'transparent' && value !== 'inherit') {
-                        console.log('Detectado color primario desde CSS var: ' + cssVars[i] + ' = ' + value);
-                        return value.trim();
+                // 2. Buscar en :root, html y body
+                var elements = [document.documentElement, document.body, document.querySelector('html')];
+                for (var e = 0; e < elements.length; e++) {
+                    var element = elements[e];
+                    if (!element) continue;
+                    
+                    for (var i = 0; i < cssVars.length; i++) {
+                        var value = getElementComputedVar(element, cssVars[i]);
+                        if (value && value !== 'transparent' && value !== 'inherit') {
+                            console.log('Detectado color primario desde variable CSS en ' + (e === 0 ? ':root' : (e === 1 ? 'body' : 'html')) + ': ' + cssVars[i] + ' = ' + value);
+                            return value;
+                        }
                     }
                 }
                 
-                // Intentar detectar el color de botones en el tema (prioridad más alta)
+                // 3. Buscar elementos que tengan estilos calculados que usen var()
+                console.log('Buscando elementos que usan variables CSS en sus estilos calculados...');
+                
+                // Selectores de elementos que posiblemente usan la variable de color primario
+                var potentialElements = [
+                    'a.button', 'button.primary', '.btn-primary', 
+                    'header', '.site-header', '.navbar', 
+                    '.main-navigation', '.elementor-button',
+                    '.wp-block-button__link', '.site-title',
+                    '.elementor-heading-title', '.logo', '.brand',
+                    '.elementor-icon', '.nav-menu', '.menu-item',
+                    'article h1', 'article h2', '.wp-block-cover',
+                    '.hp-header', '.hp-section', '.hp-button',
+                    '.wp-element-button', '.wp-block-button',
+                    '#masthead', '.elementor-widget', '.elementor-section'
+                ];
+                
+                // Recorrer los selectores e intentar encontrar elementos con color primario
+                var allPotentialElements = [];
+                potentialElements.forEach(function(selector) {
+                    try {
+                        var elements = document.querySelectorAll(selector);
+                        if (elements.length > 0) {
+                            Array.prototype.push.apply(allPotentialElements, Array.from(elements));
+                        }
+                    } catch (e) {
+                        console.error('Error al buscar selector ' + selector, e);
+                    }
+                });
+                
+                // Examinar propiedades de los elementos potenciales
+                if (allPotentialElements.length > 0) {
+                    console.log('Analizando ' + allPotentialElements.length + ' elementos potenciales...');
+                    
+                    for (var j = 0; j < Math.min(allPotentialElements.length, 20); j++) {
+                        var element = allPotentialElements[j];
+                        
+                        // Obtener texto CSS inline
+                        var inlineStyle = element.getAttribute('style');
+                        if (inlineStyle && inlineStyle.includes('var(--color-primary)')) {
+                            console.log('Encontrado elemento con estilo inline usando var(--color-primary)');
+                            
+                            // Obtener el color calculado
+                            var bgColor = getComputedColorValue(element, 'backgroundColor');
+                            if (bgColor) {
+                                var hexBg = rgbToHex(bgColor);
+                                if (hexBg && hexBg !== '#000000' && hexBg !== '#ffffff') {
+                                    console.log('Detectado color primario desde background de elemento con var(): ' + hexBg);
+                                    return hexBg;
+                                }
+                            }
+                            
+                            var color = getComputedColorValue(element, 'color');
+                            if (color) {
+                                var hexColor = rgbToHex(color);
+                                if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                    console.log('Detectado color primario desde color de elemento con var(): ' + hexColor);
+                                    return hexColor;
+                                }
+                            }
+                            
+                            var borderColor = getComputedColorValue(element, 'borderColor');
+                            if (borderColor) {
+                                var hexBorder = rgbToHex(borderColor);
+                                if (hexBorder && hexBorder !== '#000000' && hexBorder !== '#ffffff') {
+                                    console.log('Detectado color primario desde borde de elemento con var(): ' + hexBorder);
+                                    return hexBorder;
+                                }
+                            }
+                        }
+                        
+                        // 4. Buscar cualquier propiedad CSS que pueda indicar color primario
+                        var style = window.getComputedStyle(element);
+                        var properties = ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke'];
+                        
+                        for (var p = 0; p < properties.length; p++) {
+                            var colorValue = style[properties[p]];
+                            if (colorValue && 
+                                colorValue !== 'transparent' && 
+                                colorValue !== 'rgba(0, 0, 0, 0)' &&
+                                colorValue !== 'rgb(0, 0, 0)' && 
+                                colorValue !== 'rgb(255, 255, 255)') {
+                                
+                                var hexValue = rgbToHex(colorValue);
+                                if (hexValue && hexValue !== '#000000' && hexValue !== '#ffffff') {
+                                    console.log('Detectado posible color primario desde ' + properties[p] + ' de elemento ' + element.tagName + ': ' + hexValue);
+                                    return hexValue;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // 5. Análisis específico para botones (los botones suelen usar el color primario)
+                console.log('Buscando botones y elementos de acción primaria...');
                 var buttonSelectors = [
                     'button.elementor-button', 
                     'a.elementor-button', 
@@ -234,117 +395,243 @@ public function enqueue_styles() {
                     '.wp-block-button__link',
                     'button.btn',
                     'a.btn-primary',
-                    'input[type="submit"]'
+                    'input[type="submit"]',
+                    '.hp-button--primary',
+                    '.elementor-button-wrapper .elementor-button',
+                    '.wp-block-button .wp-element-button',
+                    'button:not(.secondary):not(.wp-alp-button)',
+                    '.button:not(.secondary):not(.wp-alp-button)',
+                    '.menu-item.current-menu-item > a'
                 ];
                 
                 var allButtons = [];
                 buttonSelectors.forEach(function(selector) {
-                    var buttons = document.querySelectorAll(selector);
-                    if (buttons.length > 0) {
-                        Array.prototype.push.apply(allButtons, Array.from(buttons));
+                    try {
+                        var buttons = document.querySelectorAll(selector);
+                        if (buttons.length > 0) {
+                            Array.prototype.push.apply(allButtons, Array.from(buttons));
+                        }
+                    } catch (e) {
+                        console.error('Error al buscar selector de botón ' + selector, e);
                     }
                 });
                 
                 if (allButtons.length > 0) {
-                    // Obtener el color de fondo del primer botón
-                    for (var j = 0; j < Math.min(allButtons.length, 5); j++) {
-                        var buttonStyle = window.getComputedStyle(allButtons[j]);
+                    for (var b = 0; b < Math.min(allButtons.length, 10); b++) {
+                        var buttonStyle = window.getComputedStyle(allButtons[b]);
                         var bgColor = buttonStyle.backgroundColor;
                         if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
                             var hexColor = rgbToHex(bgColor);
-                            console.log('Detectado color primario desde botón: ' + hexColor);
-                            return hexColor;
+                            if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                console.log('Detectado color primario desde botón: ' + hexColor);
+                                return hexColor;
+                            }
                         }
-                    }
-                }
-                
-                // Intentar detectar colores de acentuación en el tema
-                var links = document.querySelectorAll('a:not(.wp-alp-link):not(.wp-alp-button)');
-                if (links.length > 0) {
-                    // Muestrear varios enlaces para encontrar un color consistente
-                    var colorCount = {};
-                    var maxCount = 0;
-                    var dominantColor = null;
-                    
-                    for (var k = 0; k < Math.min(links.length, 15); k++) {
-                        var linkStyle = window.getComputedStyle(links[k]);
-                        var color = rgbToHex(linkStyle.color);
                         
-                        if (color && color !== '#000000' && color !== '#ffffff') {
-                            if (!colorCount[color]) colorCount[color] = 0;
-                            colorCount[color]++;
-                            
-                            if (colorCount[color] > maxCount) {
-                                maxCount = colorCount[color];
-                                dominantColor = color;
+                        // Si el fondo es transparente, probar con el color del texto o borde
+                        var textColor = buttonStyle.color;
+                        if (textColor && textColor !== 'rgb(0, 0, 0)' && textColor !== 'rgb(255, 255, 255)') {
+                            var hexText = rgbToHex(textColor);
+                            if (hexText && hexText !== '#000000' && hexText !== '#ffffff') {
+                                console.log('Detectado color primario desde texto de botón: ' + hexText);
+                                return hexText;
+                            }
+                        }
+                        
+                        var borderColor = buttonStyle.borderColor;
+                        if (borderColor && borderColor !== 'transparent' && borderColor !== 'rgba(0, 0, 0, 0)') {
+                            var hexBorder = rgbToHex(borderColor);
+                            if (hexBorder && hexBorder !== '#000000' && hexBorder !== '#ffffff') {
+                                console.log('Detectado color primario desde borde de botón: ' + hexBorder);
+                                return hexBorder;
                             }
                         }
                     }
-                    
-                    if (dominantColor) {
-                        console.log('Detectado color primario desde enlaces: ' + dominantColor);
-                        return dominantColor;
-                    }
                 }
                 
-                // Buscar elementos con color de fondo que podrían indicar el color de marca
-                var colorElements = document.querySelectorAll('.elementor-heading-title, .elementor-icon, header, .site-header, .navbar');
-                if (colorElements.length > 0) {
-                    for (var m = 0; m < Math.min(colorElements.length, 5); m++) {
-                        var style = window.getComputedStyle(colorElements[m]);
-                        var bgColor = style.backgroundColor;
-                        var color = style.color;
+                // 6. Analizar elementos dinámicos que podrían tener colores calculados a partir de variables CSS
+                console.log('Analizando elementos dinámicos en busca de colores calculados...');
+                var dynamicElements = document.querySelectorAll('[class*="primary"], [class*="accent"], [class*="brand"]');
+                
+                if (dynamicElements.length > 0) {
+                    for (var d = 0; d < Math.min(dynamicElements.length, 15); d++) {
+                        var element = dynamicElements[d];
+                        var style = window.getComputedStyle(element);
                         
-                        // Preferir background si no es transparente
+                        // Verificar background-color
+                        var bgColor = style.backgroundColor;
                         if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
                             var hexBg = rgbToHex(bgColor);
-                            if (hexBg !== '#000000' && hexBg !== '#ffffff') {
-                                console.log('Detectado color primario desde fondo de elemento: ' + hexBg);
+                            if (hexBg && hexBg !== '#000000' && hexBg !== '#ffffff') {
+                                console.log('Detectado color primario desde fondo de elemento dinámico: ' + hexBg);
                                 return hexBg;
                             }
                         }
                         
-                        // Usar color de texto si es distintivo
-                        if (color) {
+                        // Verificar color
+                        var color = style.color;
+                        if (color && color !== 'rgb(0, 0, 0)' && color !== 'rgb(255, 255, 255)') {
                             var hexColor = rgbToHex(color);
-                            if (hexColor !== '#000000' && hexColor !== '#ffffff') {
-                                console.log('Detectado color primario desde texto de elemento: ' + hexColor);
+                            if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                console.log('Detectado color primario desde texto de elemento dinámico: ' + hexColor);
                                 return hexColor;
                             }
                         }
                     }
                 }
                 
+                // 7. Buscar enlaces que no sean negros ni blancos (suelen usar el color primario)
+                console.log('Analizando enlaces para detectar color consistente...');
+                var links = document.querySelectorAll('a:not(.wp-alp-link):not(.wp-alp-button):not(.button):not(.btn)');
+                
+                if (links.length > 0) {
+                    // Muestrear varios enlaces para encontrar un color consistente
+                    var colorCount = {};
+                    var maxCount = 0;
+                    var dominantColor = null;
+                    
+                    for (var l = 0; l < Math.min(links.length, 30); l++) {
+                        var linkStyle = window.getComputedStyle(links[l]);
+                        var color = linkStyle.color;
+                        
+                        if (color && color !== 'rgb(0, 0, 0)' && color !== 'rgb(255, 255, 255)') {
+                            var hexColor = rgbToHex(color);
+                            if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                if (!colorCount[hexColor]) colorCount[hexColor] = 0;
+                                colorCount[hexColor]++;
+                                
+                                if (colorCount[hexColor] > maxCount) {
+                                    maxCount = colorCount[hexColor];
+                                    dominantColor = hexColor;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (dominantColor) {
+                        console.log('Detectado color primario desde enlaces (color dominante): ' + dominantColor);
+                        return dominantColor;
+                    }
+                }
+                
+                // 8. Buscar elementos específicos del tema que podrían tener el color primario
+                console.log('Buscando elementos específicos del tema con color primario...');
+                var themeSpecificSelectors = [
+                    'header', '.site-header', '.navbar', '.main-navigation',
+                    '.logo', '.brand', '.site-title', '.site-description',
+                    '.elementor-heading-title', '.hp-page__title',
+                    '.elementor-button-wrapper', '.wp-block-buttons',
+                    '.current-menu-item', '.current_page_item'
+                ];
+                
+                for (var t = 0; t < themeSpecificSelectors.length; t++) {
+                    try {
+                        var elements = document.querySelectorAll(themeSpecificSelectors[t]);
+                        for (var i = 0; i < Math.min(elements.length, 5); i++) {
+                            var style = window.getComputedStyle(elements[i]);
+                            
+                            // Verificar background-color
+                            var bgColor = style.backgroundColor;
+                            if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+                                var hexBg = rgbToHex(bgColor);
+                                if (hexBg && hexBg !== '#000000' && hexBg !== '#ffffff') {
+                                    console.log('Detectado color primario desde fondo de elemento específico del tema: ' + hexBg);
+                                    return hexBg;
+                                }
+                            }
+                            
+                            // Verificar color de texto
+                            var color = style.color;
+                            if (color && color !== 'rgb(0, 0, 0)' && color !== 'rgb(255, 255, 255)') {
+                                var hexColor = rgbToHex(color);
+                                if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                    console.log('Detectado color primario desde texto de elemento específico del tema: ' + hexColor);
+                                    return hexColor;
+                                }
+                            }
+                            
+                            // Verificar bordes y otros indicadores de color
+                            ['borderColor', 'borderTopColor', 'borderBottomColor', 'outlineColor'].forEach(function(prop) {
+                                var propValue = style[prop];
+                                if (propValue && propValue !== 'transparent' && propValue !== 'rgba(0, 0, 0, 0)') {
+                                    var hexValue = rgbToHex(propValue);
+                                    if (hexValue && hexValue !== '#000000' && hexValue !== '#ffffff') {
+                                        console.log('Detectado color primario desde ' + prop + ' de elemento específico del tema: ' + hexValue);
+                                        return hexValue;
+                                    }
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error al buscar selector específico del tema ' + themeSpecificSelectors[t], e);
+                    }
+                }
+                
                 // Si no se pudo detectar, devolver el color predeterminado
-                console.log('No se pudo detectar color primario, usando predeterminado: #FF385C');
+                console.log('No se pudo detectar color primario después de análisis exhaustivo, usando predeterminado: #FF385C');
                 return '#FF385C';
             }
             
-            // Detectar el color primario
-            var primaryColor = detectPrimaryColor();
-            var primaryHover = darkenColor(primaryColor, 20);
-            var rgbValues = hexToRgb(primaryColor);
-            var rgbString = rgbValues ? rgbValues.r + ',' + rgbValues.g + ',' + rgbValues.b : '255,56,92';
-            
-            // Crear el CSS personalizado
-            var customCSS = `
-                :root {
-                    --wp-alp-primary-color: ${primaryColor};
-                    --wp-alp-primary-hover: ${primaryHover};
-                    --wp-alp-primary-color-rgb: ${rgbString};
-                    
-                    /* Variables para las páginas de vendedor */
-                    --wp-alp-vendor-primary: ${primaryColor};
-                    --wp-alp-vendor-primary-hover: ${primaryHover};
-                    --wp-alp-vendor-text: #222222;
-                }
-            `;
-            
-            // Insertar el CSS en el head
-            var style = document.createElement('style');
-            style.type = 'text/css';
-            style.appendChild(document.createTextNode(customCSS));
-            document.head.appendChild(style);
+            try {
+                // Detectar el color primario con el algoritmo mejorado
+                var primaryColor = detectPrimaryColor();
+                var primaryHover = darkenColor(primaryColor, 20);
+                var rgbValues = hexToRgb(primaryColor);
+                var rgbString = rgbValues ? rgbValues.r + ',' + rgbValues.g + ',' + rgbValues.b : '255,56,92';
+                
+                console.log('Color primario detectado: ' + primaryColor);
+                console.log('Color hover calculado: ' + primaryHover);
+                console.log('Valores RGB: ' + rgbString);
+                
+                // Crear el CSS personalizado
+                var customCSS = `
+                    :root {
+                        --wp-alp-primary-color: ${primaryColor};
+                        --wp-alp-primary-hover: ${primaryHover};
+                        --wp-alp-primary-color-rgb: ${rgbString};
+                        
+                        /* Variables para las páginas de vendedor */
+                        --wp-alp-vendor-primary: ${primaryColor};
+                        --wp-alp-vendor-primary-hover: ${primaryHover};
+                        --wp-alp-vendor-text: #222222;
+                    }
+                `;
+                
+                // Insertar el CSS en el head
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.appendChild(document.createTextNode(customCSS));
+                document.head.appendChild(style);
+                
+                // También actualizar las variables CSS directamente para mayor compatibilidad
+                document.documentElement.style.setProperty('--wp-alp-primary-color', primaryColor);
+                document.documentElement.style.setProperty('--wp-alp-primary-hover', primaryHover);
+                document.documentElement.style.setProperty('--wp-alp-primary-color-rgb', rgbString);
+                document.documentElement.style.setProperty('--wp-alp-vendor-primary', primaryColor);
+                document.documentElement.style.setProperty('--wp-alp-vendor-primary-hover', primaryHover);
+                
+            } catch (e) {
+                console.error('Error al ejecutar la detección de colores:', e);
+                
+                // En caso de error, establecer valores predeterminados
+                var defaultCSS = `
+                    :root {
+                        --wp-alp-primary-color: #FF385C;
+                        --wp-alp-primary-hover: #d42e4e;
+                        --wp-alp-primary-color-rgb: 255,56,92;
+                        
+                        /* Variables para las páginas de vendedor */
+                        --wp-alp-vendor-primary: #FF385C;
+                        --wp-alp-vendor-primary-hover: #d42e4e;
+                        --wp-alp-vendor-text: #222222;
+                    }
+                `;
+                
+                var defaultStyle = document.createElement('style');
+                defaultStyle.type = 'text/css';
+                defaultStyle.appendChild(document.createTextNode(defaultCSS));
+                document.head.appendChild(defaultStyle);
+            }
         })();
         </script>
         <?php

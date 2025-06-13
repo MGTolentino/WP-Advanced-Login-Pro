@@ -146,7 +146,7 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                     <!-- Columna izquierda: título principal -->
                     <div class="wp-alp-column-left">
                         <h1 class="wp-alp-steps-heading">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Start offering your event services in just a few steps' : 'Comienza a ofrecer tus servicios para eventos en pocos pasos'); ?>
                         </h1>
                     </div>
                     
@@ -158,10 +158,10 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                                 <div class="wp-alp-step-content">
                                     <span class="wp-alp-step-number">1</span>
                                     <h2 class="wp-alp-step-title">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your event service' : 'Describe tu servicio para eventos'); ?>
                                     </h2>
                                     <p class="wp-alp-step-description">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add basic information about your service, equipment, or venue for events and your availability.' : 'Agrega información básica sobre tu servicio, equipo o local para eventos y tu disponibilidad.'); ?>
                                     </p>
                                 </div>
                                 <div class="wp-alp-step-image">
@@ -174,10 +174,10 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                                 <div class="wp-alp-step-content">
                                     <span class="wp-alp-step-number">2</span>
                                     <h2 class="wp-alp-step-title">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Showcase your offering' : 'Muestra lo que ofreces'); ?>
                                     </h2>
                                     <p class="wp-alp-step-description">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add at least five photos, a title, and a description. We\'ll help you.' : 'Agrega al menos cinco fotos, un título y una descripción. Nosotros te ayudamos.'); ?>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Upload high-quality photos, create a compelling title, and write a detailed description of your event service.' : 'Sube fotos de alta calidad, crea un título atractivo y redacta una descripción detallada de tu servicio para eventos.'); ?>
                                     </p>
                                 </div>
                                 <div class="wp-alp-step-image">
@@ -190,10 +190,10 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                                 <div class="wp-alp-step-content">
                                     <span class="wp-alp-step-number">3</span>
                                     <h2 class="wp-alp-step-title">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set your prices and publish' : 'Establece tus precios y publica'); ?>
                                     </h2>
                                     <p class="wp-alp-step-description">
-                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set an initial price, check some details and publish your listing.' : 'Establece un precio inicial, verifica algunos detalles y publica tu anuncio.'); ?>
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Define your pricing structure, rental conditions, and publish your service to start receiving event bookings.' : 'Define tu estructura de precios, condiciones de renta y publica tu servicio para comenzar a recibir reservas para eventos.'); ?>
                                     </p>
                                 </div>
                                 <div class="wp-alp-step-image">
