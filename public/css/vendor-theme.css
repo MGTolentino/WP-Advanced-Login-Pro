@@ -1,0 +1,436 @@
+/**
+ * Estilos específicos para las páginas de vendedor
+ * Este archivo se enfoca exclusivamente en las páginas de vendor/seller
+ */
+
+/* Variables globales - serán sobrescritas por el script de detección de colores */
+:root {
+    --wp-alp-vendor-primary: #FF385C;
+    --wp-alp-vendor-primary-hover: #E31C5F;
+    --wp-alp-vendor-text: #222222;
+    --wp-alp-vendor-border: #e4e4e4;
+    --wp-alp-vendor-background: #ffffff;
+    --wp-alp-vendor-light-bg: #f8f8f8;
+}
+
+/* Estilos de estructura básica para el contenedor principal */
+.wp-alp-vendor-page, 
+.wp-alp-vendor-form-page {
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 24px !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    color: var(--wp-alp-vendor-text) !important;
+    line-height: 1.5 !important;
+}
+
+/* Estilos para el contenedor */
+.wp-alp-container {
+    width: 100% !important;
+    max-width: 1140px !important;
+    margin: 0 auto !important;
+    padding: 0 15px !important;
+}
+
+/* Hero section */
+.wp-alp-vendor-hero {
+    text-align: center !important;
+    padding: 60px 20px !important;
+    background-color: var(--wp-alp-vendor-light-bg) !important;
+    border-radius: 16px !important;
+    margin-bottom: 48px !important;
+}
+
+.wp-alp-vendor-hero h1 {
+    font-size: 36px !important;
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-hero-subtitle {
+    font-size: 18px !important;
+    margin-bottom: 30px !important;
+    color: #666 !important;
+    max-width: 700px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Botones CTA */
+.wp-alp-cta-button {
+    background-color: var(--wp-alp-vendor-primary) !important;
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+    transition: background-color 0.2s !important;
+}
+
+.wp-alp-cta-button:hover {
+    background-color: var(--wp-alp-vendor-primary-hover) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+/* Sección de proceso */
+.wp-alp-vendor-process {
+    padding: 40px 0 !important;
+}
+
+.wp-alp-vendor-process h2 {
+    text-align: center !important;
+    font-size: 28px !important;
+    font-weight: 600 !important;
+    margin-bottom: 40px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-process-steps {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    gap: 20px !important;
+}
+
+.wp-alp-process-step {
+    flex: 1 !important;
+    min-width: 200px !important;
+    text-align: center !important;
+    padding: 20px !important;
+    background-color: var(--wp-alp-vendor-background) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.wp-alp-process-step:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1) !important;
+}
+
+.wp-alp-step-icon {
+    width: 60px !important;
+    height: 60px !important;
+    background-color: var(--wp-alp-vendor-primary) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 auto 20px !important;
+    font-size: 24px !important;
+}
+
+.wp-alp-process-step h3 {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-process-step p {
+    font-size: 16px !important;
+    color: #666 !important;
+}
+
+/* Sección de app móvil */
+.wp-alp-vendor-mobile {
+    padding: 60px 0 !important;
+    background-color: var(--wp-alp-vendor-light-bg) !important;
+    margin: 40px 0 !important;
+    border-radius: 16px !important;
+}
+
+.wp-alp-mobile-flex {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 30px !important;
+}
+
+.wp-alp-mobile-text {
+    flex: 1 !important;
+    min-width: 300px !important;
+}
+
+.wp-alp-mobile-image {
+    flex: 1 !important;
+    min-width: 300px !important;
+    text-align: center !important;
+}
+
+.wp-alp-mobile-image img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+.wp-alp-mobile-text h2 {
+    font-size: 28px !important;
+    font-weight: 600 !important;
+    margin-bottom: 20px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-mobile-content h3 {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--wp-alp-vendor-primary) !important;
+    margin-bottom: 5px !important;
+}
+
+.wp-alp-mobile-content h4 {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+/* Sección de características */
+.wp-alp-vendor-features {
+    padding: 40px 0 !important;
+}
+
+.wp-alp-features-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    gap: 30px !important;
+}
+
+.wp-alp-feature {
+    padding: 30px !important;
+    background-color: var(--wp-alp-vendor-background) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.wp-alp-feature:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+}
+
+.wp-alp-feature i {
+    font-size: 32px !important;
+    color: var(--wp-alp-vendor-primary) !important;
+    margin-bottom: 20px !important;
+}
+
+.wp-alp-feature h3 {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    margin-bottom: 15px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-feature p {
+    font-size: 16px !important;
+    color: #666 !important;
+    line-height: 1.6 !important;
+}
+
+/* Sección de galería */
+.wp-alp-vendor-gallery {
+    padding: 40px 0 !important;
+}
+
+.wp-alp-vendor-gallery h2 {
+    text-align: center !important;
+    font-size: 28px !important;
+    font-weight: 600 !important;
+    margin-bottom: 40px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-gallery-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    gap: 30px !important;
+}
+
+.wp-alp-gallery-item {
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+}
+
+.wp-alp-gallery-item:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.wp-alp-gallery-image img {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+}
+
+.wp-alp-gallery-caption {
+    padding: 20px !important;
+    background-color: var(--wp-alp-vendor-background) !important;
+}
+
+.wp-alp-gallery-caption h4 {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-gallery-caption p {
+    font-size: 14px !important;
+    color: #666 !important;
+}
+
+/* Sección de CTA final */
+.wp-alp-vendor-cta {
+    padding: 60px 0 !important;
+    text-align: center !important;
+    background-color: var(--wp-alp-vendor-light-bg) !important;
+    border-radius: 16px !important;
+    margin: 40px 0 !important;
+}
+
+.wp-alp-vendor-cta h2 {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    margin-bottom: 15px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-vendor-cta p {
+    font-size: 18px !important;
+    margin-bottom: 30px !important;
+    color: #666 !important;
+    max-width: 600px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+/* Estilos específicos para pasos */
+.wp-alp-steps-heading {
+    font-size: 32px !important;
+    font-weight: 600 !important;
+    margin-bottom: 24px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-steps-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 32px !important;
+}
+
+.wp-alp-step-item {
+    display: flex !important;
+    align-items: center !important;
+    gap: 24px !important;
+}
+
+.wp-alp-step-content {
+    flex: 2 !important;
+}
+
+.wp-alp-step-image {
+    flex: 1 !important;
+    text-align: center !important;
+}
+
+.wp-alp-step-image img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.wp-alp-step-number {
+    display: inline-block !important;
+    width: 32px !important;
+    height: 32px !important;
+    background-color: var(--wp-alp-vendor-primary) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    text-align: center !important;
+    line-height: 32px !important;
+    margin-bottom: 12px !important;
+}
+
+.wp-alp-step-title {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-step-description {
+    font-size: 16px !important;
+    color: #666 !important;
+}
+
+.wp-alp-steps-action {
+    margin-top: 48px !important;
+    text-align: center !important;
+}
+
+.wp-alp-steps-button {
+    background-color: var(--wp-alp-vendor-primary) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s !important;
+}
+
+.wp-alp-steps-button:hover {
+    background-color: var(--wp-alp-vendor-primary-hover) !important;
+}
+
+/* Columnas */
+.wp-alp-two-column-layout {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    margin: 0 -15px !important;
+}
+
+.wp-alp-column-left, .wp-alp-column-right {
+    flex: 1 !important;
+    min-width: 300px !important;
+    padding: 0 15px !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wp-alp-mobile-flex,
+    .wp-alp-process-steps,
+    .wp-alp-step-item {
+        flex-direction: column !important;
+    }
+    
+    .wp-alp-features-grid,
+    .wp-alp-gallery-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .wp-alp-vendor-hero h1,
+    .wp-alp-vendor-cta h2 {
+        font-size: 28px !important;
+    }
+    
+    .wp-alp-vendor-hero, 
+    .wp-alp-vendor-cta {
+        padding: 40px 20px !important;
+    }
+    
+    .wp-alp-step-image {
+        order: -1 !important;
+    }
+}

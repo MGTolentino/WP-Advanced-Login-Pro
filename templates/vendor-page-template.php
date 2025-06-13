@@ -10,6 +10,7 @@ get_header();
 // Asegurar que los estilos se carguen explícitamente en esta página
 wp_enqueue_style('wp-advanced-login-pro', plugin_dir_url(dirname(__FILE__)) . 'public/css/wp-alp-public.css', array(), '1.0.0', 'all');
 wp_enqueue_style('wp-advanced-login-pro-custom', plugin_dir_url(dirname(__FILE__)) . 'public/css/custom-alp-styles.css', array('wp-advanced-login-pro'), '1.0.0', 'all');
+wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__)) . 'public/css/vendor-theme.css', array('wp-advanced-login-pro', 'wp-advanced-login-pro-custom'), '1.0.0', 'all');
 ?>
 
 <!-- Estilos críticos inline para asegurar apariencia correcta -->

@@ -63,6 +63,15 @@ public function enqueue_styles() {
         'all'
     );
     
+    // Cargar estilos específicos para las páginas de vendedor
+    wp_enqueue_style(
+        $this->plugin_name . '-vendor-theme',
+        plugin_dir_url(__FILE__) . 'css/vendor-theme.css',
+        array($this->plugin_name, $this->plugin_name . '-custom', $this->plugin_name . '-login-theme'),
+        $this->version,
+        'all'
+    );
+    
     // Verificar si estamos en una página que usa nuestras templates
     global $post;
     if ($post && is_page()) {
@@ -91,6 +100,7 @@ public function enqueue_styles() {
             wp_dequeue_style($this->plugin_name);
             wp_dequeue_style($this->plugin_name . '-custom');
             wp_dequeue_style($this->plugin_name . '-login-theme');
+            wp_dequeue_style($this->plugin_name . '-vendor-theme');
             
             wp_enqueue_style(
                 $this->plugin_name,
@@ -112,6 +122,14 @@ public function enqueue_styles() {
                 $this->plugin_name . '-login-theme',
                 plugin_dir_url(__FILE__) . 'css/login-theme.css',
                 array($this->plugin_name, $this->plugin_name . '-custom'),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            wp_enqueue_style(
+                $this->plugin_name . '-vendor-theme',
+                plugin_dir_url(__FILE__) . 'css/vendor-theme.css',
+                array($this->plugin_name, $this->plugin_name . '-custom', $this->plugin_name . '-login-theme'),
                 $this->version . '.' . time(), // Forzar recarga evitando caché
                 'all'
             );
@@ -237,6 +255,11 @@ public function enqueue_styles() {
                     --wp-alp-primary-color: ${primaryColor};
                     --wp-alp-primary-hover: ${primaryHover};
                     --wp-alp-primary-color-rgb: ${rgbString};
+                    
+                    /* Variables para las páginas de vendedor */
+                    --wp-alp-vendor-primary: ${primaryColor};
+                    --wp-alp-vendor-primary-hover: ${primaryHover};
+                    --wp-alp-vendor-text: #222222;
                 }
             `;
             
