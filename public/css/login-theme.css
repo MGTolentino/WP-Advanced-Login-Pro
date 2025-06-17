@@ -4,8 +4,8 @@
  */
 
 :root {
-    --wp-alp-primary-color: var(--wp-admin-theme-color, #FF385C);  /* Color predeterminado */
-    --wp-alp-primary-hover: var(--wp-admin-theme-color-darker-10, #E31C5F);  /* Versión más oscura para hover */
+    --wp-alp-primary-color: #cbb881;  /* Color predeterminado */
+    --wp-alp-primary-hover: #a99969;  /* Versión más oscura para hover */
     --wp-alp-text-color: #222222;
     --wp-alp-border-color: #e4e4e4;
     --wp-alp-background: #ffffff;
