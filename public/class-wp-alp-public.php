@@ -180,7 +180,7 @@ public function enqueue_styles() {
             
             // Función para calcular el color de hover (más oscuro)
             function darkenColor(hex, percent) {
-                if (!hex) return '#d42e4e'; // Color oscuro predeterminado si no hay hex
+                if (!hex) return '#a99969'; // Color oscuro predeterminado si no hay hex
                 
                 try {
                     hex = hex.replace('#', '');
@@ -201,7 +201,7 @@ public function enqueue_styles() {
             
             // Convertir color hex a componentes RGB
             function hexToRgb(hex) {
-                if (!hex) return {r: 255, g: 56, b: 92}; // Valores predeterminados
+                if (!hex) return {r: 203, g: 184, b: 129}; // Valores predeterminados
                 
                 try {
                     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -209,10 +209,10 @@ public function enqueue_styles() {
                         r: parseInt(result[1], 16),
                         g: parseInt(result[2], 16),
                         b: parseInt(result[3], 16)
-                    } : {r: 255, g: 56, b: 92}; // Valores predeterminados si no hay coincidencia
+                    } : {r: 203, g: 184, b: 129}; // Valores predeterminados si no hay coincidencia
                 } catch (e) {
                     console.error('Error al convertir hex a RGB:', e);
-                    return {r: 255, g: 56, b: 92}; // Valores predeterminados en caso de error
+                    return {r: 203, g: 184, b: 129}; // Valores predeterminados en caso de error
                 }
             }
             
@@ -568,8 +568,8 @@ public function enqueue_styles() {
                 }
                 
                 // Si no se pudo detectar, devolver el color predeterminado
-                console.log('No se pudo detectar color primario después de análisis exhaustivo, usando predeterminado: #FF385C');
-                return '#FF385C';
+                console.log('No se pudo detectar color primario después de análisis exhaustivo, usando predeterminado: #cbb881');
+                return '#cbb881';
             }
             
             try {
@@ -577,7 +577,7 @@ public function enqueue_styles() {
                 var primaryColor = detectPrimaryColor();
                 var primaryHover = darkenColor(primaryColor, 20);
                 var rgbValues = hexToRgb(primaryColor);
-                var rgbString = rgbValues ? rgbValues.r + ',' + rgbValues.g + ',' + rgbValues.b : '255,56,92';
+                var rgbString = rgbValues ? rgbValues.r + ',' + rgbValues.g + ',' + rgbValues.b : '203,184,129';
                 
                 console.log('Color primario detectado: ' + primaryColor);
                 console.log('Color hover calculado: ' + primaryHover);
@@ -616,13 +616,13 @@ public function enqueue_styles() {
                 // En caso de error, establecer valores predeterminados
                 var defaultCSS = `
                     :root {
-                        --wp-alp-primary-color: #FF385C;
-                        --wp-alp-primary-hover: #d42e4e;
-                        --wp-alp-primary-color-rgb: 255,56,92;
+                        --wp-alp-primary-color: #cbb881;
+                        --wp-alp-primary-hover: #a99969;
+                        --wp-alp-primary-color-rgb: 203,184,129;
                         
                         /* Variables para las páginas de vendedor */
-                        --wp-alp-vendor-primary: #FF385C;
-                        --wp-alp-vendor-primary-hover: #d42e4e;
+                        --wp-alp-vendor-primary: #cbb881;
+                        --wp-alp-vendor-primary-hover: #a99969;
                         --wp-alp-vendor-text: #222222;
                     }
                 `;
