@@ -91,7 +91,7 @@ function wp_alp_add_login_button_styles() {
         body #menu-main-menu .menu-item.wp-alp-login-trigger a,
         body .menu-item a[href="#"][data-wp-alp-trigger="login"],
         body .menu-item.wp-alp-login-trigger a[href="#"] {
-            background-color: #FF385C !important;
+            background-color: #cbb881 !important;
             color: white !important;
             border-radius: 8px !important;
             padding: 10px 16px !important;
@@ -108,7 +108,7 @@ function wp_alp_add_login_button_styles() {
         body #menu-main-menu .menu-item.wp-alp-login-trigger a:hover,
         body .menu-item a[href="#"][data-wp-alp-trigger="login"]:hover,
         body .menu-item.wp-alp-login-trigger a[href="#"]:hover {
-            background-color: #E31C5F !important;
+            background-color: #a99969 !important;
             color: white !important;
         }
     </style>
