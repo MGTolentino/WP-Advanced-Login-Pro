@@ -708,33 +708,55 @@ if (get_option('wp_alp_enable_social_login', true)) {
     }
 }
 
-// Añadir script para insertar el botón en el menú principal
-wp_add_inline_script($this->plugin_name, '
-    jQuery(document).ready(function($) {
-        // Eliminar el botón si ya existe en otra posición
-        $(".wp-alp-vendor-button").remove();
-        
-        // URL condicional según el dominio
-        var currentDomain = window.location.hostname;
-        var vendorPageUrl = "";
-        var buttonText = "";
-        
-        if (currentDomain.includes("bookit.events")) {
-            vendorPageUrl = "' . site_url('/become-a-seller/') . '";
-            buttonText = "Become a seller";
-        } else if (currentDomain.includes("reservas.events")) {
-            vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
-            buttonText = "Conviértete en vendedor";
-        } else {
-            // URL predeterminada por si acaso
-            vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
-            buttonText = "Conviértete en vendedor";
+// Añadir script para insertar el botón en el menú principal solo si el usuario está logueado y no es vendor
+if (is_user_logged_in()) {
+    $show_vendor_button = true;
+    $current_user_id = get_current_user_id();
+    
+    // Si no es admin, verificar si ya es vendor
+    if (!current_user_can('administrator')) {
+        if (class_exists('\HivePress\Models\Vendor')) {
+            $vendor = \HivePress\Models\Vendor::query()->filter([
+                'user' => $current_user_id,
+            ])->get_first();
+            
+            // Si el usuario ya tiene un vendor, no mostrar el botón
+            if ($vendor) {
+                $show_vendor_button = false;
+            }
         }
-        
-        // Insertar el botón ANTES del elemento "Official Stores" en el menú con el texto actualizado
-        $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"" + vendorPageUrl + "\" class=\"wp-alp-vendor-button-link\">" + buttonText + "</a></li>");
-    });
-');
+    }
+    
+    // Solo insertar el botón si debe mostrarse
+    if ($show_vendor_button) {
+        wp_add_inline_script($this->plugin_name, '
+            jQuery(document).ready(function($) {
+                // Eliminar el botón si ya existe en otra posición
+                $(".wp-alp-vendor-button").remove();
+                
+                // URL condicional según el dominio
+                var currentDomain = window.location.hostname;
+                var vendorPageUrl = "";
+                var buttonText = "";
+                
+                if (currentDomain.includes("bookit.events")) {
+                    vendorPageUrl = "' . site_url('/become-a-seller/') . '";
+                    buttonText = "Become a seller";
+                } else if (currentDomain.includes("reservas.events")) {
+                    vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
+                    buttonText = "Conviértete en vendedor";
+                } else {
+                    // URL predeterminada por si acaso
+                    vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
+                    buttonText = "Conviértete en vendedor";
+                }
+                
+                // Insertar el botón ANTES del elemento "Official Stores" en el menú con el texto actualizado
+                $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"" + vendorPageUrl + "\" class=\"wp-alp-vendor-button-link\">" + buttonText + "</a></li>");
+            });
+        ');
+    }
+}
     }
 
     /**
