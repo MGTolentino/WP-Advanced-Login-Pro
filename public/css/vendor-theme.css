@@ -13,6 +13,21 @@
     --wp-alp-vendor-light-bg: #f8f8f8;
 }
 
+/* Variables específicas para la página del formulario de vendedor */
+.wp-alp-vendor-form-page {
+    --wp-alp-spacing-base: 24px !important;
+    --wp-alp-spacing-large: 48px !important;
+    --wp-alp-spacing-small: 16px !important;
+    --wp-alp-border-radius: 12px !important;
+    --wp-alp-color-primary: var(--wp-admin-theme-color, #cbb881) !important;
+    --wp-alp-color-text: #222 !important;
+    --wp-alp-color-background: #fff !important;
+    --wp-alp-color-border: #e4e4e4 !important;
+    margin: 0 auto !important;
+    max-width: 1200px !important;
+    padding: 24px !important;
+}
+
 /* Estilos de estructura básica para el contenedor principal */
 .wp-alp-vendor-page, 
 .wp-alp-vendor-form-page {
@@ -397,7 +412,7 @@
 }
 
 .wp-alp-steps-button:hover {
-    background-color: var(--wp-alp-vendor-primary-hover) !important;
+    background-color: var(--wp-admin-theme-color-darker-10, #a99969) !important;
 }
 
 /* Columnas */

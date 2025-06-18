@@ -31,7 +31,7 @@
     --wp-alp-spacing-large: 48px;
     --wp-alp-spacing-small: 16px;
     --wp-alp-border-radius: 12px;
-    --wp-alp-color-primary: #cbb881;
+    --wp-alp-color-primary: var(--wp-admin-theme-color, #cbb881);
     --wp-alp-color-text: #222;
     --wp-alp-color-background: #fff;
     --wp-alp-color-border: #e4e4e4;
@@ -78,8 +78,8 @@
 }
 
 .wp-alp-airbnb-category-item.selected {
-    border-color: var(--wp-alp-color-primary);
-    box-shadow: 0 0 0 2px var(--wp-alp-color-primary);
+    border-color: var(--wp-admin-theme-color, #cbb881);
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #cbb881);
 }
 
 /* Mejora de la experiencia del usuario con efectos visuales */
@@ -105,12 +105,12 @@
 }
 
 .wp-alp-airbnb-next-btn {
-    background-color: var(--wp-alp-color-primary);
+    background-color: var(--wp-admin-theme-color, #cbb881);
     color: white;
 }
 
 .wp-alp-airbnb-next-btn:hover {
-    background-color: var(--wp-alp-primary-hover, #a99969);
+    background-color: var(--wp-admin-theme-color-darker-10, #a99969);
     color: white;
 }
 
@@ -123,7 +123,7 @@
 
 .wp-alp-airbnb-progress-completed {
     height: 100%;
-    background-color: var(--wp-alp-color-primary);
+    background-color: var(--wp-admin-theme-color, #cbb881);
     transition: width 0.3s ease;
 }
 
@@ -151,8 +151,8 @@
 }
 
 .wp-alp-airbnb-service-option.selected {
-    border-color: var(--wp-alp-color-primary);
-    box-shadow: 0 0 0 2px var(--wp-alp-color-primary);
+    border-color: var(--wp-admin-theme-color, #cbb881);
+    box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #cbb881);
 }
 
 /* Mejoras para formularios en el paso 2 */
@@ -225,7 +225,7 @@
     height: 40px;
     border: 4px solid rgba(203, 184, 129, 0.1);
     border-radius: 50%;
-    border-top-color: var(--wp-alp-primary-color, #cbb881);
+    border-top-color: var(--wp-admin-theme-color, #cbb881);
     animation: spin 1s linear infinite;
 }
 
@@ -362,13 +362,13 @@
 
 /* Mejora para los botones principales */
 .wp-alp-primary-button {
-    background-color: var(--wp-alp-primary-color, #cbb881) !important;
+    background-color: var(--wp-admin-theme-color, #cbb881) !important;
     color: white !important;
     transition: background-color 0.2s, transform 0.1s !important;
 }
 
 .wp-alp-primary-button:hover {
-    background-color: var(--wp-alp-primary-hover, #a99969) !important;
+    background-color: var(--wp-admin-theme-color-darker-10, #a99969) !important;
 }
 
 .wp-alp-primary-button:active {
@@ -403,7 +403,7 @@
 }
 
 .wp-alp-back-button:hover {
-    color: var(--wp-alp-primary-color, #cbb881) !important;
+    color: var(--wp-admin-theme-color, #cbb881) !important;
 }
 
 /* Reposicionar botón de cierre al lado derecho */
@@ -467,7 +467,7 @@ body #menu-main-menu .menu-item a[data-wp-alp-trigger="login"],
 body #menu-main-menu .menu-item.wp-alp-login-trigger a,
 body .menu-item a[href="#"][data-wp-alp-trigger="login"],
 body .menu-item.wp-alp-login-trigger a[href="#"] {
-    background-color: var(--wp-alp-primary-color, #cbb881) !important;
+    background-color: var(--wp-admin-theme-color, #cbb881) !important;
     color: white !important;
     border-radius: 8px !important;
     padding: 10px 16px !important;
@@ -484,6 +484,6 @@ body #menu-main-menu .menu-item a[data-wp-alp-trigger="login"]:hover,
 body #menu-main-menu .menu-item.wp-alp-login-trigger a:hover,
 body .menu-item a[href="#"][data-wp-alp-trigger="login"]:hover,
 body .menu-item.wp-alp-login-trigger a[href="#"]:hover {
-    background-color: var(--wp-alp-primary-hover, #a99969) !important;
+    background-color: var(--wp-admin-theme-color-darker-10, #a99969) !important;
     color: white !important;
 }

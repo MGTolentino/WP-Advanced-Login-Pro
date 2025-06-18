@@ -78,42 +78,14 @@ function wp_alp_modify_menu_items($items, $args) {
 add_filter('wp_nav_menu_items', 'wp_alp_modify_menu_items', 10, 2);
 
 /**
- * Agrega estilos personalizados para el botón de login en el menú.
- * Utiliza !important para sobrescribir los estilos de Elementor.
+ * Los estilos del botón de login se han movido al archivo custom-alp-styles.css
+ * para mejorar el rendimiento y la mantenibilidad.
  */
 function wp_alp_add_login_button_styles() {
-    ?>
-    <style>
-        /* Estilos de alta especificidad para sobrescribir Elementor */
-        body .elementor-nav-menu .menu-item a[data-wp-alp-trigger="login"],
-        body .elementor-widget-container .menu-item.wp-alp-login-trigger a,
-        body #menu-main-menu .menu-item a[data-wp-alp-trigger="login"],
-        body #menu-main-menu .menu-item.wp-alp-login-trigger a,
-        body .menu-item a[href="#"][data-wp-alp-trigger="login"],
-        body .menu-item.wp-alp-login-trigger a[href="#"] {
-            background-color: #cbb881 !important;
-            color: white !important;
-            border-radius: 8px !important;
-            padding: 10px 16px !important;
-            font-weight: 500 !important;
-            transition: background-color 0.2s !important;
-            text-decoration: none !important;
-            display: inline-block !important;
-        }
-        
-        /* Hover state */
-        body .elementor-nav-menu .menu-item a[data-wp-alp-trigger="login"]:hover,
-        body .elementor-widget-container .menu-item.wp-alp-login-trigger a:hover,
-        body #menu-main-menu .menu-item a[data-wp-alp-trigger="login"]:hover,
-        body #menu-main-menu .menu-item.wp-alp-login-trigger a:hover,
-        body .menu-item a[href="#"][data-wp-alp-trigger="login"]:hover,
-        body .menu-item.wp-alp-login-trigger a[href="#"]:hover {
-            background-color: #a99969 !important;
-            color: white !important;
-        }
-    </style>
-    <?php
+    // Los estilos ahora están en el archivo CSS correspondiente
+    // y se cargan mediante wp_enqueue_style
 }
+// La acción se mantiene por retrocompatibilidad pero no hace nada
 add_action('wp_head', 'wp_alp_add_login_button_styles');
 
 /**
