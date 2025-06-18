@@ -16,9 +16,7 @@
 /* Estilos de estructura básica para el contenedor principal */
 .wp-alp-vendor-page, 
 .wp-alp-vendor-form-page {
-    max-width: 1200px !important;
-    margin: 0 auto !important;
-    padding: 24px !important;
+    width: 100% !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
     color: var(--wp-alp-vendor-text) !important;
     line-height: 1.5 !important;
@@ -249,7 +247,7 @@
 
 .wp-alp-gallery-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
     gap: 30px !important;
 }
 
@@ -265,9 +263,15 @@
     box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
 }
 
+.wp-alp-gallery-image {
+    height: 200px !important;
+    overflow: hidden !important;
+}
+
 .wp-alp-gallery-image img {
     width: 100% !important;
-    height: auto !important;
+    height: 100% !important;
+    object-fit: cover !important;
     display: block !important;
 }
 
@@ -408,6 +412,12 @@
 }
 
 /* Responsive */
+@media (max-width: 992px) {
+    .wp-alp-gallery-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
 @media (max-width: 768px) {
     .wp-alp-mobile-flex,
     .wp-alp-process-steps,

@@ -20,15 +20,17 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
         --wp-alp-spacing-large: 48px;
         --wp-alp-spacing-small: 16px;
         --wp-alp-border-radius: 12px;
-        --wp-alp-color-primary: #FF385C;
+        --wp-alp-color-primary: #cbb881;
         --wp-alp-color-text: #222;
         --wp-alp-color-background: #fff;
         --wp-alp-color-border: #e4e4e4;
     }
     .wp-alp-container {
         max-width: 1200px;
+        width: 100%;
         margin: 0 auto;
         padding: 0 20px;
+        box-sizing: border-box;
     }
     .wp-alp-vendor-hero {
         text-align: center;
@@ -48,7 +50,7 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
         color: #666;
     }
     .wp-alp-cta-button {
-        background-color: #FF385C;
+        background-color: #cbb881;
         color: white !important;
         font-size: 16px;
         font-weight: 600;
@@ -59,7 +61,7 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
         transition: background-color 0.2s;
     }
     .wp-alp-cta-button:hover {
-        background-color: #E31C5F;
+        background-color: #a99969;
         color: white !important;
         text-decoration: none;
     }
@@ -77,7 +79,7 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
     }
     .wp-alp-gallery-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 24px;
         margin: 30px 0;
     }
@@ -86,10 +88,25 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
         overflow: hidden;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
+    .wp-alp-gallery-image {
+        height: 200px;
+        overflow: hidden;
+    }
     .wp-alp-gallery-image img {
         width: 100%;
-        height: auto;
+        height: 100%;
+        object-fit: cover;
         display: block;
+    }
+    @media (max-width: 992px) {
+        .wp-alp-gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 767px) {
+        .wp-alp-gallery-grid {
+            grid-template-columns: 1fr;
+        }
     }
     .wp-alp-gallery-caption {
         padding: 16px;
