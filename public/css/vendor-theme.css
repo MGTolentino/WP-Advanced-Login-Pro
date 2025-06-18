@@ -5,8 +5,8 @@
 
 /* Variables globales - serán sobrescritas por el script de detección de colores */
 :root {
-    --wp-alp-vendor-primary: var(--wp-alp-primary-color, #cbb881);
-    --wp-alp-vendor-primary-hover: var(--wp-alp-primary-hover, #a99969);
+    --wp-alp-vendor-primary: var(--wp-admin-theme-color, #cbb881);
+    --wp-alp-vendor-primary-hover: var(--wp-admin-theme-color-darker-10, #a99969);
     --wp-alp-vendor-text: #222222;
     --wp-alp-vendor-border: #e4e4e4;
     --wp-alp-vendor-background: #ffffff;
@@ -481,6 +481,95 @@
     width: 0% !important; /* Sin progreso inicialmente */
     background-color: var(--wp-alp-vendor-primary) !important;
     border-radius: 4px !important;
+}
+
+/* Estilos para el footer tipo Airbnb */
+.wp-alp-airbnb-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    background-color: white !important;
+    border-top: 1px solid #e4e4e4 !important;
+    padding: 16px 0 !important;
+    margin-top: 32px !important;
+    z-index: 10 !important;
+}
+
+.wp-alp-airbnb-progress-bar {
+    height: 4px !important;
+    background-color: #f0f0f0 !important;
+    margin-bottom: 16px !important;
+    border-radius: 2px !important;
+    overflow: hidden !important;
+}
+
+.wp-alp-airbnb-progress-completed {
+    height: 100% !important;
+    background-color: var(--wp-alp-vendor-primary) !important;
+    transition: width 0.3s ease !important;
+}
+
+.wp-alp-airbnb-nav {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 24px !important;
+    margin-top: 16px !important;
+}
+
+.wp-alp-airbnb-back-btn,
+.wp-alp-airbnb-next-btn {
+    text-decoration: none !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.2s !important;
+}
+
+.wp-alp-airbnb-back-btn {
+    color: var(--wp-alp-vendor-text) !important;
+    border: 1px solid #dddddd !important;
+    background-color: transparent !important;
+}
+
+.wp-alp-airbnb-back-btn:hover {
+    background-color: #f7f7f7 !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-airbnb-next-btn {
+    background-color: var(--wp-alp-vendor-primary) !important;
+    color: white !important;
+    border: 1px solid var(--wp-alp-vendor-primary) !important;
+}
+
+.wp-alp-airbnb-next-btn:hover {
+    background-color: var(--wp-alp-vendor-primary-hover) !important;
+    border-color: var(--wp-alp-vendor-primary-hover) !important;
+}
+
+/* Estilos para el header de ayuda */
+.wp-alp-airbnb-help-header {
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding: 16px 24px !important;
+    border-bottom: 1px solid #e4e4e4 !important;
+}
+
+.wp-alp-airbnb-help-links {
+    display: flex !important;
+    gap: 20px !important;
+}
+
+.wp-alp-airbnb-help-link,
+.wp-alp-airbnb-save-link {
+    color: var(--wp-alp-vendor-text) !important;
+    text-decoration: underline !important;
+    font-size: 14px !important;
+}
+
+.wp-alp-airbnb-help-link:hover,
+.wp-alp-airbnb-save-link:hover {
+    color: var(--wp-alp-vendor-primary) !important;
 }
 
 /* Responsive */
