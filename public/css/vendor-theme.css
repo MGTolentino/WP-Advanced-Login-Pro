@@ -421,6 +421,51 @@
     min-height: 200px !important;
 }
 
+/* Dual Column Container para los pasos */
+.wp-alp-dual-column-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 30px !important;
+    padding: 20px 0 !important;
+}
+
+.wp-alp-dual-column-left, .wp-alp-dual-column-right {
+    flex: 1 !important;
+    min-width: 300px !important;
+}
+
+.wp-alp-step-illustration {
+    width: 100% !important;
+}
+
+.wp-alp-step-illustration img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 12px !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+
+.wp-alp-step-label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--wp-alp-vendor-primary) !important;
+    margin-bottom: 8px !important;
+}
+
+.wp-alp-step-heading {
+    font-size: 32px !important;
+    font-weight: 600 !important;
+    margin-bottom: 16px !important;
+    color: var(--wp-alp-vendor-text) !important;
+}
+
+.wp-alp-step-description-large {
+    font-size: 18px !important;
+    line-height: 1.6 !important;
+    color: #666 !important;
+}
+
 /* Barra de progreso a ancho completo */
 .wp-alp-full-width-progress {
     width: 100% !important;
@@ -448,7 +493,8 @@
 @media (max-width: 768px) {
     .wp-alp-mobile-flex,
     .wp-alp-process-steps,
-    .wp-alp-step-item {
+    .wp-alp-step-item,
+    .wp-alp-dual-column-container {
         flex-direction: column !important;
     }
     
@@ -469,5 +515,9 @@
     
     .wp-alp-step-image {
         order: -1 !important;
+    }
+    
+    .wp-alp-dual-column-right {
+        order: -1 !important;  /* Ensure image comes first on mobile */
     }
 }
