@@ -161,6 +161,38 @@
             }
         });
 
+        // Manejar tecla Enter en campos de login
+        $(document).on('keydown', '#wp-alp-login-email, #wp-alp-login-password', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var email = $('#wp-alp-login-email').val().trim();
+                var password = $('#wp-alp-login-password').val().trim();
+                
+                if (!email || !password) {
+                    showError(wp_alp_ajax.translations.required_field);
+                    return;
+                }
+                
+                loginUser(email, password);
+            }
+        });
+        
+        // Manejar tecla Enter en formulario inicial
+        $(document).on('keydown', '#wp-alp-identifier', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('#wp-alp-continue-btn').trigger('click');
+            }
+        });
+        
+        // Manejar tecla Enter en formulario de teléfono
+        $(document).on('keydown', '#wp-alp-phone-number', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('#wp-alp-phone-continue-btn').trigger('click');
+            }
+        });
+
         // Botón de login
         $(document).on('click', '#wp-alp-login-btn', function() {
             var email = $('#wp-alp-login-email').val().trim();
@@ -174,9 +206,9 @@
             loginUser(email, password);
         });
 
-        // Botón de registro
-        $(document).on('click', '#wp-alp-register-btn', function() {
-            var formData = {
+        // Función para recopilar datos del formulario de registro
+        function collectRegisterFormData() {
+            return {
                 email: $('#wp-alp-register-email').val().trim(),
                 first_name: $('#wp-alp-register-first-name').val().trim(),
                 last_name: $('#wp-alp-register-last-name').val().trim(),
@@ -189,28 +221,50 @@
                 guests: $('#wp-alp-event-guests').val().trim(),
                 details: $('#wp-alp-event-details').val().trim()
             };
-            
+        }
+        
+        // Función para validar datos del formulario de registro
+        function validateRegisterFormData(formData) {
             // Validar campos requeridos
             var requiredFields = ['email', 'first_name', 'last_name', 'birthdate', 'phone', 'password', 'event_type', 'event_date', 'event_address', 'guests'];
             for (var i = 0; i < requiredFields.length; i++) {
                 if (!formData[requiredFields[i]]) {
                     showError(wp_alp_ajax.translations.required_field + ': ' + requiredFields[i]);
-                    return;
+                    return false;
                 }
             }
             
             // Validar contraseña
             if (formData.password.length < 6) {
                 showError(wp_alp_ajax.translations.password_short);
-                return;
+                return false;
             }
             
-            registerUser(formData);
+            return true;
+        }
+
+        // Manejar tecla Enter en campos del formulario de registro
+        $(document).on('keydown', '.wp-alp-register-form input, .wp-alp-register-form textarea, .wp-alp-register-form select', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var formData = collectRegisterFormData();
+                if (validateRegisterFormData(formData)) {
+                    registerUser(formData);
+                }
+            }
+        });
+        
+        // Botón de registro
+        $(document).on('click', '#wp-alp-register-btn', function() {
+            var formData = collectRegisterFormData();
+            if (validateRegisterFormData(formData)) {
+                registerUser(formData);
+            }
         });
 
-        // Botón de completar perfil
-        $(document).on('click', '#wp-alp-complete-profile-btn', function() {
-            var formData = {
+        // Función para recopilar datos del formulario de completar perfil
+        function collectProfileFormData() {
+            return {
                 user_id: $('input[name="user_id"]').val().trim(),
                 email: $('input[name="email"]').val().trim(),
                 first_name: $('input[name="first_name"]').val().trim(),
@@ -222,17 +276,39 @@
                 guests: $('#wp-alp-event-guests').val().trim(),
                 details: $('#wp-alp-event-details').val().trim()
             };
-            
+        }
+        
+        // Función para validar datos del formulario de completar perfil
+        function validateProfileFormData(formData) {
             // Validar campos requeridos
             var requiredFields = ['user_id', 'event_type', 'event_date', 'event_address', 'guests'];
             for (var i = 0; i < requiredFields.length; i++) {
                 if (!formData[requiredFields[i]]) {
                     showError(wp_alp_ajax.translations.required_field + ': ' + requiredFields[i]);
-                    return;
+                    return false;
                 }
             }
             
-            completeProfile(formData);
+            return true;
+        }
+        
+        // Manejar tecla Enter en campos del formulario de completar perfil
+        $(document).on('keydown', '.wp-alp-profile-form input, .wp-alp-profile-form textarea, .wp-alp-profile-form select', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var formData = collectProfileFormData();
+                if (validateProfileFormData(formData)) {
+                    completeProfile(formData);
+                }
+            }
+        });
+
+        // Botón de completar perfil
+        $(document).on('click', '#wp-alp-complete-profile-btn', function() {
+            var formData = collectProfileFormData();
+            if (validateProfileFormData(formData)) {
+                completeProfile(formData);
+            }
         });
 
         // Inputs de código de verificación
