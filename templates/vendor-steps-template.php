@@ -399,6 +399,31 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                                     <?php echo esc_html(get_locale() == 'en_US' ? 'Clearly indicate to guests where your place is located. We will only provide your address when the reservation is confirmed.' : 'Indica claramente a los huéspedes dónde se encuentra tu alojamiento. Solo les facilitaremos tu dirección cuando su reservación esté confirmada.'); ?>
                                     <a href="javascript:void(0);" class="wp-alp-more-info" id="location-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
                                 </p>
+                                
+                                <!-- Modal de información sobre compartir ubicación -->
+                                <div id="location-info-modal" class="wp-alp-info-modal" style="display: none;">
+                                    <div class="wp-alp-info-modal-content">
+                                        <span class="wp-alp-info-modal-close">&times;</span>
+                                        <h3><?php echo get_locale() == 'en_US' ? 'About Location Sharing' : 'Sobre compartir tu ubicación'; ?></h3>
+                                        <div class="wp-alp-info-modal-body">
+                                            <?php if (get_locale() == 'en_US'): ?>
+                                                <p>By sharing your location, you help potential clients find services near them. You can choose to share either:</p>
+                                                <ul>
+                                                    <li><strong>Exact location:</strong> Your precise address will be shown on the map.</li>
+                                                    <li><strong>Approximate location:</strong> Only the general area will be displayed, protecting your exact address.</li>
+                                                </ul>
+                                                <p>You can change this setting at any time from your profile settings.</p>
+                                            <?php else: ?>
+                                                <p>Al compartir tu ubicación, ayudas a que los clientes potenciales encuentren servicios cerca de ellos. Puedes elegir compartir:</p>
+                                                <ul>
+                                                    <li><strong>Ubicación exacta:</strong> Tu dirección precisa se mostrará en el mapa.</li>
+                                                    <li><strong>Ubicación aproximada:</strong> Solo se mostrará el área general, protegiendo tu dirección exacta.</li>
+                                                </ul>
+                                                <p>Puedes cambiar esta configuración en cualquier momento desde los ajustes de tu perfil.</p>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="wp-alp-toggle-switch">
                                 <label class="wp-alp-switch">
@@ -1896,12 +1921,77 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
    color: #222;
    margin-bottom: 24px;
 }
+
+/* Estilos para el modal de información */
+.wp-alp-info-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.wp-alp-info-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+}
+
+.wp-alp-info-modal-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+}
+
+.wp-alp-info-modal-close:hover {
+    color: #000;
+}
+
+.wp-alp-info-modal h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.4em;
+    color: #333;
+}
+
+.wp-alp-info-modal-body p {
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.wp-alp-info-modal-body ul {
+    margin-left: 20px;
+    margin-bottom: 16px;
+}
+
+.wp-alp-info-modal-body li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
 </style>
 
 <!-- JavaScript para la navegación mejorada -->
 <script>
-// Nota: La funcionalidad de Google Maps ahora se gestiona desde wp-alp-maps-integration.php
-// y el archivo vendor-location.js
+// Código simplificado para cargar Google Maps directamente
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar el script de mapas directamente
+    var script = document.createElement('script');
+    script.src = '<?php echo plugin_dir_url(dirname(__FILE__)) . "public/js/direct-map.js"; ?>?v=<?php echo time(); ?>';
+    document.head.appendChild(script);
+});
 
 jQuery(document).ready(function($) {
 
