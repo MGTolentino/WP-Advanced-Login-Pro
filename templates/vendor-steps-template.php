@@ -397,7 +397,7 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                                 <span><?php echo esc_html(get_locale() == 'en_US' ? 'Show your exact location' : 'Mostrar tu ubicación exacta'); ?></span>
                                 <p class="wp-alp-toggle-description">
                                     <?php echo esc_html(get_locale() == 'en_US' ? 'Clearly indicate to guests where your place is located. We will only provide your address when the reservation is confirmed.' : 'Indica claramente a los huéspedes dónde se encuentra tu alojamiento. Solo les facilitaremos tu dirección cuando su reservación esté confirmada.'); ?>
-                                    <a href="#" class="wp-alp-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
+                                    <a href="javascript:void(0);" class="wp-alp-more-info" id="location-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
                                 </p>
                             </div>
                             <div class="wp-alp-toggle-switch">
@@ -3093,5 +3093,326 @@ $('#photo-upload-zone').on('click', function(e) {
     }
 });
 </script>
+
+<!-- Modal de información sobre ubicación -->
+<div class="wp-alp-info-modal" id="location-info-modal" style="display: none;">
+    <div class="wp-alp-info-modal-content">
+        <button type="button" class="wp-alp-info-modal-close">×</button>
+        <h3><?php echo esc_html(get_locale() == 'en_US' ? 'About Location Sharing' : 'Sobre compartir tu ubicación'); ?></h3>
+        <div class="wp-alp-info-modal-body">
+            <p><strong><?php echo esc_html(get_locale() == 'en_US' ? 'Exact location' : 'Ubicación exacta'); ?></strong></p>
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'When you select to show your exact location, clients will see the precise address of your service after booking is confirmed. This is useful for venue services or specific location-based services.' : 'Cuando seleccionas mostrar tu ubicación exacta, los clientes verán la dirección precisa de tu servicio después de que se confirme la reserva. Esto es útil para servicios de locales o servicios basados en ubicaciones específicas.'); ?></p>
+            
+            <p><strong><?php echo esc_html(get_locale() == 'en_US' ? 'Approximate location' : 'Ubicación aproximada'); ?></strong></p>
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'If you prefer not to share your exact address, we\'ll only show an approximate location on the map (about 200m radius area). This option is good for privacy while still giving clients a general idea of your service area.' : 'Si prefieres no compartir tu dirección exacta, solo mostraremos una ubicación aproximada en el mapa (un área de radio de aproximadamente 200 m). Esta opción es buena para la privacidad y al mismo tiempo proporciona a los clientes una idea general de tu área de servicio.'); ?></p>
+            
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'In both cases, your full address will never be publicly visible on the search results or listing preview.' : 'En ambos casos, tu dirección completa nunca será visible públicamente en los resultados de búsqueda o en la vista previa del anuncio.'); ?></p>
+        </div>
+    </div>
+</div>
+
+<!-- Script adicional para funcionalidad de ubicación y modal -->
+<script>
+jQuery(document).ready(function($) {
+    // Inicializar el autocompletado de Google Maps para la dirección
+    function initAddressAutocomplete() {
+        if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+            console.error('Google Maps Places API no está disponible');
+            return;
+        }
+
+        var addressInput = document.getElementById('wp-alp-address-input');
+        if (!addressInput) return;
+
+        var autocomplete = new google.maps.places.Autocomplete(addressInput, {
+            types: ['address']
+        });
+
+        // Cuando se selecciona una dirección
+        autocomplete.addListener('place_changed', function() {
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                console.log("No se encontraron detalles para: " + place.name);
+                return;
+            }
+
+            // Guardar la ubicación seleccionada
+            selectedLocation = place;
+            
+            // Actualizar el mapa con la nueva ubicación
+            if (map) {
+                map.setCenter(place.geometry.location);
+                marker.setPosition(place.geometry.location);
+                
+                // Mostrar el botón de confirmar
+                $('.wp-alp-confirm-address-btn').fadeIn(300);
+            }
+            
+            console.log("Ubicación seleccionada:", place.formatted_address);
+        });
+    }
+
+    // Mejorar la inicialización del mapa
+    window.initMap = function() {
+        // Verificar si la API de Google Maps está disponible
+        if (typeof google === 'undefined' || !google.maps) {
+            console.error('Google Maps API no está disponible');
+            return;
+        }
+
+        // Coordenadas predeterminadas (se pueden ajustar)
+        var defaultLocation = { lat: 20.6534, lng: -103.3276 };  // Guadalajara, México
+        
+        // Crear el mapa
+        map = new google.maps.Map(document.getElementById('wp-alp-location-map'), {
+            center: defaultLocation,
+            zoom: 15,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false
+        });
+        
+        // Crear el marcador
+        marker = new google.maps.Marker({
+            position: defaultLocation,
+            map: map,
+            draggable: true
+        });
+        
+        // Crear el geocoder para búsquedas
+        geocoder = new google.maps.Geocoder();
+        
+        // Inicializar autocompletado
+        initAddressAutocomplete();
+        
+        // Actualizar posición del marcador cuando se arrastra
+        marker.addListener('dragend', function() {
+            var position = marker.getPosition();
+            updateLocationDisplay(position);
+            
+            // Mostrar el botón de confirmar
+            $('.wp-alp-confirm-address-btn').fadeIn(300);
+            
+            // Geocodificar inverso para obtener la dirección
+            geocoder.geocode({ 'location': position }, function(results, status) {
+                if (status === 'OK' && results[0]) {
+                    selectedLocation = results[0];
+                    $('#wp-alp-address-input').val(results[0].formatted_address);
+                }
+            });
+        });
+    };
+    
+    // Función para actualizar la visualización de la ubicación
+    window.updateLocationDisplay = function(position) {
+        if (!map || !marker) return;
+        
+        map.setCenter(position);
+        marker.setPosition(position);
+    };
+    
+    // Manejador para el enlace "More information"
+    $('#location-more-info').on('click', function(e) {
+        e.preventDefault();
+        $('#location-info-modal').fadeIn(300);
+    });
+    
+    // Cerrar el modal cuando se hace clic en el botón de cierre
+    $('.wp-alp-info-modal-close').on('click', function() {
+        $(this).closest('.wp-alp-info-modal').fadeOut(300);
+    });
+    
+    // Cerrar el modal cuando se hace clic fuera del contenido
+    $(document).on('click', '.wp-alp-info-modal', function(e) {
+        if ($(e.target).hasClass('wp-alp-info-modal')) {
+            $(this).fadeOut(300);
+        }
+    });
+    
+    // Cargar Google Maps Places API si aún no está disponible
+    if (typeof google === 'undefined' || !google.maps || !google.maps.places) {
+        // Intentar cargar la API con places si aún no está disponible
+        var script = document.createElement('script');
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=' + 
+                    (typeof GOOGLE_MAPS_API_KEY !== 'undefined' ? GOOGLE_MAPS_API_KEY : '') + 
+                    '&libraries=places&callback=initMap';
+        script.async = true;
+        script.defer = true;
+        document.head.appendChild(script);
+    } else if (typeof google !== 'undefined' && google.maps) {
+        // Si la API ya está cargada, inicializar el mapa directamente
+        initMap();
+    }
+});
+</script>
+
+<style>
+/* Estilos para el modal de información */
+.wp-alp-info-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.wp-alp-info-modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {transform: translateY(-20px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+
+.wp-alp-info-modal-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #666;
+}
+
+.wp-alp-info-modal-close:hover {
+    color: #222;
+}
+
+.wp-alp-info-modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.wp-alp-info-modal-body p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Estilos para mejorar la integración con Google Maps */
+.wp-alp-address-input-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.wp-alp-address-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wp-alp-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.wp-alp-confirm-address-btn {
+    text-align: center;
+    margin-top: 15px;
+    display: none;
+}
+
+.wp-alp-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.wp-alp-btn-secondary {
+    background-color: #fff;
+    color: #222;
+    border: 1px solid #ddd;
+}
+
+.wp-alp-btn-secondary:hover {
+    background-color: #f5f5f5;
+    border-color: #aaa;
+}
+
+/* Mejorar el contenedor del mapa para mejor visualización */
+.wp-alp-map-wrapper {
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Mejorar estilos de servicios */
+.wp-alp-airbnb-service-option {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wp-alp-airbnb-service-option:hover {
+    border-color: #999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.wp-alp-airbnb-service-option.selected {
+    border-color: var(--wp-alp-color-primary, #cbb881);
+    box-shadow: 0 0 0 2px var(--wp-alp-color-primary, #cbb881);
+}
+
+.wp-alp-airbnb-service-option h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.wp-alp-airbnb-service-option p {
+    margin-bottom: 0;
+    color: #666;
+}
+
+.wp-alp-airbnb-service-validation {
+    color: #e4002b;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+.wp-alp-location-validation {
+    color: #e4002b;
+    font-size: 14px;
+    margin-top: 5px;
+    padding: 8px;
+    background-color: rgba(228, 0, 43, 0.1);
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+}
+</style>
 
 <?php get_footer(); ?>
