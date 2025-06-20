@@ -2047,24 +2047,28 @@ window.initMap = function() {
             }
             
             // Geocodificar inverso para obtener la dirección
-            geocoder.geocode({ 'location': position }, function(results, status) {
-                if (status === 'OK' && results[0] && addressInput) {
-                    // Actualizar el input con la dirección
-                    addressInput.value = results[0].formatted_address;
-                    
-                    // Disparar un evento de cambio para actualizar cualquier validación
-                    var event = new Event('input', { bubbles: true });
-                    addressInput.dispatchEvent(event);
-                    
-                    console.log('VENDOR-STEPS: Dirección actualizada a: ' + results[0].formatted_address);
-                    
-                    // Quitar el mensaje de error si existe
-                    var errorMsg = document.querySelector('.wp-alp-location-error');
-                    if (errorMsg) {
-                        errorMsg.style.display = 'none';
+            if (geocoder && position) {
+                geocoder.geocode({ 'location': position }, function(results, status) {
+                    if (status === 'OK' && results && results[0] && addressInput) {
+                        // Actualizar el input con la dirección
+                        addressInput.value = results[0].formatted_address;
+                        
+                        // Disparar un evento de cambio para actualizar cualquier validación
+                        var event = new Event('input', { bubbles: true });
+                        addressInput.dispatchEvent(event);
+                        
+                        console.log('VENDOR-STEPS: Dirección actualizada a: ' + results[0].formatted_address);
+                        
+                        // Quitar el mensaje de error si existe
+                        var errorMsg = document.querySelector('.wp-alp-location-error');
+                        if (errorMsg) {
+                            errorMsg.style.display = 'none';
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                console.error('VENDOR-STEPS: Geocoder o posición no disponible');
+            }
         });
         
         // Inicializar Places Autocomplete en el input de dirección
@@ -2078,31 +2082,35 @@ window.initMap = function() {
             autocomplete.addListener('place_changed', function() {
                 var place = autocomplete.getPlace();
                 
-                if (!place.geometry) {
-                    console.log('VENDOR-STEPS: No se encontraron detalles para: ' + place.name);
+                if (!place || !place.geometry || !place.geometry.location) {
+                    console.log('VENDOR-STEPS: No se encontraron detalles para la ubicación seleccionada');
                     return;
                 }
                 
                 // Actualizar el mapa y el marcador con la nueva ubicación
-                map.setCenter(place.geometry.location);
-                marker.setPosition(place.geometry.location);
+                if (map && marker) {
+                    map.setCenter(place.geometry.location);
+                    marker.setPosition(place.geometry.location);
                 
-                // Mostrar el botón de confirmar
-                var confirmBtn = document.getElementById('confirm-address-btn');
-                if (confirmBtn) {
-                    confirmBtn.style.display = 'block';
+                    // Mostrar el botón de confirmar
+                    var confirmBtn = document.getElementById('confirm-address-btn');
+                    if (confirmBtn) {
+                        confirmBtn.style.display = 'block';
+                    }
+                    
+                    // Quitar el mensaje de error si existe
+                    var errorMsg = document.querySelector('.wp-alp-location-error');
+                    if (errorMsg) {
+                        errorMsg.style.display = 'none';
+                    }
+                    
+                    // Almacenar la ubicación seleccionada para uso posterior
+                    window.selectedLocation = place;
+                    
+                    console.log('VENDOR-STEPS: Ubicación seleccionada: ' + (place.formatted_address || 'dirección no disponible'));
+                } else {
+                    console.error('VENDOR-STEPS: Mapa o marcador no disponible');
                 }
-                
-                // Quitar el mensaje de error si existe
-                var errorMsg = document.querySelector('.wp-alp-location-error');
-                if (errorMsg) {
-                    errorMsg.style.display = 'none';
-                }
-                
-                // Almacenar la ubicación seleccionada para uso posterior
-                window.selectedLocation = place;
-                
-                console.log('VENDOR-STEPS: Ubicación seleccionada: ' + place.formatted_address);
             });
         } else {
             console.error('VENDOR-STEPS: Input de dirección no encontrado');
