@@ -2049,8 +2049,20 @@ window.initMap = function() {
             // Geocodificar inverso para obtener la dirección
             geocoder.geocode({ 'location': position }, function(results, status) {
                 if (status === 'OK' && results[0] && addressInput) {
+                    // Actualizar el input con la dirección
                     addressInput.value = results[0].formatted_address;
+                    
+                    // Disparar un evento de cambio para actualizar cualquier validación
+                    var event = new Event('input', { bubbles: true });
+                    addressInput.dispatchEvent(event);
+                    
                     console.log('VENDOR-STEPS: Dirección actualizada a: ' + results[0].formatted_address);
+                    
+                    // Quitar el mensaje de error si existe
+                    var errorMsg = document.querySelector('.wp-alp-location-error');
+                    if (errorMsg) {
+                        errorMsg.style.display = 'none';
+                    }
                 }
             });
         });
@@ -2080,6 +2092,15 @@ window.initMap = function() {
                 if (confirmBtn) {
                     confirmBtn.style.display = 'block';
                 }
+                
+                // Quitar el mensaje de error si existe
+                var errorMsg = document.querySelector('.wp-alp-location-error');
+                if (errorMsg) {
+                    errorMsg.style.display = 'none';
+                }
+                
+                // Almacenar la ubicación seleccionada para uso posterior
+                window.selectedLocation = place;
                 
                 console.log('VENDOR-STEPS: Ubicación seleccionada: ' + place.formatted_address);
             });
@@ -2111,8 +2132,38 @@ document.head.appendChild(googleMapsScript);
 // Configurar el botón de confirmación de dirección
 document.addEventListener('DOMContentLoaded', function() {
     var confirmBtn = document.getElementById('confirm-address-btn');
-    if (confirmBtn) {
+    var addressInput = document.getElementById('wp-alp-address-input');
+    
+    // Mostrar el botón de confirmar si ya hay una dirección
+    if (confirmBtn && addressInput) {
+        // Verificar si hay una dirección al cargar la página
+        if (addressInput.value && addressInput.value.trim() !== '') {
+            confirmBtn.style.display = 'block';
+        } else {
+            confirmBtn.style.display = 'none';
+        }
+        
+        // Mostrar/ocultar el botón según si hay dirección
+        addressInput.addEventListener('input', function() {
+            if (this.value && this.value.trim() !== '') {
+                confirmBtn.style.display = 'block';
+            } else {
+                confirmBtn.style.display = 'none';
+            }
+        });
+        
+        // Manejar el clic en el botón de confirmar
         confirmBtn.addEventListener('click', function() {
+            // Verificar que hay una dirección
+            if (!addressInput.value || addressInput.value.trim() === '') {
+                var errorMsg = document.querySelector('.wp-alp-location-error');
+                if (errorMsg) {
+                    errorMsg.textContent = '<?php echo esc_js(get_locale() == 'en_US' ? 'Please select a location to continue.' : 'Por favor, selecciona una ubicación para continuar.'); ?>';
+                    errorMsg.style.display = 'block';
+                }
+                return;
+            }
+            
             // Ocultar la vista del mapa
             var mapContainer = document.querySelector('.wp-alp-location-specific-container');
             if (mapContainer) {
