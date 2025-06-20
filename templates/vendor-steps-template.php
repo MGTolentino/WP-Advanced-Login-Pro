@@ -2038,7 +2038,27 @@ window.initMap = function() {
         
         // Actualizar posición del marcador cuando se arrastra
         marker.addListener('dragend', function() {
+            updateAddressFromMarker(marker, geocoder, addressInput);
+        });
+        
+        // También actualizar cuando el mapa cambia de centro
+        map.addListener('dragend', function() {
+            marker.setPosition(map.getCenter());
+            updateAddressFromMarker(marker, geocoder, addressInput);
+        });
+        
+        // Función para actualizar la dirección desde el marcador
+        function updateAddressFromMarker(marker, geocoder, addressInput) {
+            if (!marker || !geocoder || !addressInput) {
+                console.error('VENDOR-STEPS: Faltan elementos necesarios para actualizar la dirección');
+                return;
+            }
+            
             var position = marker.getPosition();
+            if (!position) {
+                console.error('VENDOR-STEPS: No se pudo obtener la posición del marcador');
+                return;
+            }
             
             // Mostrar el botón de confirmar
             var confirmBtn = document.getElementById('confirm-address-btn');
@@ -2047,27 +2067,31 @@ window.initMap = function() {
             }
             
             // Geocodificar inverso para obtener la dirección
-            if (geocoder && position) {
+            try {
                 geocoder.geocode({ 'location': position }, function(results, status) {
-                    if (status === 'OK' && results && results[0] && addressInput) {
+                    console.log('VENDOR-STEPS: Resultado de geocodificación:', status, results);
+                    
+                    if (status === 'OK' && results && results.length > 0) {
                         // Actualizar el input con la dirección
-                        addressInput.value = results[0].formatted_address;
+                        addressInput.value = results[0].formatted_address || '';
                         
                         // Disparar un evento de cambio para actualizar cualquier validación
                         var event = new Event('input', { bubbles: true });
                         addressInput.dispatchEvent(event);
                         
-                        console.log('VENDOR-STEPS: Dirección actualizada a: ' + results[0].formatted_address);
+                        console.log('VENDOR-STEPS: Dirección actualizada a: ' + addressInput.value);
                         
                         // Quitar el mensaje de error si existe
                         var errorMsg = document.querySelector('.wp-alp-location-error');
                         if (errorMsg) {
                             errorMsg.style.display = 'none';
                         }
+                    } else {
+                        console.error('VENDOR-STEPS: Error de geocodificación:', status);
                     }
                 });
-            } else {
-                console.error('VENDOR-STEPS: Geocoder o posición no disponible');
+            } catch (e) {
+                console.error('VENDOR-STEPS: Error al geocodificar:', e);
             }
         });
         
@@ -2130,12 +2154,22 @@ window.initMap = function() {
     }
 };
 
-// Cargar la API de Google Maps directamente (sin pasar por otro script)
-var googleMapsScript = document.createElement('script');
-googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : "AIzaSyA6tLIy4UXGxEJoNehZYjXHVt8GnZnbjP4"; ?>&libraries=places&callback=initMap';
-googleMapsScript.async = true;
-googleMapsScript.defer = true;
-document.head.appendChild(googleMapsScript);
+// Evitamos cargar la API de Google Maps varias veces
+if (!window.googleMapsLoaded) {
+    window.googleMapsLoaded = true;
+    // Verificamos si ya existe Google Maps en la página
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        var googleMapsScript = document.createElement('script');
+        googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : "AIzaSyA6tLIy4UXGxEJoNehZYjXHVt8GnZnbjP4"; ?>&libraries=places&callback=initMap';
+        googleMapsScript.async = true;
+        googleMapsScript.defer = true;
+        document.head.appendChild(googleMapsScript);
+    } else {
+        // Si ya existe, inicializar directamente
+        console.log('VENDOR-STEPS: Google Maps ya está cargado, inicializando mapa');
+        initMap();
+    }
+}
 
 // Configurar el botón de confirmación de dirección
 document.addEventListener('DOMContentLoaded', function() {
