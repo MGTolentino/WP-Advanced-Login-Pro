@@ -1985,12 +1985,18 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
 
 <!-- JavaScript para la navegación mejorada -->
 <script>
-// Código simplificado para cargar Google Maps directamente
+// Código para una prueba extremadamente simple del mapa
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar el script de mapas directamente
+    console.log('VENDOR-STEPS: Cargando script de prueba del mapa');
+    
+    // Cargar script de prueba básico
     var script = document.createElement('script');
-    script.src = '<?php echo plugin_dir_url(dirname(__FILE__)) . "public/js/direct-map.js"; ?>?v=<?php echo time(); ?>';
+    script.src = '<?php echo plugin_dir_url(dirname(__FILE__)) . "public/js/test-map.js"; ?>?v=<?php echo time(); ?>';
     document.head.appendChild(script);
+    
+    // Exponer la API key como variable global para el script de prueba
+    window.GOOGLE_MAPS_API_KEY = '<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : ""; ?>';
+    console.log('VENDOR-STEPS: API Key disponible: ' + (window.GOOGLE_MAPS_API_KEY ? 'Sí' : 'No'));
 });
 
 jQuery(document).ready(function($) {
