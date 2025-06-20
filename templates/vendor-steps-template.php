@@ -2159,8 +2159,9 @@ if (!window.googleMapsLoaded) {
     window.googleMapsLoaded = true;
     // Verificamos si ya existe Google Maps en la página
     if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        // Usar una nueva clave API que tenga geocodificación habilitada
         var googleMapsScript = document.createElement('script');
-        googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : "AIzaSyA6tLIy4UXGxEJoNehZYjXHVt8GnZnbjP4"; ?>&libraries=places&callback=initMap';
+        googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : "AIzaSyDVlOCk9KzVuBCR7YaL1lvMoP-9XwYhz_o"; ?>&libraries=places&callback=initMap';
         googleMapsScript.async = true;
         googleMapsScript.defer = true;
         document.head.appendChild(googleMapsScript);
