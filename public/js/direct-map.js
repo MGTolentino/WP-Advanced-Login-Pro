@@ -15,6 +15,14 @@
             return;
         }
         
+        // Asegurarnos que el elemento del mapa tenga dimensiones
+        if (!mapElement.style.height) {
+            mapElement.style.height = '400px';
+        }
+        if (!mapElement.style.width) {
+            mapElement.style.width = '100%';
+        }
+        
         // Coordenadas predeterminadas (Guadalajara, México)
         var defaultLocation = { lat: 20.6534, lng: -103.3276 };
         

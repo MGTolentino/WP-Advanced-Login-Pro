@@ -435,7 +435,7 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                         
                         <!-- Contenedor del mapa -->
                         <div class="wp-alp-map-container">
-                            <div id="wp-alp-location-map" class="wp-alp-map-wrapper"></div>
+                            <div id="wp-alp-location-map" class="wp-alp-map-wrapper" style="height: 400px; width: 100%;"></div>
                             
                             <!-- Tooltip de ubicación aproximada (inicialmente visible) -->
                             <div class="wp-alp-approximate-tooltip" id="approximate-tooltip">
@@ -3201,6 +3201,61 @@ $('#photo-upload-zone').on('click', function(e) {
 <!-- No se requiere script adicional aquí para la funcionalidad de Google Maps -->
 
 <style>
+/* Estilos para el mapa y contenedores relacionados */
+.wp-alp-map-container {
+    position: relative;
+    margin: 20px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.wp-alp-map-wrapper {
+    height: 400px;
+    width: 100%;
+    background-color: #f5f5f5;
+}
+
+.wp-alp-map-search {
+    padding: 15px;
+    background-color: white;
+    border-bottom: 1px solid #e4e4e4;
+}
+
+.wp-alp-approximate-tooltip {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    max-width: 90%;
+    text-align: center;
+}
+
+.wp-alp-house-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    pointer-events: none;
+}
+
+.wp-alp-marker-icon {
+    background-color: #FF385C;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
 /* Estilos para el modal de información */
 .wp-alp-info-modal {
     display: none;
