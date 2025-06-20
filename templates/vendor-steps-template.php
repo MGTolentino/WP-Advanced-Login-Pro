@@ -2093,7 +2093,7 @@ window.initMap = function() {
             } catch (e) {
                 console.error('VENDOR-STEPS: Error al geocodificar:', e);
             }
-        });
+        }
         
         // Inicializar Places Autocomplete en el input de dirección
         if (addressInput) {
