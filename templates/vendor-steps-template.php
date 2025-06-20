@@ -1990,19 +1990,39 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
 
 <!-- JavaScript para la navegación mejorada -->
 <script>
-// Código para una prueba extremadamente simple del mapa
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('VENDOR-STEPS: Cargando script de prueba del mapa');
+// Cargar directamente el script de Google Maps
+console.log('VENDOR-STEPS: Cargando Google Maps directamente');
+
+// Script de Google Maps simplificado (incrustado directamente)
+window.initMap = function() {
+    console.log('VENDOR-STEPS: Google Maps inicializando');
+    var mapElement = document.getElementById('wp-alp-location-map');
     
-    // Cargar script de prueba básico
-    var script = document.createElement('script');
-    script.src = '<?php echo plugin_dir_url(dirname(__FILE__)) . "public/js/test-map.js"; ?>?v=<?php echo time(); ?>';
-    document.head.appendChild(script);
-    
-    // Exponer la API key como variable global para el script de prueba
-    window.GOOGLE_MAPS_API_KEY = '<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : ""; ?>';
-    console.log('VENDOR-STEPS: API Key disponible: ' + (window.GOOGLE_MAPS_API_KEY ? 'Sí' : 'No'));
-});
+    if (mapElement) {
+        console.log('VENDOR-STEPS: Elemento del mapa encontrado, creando mapa');
+        try {
+            var map = new google.maps.Map(mapElement, {
+                center: { lat: 20.6534, lng: -103.3276 },
+                zoom: 12
+            });
+            console.log('VENDOR-STEPS: Mapa creado correctamente');
+        } catch (error) {
+            console.error('VENDOR-STEPS: Error al crear el mapa', error);
+        }
+    } else {
+        console.error('VENDOR-STEPS: Elemento del mapa no encontrado');
+    }
+};
+
+// Cargar la API de Google Maps directamente (sin pasar por otro script)
+var googleMapsScript = document.createElement('script');
+googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : "AIzaSyA6tLIy4UXGxEJoNehZYjXHVt8GnZnbjP4"; ?>&libraries=places&callback=initMap';
+googleMapsScript.async = true;
+googleMapsScript.defer = true;
+document.head.appendChild(googleMapsScript);
+
+console.log('VENDOR-STEPS: Script de Google Maps insertado');
+console.log('VENDOR-STEPS: API Key: <?php echo defined("GOOGLE_MAPS_API_KEY") ? substr(GOOGLE_MAPS_API_KEY, 0, 10) . "..." : "No definida"; ?>');
 
 jQuery(document).ready(function($) {
 
