@@ -10,6 +10,17 @@ if (!defined('WPINC')) {
     die;
 }
 
+// ===== DEBUG - Verificar que este archivo se carga correctamente =====
+error_log('WP-ALP Maps Integration file loaded - ' . date('Y-m-d H:i:s'));
+
+// Función para debug visual en el admin footer
+function wp_alp_maps_admin_debug() {
+    echo '<div style="background-color:#ff5500; color:white; padding:5px; margin-top:10px;">
+    WP-ALP Maps Integration cargado correctamente - ' . date('Y-m-d H:i:s') . '
+    </div>';
+}
+add_action('admin_footer', 'wp_alp_maps_admin_debug');
+
 /**
  * Obtiene la API key de Google Maps de manera segura y flexible
  * Busca la clave en varias ubicaciones posibles para mayor compatibilidad
