@@ -22,21 +22,29 @@
     
     // Inicialización cuando el documento está listo
     $(document).ready(function() {
-        console.log('Document ready in vendor location script');
+        console.log('[WP-ALP Maps] Document ready in vendor location script');
         
         // Verificar si estamos en la página correcta
         if ($('#wp-alp-location-map').length === 0) {
-            console.log('Map container not found on page');
+            console.log('[WP-ALP Maps] Map container not found on page');
             return;
         }
         
-        console.log('Map container found, setting up event handlers');
+        console.log('[WP-ALP Maps] Map container found, setting up event handlers');
         
-        // Verificar si la opción específica ya está seleccionada
-        if ($('.wp-alp-location-option[data-option="specific"]').hasClass('selected')) {
-            console.log('Specific location already selected, initializing map');
-            setTimeout(initializeMap, 500); // Inicializar después de un breve retraso
-        }
+        // Esperar a que Google Maps esté disponible
+        var mapCheckInterval = setInterval(function() {
+            if (typeof google !== 'undefined' && google.maps) {
+                clearInterval(mapCheckInterval);
+                console.log('[WP-ALP Maps] Google Maps API detected, initializing map');
+                
+                // Verificar si la opción específica ya está seleccionada
+                if ($('.wp-alp-location-option[data-option="specific"]').hasClass('selected')) {
+                    console.log('[WP-ALP Maps] Specific location already selected, initializing map');
+                    setTimeout(initializeMap, 500); // Inicializar después de un breve retraso
+                }
+            }
+        }, 500); // Comprobar cada 500ms
         
         // Inicializar mapa cuando se muestre el paso de ubicación
         $(document).on('click', '.wp-alp-location-option[data-option="specific"]', function() {
@@ -260,25 +268,17 @@
     
 })(jQuery);
 
-// Asegurarse de que initMap existe globalmente para el callback de Google Maps API
+// Esta función ya no se usa como callback, pero la mantenemos por compatibilidad
 window.initMap = function() {
-    console.log('[WP-ALP Maps] Global initMap callback executed at ' + new Date().toISOString());
+    console.log('[WP-ALP Maps] Global initMap called (not used as callback anymore)');
     
-    // Marcar que la API ha sido cargada
-    if (typeof wpAlpMaps !== 'undefined') {
-        wpAlpMaps.apiLoaded = true;
-        console.log('[WP-ALP Maps] API marked as loaded in config object');
-    }
-    
-    // Intentar inicializar el mapa si la función está disponible
+    // Por compatibilidad, intentamos inicializar si vendorMap existe
     if (window.vendorMap && typeof window.vendorMap.initializeMap === 'function') {
-        console.log('[WP-ALP Maps] Calling vendorMap.initializeMap()');
+        console.log('[WP-ALP Maps] Calling vendorMap.initializeMap() from legacy initMap');
         try {
             window.vendorMap.initializeMap();
         } catch (e) {
-            console.error('[WP-ALP Maps] Error initializing map:', e);
+            console.error('[WP-ALP Maps] Error initializing map from legacy callback:', e);
         }
-    } else {
-        console.error('[WP-ALP Maps] vendorMap object or initializeMap function not available');
-    }
+    } 
 };

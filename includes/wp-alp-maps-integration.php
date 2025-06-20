@@ -67,32 +67,56 @@ if (!defined('GOOGLE_MAPS_API_KEY')) {
  * y asegurar que se cargue correctamente
  */
 function wp_alp_manage_google_maps_scripts() {
-    // Solo desregistrar los scripts que podrían causar conflictos si NO estamos
-    // en la página de vendedor - esto previene duplicación
-    if (!is_page_template('templates/vendor-steps-template.php')) {
-        // Desregistrar scripts de Google Maps que podrían haber sido encolados por otros plugins
-        wp_deregister_script('google-maps');
-        wp_deregister_script('google-maps-api');
-        wp_deregister_script('googlemaps');
-        wp_deregister_script('google-places');
-        wp_deregister_script('maps-googleapis');
-        wp_deregister_script('google-maps-places');
-        
-        // Scripts específicos de plugins conocidos
-        wp_deregister_script('hivepress-geolocation');
-        wp_deregister_script('geocomplete');
+    // Desregistrar TODOS los scripts de Google Maps para evitar duplicados
+    // independientemente de la página en que estemos
+    $scripts_to_deregister = array(
+        'google-maps', 'google-maps-api', 'googlemaps', 'google-places', 
+        'maps-googleapis', 'google-maps-places', 'googleapis',
+        'google-api', 'googlemap', 'google-map',
+        'maps-api', 'maps-google', 'gmaps', 'gmaps-api',
+        'google-maps-js', 'google-places-js', 'google-maps-places-js',
+        'hivepress-geolocation', 'geocomplete', 'google-maps-script',
+        'maps-js', 'places-js', 'places-library'
+    );
+    
+    foreach ($scripts_to_deregister as $script) {
+        wp_deregister_script($script);
+    }
+    
+    // Desregistrar globalmente los scripts específicos de HivePress
+    global $wp_scripts;
+    if ($wp_scripts) {
+        foreach ($wp_scripts->registered as $handle => $script) {
+            if ($script->src && (
+                strpos($script->src, 'maps.googleapis.com') !== false || 
+                strpos($script->src, 'maps.google.com') !== false ||
+                strpos($handle, 'map') !== false || 
+                strpos($handle, 'place') !== false)
+            ) {
+                wp_deregister_script($handle);
+            }
+        }
     }
     
     // Solo en la página de vendedor cargamos Google Maps API con Places library
     if (is_page_template('templates/vendor-steps-template.php')) {
         // Primero, registrar el script principal de Google Maps con la API key
+        // Usamos async y defer para mejorar carga, y sin callback para evitar problemas
         wp_register_script(
             'wp-alp-google-maps',
-            'https://maps.googleapis.com/maps/api/js?key=' . GOOGLE_MAPS_API_KEY . '&libraries=places&callback=initMap',
+            'https://maps.googleapis.com/maps/api/js?key=' . GOOGLE_MAPS_API_KEY . '&libraries=places',
             array('jquery'),
             null,
             true
         );
+        
+        // Añadir atributos async y defer al script
+        add_filter('script_loader_tag', function($tag, $handle) {
+            if ('wp-alp-google-maps' === $handle) {
+                return str_replace('<script', '<script async defer', $tag);
+            }
+            return $tag;
+        }, 10, 2);
         
         // Luego, registrar y encolar nuestro script personalizado
         wp_register_script(

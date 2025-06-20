@@ -1903,40 +1903,6 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
 // Nota: La funcionalidad de Google Maps ahora se gestiona desde wp-alp-maps-integration.php
 // y el archivo vendor-location.js
 
-// Script de diagnóstico directo
-console.log('===== SCRIPT DE DIAGNÓSTICO DIRECTO =====');
-console.log('Cargado a las: ' + new Date().toISOString());
-
-// Cargar script de prueba directamente (evitando wp_enqueue_scripts)
-document.addEventListener('DOMContentLoaded', function() {
-    var script = document.createElement('script');
-    script.src = '<?php echo plugin_dir_url(dirname(__FILE__)) . "public/js/maps-test.js"; ?>?t=' + new Date().getTime();
-    document.head.appendChild(script);
-    
-    // También intentar cargar Google Maps directamente
-    var mapsScript = document.createElement('script');
-    mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : ""; ?>&libraries=places&callback=testMapInit';
-    document.head.appendChild(mapsScript);
-});
-
-// Función de callback para Google Maps
-window.testMapInit = function() {
-    console.log('Google Maps cargado directamente a las: ' + new Date().toISOString());
-    
-    // Crear un div verde para indicar que Google Maps se cargó
-    var mapLoadedDiv = document.createElement('div');
-    mapLoadedDiv.style.position = 'fixed';
-    mapLoadedDiv.style.top = '60px';
-    mapLoadedDiv.style.right = '10px';
-    mapLoadedDiv.style.backgroundColor = '#00aa00';
-    mapLoadedDiv.style.color = '#ffffff';
-    mapLoadedDiv.style.padding = '10px';
-    mapLoadedDiv.style.zIndex = '9999';
-    mapLoadedDiv.style.borderRadius = '5px';
-    mapLoadedDiv.textContent = 'Google Maps API Loaded';
-    document.body.appendChild(mapLoadedDiv);
-}
-
 jQuery(document).ready(function($) {
 
     // Variables globales para AJAX
