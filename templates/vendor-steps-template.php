@@ -433,9 +433,14 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                             </div>
                         </div>
                         
-                        <!-- Contenedor del mapa -->
+                        <!-- Contenedor del mapa con texto de prueba visible -->
                         <div class="wp-alp-map-container">
-                            <div id="wp-alp-location-map" class="wp-alp-map-wrapper" style="height: 400px; width: 100%;"></div>
+                            <div id="wp-alp-location-map" class="wp-alp-map-wrapper" style="height: 400px; width: 100%; background-color: #e0e0e0; position: relative;">
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10;">
+                                    <p style="margin: 0; font-weight: bold; color: #222;">Contenedor del Mapa</p>
+                                    <p style="margin: 5px 0 0; color: #555;">Si puedes ver este texto, el contenedor es visible.</p>
+                                </div>
+                            </div>
                             
                             <!-- Tooltip de ubicación aproximada (inicialmente visible) -->
                             <div class="wp-alp-approximate-tooltip" id="approximate-tooltip">
