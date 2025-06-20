@@ -1900,12 +1900,8 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
 
 <!-- JavaScript para la navegación mejorada -->
 <script>
-// Definir una función global que será llamada cuando Google Maps esté cargado
-function googleMapsCallback() {
-   // Indicar que Google Maps está listo
-   window.googleMapsLoaded = true;
-   console.log("Google Maps API cargada correctamente");
-}
+// Nota: La funcionalidad de Google Maps ahora se gestiona desde wp-alp-maps-integration.php
+// y el archivo vendor-location.js
 
 jQuery(document).ready(function($) {
 
