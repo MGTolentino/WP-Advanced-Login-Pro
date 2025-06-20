@@ -1993,24 +1993,111 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
 // Cargar directamente el script de Google Maps
 console.log('VENDOR-STEPS: Cargando Google Maps directamente');
 
-// Script de Google Maps simplificado (incrustado directamente)
+// Script de Google Maps con Places autocomplete
 window.initMap = function() {
     console.log('VENDOR-STEPS: Google Maps inicializando');
     var mapElement = document.getElementById('wp-alp-location-map');
+    var addressInput = document.getElementById('wp-alp-address-input');
     
-    if (mapElement) {
-        console.log('VENDOR-STEPS: Elemento del mapa encontrado, creando mapa');
-        try {
-            var map = new google.maps.Map(mapElement, {
-                center: { lat: 20.6534, lng: -103.3276 },
-                zoom: 12
-            });
-            console.log('VENDOR-STEPS: Mapa creado correctamente');
-        } catch (error) {
-            console.error('VENDOR-STEPS: Error al crear el mapa', error);
-        }
-    } else {
+    if (!mapElement) {
         console.error('VENDOR-STEPS: Elemento del mapa no encontrado');
+        return;
+    }
+    
+    console.log('VENDOR-STEPS: Elemento del mapa encontrado, creando mapa');
+    
+    try {
+        // Variables globales para compartir entre funciones
+        window.vendorMapObj = {
+            map: null,
+            marker: null,
+            geocoder: null
+        };
+        
+        // Crear el mapa
+        var map = new google.maps.Map(mapElement, {
+            center: { lat: 20.6534, lng: -103.3276 }, // Guadalajara, México
+            zoom: 15,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false
+        });
+        window.vendorMapObj.map = map;
+        
+        // Crear el marcador
+        var marker = new google.maps.Marker({
+            position: { lat: 20.6534, lng: -103.3276 },
+            map: map,
+            draggable: true
+        });
+        window.vendorMapObj.marker = marker;
+        
+        // Crear el geocoder
+        var geocoder = new google.maps.Geocoder();
+        window.vendorMapObj.geocoder = geocoder;
+        
+        // Actualizar posición del marcador cuando se arrastra
+        marker.addListener('dragend', function() {
+            var position = marker.getPosition();
+            
+            // Mostrar el botón de confirmar
+            var confirmBtn = document.getElementById('confirm-address-btn');
+            if (confirmBtn) {
+                confirmBtn.style.display = 'block';
+            }
+            
+            // Geocodificar inverso para obtener la dirección
+            geocoder.geocode({ 'location': position }, function(results, status) {
+                if (status === 'OK' && results[0] && addressInput) {
+                    addressInput.value = results[0].formatted_address;
+                    console.log('VENDOR-STEPS: Dirección actualizada a: ' + results[0].formatted_address);
+                }
+            });
+        });
+        
+        // Inicializar Places Autocomplete en el input de dirección
+        if (addressInput) {
+            console.log('VENDOR-STEPS: Inicializando autocompletado de Places');
+            var autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ['address']
+            });
+            
+            // Cuando se selecciona una dirección
+            autocomplete.addListener('place_changed', function() {
+                var place = autocomplete.getPlace();
+                
+                if (!place.geometry) {
+                    console.log('VENDOR-STEPS: No se encontraron detalles para: ' + place.name);
+                    return;
+                }
+                
+                // Actualizar el mapa y el marcador con la nueva ubicación
+                map.setCenter(place.geometry.location);
+                marker.setPosition(place.geometry.location);
+                
+                // Mostrar el botón de confirmar
+                var confirmBtn = document.getElementById('confirm-address-btn');
+                if (confirmBtn) {
+                    confirmBtn.style.display = 'block';
+                }
+                
+                console.log('VENDOR-STEPS: Ubicación seleccionada: ' + place.formatted_address);
+            });
+        } else {
+            console.error('VENDOR-STEPS: Input de dirección no encontrado');
+        }
+        
+        // Mostrar elementos visuales
+        var houseMarker = document.querySelector('.wp-alp-house-marker');
+        var tooltip = document.querySelector('.wp-alp-approximate-tooltip');
+        
+        if (houseMarker) houseMarker.style.display = 'block';
+        if (tooltip) tooltip.style.display = 'block';
+        
+        console.log('VENDOR-STEPS: Mapa inicializado correctamente');
+        
+    } catch (error) {
+        console.error('VENDOR-STEPS: Error al crear el mapa', error);
     }
 };
 
@@ -2020,6 +2107,46 @@ googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo d
 googleMapsScript.async = true;
 googleMapsScript.defer = true;
 document.head.appendChild(googleMapsScript);
+
+// Configurar el botón de confirmación de dirección
+document.addEventListener('DOMContentLoaded', function() {
+    var confirmBtn = document.getElementById('confirm-address-btn');
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            // Ocultar la vista del mapa
+            var mapContainer = document.querySelector('.wp-alp-location-specific-container');
+            if (mapContainer) {
+                mapContainer.style.display = 'none';
+            }
+            
+            // Mostrar el formulario de dirección detallada
+            var addressForm = document.getElementById('address-form-container');
+            if (addressForm) {
+                addressForm.style.display = 'block';
+                
+                // Desplazarse al inicio del contenedor
+                addressForm.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        });
+    }
+    
+    // Configurar el toggle de ubicación exacta
+    var exactLocationToggle = document.getElementById('exact-location-toggle');
+    if (exactLocationToggle) {
+        exactLocationToggle.addEventListener('change', function() {
+            var isExactLocation = this.checked;
+            var tooltipElement = document.getElementById('approximate-tooltip');
+            
+            if (isExactLocation) {
+                // Cambiar a ubicación exacta
+                if (tooltipElement) tooltipElement.style.display = 'none';
+            } else {
+                // Cambiar a ubicación aproximada
+                if (tooltipElement) tooltipElement.style.display = 'block';
+            }
+        });
+    }
+});
 
 console.log('VENDOR-STEPS: Script de Google Maps insertado');
 console.log('VENDOR-STEPS: API Key: <?php echo defined("GOOGLE_MAPS_API_KEY") ? substr(GOOGLE_MAPS_API_KEY, 0, 10) . "..." : "No definida"; ?>');
