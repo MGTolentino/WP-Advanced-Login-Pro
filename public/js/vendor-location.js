@@ -8,13 +8,29 @@
     var map, marker, geocoder, selectedLocation;
     var isMapInitialized = false;
     
+    console.log('Vendor location script loaded');
+    
     // Inicialización cuando el documento está listo
     $(document).ready(function() {
-        // Verificar si estamos en la página correcta
-        if ($('#wp-alp-location-map').length === 0) return;
+        console.log('Document ready in vendor location script');
         
-        // Inicializar mapa solo cuando se muestre el paso de ubicación
+        // Verificar si estamos en la página correcta
+        if ($('#wp-alp-location-map').length === 0) {
+            console.log('Map container not found on page');
+            return;
+        }
+        
+        console.log('Map container found, setting up event handlers');
+        
+        // Verificar si la opción específica ya está seleccionada
+        if ($('.wp-alp-location-option[data-option="specific"]').hasClass('selected')) {
+            console.log('Specific location already selected, initializing map');
+            setTimeout(initializeMap, 500); // Inicializar después de un breve retraso
+        }
+        
+        // Inicializar mapa cuando se muestre el paso de ubicación
         $(document).on('click', '.wp-alp-location-option[data-option="specific"]', function() {
+            console.log('Specific location clicked, initializing map');
             initializeMap();
         });
         
@@ -76,14 +92,33 @@
     
     // Inicialización del mapa (solo se ejecutará una vez)
     function initializeMap() {
-        if (isMapInitialized) return;
+        console.log('Attempting to initialize map');
+        
+        if (isMapInitialized) {
+            console.log('Map already initialized, skipping');
+            return;
+        }
         
         // Verificar que Google Maps esté disponible
-        if (typeof google === 'undefined' || !google.maps) {
-            console.error('Google Maps API no está disponible');
+        if (typeof google === 'undefined') {
+            console.error('Google object is undefined');
             setTimeout(initializeMap, 1000); // Reintentar en 1 segundo
             return;
         }
+        
+        if (!google.maps) {
+            console.error('Google Maps is undefined');
+            setTimeout(initializeMap, 1000);
+            return;
+        }
+        
+        if (!google.maps.Map) {
+            console.error('Google Maps Map constructor is undefined');
+            setTimeout(initializeMap, 1000);
+            return;
+        }
+        
+        console.log('Google Maps API available, initializing map');
         
         // Coordenadas predeterminadas (se pueden ajustar)
         var defaultLocation = { lat: 20.6534, lng: -103.3276 };  // Guadalajara, México
@@ -198,4 +233,18 @@
         updateLocationDisplay: updateLocationDisplay
     };
     
+    // Inicializar en carga inicial si estamos en el paso de ubicación
+    if ($('#step-1-location').is(':visible') && $('.wp-alp-location-option[data-option="specific"]').hasClass('selected')) {
+        console.log('Location step is visible and specific location selected on page load');
+        setTimeout(initializeMap, 1000);
+    }
+    
 })(jQuery);
+
+// Asegurarse de que initMap existe globalmente para el callback de Google Maps
+window.initMap = function() {
+    console.log('Global initMap called');
+    if (window.vendorMap && typeof window.vendorMap.initializeMap === 'function') {
+        window.vendorMap.initializeMap();
+    }
+};
