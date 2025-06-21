@@ -2031,6 +2031,215 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
 // Cargar Google Maps
 
 // Script de Google Maps con Places autocomplete
+// Función para llenar todos los campos de dirección disponibles en el formulario
+window.fillAddressFields = function(place) {
+    console.log('Llenando campos de dirección con:', place);
+    
+    if (!place) {
+        console.error('No hay datos de lugar para llenar los campos');
+        return;
+    }
+    
+    // Obtener todos los campos de dirección disponibles en el formulario
+    var formFields = {};
+    $('#address-form-container input, #address-form-container select').each(function() {
+        var $field = $(this);
+        var id = $field.attr('id') || '';
+        var name = $field.attr('name') || '';
+        
+        // Agregar al objeto de campos si tiene id o name
+        if (id || name) {
+            formFields[id || name] = {
+                element: $field,
+                type: $field.prop('tagName').toLowerCase(),
+                id: id,
+                name: name
+            };
+        }
+    });
+    
+    console.log('Campos de formulario encontrados:', formFields);
+    
+    // Componentes de dirección extraídos
+    var addressComponents = {};
+    
+    // Extraer componentes de la dirección si están disponibles
+    if (place.address_components && place.address_components.length > 0) {
+        place.address_components.forEach(function(component) {
+            var types = component.types;
+            
+            // Mostrar cada componente para depuración
+            console.log('Componente:', component.long_name, 'Tipos:', types.join(', '));
+            
+            // Guardar todos los tipos de componentes para su uso posterior
+            types.forEach(function(type) {
+                addressComponents[type] = addressComponents[type] || { 
+                    long_name: component.long_name,
+                    short_name: component.short_name
+                };
+            });
+        });
+    }
+    
+    console.log('Componentes procesados:', addressComponents);
+    
+    // Intentar llenar la dirección principal (street_address, route, street_number)
+    var streetAddress = '';
+    
+    if (addressComponents.street_number && addressComponents.route) {
+        streetAddress = addressComponents.street_number.long_name + ' ' + addressComponents.route.long_name;
+    } else if (addressComponents.route) {
+        streetAddress = addressComponents.route.long_name;
+    } else if (place.formatted_address) {
+        // Si no hay componentes detallados, usar la primera parte de la dirección formateada
+        var parts = place.formatted_address.split(',');
+        if (parts.length > 0) {
+            streetAddress = parts[0].trim();
+        }
+    }
+    
+    // Aplicar la dirección a todos los posibles campos de dirección
+    ['street', 'address', 'address1', 'street_address', 'route'].forEach(function(fieldKey) {
+        if (formFields[fieldKey]) {
+            formFields[fieldKey].element.val(streetAddress).trigger('change');
+        }
+    });
+    
+    // También buscar campos por name="address"
+    $('input[name="address"]').val(streetAddress).trigger('change');
+    
+    // Llenar campos específicos basados en tipos de componentes
+    var componentMapping = {
+        // Ciudad
+        'locality': ['city', 'locality', 'administrative_area_level_2'],
+        // Estado/Provincia
+        'administrative_area_level_1': ['state', 'region', 'province', 'administrative_area_level_1'],
+        // Código postal
+        'postal_code': ['zipcode', 'postal_code', 'postcode', 'zip'],
+        // País
+        'country': ['country'],
+        // Barrio
+        'sublocality_level_1': ['neighborhood', 'sublocality', 'district'],
+        // Condado
+        'administrative_area_level_2': ['county']
+    };
+    
+    // Aplicar cada tipo de componente a los campos correspondientes
+    Object.keys(componentMapping).forEach(function(componentType) {
+        if (addressComponents[componentType]) {
+            var value = addressComponents[componentType].long_name;
+            var shortValue = addressComponents[componentType].short_name;
+            
+            componentMapping[componentType].forEach(function(fieldKey) {
+                // Buscar por ID
+                if (formFields[fieldKey]) {
+                    var $field = formFields[fieldKey].element;
+                    
+                    // Si es un select, intentar encontrar la opción correcta
+                    if ($field.is('select')) {
+                        var optionFound = false;
+                        
+                        $field.find('option').each(function() {
+                            var $option = $(this);
+                            var optionText = $option.text().toLowerCase();
+                            var optionValue = $option.val().toLowerCase();
+                            
+                            // Intentar diferentes variaciones para la coincidencia
+                            if (optionText === value.toLowerCase() || 
+                                optionValue === value.toLowerCase() || 
+                                optionText === shortValue.toLowerCase() || 
+                                optionValue === shortValue.toLowerCase() ||
+                                optionText.includes(value.toLowerCase()) ||
+                                value.toLowerCase().includes(optionText)) {
+                                
+                                $field.val($option.val()).trigger('change');
+                                optionFound = true;
+                                console.log('Opción encontrada para', fieldKey, ':', $option.val());
+                                return false; // break
+                            }
+                        });
+                        
+                        // Si no se encontró ninguna opción, establecer el valor directamente
+                        if (!optionFound) {
+                            console.log('No se encontró opción para', fieldKey, ', estableciendo valor directamente:', value);
+                            $field.val(value).trigger('change');
+                        }
+                    } else {
+                        // Para campos de texto, simplemente establecer el valor
+                        $field.val(value).trigger('change');
+                        console.log('Campo', fieldKey, 'establecido a', value);
+                    }
+                }
+                
+                // También buscar por name attribute
+                $('[name="' + fieldKey + '"]').each(function() {
+                    var $field = $(this);
+                    
+                    // El mismo proceso que arriba para selects vs inputs
+                    if ($field.is('select')) {
+                        var optionFound = false;
+                        
+                        $field.find('option').each(function() {
+                            var $option = $(this);
+                            var optionText = $option.text().toLowerCase();
+                            var optionValue = $option.val().toLowerCase();
+                            
+                            if (optionText === value.toLowerCase() || 
+                                optionValue === value.toLowerCase() || 
+                                optionText === shortValue.toLowerCase() || 
+                                optionValue === shortValue.toLowerCase() ||
+                                optionText.includes(value.toLowerCase()) ||
+                                value.toLowerCase().includes(optionText)) {
+                                
+                                $field.val($option.val()).trigger('change');
+                                optionFound = true;
+                                return false; // break
+                            }
+                        });
+                        
+                        if (!optionFound) {
+                            $field.val(value).trigger('change');
+                        }
+                    } else {
+                        $field.val(value).trigger('change');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Si no se pudo llenar algún campo importante con componentes, intentar con la dirección formateada
+    if (place.formatted_address && (!addressComponents.locality || !addressComponents.administrative_area_level_1)) {
+        var parts = place.formatted_address.split(',');
+        console.log('Partes de la dirección formateada:', parts);
+        
+        if (parts.length >= 3) {
+            // Si no se llenó la ciudad y tenemos suficientes partes
+            if (!addressComponents.locality && parts.length > 2) {
+                var cityPart = parts[parts.length - 3].trim();
+                $('[id="city"], [name="city"]').val(cityPart).trigger('change');
+            }
+            
+            // Si no se llenó el estado/provincia
+            if (!addressComponents.administrative_area_level_1) {
+                var statePart = parts[parts.length - 2].trim();
+                
+                // Intentar extraer el código postal
+                var zipMatch = statePart.match(/\b\d{5}(-\d{4})?\b/);
+                if (zipMatch) {
+                    // Si encontramos un código postal, llenar ese campo también
+                    $('[id="zipcode"], [id="postal_code"], [name="zipcode"], [name="postal_code"]').val(zipMatch[0]).trigger('change');
+                    
+                    // Y quitar el código postal de la parte del estado
+                    statePart = statePart.replace(zipMatch[0], '').trim();
+                }
+                
+                $('[id="state"], [id="region"], [name="state"]').val(statePart).trigger('change');
+            }
+        }
+    }
+};
+
 window.initMap = function() {
     // Inicializar Google Maps
     var mapElement = document.getElementById('wp-alp-location-map');
@@ -2168,6 +2377,44 @@ window.initMap = function() {
                     // Almacenar la ubicación seleccionada para uso posterior
                     window.selectedLocation = place;
                     console.log('Ubicación seleccionada guardada:', window.selectedLocation);
+                    
+                    // Opcionalmente, pre-llenar los campos de dirección si el usuario lo confirma
+                    if (window.fillAddressFields && typeof window.fillAddressFields === 'function' && confirm('¿Deseas llenar automáticamente los campos de dirección?')) {
+                        // Ocultar la vista del mapa
+                        $('.wp-alp-specific-section').hide();
+                        
+                        // Mostrar el formulario de dirección detallada
+                        $('#address-form-container').show();
+                        
+                        // Llenar los campos con la información
+                        window.fillAddressFields(place);
+                        
+                        // Añadir mensaje de confirmación
+                        var isEnglish = $('html').attr('lang') === 'en-US' || 
+                                       document.documentElement.lang === 'en-US' || 
+                                       $('body').hasClass('en-US');
+                        var confirmMessage = $('<div class="wp-alp-address-confirmed">' + 
+                            (isEnglish ? 'Address verified successfully!' : '¡Dirección verificada correctamente!') + 
+                            '</div>');
+                        
+                        // Remover cualquier mensaje anterior
+                        $('.wp-alp-address-confirmed').remove();
+                        
+                        // Añadir el mensaje al inicio del formulario
+                        $('#address-form-container').prepend(confirmMessage);
+                        
+                        // Animar el mensaje para que desaparezca después de 5 segundos
+                        setTimeout(function() {
+                            confirmMessage.fadeOut(500, function() {
+                                $(this).remove();
+                            });
+                        }, 5000);
+                        
+                        // Desplazarse al inicio del contenedor
+                        $('html, body').animate({
+                            scrollTop: $('#address-form-container').offset().top - 100
+                        }, 300);
+                    }
                     
                     // Limpiar el campo y restaurar el valor para ocultar las sugerencias
                     var tempValue = addressInput.value;
@@ -2796,7 +3043,6 @@ $(document).on('click', '.wp-alp-remove-item', function() {
        
        // Obtener la dirección ingresada o seleccionada
        var addressInput = $('#wp-alp-address-input').val().trim();
-       var addressComponents = {};
        
        // Verificar que tenemos una dirección para procesar
        if (!addressInput) {
@@ -2815,165 +3061,25 @@ $(document).on('click', '.wp-alp-remove-item', function() {
            window.selectedLocation = { formatted_address: addressInput };
        }
        
-       // Extraer componentes de dirección si tenemos la ubicación seleccionada
-       if (window.selectedLocation && window.selectedLocation.address_components) {
-           // Si tenemos los componentes de dirección de Google Maps
-           window.selectedLocation.address_components.forEach(function(component) {
-               var types = component.types;
-               
-               if (types.includes('street_number')) {
-                   addressComponents.streetNumber = component.long_name;
-               } else if (types.includes('route')) {
-                   addressComponents.route = component.long_name;
-               } else if (types.includes('locality')) {
-                   addressComponents.city = component.long_name;
-               } else if (types.includes('administrative_area_level_1')) {
-                   addressComponents.state = component.long_name;
-               } else if (types.includes('country')) {
-                   addressComponents.country = component.short_name;
-               } else if (types.includes('postal_code')) {
-                   addressComponents.zipcode = component.long_name;
-               } else if (types.includes('sublocality_level_1') || types.includes('sublocality')) {
-                   addressComponents.neighborhood = component.long_name;
-               }
-           });
-           
-           // Rellenar los campos del formulario con la información extraida
-           if (addressComponents.streetNumber && addressComponents.route) {
-               $('#street').val(addressComponents.streetNumber + ' ' + addressComponents.route);
-           } else if (addressComponents.route) {
-               $('#street').val(addressComponents.route);
-           }
-           
-           if (addressComponents.city) $('#city').val(addressComponents.city);
-           if (addressComponents.state) {
-               // Buscar el valor en el select o establecer el texto si no lo encuentra
-               var $stateSelect = $('#state');
-               var stateFound = false;
-               
-               // Solo buscar opciones si es un select
-               if ($stateSelect.is('select')) {
-                   $stateSelect.find('option').each(function() {
-                       if ($(this).text().toLowerCase() === addressComponents.state.toLowerCase()) {
-                           $stateSelect.val($(this).val()).trigger('change');
-                           stateFound = true;
-                           return false; // break
-                       }
-                   });
-               }
-               
-               // Si no es un select o no se encontró, establecer el valor directamente
-               if (!stateFound) {
-                   $stateSelect.val(addressComponents.state).trigger('change');
-               }
-           }
-           
-           if (addressComponents.zipcode) $('#zipcode').val(addressComponents.zipcode);
-           if (addressComponents.neighborhood) $('#neighborhood').val(addressComponents.neighborhood);
-           if (addressComponents.country) {
-               var $countrySelect = $('#country');
-               var countryFound = false;
-               
-               // Solo buscar opciones si es un select
-               if ($countrySelect.is('select')) {
-                   $countrySelect.find('option').each(function() {
-                       if ($(this).val() === addressComponents.country || 
-                           $(this).text().toLowerCase() === addressComponents.country.toLowerCase()) {
-                           $countrySelect.val($(this).val()).trigger('change');
-                           countryFound = true;
-                           return false; // break
-                       }
-                   });
-               }
-               
-               // Si no se encontró, establecer el valor directamente
-               if (!countryFound) {
-                   $countrySelect.val(addressComponents.country).trigger('change');
-               }
-           }
+       // Depuración: Mostrar todos los campos del formulario
+       console.log('Campos del formulario de dirección:');
+       $('#address-form-container input, #address-form-container select').each(function() {
+           console.log('Campo:', $(this).attr('id'), 'Tipo:', this.tagName, 'Nombre:', $(this).attr('name'));
+       });
+       
+       // Usar la función de llenado de campos de dirección
+       if (window.fillAddressFields && typeof window.fillAddressFields === 'function') {
+           console.log('Usando la función fillAddressFields para rellenar el formulario');
+           window.fillAddressFields(window.selectedLocation);
        } else {
-           // Si no tenemos componentes detallados, al menos rellenamos la dirección principal
-           $('#street').val(addressInput);
+           console.error('La función fillAddressFields no está disponible');
            
-           // Intentar extraer información básica de la dirección formateada
+           // Fallback: Establecer al menos la dirección principal
+           $('#street, #address, #address1, input[name="address"]').val(addressInput).trigger('change');
+           
            if (window.selectedLocation && window.selectedLocation.formatted_address) {
-               var formattedAddress = window.selectedLocation.formatted_address;
-               var parts = formattedAddress.split(',');
-               
-               // Mostrar mensaje informativo
-               console.log('Usando dirección formateada para extraer componentes:', formattedAddress);
-               
-               if (parts.length >= 3) {
-                   // La primera parte suele contener la calle
-                   var streetPart = parts[0].trim();
-                   // Si hay más de 3 partes, la antepenultima suele ser la ciudad
-                   var cityPart = parts.length > 3 ? parts[parts.length - 3].trim() : '';
-                   // La penúltima parte suele contener estado y código postal
-                   var statePart = parts[parts.length - 2].trim();
-                   // La última parte suele contener el país
-                   var countryPart = parts[parts.length - 1].trim();
-                   
-                   // Establecer valores en el formulario
-                   if (streetPart && $('#street').val() === '') {
-                       $('#street').val(streetPart);
-                   }
-                   
-                   if (cityPart) {
-                       $('#city').val(cityPart);
-                   }
-                   
-                   // Intentar extraer el código postal del estado
-                   var zipMatch = statePart.match(/(\d{5})/);
-                   if (zipMatch) {
-                       $('#zipcode').val(zipMatch[1]);
-                       // Eliminar el código postal de la parte del estado
-                       statePart = statePart.replace(zipMatch[0], '').trim();
-                   }
-                   
-                   // Establecer el estado
-                   if (statePart) {
-                       var $stateSelect = $('#state');
-                       var stateFound = false;
-                       
-                       // Solo buscar opciones si es un select
-                       if ($stateSelect.is('select')) {
-                           $stateSelect.find('option').each(function() {
-                               if ($(this).text().toLowerCase().includes(statePart.toLowerCase())) {
-                                   $stateSelect.val($(this).val()).trigger('change');
-                                   stateFound = true;
-                                   return false; // break
-                               }
-                           });
-                       }
-                       
-                       // Si no es un select o no se encontró, establecer el valor directamente
-                       if (!stateFound) {
-                           $stateSelect.val(statePart).trigger('change');
-                       }
-                   }
-                   
-                   // Establecer el país
-                   if (countryPart) {
-                       var $countrySelect = $('#country');
-                       var countryFound = false;
-                       
-                       // Solo buscar opciones si es un select
-                       if ($countrySelect.is('select')) {
-                           $countrySelect.find('option').each(function() {
-                               if ($(this).text().toLowerCase().includes(countryPart.toLowerCase())) {
-                                   $countrySelect.val($(this).val()).trigger('change');
-                                   countryFound = true;
-                                   return false; // break
-                               }
-                           });
-                       }
-                       
-                       // Si no se encontró, establecer el valor directamente
-                       if (!countryFound) {
-                           $countrySelect.val(countryPart).trigger('change');
-                       }
-                   }
-               }
+               // Usar la dirección formateada para mostrarla
+               $('#street, #address, #address1, input[name="address"]').val(window.selectedLocation.formatted_address).trigger('change');
            }
        }
        
