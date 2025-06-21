@@ -488,7 +488,22 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                                             // Ubicaciones de ejemplo si no hay taxonomías disponibles
                                             ?>
                                             <div class="wp-alp-locations-checkboxes">
-                                                <!-- Tus ubicaciones de ejemplo aquí -->
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-1" name="locations[]" value="1">
+                                                    <label for="location-1">Ciudad de México</label>
+                                                </div>
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-2" name="locations[]" value="2">
+                                                    <label for="location-2">Monterrey</label>
+                                                </div>
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-3" name="locations[]" value="3">
+                                                    <label for="location-3">Guadalajara</label>
+                                                </div>
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-4" name="locations[]" value="4">
+                                                    <label for="location-4">Cancún</label>
+                                                </div>
                                             </div>
                                         <?php } ?>
                                     </div>
@@ -612,26 +627,6 @@ wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__
                     
                     <!-- Contenedor para múltiples ubicaciones - inicialmente oculto -->
                     <!-- El contenedor de ubicaciones múltiples se ha movido a la estructura de opciones -->
-                                    <div class="wp-alp-location-checkbox-item">
-                                        <input type="checkbox" id="location-1" name="locations[]" value="1">
-                                        <label for="location-1">Ciudad de México</label>
-                                    </div>
-                                    <div class="wp-alp-location-checkbox-item">
-                                        <input type="checkbox" id="location-2" name="locations[]" value="2">
-                                        <label for="location-2">Guadalajara</label>
-                                    </div>
-                                    <div class="wp-alp-location-checkbox-item">
-                                        <input type="checkbox" id="location-3" name="locations[]" value="3">
-                                        <label for="location-3">Monterrey</label>
-                                    </div>
-                                    <div class="wp-alp-location-checkbox-item">
-                                        <input type="checkbox" id="location-4" name="locations[]" value="4">
-                                        <label for="location-4">Cancún</label>
-                                    </div>
-                                </div>
-                                <?php
-                            }
-                            ?>
                             <!-- Opción "Otro" con campo de texto -->
                             <div class="wp-alp-location-other">
                                 <div class="wp-alp-location-checkbox-item">
