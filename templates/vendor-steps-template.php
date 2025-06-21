@@ -2167,6 +2167,7 @@ window.initMap = function() {
                     
                     // Almacenar la ubicación seleccionada para uso posterior
                     window.selectedLocation = place;
+                    console.log('Ubicación seleccionada guardada:', window.selectedLocation);
                     
                     // Limpiar el campo y restaurar el valor para ocultar las sugerencias
                     var tempValue = addressInput.value;
@@ -2312,7 +2313,7 @@ $.fn.singleClick = function(callback) {
    // Variables para la navegación
    var currentStep = 0;
    var totalSteps = 3; // Total de pasos implementados
-   var selectedLocation = null;
+   // Utilizamos window.selectedLocation en lugar de una variable local para evitar problemas de ámbito
    var isExactLocation = false;
    var map, marker, circle, geocoder, placesService;
    var selectedCategory = null;
@@ -2760,16 +2761,16 @@ $(document).on('click', '.wp-alp-remove-item', function() {
        if (isExactLocation) {
            // Cambiar a ubicación exacta
            $('#approximate-tooltip').fadeOut(200);
-           if (selectedLocation && selectedLocation.geometry) {
-               updateLocationDisplay(selectedLocation.geometry.location);
+           if (window.selectedLocation && window.selectedLocation.geometry) {
+               updateLocationDisplay(window.selectedLocation.geometry.location);
            } else if (map) {
                updateLocationDisplay(map.getCenter());
            }
        } else {
            // Cambiar a ubicación aproximada
            $('#approximate-tooltip').fadeIn(200);
-           if (selectedLocation && selectedLocation.geometry) {
-               updateLocationDisplay(selectedLocation.geometry.location);
+           if (window.selectedLocation && window.selectedLocation.geometry) {
+               updateLocationDisplay(window.selectedLocation.geometry.location);
            } else if (map) {
                updateLocationDisplay(map.getCenter());
            }
@@ -2859,13 +2860,19 @@ $(document).on('click', '.wp-alp-remove-item', function() {
            } else {
                // Verificar si se ha ingresado una dirección
                var address = $('#wp-alp-address-input').val().trim();
-               if (!address || !selectedLocation) {
+               if (!address) {
                    $('.wp-alp-location-validation').fadeIn();
                    return;
                }
                
+               // Verificar si tenemos la ubicación global
+               if (!window.selectedLocation) {
+                   // Si hay dirección pero no selectedLocation, asumimos que está bien continuar
+                   console.log('Advertencia: dirección presente pero selectedLocation no definido');
+               }
+               
                // Mostrar formulario detallado de dirección
-               $('.wp-alp-location-specific-container').hide();
+               $('.wp-alp-specific-section').hide();
                $('#address-form-container').show();
                
                // Desplazarse al inicio del contenedor
