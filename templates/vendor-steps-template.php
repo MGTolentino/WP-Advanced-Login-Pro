@@ -2794,8 +2794,213 @@ $(document).on('click', '.wp-alp-remove-item', function() {
        // Ocultar la vista del mapa
        $('.wp-alp-specific-section').hide();
        
+       // Obtener la dirección ingresada o seleccionada
+       var addressInput = $('#wp-alp-address-input').val().trim();
+       var addressComponents = {};
+       
+       // Verificar que tenemos una dirección para procesar
+       if (!addressInput) {
+           // Si no hay dirección, mostrar un mensaje y retornar
+           // Detectar idioma según contenido de la página
+           var isEnglish = $('html').attr('lang') === 'en-US' || 
+                          document.documentElement.lang === 'en-US' || 
+                          $('body').hasClass('en-US');
+           alert(isEnglish ? 'Please enter an address first' : 'Por favor ingresa una dirección primero');
+           $('.wp-alp-specific-section').show();
+           return;
+       }
+       
+       // Asegurarnos de que window.selectedLocation existe
+       if (!window.selectedLocation && addressInput) {
+           window.selectedLocation = { formatted_address: addressInput };
+       }
+       
+       // Extraer componentes de dirección si tenemos la ubicación seleccionada
+       if (window.selectedLocation && window.selectedLocation.address_components) {
+           // Si tenemos los componentes de dirección de Google Maps
+           window.selectedLocation.address_components.forEach(function(component) {
+               var types = component.types;
+               
+               if (types.includes('street_number')) {
+                   addressComponents.streetNumber = component.long_name;
+               } else if (types.includes('route')) {
+                   addressComponents.route = component.long_name;
+               } else if (types.includes('locality')) {
+                   addressComponents.city = component.long_name;
+               } else if (types.includes('administrative_area_level_1')) {
+                   addressComponents.state = component.long_name;
+               } else if (types.includes('country')) {
+                   addressComponents.country = component.short_name;
+               } else if (types.includes('postal_code')) {
+                   addressComponents.zipcode = component.long_name;
+               } else if (types.includes('sublocality_level_1') || types.includes('sublocality')) {
+                   addressComponents.neighborhood = component.long_name;
+               }
+           });
+           
+           // Rellenar los campos del formulario con la información extraida
+           if (addressComponents.streetNumber && addressComponents.route) {
+               $('#street').val(addressComponents.streetNumber + ' ' + addressComponents.route);
+           } else if (addressComponents.route) {
+               $('#street').val(addressComponents.route);
+           }
+           
+           if (addressComponents.city) $('#city').val(addressComponents.city);
+           if (addressComponents.state) {
+               // Buscar el valor en el select o establecer el texto si no lo encuentra
+               var $stateSelect = $('#state');
+               var stateFound = false;
+               
+               // Solo buscar opciones si es un select
+               if ($stateSelect.is('select')) {
+                   $stateSelect.find('option').each(function() {
+                       if ($(this).text().toLowerCase() === addressComponents.state.toLowerCase()) {
+                           $stateSelect.val($(this).val()).trigger('change');
+                           stateFound = true;
+                           return false; // break
+                       }
+                   });
+               }
+               
+               // Si no es un select o no se encontró, establecer el valor directamente
+               if (!stateFound) {
+                   $stateSelect.val(addressComponents.state).trigger('change');
+               }
+           }
+           
+           if (addressComponents.zipcode) $('#zipcode').val(addressComponents.zipcode);
+           if (addressComponents.neighborhood) $('#neighborhood').val(addressComponents.neighborhood);
+           if (addressComponents.country) {
+               var $countrySelect = $('#country');
+               var countryFound = false;
+               
+               // Solo buscar opciones si es un select
+               if ($countrySelect.is('select')) {
+                   $countrySelect.find('option').each(function() {
+                       if ($(this).val() === addressComponents.country || 
+                           $(this).text().toLowerCase() === addressComponents.country.toLowerCase()) {
+                           $countrySelect.val($(this).val()).trigger('change');
+                           countryFound = true;
+                           return false; // break
+                       }
+                   });
+               }
+               
+               // Si no se encontró, establecer el valor directamente
+               if (!countryFound) {
+                   $countrySelect.val(addressComponents.country).trigger('change');
+               }
+           }
+       } else {
+           // Si no tenemos componentes detallados, al menos rellenamos la dirección principal
+           $('#street').val(addressInput);
+           
+           // Intentar extraer información básica de la dirección formateada
+           if (window.selectedLocation && window.selectedLocation.formatted_address) {
+               var formattedAddress = window.selectedLocation.formatted_address;
+               var parts = formattedAddress.split(',');
+               
+               // Mostrar mensaje informativo
+               console.log('Usando dirección formateada para extraer componentes:', formattedAddress);
+               
+               if (parts.length >= 3) {
+                   // La primera parte suele contener la calle
+                   var streetPart = parts[0].trim();
+                   // Si hay más de 3 partes, la antepenultima suele ser la ciudad
+                   var cityPart = parts.length > 3 ? parts[parts.length - 3].trim() : '';
+                   // La penúltima parte suele contener estado y código postal
+                   var statePart = parts[parts.length - 2].trim();
+                   // La última parte suele contener el país
+                   var countryPart = parts[parts.length - 1].trim();
+                   
+                   // Establecer valores en el formulario
+                   if (streetPart && $('#street').val() === '') {
+                       $('#street').val(streetPart);
+                   }
+                   
+                   if (cityPart) {
+                       $('#city').val(cityPart);
+                   }
+                   
+                   // Intentar extraer el código postal del estado
+                   var zipMatch = statePart.match(/(\d{5})/);
+                   if (zipMatch) {
+                       $('#zipcode').val(zipMatch[1]);
+                       // Eliminar el código postal de la parte del estado
+                       statePart = statePart.replace(zipMatch[0], '').trim();
+                   }
+                   
+                   // Establecer el estado
+                   if (statePart) {
+                       var $stateSelect = $('#state');
+                       var stateFound = false;
+                       
+                       // Solo buscar opciones si es un select
+                       if ($stateSelect.is('select')) {
+                           $stateSelect.find('option').each(function() {
+                               if ($(this).text().toLowerCase().includes(statePart.toLowerCase())) {
+                                   $stateSelect.val($(this).val()).trigger('change');
+                                   stateFound = true;
+                                   return false; // break
+                               }
+                           });
+                       }
+                       
+                       // Si no es un select o no se encontró, establecer el valor directamente
+                       if (!stateFound) {
+                           $stateSelect.val(statePart).trigger('change');
+                       }
+                   }
+                   
+                   // Establecer el país
+                   if (countryPart) {
+                       var $countrySelect = $('#country');
+                       var countryFound = false;
+                       
+                       // Solo buscar opciones si es un select
+                       if ($countrySelect.is('select')) {
+                           $countrySelect.find('option').each(function() {
+                               if ($(this).text().toLowerCase().includes(countryPart.toLowerCase())) {
+                                   $countrySelect.val($(this).val()).trigger('change');
+                                   countryFound = true;
+                                   return false; // break
+                               }
+                           });
+                       }
+                       
+                       // Si no se encontró, establecer el valor directamente
+                       if (!countryFound) {
+                           $countrySelect.val(countryPart).trigger('change');
+                       }
+                   }
+               }
+           }
+       }
+       
        // Mostrar el formulario de dirección detallada
        $('#address-form-container').show();
+       
+       // Añadir mensaje de confirmación
+       // Detectar idioma según contenido de la página
+       var isEnglish = $('html').attr('lang') === 'en-US' || 
+                      document.documentElement.lang === 'en-US' || 
+                      $('body').hasClass('en-US');
+       var confirmMessage = $('<div class="wp-alp-address-confirmed">' + 
+           (isEnglish ? 'Address verified successfully!' : '¡Dirección verificada correctamente!') + 
+           '</div>');
+       
+       // Remover cualquier mensaje anterior
+       $('.wp-alp-address-confirmed').remove();
+       
+       // Añadir el mensaje al inicio del formulario
+       $('#address-form-container').prepend(confirmMessage);
+       
+       // Animar el mensaje para que desaparezca después de 5 segundos
+       setTimeout(function() {
+           confirmMessage.fadeOut(500, function() {
+               $(this).remove();
+           });
+       }, 5000);
        
        // Desplazarse al inicio del contenedor
        $('html, body').animate({
@@ -3670,6 +3875,21 @@ $('#photo-upload-zone').on('click', function(e) {
     text-align: center;
     margin-top: 15px;
     display: none;
+}
+
+.wp-alp-address-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border-left: 4px solid #28a745;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .wp-alp-btn {
