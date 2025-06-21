@@ -2314,6 +2314,8 @@ $.fn.singleClick = function(callback) {
    var currentStep = 0;
    var totalSteps = 3; // Total de pasos implementados
    // Utilizamos window.selectedLocation en lugar de una variable local para evitar problemas de ámbito
+   // Inicializamos la variable global para tipo de ubicación seleccionado
+   window.selectedLocationType = null;
    var isExactLocation = false;
    var map, marker, circle, geocoder, placesService;
    var selectedCategory = null;
@@ -2714,8 +2716,18 @@ $(document).on('click', '.wp-alp-remove-item', function() {
        $('.wp-alp-location-option').removeClass('selected');
        $this.addClass('selected');
        
-       // Marcar el radio button
-       $('#location-' + option).prop('checked', true);
+       // Marcar el radio button explícitamente
+       if (option === 'specific') {
+           $('#location-specific').prop('checked', true);
+       } else if (option === 'multiple') {
+           $('#location-multiple').prop('checked', true);
+       }
+       
+       // Guardar la selección en una variable global para asegurar consistencia
+       window.selectedLocationType = option;
+       
+       console.log('Tipo de ubicación seleccionado: ' + option);
+       console.log('Radio button checked: ' + $('#location-' + option).is(':checked'));
        
        // Mostrar el contenedor correspondiente
        if (option === 'specific') {
@@ -2780,7 +2792,7 @@ $(document).on('click', '.wp-alp-remove-item', function() {
    // Botón para confirmar dirección y mostrar el formulario detallado
    $('#confirm-address-btn').on('click', function() {
        // Ocultar la vista del mapa
-       $('.wp-alp-location-specific-container').hide();
+       $('.wp-alp-specific-section').hide();
        
        // Mostrar el formulario de dirección detallada
        $('#address-form-container').show();
@@ -2797,7 +2809,7 @@ $(document).on('click', '.wp-alp-remove-item', function() {
        $('#address-form-container').hide();
        
        // Mostrar la vista del mapa
-       $('.wp-alp-location-specific-container').show();
+       $('.wp-alp-specific-section').show();
        
        // Desplazarse al inicio del contenedor
        $('html, body').animate({
@@ -2829,8 +2841,14 @@ $(document).on('click', '.wp-alp-remove-item', function() {
        e.preventDefault();
        
        // Verificar qué tipo de ubicación se ha seleccionado
-       var isSpecificLocation = $('#location-specific').is(':checked');
-       var isMultipleLocation = $('#location-multiple').is(':checked');
+       var isSpecificLocation = $('#location-specific').is(':checked') || window.selectedLocationType === 'specific';
+       var isMultipleLocation = $('#location-multiple').is(':checked') || window.selectedLocationType === 'multiple';
+       
+       console.log('Verificando ubicación - isSpecificLocation:', isSpecificLocation);
+       console.log('Verificando ubicación - isMultipleLocation:', isMultipleLocation);
+       console.log('Estado del radio button location-specific:', $('#location-specific').is(':checked'));
+       console.log('Estado del radio button location-multiple:', $('#location-multiple').is(':checked'));
+       console.log('Valor de window.selectedLocationType:', window.selectedLocationType);
        
        if (!isSpecificLocation && !isMultipleLocation) {
            // No se ha seleccionado un tipo de ubicación
@@ -2860,15 +2878,22 @@ $(document).on('click', '.wp-alp-remove-item', function() {
            } else {
                // Verificar si se ha ingresado una dirección
                var address = $('#wp-alp-address-input').val().trim();
+               
                if (!address) {
+                   console.log('Error: Dirección no ingresada');
                    $('.wp-alp-location-validation').fadeIn();
                    return;
                }
                
-               // Verificar si tenemos la ubicación global
+               console.log('Dirección verificada:', address);
+               
+               // Si hay dirección, continuamos aunque no haya selectedLocation
+               // Esto soluciona el problema de validación cuando se ha ingresado una dirección
+               // pero por alguna razón window.selectedLocation no está definido
                if (!window.selectedLocation) {
-                   // Si hay dirección pero no selectedLocation, asumimos que está bien continuar
                    console.log('Advertencia: dirección presente pero selectedLocation no definido');
+                   // Creamos un objeto selectedLocation mínimo para evitar errores
+                   window.selectedLocation = { formatted_address: address };
                }
                
                // Mostrar formulario detallado de dirección
