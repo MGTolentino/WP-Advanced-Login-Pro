@@ -862,7 +862,24 @@ public function initialize_social_scripts() {
      * Valida la existencia de un usuario vía AJAX.
      */
     public function validate_user_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación estricta de nonce
+        if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+            wp_send_json_error(array(
+                'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+                'code' => 'invalid_nonce'
+            ));
+            return;
+        }
+        
+        // Verificar rate limiting
+        $identifier = isset($_POST['identifier']) ? sanitize_text_field($_POST['identifier']) : '';
+        if (WP_ALP_Security::is_rate_limited($identifier, 'validate_user', 10, 300)) {
+            wp_send_json_error(array(
+                'message' => __('Demasiados intentos. Por favor, espera unos minutos.', 'wp-alp'),
+                'code' => 'rate_limited'
+            ));
+            return;
+        }
         
         if (!isset($_POST['identifier']) || empty($_POST['identifier'])) {
             wp_send_json_error(array(
@@ -874,15 +891,17 @@ public function initialize_social_scripts() {
         $result = WP_ALP_Forms::process_check_user($identifier);
         
         if ($result['exists']) {
-            // El usuario existe
+            // El usuario existe - NO revelar detalles específicos para prevenir enumeración
             $data = array(
                 'exists' => true,
-                'user_id' => $result['user_id'],
-                'user_type' => $result['user_type'],
-                'profile_status' => $result['profile_status'],
-                'found_by' => $result['found_by'],
                 'html' => WP_ALP_Forms::get_login_form($identifier),
             );
+            
+            // Solo incluir datos adicionales si es necesario para el flujo
+            if (isset($result['user_id'])) {
+                // NO incluir el user_id real, usar un hash temporal
+                $data['temp_id'] = wp_hash($result['user_id'] . wp_salt('auth'));
+            }
             
             // Obtener el usuario de WordPress
             $user = get_user_by('ID', $result['user_id']);
@@ -914,7 +933,14 @@ public function initialize_social_scripts() {
      * Registra un nuevo usuario vía AJAX.
      */
     public function register_user_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación estricta de nonce
+        if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+            wp_send_json_error(array(
+                'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+                'code' => 'invalid_nonce'
+            ));
+            return;
+        }
         
         $required_fields = array('first_name', 'last_name', 'email', 'password', 'phone', 'event_type', 'event_date');
         
@@ -957,7 +983,33 @@ public function initialize_social_scripts() {
      * Autentica a un usuario vía AJAX.
      */
     public function login_user_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación estricta de nonce
+        if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+            wp_send_json_error(array(
+                'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+                'code' => 'invalid_nonce'
+            ));
+            return;
+        }
+        
+        // Verificar rate limiting por email
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+        if (WP_ALP_Security::is_rate_limited($email, 'login', 5, 300)) {
+            // Registrar evento de seguridad
+            if (class_exists('WP_ALP_Security_Enhanced')) {
+                WP_ALP_Security_Enhanced::log_security_event(
+                    'login_rate_limited',
+                    array('email' => $email),
+                    'warning'
+                );
+            }
+            
+            wp_send_json_error(array(
+                'message' => __('Demasiados intentos de inicio de sesión. Por favor, espera unos minutos.', 'wp-alp'),
+                'code' => 'rate_limited'
+            ));
+            return;
+        }
         
         if (!isset($_POST['email']) || empty($_POST['email']) || !isset($_POST['password']) || empty($_POST['password'])) {
             wp_send_json_error(array(
@@ -1011,8 +1063,10 @@ public function initialize_social_scripts() {
         // Verificación de nonce con opción de fallar silenciosamente (no terminar ejecución)
         $nonce_valid = check_ajax_referer('wp_alp_nonce', 'nonce', false);
         
-        // Log para depuración
-        error_log('WP_ALP: Verificando código, nonce válido: ' . ($nonce_valid ? 'Sí' : 'No'));
+        // Log para depuración (sin información sensible)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Verificando código, nonce válido: ' . ($nonce_valid ? 'Sí' : 'No'));
+        }
         
         if (!isset($_POST['code']) || empty($_POST['code']) || !isset($_POST['user_id']) || empty($_POST['user_id'])) {
             wp_send_json_error(array(
@@ -1024,8 +1078,10 @@ public function initialize_social_scripts() {
         $code = sanitize_text_field($_POST['code']);
         $user_id = intval($_POST['user_id']);
         
-        // Más logs para depuración
-        error_log('WP_ALP: Verificando código ' . $code . ' para usuario ' . $user_id);
+        // Log para depuración (sin código sensible)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Verificando código para usuario ' . $user_id);
+        }
         
         $result = WP_ALP_Forms::process_verification_code($user_id, $code);
         
@@ -1050,10 +1106,14 @@ public function initialize_social_scripts() {
                 $response['redirect'] = get_option('wp_alp_redirect_after_login', home_url());
             }
             
-            error_log('WP_ALP: Verificación exitosa, enviando respuesta');
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('WP_ALP: Verificación exitosa, enviando respuesta');
+            }
             wp_send_json_success($response);
         } else {
-            error_log('WP_ALP: Verificación fallida: ' . $result['message']);
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('WP_ALP: Verificación fallida');
+            }
             wp_send_json_error(array(
                 'message' => $result['message'],
             ));
@@ -1091,15 +1151,31 @@ public function initialize_social_scripts() {
  * Completa el perfil de un usuario vía AJAX.
  */
 public function complete_profile_ajax() {
-    // Intentar verificar el nonce
-    $nonce_verified = check_ajax_referer('wp_alp_nonce', 'nonce', false);
-    
-    // Si el nonce falla pero el usuario está logueado, permitir la acción
-    if (!$nonce_verified && !is_user_logged_in()) {
+    // Verificación estricta: el usuario DEBE estar logueado
+    if (!is_user_logged_in()) {
         wp_send_json_error(array(
-            'message' => __('Error de seguridad. Actualiza la página e intenta nuevamente.', 'wp-alp'),
+            'message' => __('Debes iniciar sesión para completar tu perfil.', 'wp-alp'),
+            'code' => 'not_logged_in'
         ));
         return;
+    }
+    
+    // Verificar nonce con tolerancia para usuarios recién autenticados
+    $nonce_verified = check_ajax_referer('wp_alp_nonce', 'nonce', false);
+    if (!$nonce_verified) {
+        // Generar nuevo nonce para el usuario actual
+        $new_nonce = wp_create_nonce('wp_alp_nonce');
+        
+        // Log de seguridad
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'profile_completion_nonce_refresh',
+                array('user_id' => get_current_user_id()),
+                'info'
+            );
+        }
+        
+        // Continuar con nuevo nonce
     }
     
     $required_fields = array('user_id', 'event_type', 'event_date', 'event_address', 'guests');
@@ -1122,11 +1198,12 @@ public function complete_profile_ajax() {
     $result = $user_manager->complete_user_profile($data['user_id'], $data);
     
     if ($result['success']) {
-        // Actualizar el rol del usuario a 'lead'
-        $user = get_user_by('ID', $data['user_id']);
-        if ($user) {
-            $user->set_role('lead'); // Cambiar el rol a 'lead'
+        // Definir contexto de sistema para cambio de rol autorizado
+        if (!defined('WP_ALP_SYSTEM_ROLE_ASSIGNMENT')) {
+            define('WP_ALP_SYSTEM_ROLE_ASSIGNMENT', true);
         }
+        
+        // El cambio de rol se manejará dentro de complete_user_profile con verificaciones de seguridad
         
         wp_send_json_success(array(
             'success' => true,
@@ -1135,8 +1212,10 @@ public function complete_profile_ajax() {
         ));
     }
     else {
-        // Registrar el error para debugging
-        error_log('Error al completar perfil: ' . json_encode($result));
+        // Registrar el error para debugging (sin datos sensibles)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('Error al completar perfil: ' . ($result['message'] ?? 'Error desconocido'));
+        }
         
         wp_send_json_error(array(
             'message' => $result['message'],
@@ -1148,7 +1227,10 @@ public function complete_profile_ajax() {
  * Maneja el login social vía AJAX.
  */
 public function social_login_ajax() {
-    error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $_POST['provider']);
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        $provider = isset($_POST['provider']) ? sanitize_text_field($_POST['provider']) : 'unknown';
+        error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $provider);
+    }
 
     check_ajax_referer('wp_alp_nonce', 'nonce');
     
@@ -1205,7 +1287,9 @@ public function social_login_ajax() {
         wp_send_json_error(array(
             'message' => $result['message'],
         ));
-        error_log('WP_ALP: Error en social_login_ajax: ' . $result['message']);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Error en social_login_ajax');
+        }
     }
 }
 
@@ -1213,13 +1297,18 @@ public function social_login_ajax() {
  * Devuelve el HTML del formulario solicitado vía AJAX.
  */
 public function get_form_ajax() {
-    // Añadir información de debugging
-    error_log('WP_ALP: Solicitud get_form_ajax - ' . json_encode($_POST));
+    // Log de debugging sin datos sensibles
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        $form_type = isset($_POST['form']) ? sanitize_text_field($_POST['form']) : 'unknown';
+        error_log('WP_ALP: Solicitud get_form_ajax para formulario: ' . $form_type);
+    }
     
     // Verificar nonce con mensaje detallado
     $nonce_result = wp_verify_nonce($_POST['nonce'], 'wp_alp_nonce');
     if (!$nonce_result) {
-        error_log('WP_ALP: Fallo en verificación de nonce: ' . $_POST['nonce']);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Fallo en verificación de nonce');
+        }
         
         // Para solicitudes de formulario de perfil después de social login, 
         // intentaremos ser más permisivos
@@ -1229,7 +1318,9 @@ public function get_form_ajax() {
             $user = get_user_by('ID', $user_id);
             
             if ($user) {
-                error_log('WP_ALP: Permitiendo carga de formulario a pesar de nonce inválido para user_id: ' . $user_id);
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('WP_ALP: Permitiendo carga de formulario a pesar de nonce inválido para user_id: ' . $user_id);
+                }
                 // Continuar el proceso
             } else {
                 wp_send_json_error(array(
@@ -1445,8 +1536,10 @@ public function refresh_nonce_ajax() {
     // Generar un nuevo nonce
     $new_nonce = wp_create_nonce('wp_alp_nonce');
     
-    // Registrar para debugging
-    error_log('WP_ALP: Nonce refrescado: ' . $new_nonce);
+    // Log de debugging
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('WP_ALP: Nonce refrescado exitosamente');
+    }
     
     // Enviar respuesta
     wp_send_json_success(array('nonce' => $new_nonce));

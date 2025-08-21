@@ -5,16 +5,77 @@
  */
 function check_create_vendor_ajax() {
     // Verificar nonce por seguridad
-    check_ajax_referer('create_vendor_nonce', 'nonce');
+    if (!check_ajax_referer('create_vendor_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+            'code' => 'invalid_nonce'
+        ));
+        return;
+    }
     
     // Verificar si el usuario está loggeado
     if (!is_user_logged_in()) {
-        wp_send_json_error('User not logged in');
+        wp_send_json_error(array(
+            'message' => __('Debes iniciar sesión para continuar.', 'wp-alp'),
+            'code' => 'not_logged_in'
+        ));
         return;
     }
     
     $user_id = get_current_user_id();
     $result = array('success' => false);
+    
+    // Verificar permisos del usuario
+    // Solo usuarios con rol 'lead' o superior pueden crear vendors
+    $user = get_user_by('ID', $user_id);
+    if (!$user) {
+        wp_send_json_error(array(
+            'message' => __('Usuario no válido.', 'wp-alp'),
+            'code' => 'invalid_user'
+        ));
+        return;
+    }
+    
+    // Verificar roles permitidos
+    $allowed_roles = array('lead', 'administrator', 'editor');
+    $user_roles = (array) $user->roles;
+    $has_permission = false;
+    
+    foreach ($allowed_roles as $role) {
+        if (in_array($role, $user_roles)) {
+            $has_permission = true;
+            break;
+        }
+    }
+    
+    if (!$has_permission) {
+        // Registrar intento no autorizado
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'unauthorized_vendor_creation_attempt',
+                array(
+                    'user_id' => $user_id,
+                    'user_roles' => $user_roles
+                ),
+                'warning'
+            );
+        }
+        
+        wp_send_json_error(array(
+            'message' => __('No tienes permisos para crear un vendor.', 'wp-alp'),
+            'code' => 'insufficient_permissions'
+        ));
+        return;
+    }
+    
+    // Verificar rate limiting
+    if (WP_ALP_Security::is_rate_limited($user_id, 'create_vendor', 3, 3600)) {
+        wp_send_json_error(array(
+            'message' => __('Has intentado crear un vendor demasiadas veces. Por favor, espera una hora.', 'wp-alp'),
+            'code' => 'rate_limited'
+        ));
+        return;
+    }
     
     // Verificar si el usuario ya es vendor
     $vendor = null;
@@ -29,16 +90,67 @@ function check_create_vendor_ajax() {
     
     // Si no hay vendor, crearlo
     if (!$vendor && class_exists('HivePress\Models\Vendor')) {
-        $vendor = new \HivePress\Models\Vendor();
-        $vendor->fill(array(
-            'user'   => $user_id,
-            'status' => 'publish',
-            'name'   => get_user_meta($user_id, 'first_name', true) . ' ' . get_user_meta($user_id, 'last_name', true),
-        ));
-        
-        // Guardar el vendor
-        $vendor->save();
-        $result['created'] = true;
+        try {
+            // Sanitizar datos del usuario
+            $first_name = sanitize_text_field(get_user_meta($user_id, 'first_name', true));
+            $last_name = sanitize_text_field(get_user_meta($user_id, 'last_name', true));
+            $vendor_name = trim($first_name . ' ' . $last_name);
+            
+            // Si no hay nombre, usar el display name del usuario
+            if (empty($vendor_name)) {
+                $vendor_name = sanitize_text_field($user->display_name);
+            }
+            
+            // Si aún no hay nombre, usar el email
+            if (empty($vendor_name)) {
+                $vendor_name = sanitize_text_field($user->user_email);
+            }
+            
+            $vendor = new \HivePress\Models\Vendor();
+            $vendor->fill(array(
+                'user'   => $user_id,
+                'status' => 'draft', // Iniciar como draft para revisión
+                'name'   => $vendor_name,
+            ));
+            
+            // Guardar el vendor
+            if ($vendor->save()) {
+                $result['created'] = true;
+                
+                // Registrar evento de seguridad
+                if (class_exists('WP_ALP_Security_Enhanced')) {
+                    WP_ALP_Security_Enhanced::log_security_event(
+                        'vendor_created',
+                        array(
+                            'user_id' => $user_id,
+                            'vendor_id' => $vendor->get_id(),
+                            'vendor_name' => $vendor_name
+                        ),
+                        'info'
+                    );
+                }
+            } else {
+                throw new Exception('Failed to save vendor');
+            }
+        } catch (Exception $e) {
+            // Registrar error
+            if (class_exists('WP_ALP_Security_Enhanced')) {
+                WP_ALP_Security_Enhanced::log_security_event(
+                    'vendor_creation_error',
+                    array(
+                        'user_id' => $user_id,
+                        'error' => $e->getMessage()
+                    ),
+                    'error'
+                );
+            }
+            
+            wp_send_json_error(array(
+                'message' => __('Error al crear el vendor. Por favor, inténtalo de nuevo.', 'wp-alp'),
+                'code' => 'creation_error'
+            ));
+            return;
+        }
     }
     
     $result['success'] = true;

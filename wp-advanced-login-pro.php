@@ -37,6 +37,9 @@ function run_wp_advanced_login_pro() {
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-core.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-i18n.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-security.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-security-enhanced.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-encryption.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-security-headers.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-social.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-user-manager.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-jetengine.php';
@@ -47,6 +50,12 @@ function run_wp_advanced_login_pro() {
     // Carga las clases para el admin y parte pública
     require_once plugin_dir_path(__FILE__) . 'admin/class-wp-alp-admin.php';
     require_once plugin_dir_path(__FILE__) . 'public/class-wp-alp-public.php';
+
+    // Inicializar medidas de seguridad
+    WP_ALP_Security_Headers::init();
+    WP_ALP_Security_Headers::secure_upload_headers();
+    WP_ALP_Security_Headers::secure_cookies();
+    WP_ALP_Security_Headers::remove_sensitive_headers();
 
     $plugin = new WP_ALP_Core();
     $plugin->run();
@@ -67,6 +76,24 @@ function wp_alp_activate() {
     if (!class_exists('Jet_Engine')) {
         deactivate_plugins(plugin_basename(__FILE__));
         wp_die('Este plugin requiere que JetEngine esté instalado y activado.', 'Plugin Activación Error', array('back_link' => true));
+    }
+    
+    // Inicializar configuración de seguridad
+    if (!get_option('wp_alp_security_initialized', false)) {
+        // Configurar valores por defecto de seguridad
+        update_option('wp_alp_max_login_attempts', 5);
+        update_option('wp_alp_lockout_time', 300);
+        update_option('wp_alp_enable_captcha', false);
+        update_option('wp_alp_security_initialized', true);
+        
+        // Registrar evento de activación
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'plugin_activated',
+                array('version' => WP_ALP_VERSION),
+                'info'
+            );
+        }
     }
 }
 

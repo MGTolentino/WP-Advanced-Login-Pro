@@ -9,6 +9,9 @@
  * @subpackage WP_Advanced_Login_Pro/admin
  */
 
+// Incluir clase de encriptación
+require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-wp-alp-encryption.php';
+
 /**
  * Clase que gestiona la funcionalidad de administración del plugin.
  */
@@ -135,6 +138,7 @@ class WP_ALP_Admin {
         
         register_setting('wp_alp_social', 'wp_alp_google_client_secret', array(
             'type' => 'string',
+            'sanitize_callback' => array($this, 'sanitize_encrypted_field'),
         ));
         
         register_setting('wp_alp_social', 'wp_alp_facebook_app_id', array(
@@ -143,6 +147,7 @@ class WP_ALP_Admin {
         
         register_setting('wp_alp_social', 'wp_alp_facebook_app_secret', array(
             'type' => 'string',
+            'sanitize_callback' => array($this, 'sanitize_encrypted_field'),
         ));
         
         register_setting('wp_alp_social', 'wp_alp_apple_client_id', array(
@@ -159,6 +164,7 @@ class WP_ALP_Admin {
         
         register_setting('wp_alp_social', 'wp_alp_apple_private_key', array(
             'type' => 'string',
+            'sanitize_callback' => array($this, 'sanitize_encrypted_field'),
         ));
         
         // Configuración de seguridad
@@ -183,6 +189,7 @@ class WP_ALP_Admin {
         
         register_setting('wp_alp_security', 'wp_alp_recaptcha_secret_key', array(
             'type' => 'string',
+            'sanitize_callback' => array($this, 'sanitize_encrypted_field'),
         ));
 
          // Configuración de página de login
@@ -195,6 +202,88 @@ class WP_ALP_Admin {
         'wp_alp_general_settings',
         'wp_alp_general_section'
     );
+    
+    // Migrar opciones existentes a formato encriptado si es necesario
+    add_action('admin_init', array($this, 'maybe_migrate_to_encrypted'));
+    }
+    
+    /**
+     * Sanitiza y encripta campos sensibles
+     * 
+     * @param string $value
+     * @return string
+     */
+    public function sanitize_encrypted_field($value) {
+        // Limpiar el valor
+        $value = sanitize_text_field($value);
+        
+        // Si está vacío, no encriptar
+        if (empty($value)) {
+            return '';
+        }
+        
+        // Si ya está encriptado, no re-encriptar
+        if (WP_ALP_Encryption::is_encrypted($value)) {
+            return $value;
+        }
+        
+        // Encriptar nuevo valor
+        $encrypted = WP_ALP_Encryption::encrypt($value);
+        
+        if ($encrypted === false) {
+            // Si falla la encriptación, mantener el valor original pero logearlo
+            if (class_exists('WP_ALP_Security_Enhanced')) {
+                WP_ALP_Security_Enhanced::log_security_event(
+                    'field_encryption_failed',
+                    array(),
+                    'error'
+                );
+            }
+            return $value;
+        }
+        
+        return $encrypted;
+    }
+    
+    /**
+     * Migra opciones existentes a formato encriptado
+     */
+    public function maybe_migrate_to_encrypted() {
+        // Solo ejecutar una vez
+        if (get_option('wp_alp_encryption_migrated', false)) {
+            return;
+        }
+        
+        $sensitive_options = array(
+            'wp_alp_google_client_secret',
+            'wp_alp_facebook_app_secret',
+            'wp_alp_apple_private_key',
+            'wp_alp_recaptcha_secret_key'
+        );
+        
+        $results = WP_ALP_Encryption::migrate_to_encrypted($sensitive_options);
+        
+        // Marcar como migrado
+        update_option('wp_alp_encryption_migrated', true);
+        
+        // Registrar resultado
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'encryption_migration_completed',
+                $results,
+                'info'
+            );
+        }
+    }
+    
+    /**
+     * Obtiene un valor de opción encriptada para mostrar en el admin
+     * 
+     * @param string $option_name
+     * @return string
+     */
+    public function get_decrypted_option($option_name) {
+        return WP_ALP_Encryption::get_encrypted_option($option_name, '');
     }
 
     /**
