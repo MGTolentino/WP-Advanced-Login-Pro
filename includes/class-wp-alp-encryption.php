@@ -46,8 +46,23 @@ class WP_ALP_Encryption {
      * @return string
      */
     private static function generate_key() {
-        // Usar sal de WordPress para mayor entropía
-        $salt = wp_salt('auth') . wp_salt('secure_auth') . wp_salt('logged_in') . wp_salt('nonce');
+        // Verificar si wp_salt está disponible, si no usar constantes de wp-config.php
+        if (function_exists('wp_salt')) {
+            $salt = wp_salt('auth') . wp_salt('secure_auth') . wp_salt('logged_in') . wp_salt('nonce');
+        } else {
+            // Usar constantes de wp-config.php cuando wp_salt no está disponible
+            $salt = '';
+            if (defined('AUTH_KEY')) $salt .= AUTH_KEY;
+            if (defined('SECURE_AUTH_KEY')) $salt .= SECURE_AUTH_KEY;
+            if (defined('LOGGED_IN_KEY')) $salt .= LOGGED_IN_KEY;
+            if (defined('NONCE_KEY')) $salt .= NONCE_KEY;
+            
+            // Si no hay constantes definidas, usar un fallback
+            if (empty($salt)) {
+                // Generar salt aleatorio sin depender de funciones de WordPress
+                $salt = 'wp-alp-default-salt-' . bin2hex(random_bytes(32));
+            }
+        }
         
         // Combinar con datos únicos del sitio
         $site_data = get_option('siteurl') . get_option('admin_email') . get_option('db_version');
