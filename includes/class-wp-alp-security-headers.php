@@ -36,11 +36,11 @@ class WP_ALP_Security_Headers {
      * Agrega headers HTTP de seguridad
      */
     public static function add_http_headers() {
-        // Prevenir clickjacking
-        if (!headers_sent()) {
+        // Solo aplicar CSP en páginas del plugin para evitar conflictos
+        if (!headers_sent() && self::should_apply_headers()) {
             header('X-Frame-Options: SAMEORIGIN');
             
-            // Content Security Policy básico
+            // Content Security Policy básico - SOLO en páginas del plugin
             $csp = self::get_content_security_policy();
             if ($csp) {
                 header('Content-Security-Policy: ' . $csp);
@@ -156,7 +156,10 @@ class WP_ALP_Security_Headers {
             "https://connect.facebook.net",
             "https://appleid.cdn-apple.com",
             "https://www.google.com",
-            "https://apis.google.com"
+            "https://www.google-analytics.com",
+            "https://www.googletagmanager.com",
+            "https://apis.google.com",
+            "https://www.gstatic.com" // Necesario para reCAPTCHA
         );
         
         // Style sources
@@ -164,7 +167,8 @@ class WP_ALP_Security_Headers {
             "'self'",
             "'unsafe-inline'", // Necesario para estilos dinámicos
             "https://fonts.googleapis.com",
-            "https://accounts.google.com"
+            "https://accounts.google.com",
+            "https://www.gstatic.com" // Estilos de reCAPTCHA
         );
         
         // Font sources
@@ -183,12 +187,14 @@ class WP_ALP_Security_Headers {
             "*.fbcdn.net"
         );
         
-        // Frame sources para OAuth
+        // Frame sources para OAuth y reCAPTCHA
         $frame_src = array(
             "'self'",
             "https://accounts.google.com",
             "https://www.facebook.com",
-            "https://appleid.apple.com"
+            "https://appleid.apple.com",
+            "https://www.google.com",
+            "https://recaptcha.google.com"
         );
         
         // Connect sources para AJAX y API calls
@@ -198,7 +204,9 @@ class WP_ALP_Security_Headers {
             "https://www.googleapis.com",
             "https://graph.facebook.com",
             "https://appleid.apple.com",
-            "https://www.google.com"
+            "https://www.google.com",
+            "https://www.gstatic.com",
+            "https://recaptcha.google.com"
         );
         
         // Construir CSP

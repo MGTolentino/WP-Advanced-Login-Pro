@@ -156,6 +156,42 @@ public function enqueue_styles() {
 }
 
     /**
+     * Verifica si se debe cargar reCAPTCHA en esta página
+     */
+    private function should_load_recaptcha() {
+        // Solo cargar en páginas que usan nuestros formularios
+        global $post;
+        
+        // En páginas con nuestras templates
+        if ($post && is_page()) {
+            $template_name = get_post_meta($post->ID, '_wp_page_template', true);
+            
+            $our_templates = array(
+                'login-page-template.php',
+                'vendor-page-template.php',
+                'vendor-steps-template.php'
+            );
+            
+            foreach ($our_templates as $template) {
+                if (strpos($template_name, $template) !== false) {
+                    return true;
+                }
+            }
+        }
+        
+        // En páginas que contienen nuestros shortcodes
+        if ($post && (
+            has_shortcode($post->post_content, 'wp_alp_login_page') ||
+            has_shortcode($post->post_content, 'wp_alp_login_button')
+        )) {
+            return true;
+        }
+        
+        // No cargar por defecto
+        return false;
+    }
+
+    /**
      * Detecta y aplica los colores del tema actual para el login.
      */
     public function detect_theme_colors() {
@@ -682,11 +718,20 @@ wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
             ),
         ));
         
-        // Si está habilitado Google reCAPTCHA
+        // Si está habilitado Google reCAPTCHA - Cargar globalmente para todos los formularios
         if (get_option('wp_alp_enable_captcha', false)) {
             $site_key = get_option('wp_alp_recaptcha_site_key', '');
             if (!empty($site_key)) {
-                wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true);
+                // NO cargar reCAPTCHA aquí si ya está cargado por otro plugin
+                if (!wp_script_is('google-recaptcha', 'enqueued')) {
+                    wp_enqueue_script(
+                        'google-recaptcha', 
+                        'https://www.google.com/recaptcha/api.js', 
+                        array(), 
+                        null, 
+                        true
+                    );
+                }
             }
         }
         
