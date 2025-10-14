@@ -221,7 +221,11 @@ add_shortcode('wp_alp_login_form', 'wp_alp_login_form_shortcode');
 function add_login_trigger_attribute($atts, $item, $args) {
     // Verifica si el elemento tiene la clase wp-alp-login-trigger
     if (is_object($item) && isset($item->classes) && in_array('wp-alp-login-trigger', $item->classes)) {
-        $atts['data-wp-alp-trigger'] = 'login';
+        // Solo agregar el atributo si el enlace no tiene un href válido o es un enlace especial (#)
+        $url = isset($item->url) ? $item->url : '';
+        if (empty($url) || $url === '#' || strpos($url, '#login') !== false || strpos($url, '#registro') !== false) {
+            $atts['data-wp-alp-trigger'] = 'login';
+        }
     }
     return $atts;
 }

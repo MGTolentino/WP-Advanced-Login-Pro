@@ -80,6 +80,16 @@
         // Abrir modal con botones o enlaces específicos (usando clase o atributo)
         // Mejorado para prevenir comportamiento nativo incluso en clics rápidos
         $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger', function(e) {
+            // Solo procesar si realmente es un elemento de login válido
+            var $target = $(e.currentTarget);
+            
+            // Verificar que no sea un enlace de navegación normal
+            var href = $target.attr('href');
+            if (href && href !== '#' && href !== '' && !href.includes('login') && !href.includes('registro')) {
+                // Es un enlace normal, no interceptar
+                return true;
+            }
+            
             e.preventDefault();
             e.stopPropagation(); // Detener propagación del evento
             openModal();
