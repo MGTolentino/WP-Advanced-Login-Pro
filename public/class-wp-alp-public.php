@@ -838,15 +838,9 @@ public function login_page_shortcode($atts) {
             return ob_get_clean();
         }
         
-        // Si hay redirect_to, redirigir allí
-        if (isset($_GET['redirect_to']) && !empty($_GET['redirect_to'])) {
-            $redirect_url = esc_url_raw($_GET['redirect_to']);
-            echo '<script>window.location.href = "' . $redirect_url . '";</script>';
-            return '<p>' . __('Redirigiendo...', 'wp-alp') . '</p>';
-        }
-        
-        // Si no hay redirect, mostrar mensaje
-        return '<p>' . __('Ya has iniciado sesión.', 'wp-alp') . ' <a href="' . esc_url(home_url()) . '">' . __('Ir a la página principal', 'wp-alp') . '</a></p>';
+        // Permitir que usuarios logueados vean el contenido
+        // Solo mostrar un mensaje informativo
+        return '<div class="wp-alp-logged-in-message"><p>' . __('Ya has iniciado sesión.', 'wp-alp') . '</p></div>';
     }
     
     // Cargar la plantilla de página de login

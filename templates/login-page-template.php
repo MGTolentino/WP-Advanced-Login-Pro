@@ -5,11 +5,9 @@
  * Template para mostrar la página de login/registro personalizada.
  */
 
-// Si el usuario ya está logueado, redirigir a la página principal
-if (is_user_logged_in() && !isset($_GET['redirect_to'])) {
-    wp_redirect(home_url());
-    exit;
-}
+// Permitir que los usuarios logueados también puedan ver esta página
+// Solo mostrar un mensaje si están logueados
+$is_logged_in = is_user_logged_in();
 
 get_header();
 ?>
