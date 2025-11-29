@@ -746,10 +746,18 @@
                     // Flujo simplificado sin verificación SMS
                     if (response.data.user_exists) {
                         // Usuario existente - ir a login
-                        window.wpAlp.showFormInstant('login', identifier);
+                        if (window.wpAlp && window.wpAlp.showFormInstant) {
+                            window.wpAlp.showFormInstant('login', identifier);
+                        } else {
+                            showFormInstant('login');
+                        }
                     } else {
                         // Usuario nuevo - ir a registro  
-                        window.wpAlp.showFormInstant('register', identifier);
+                        if (window.wpAlp && window.wpAlp.showFormInstant) {
+                            window.wpAlp.showFormInstant('register', identifier);
+                        } else {
+                            showFormInstant('register');
+                        }
                     }
                 } else {
                     showError(response.data.message || 'Error al validar usuario');
