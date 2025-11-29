@@ -202,19 +202,13 @@ get_header();
 </style>
 
 <!-- Modal loader y contenedor (escondido por defecto) -->
-<div id="wp-alp-modal-overlay" class="wp-alp-modal-overlay" style="display: none;">
-    <div id="wp-alp-modal-container" class="wp-alp-modal-container">
-        <button type="button" id="wp-alp-close-modal" class="wp-alp-close-modal">
-            <span class="wp-alp-close-icon"></span>
-        </button>
-        
-        <div id="wp-alp-modal-content" class="wp-alp-modal-content">
-            <!-- Aquí se cargarán dinámicamente los formularios -->
-        </div>
-        
-        <div id="wp-alp-modal-loader" class="wp-alp-modal-loader" style="display: none;">
-            <div class="wp-alp-spinner"></div>
-        </div>
+<div id="wpalp-modal-wrapper" class="wpalp-modal-wrapper" style="display: none;">
+    <div id="wpalp-modal-content" class="wpalp-modal-content">
+        <!-- Aquí se cargarán dinámicamente los formularios -->
+    </div>
+    
+    <div id="wpalp-modal-loader" class="wpalp-loading-overlay" style="display: none;">
+        <div class="wpalp-spinner"></div>
     </div>
 </div>
 

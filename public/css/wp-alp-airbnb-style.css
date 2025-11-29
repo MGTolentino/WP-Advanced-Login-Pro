@@ -1,0 +1,759 @@
+/**
+ * WP Advanced Login Pro - Estilo Airbnb
+ * CSS con alta especificidad y clases únicas para evitar conflictos
+ */
+
+/* Reset y variables únicas para el plugin */
+.wpalp-modal-wrapper *,
+.wpalp-modal-wrapper *::before,
+.wpalp-modal-wrapper *::after {
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+}
+
+/* Variables del tema */
+.wpalp-modal-wrapper {
+    --wpalp-primary: #FF385C !important;
+    --wpalp-primary-hover: #E31C5F !important;
+    --wpalp-primary-dark: #D50027 !important;
+    --wpalp-black: #222222 !important;
+    --wpalp-gray-dark: #717171 !important;
+    --wpalp-gray: #B0B0B0 !important;
+    --wpalp-gray-light: #EBEBEB !important;
+    --wpalp-gray-lighter: #F7F7F7 !important;
+    --wpalp-white: #FFFFFF !important;
+    --wpalp-border: #DDDDDD !important;
+    --wpalp-shadow-sm: 0 1px 2px rgba(0,0,0,0.08) !important;
+    --wpalp-shadow-md: 0 2px 8px rgba(0,0,0,0.12) !important;
+    --wpalp-shadow-lg: 0 8px 28px rgba(0,0,0,0.28) !important;
+    --wpalp-radius-sm: 8px !important;
+    --wpalp-radius-md: 12px !important;
+    --wpalp-radius-lg: 16px !important;
+}
+
+/* Overlay del modal */
+.wpalp-modal-wrapper {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    z-index: 2147483647 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding: 40px 20px !important;
+    overflow-y: auto !important;
+    animation: wpalp-fadeIn 0.2s ease-out !important;
+}
+
+/* Container del modal */
+.wpalp-auth-modal {
+    background-color: var(--wpalp-white) !important;
+    border-radius: var(--wpalp-radius-md) !important;
+    width: 100% !important;
+    max-width: 568px !important;
+    margin: auto !important;
+    box-shadow: var(--wpalp-shadow-lg) !important;
+    position: relative !important;
+    animation: wpalp-slideUp 0.3s ease-out !important;
+}
+
+/* Header del modal */
+.wpalp-modal-header {
+    position: relative !important;
+    padding: 24px !important;
+    border-bottom: 1px solid var(--wpalp-gray-light) !important;
+    min-height: 64px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.wpalp-modal-title {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    color: var(--wpalp-black) !important;
+    text-align: center !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Botones de cerrar y volver */
+.wpalp-btn-close,
+.wpalp-btn-back {
+    position: absolute !important;
+    left: 24px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    background-color: transparent !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.wpalp-btn-close:hover,
+.wpalp-btn-back:hover {
+    background-color: var(--wpalp-gray-lighter) !important;
+}
+
+.wpalp-icon-close,
+.wpalp-icon-back {
+    width: 12px !important;
+    height: 12px !important;
+    position: relative !important;
+}
+
+.wpalp-icon-close::before,
+.wpalp-icon-close::after {
+    content: '' !important;
+    position: absolute !important;
+    width: 14px !important;
+    height: 1.5px !important;
+    background-color: var(--wpalp-black) !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform-origin: center !important;
+}
+
+.wpalp-icon-close::before {
+    transform: translate(-50%, -50%) rotate(45deg) !important;
+}
+
+.wpalp-icon-close::after {
+    transform: translate(-50%, -50%) rotate(-45deg) !important;
+}
+
+.wpalp-icon-back::before {
+    content: '' !important;
+    position: absolute !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-left: 1.5px solid var(--wpalp-black) !important;
+    border-bottom: 1.5px solid var(--wpalp-black) !important;
+    transform: rotate(45deg) !important;
+    left: 2px !important;
+    top: 50% !important;
+    margin-top: -4px !important;
+}
+
+/* Contenido del modal */
+.wpalp-modal-body {
+    padding: 24px !important;
+}
+
+/* Título de bienvenida */
+.wpalp-welcome-title {
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    color: var(--wpalp-black) !important;
+    margin-bottom: 24px !important;
+    line-height: 26px !important;
+    letter-spacing: -0.01em !important;
+}
+
+/* Grupos de input */
+.wpalp-field-group {
+    margin-bottom: 24px !important;
+    position: relative !important;
+}
+
+.wpalp-field-label {
+    display: block !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--wpalp-black) !important;
+    margin-bottom: 8px !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+}
+
+/* Inputs únicos del plugin */
+.wpalp-field-input {
+    width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: var(--wpalp-black) !important;
+    background-color: var(--wpalp-white) !important;
+    border: 1px solid var(--wpalp-gray) !important;
+    border-radius: var(--wpalp-radius-sm) !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+}
+
+.wpalp-field-input:hover {
+    border-color: var(--wpalp-black) !important;
+}
+
+.wpalp-field-input:focus {
+    border-color: var(--wpalp-black) !important;
+    border-width: 2px !important;
+    padding: 13px 15px !important;
+    box-shadow: none !important;
+}
+
+.wpalp-field-input::placeholder {
+    color: var(--wpalp-gray) !important;
+}
+
+.wpalp-field-input:disabled {
+    background-color: var(--wpalp-gray-lighter) !important;
+    color: var(--wpalp-gray-dark) !important;
+    cursor: not-allowed !important;
+}
+
+/* Campo de contraseña con toggle */
+.wpalp-password-wrapper {
+    position: relative !important;
+}
+
+.wpalp-password-toggle {
+    position: absolute !important;
+    right: 16px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: transparent !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--wpalp-black) !important;
+    cursor: pointer !important;
+    text-decoration: underline !important;
+    padding: 4px !important;
+}
+
+.wpalp-password-toggle:hover {
+    color: var(--wpalp-gray-dark) !important;
+}
+
+/* Info text */
+.wpalp-field-info {
+    font-size: 12px !important;
+    color: var(--wpalp-gray-dark) !important;
+    margin-top: 8px !important;
+    line-height: 16px !important;
+}
+
+/* Botón principal */
+.wpalp-btn-primary {
+    width: 100% !important;
+    padding: 14px 24px !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: var(--wpalp-white) !important;
+    background: linear-gradient(to right, #E61E4D 0%, #E31C5F 27.5%, #D70466 40%, #BD1E59 57.5%, #BD1E59 75%, #BD1E59 100%) !important;
+    border-radius: var(--wpalp-radius-sm) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    letter-spacing: -0.01em !important;
+}
+
+.wpalp-btn-primary:hover {
+    background: linear-gradient(to right, #D70466 0%, #BD1E59 100%) !important;
+    transform: scale(0.98) !important;
+}
+
+.wpalp-btn-primary:active {
+    transform: scale(0.96) !important;
+}
+
+.wpalp-btn-primary:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+}
+
+/* Divider */
+.wpalp-auth-divider {
+    position: relative !important;
+    text-align: center !important;
+    margin: 24px 0 !important;
+}
+
+.wpalp-auth-divider::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 1px !important;
+    background-color: var(--wpalp-gray-light) !important;
+}
+
+.wpalp-divider-text {
+    position: relative !important;
+    display: inline-block !important;
+    padding: 0 16px !important;
+    font-size: 12px !important;
+    color: var(--wpalp-gray-dark) !important;
+    background-color: var(--wpalp-white) !important;
+    font-weight: 400 !important;
+}
+
+/* Botones sociales */
+.wpalp-social-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+}
+
+.wpalp-btn-social {
+    width: 100% !important;
+    padding: 13px 24px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: var(--wpalp-black) !important;
+    background-color: var(--wpalp-white) !important;
+    border: 2px solid var(--wpalp-black) !important;
+    border-radius: var(--wpalp-radius-sm) !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    letter-spacing: -0.01em !important;
+}
+
+.wpalp-btn-social:hover {
+    background-color: var(--wpalp-gray-lighter) !important;
+    transform: scale(0.98) !important;
+}
+
+.wpalp-btn-social:active {
+    transform: scale(0.96) !important;
+}
+
+.wpalp-social-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 12px !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+}
+
+/* Iconos sociales SVG inline */
+.wpalp-icon-google {
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCA0OCA0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiNGRkJDMDAiIGQ9Ik00My42MTEgMjAuMDgzSDQyVjIwSDI0djhoMTEuMzAzYy0xLjY0OSA0LjY1Ny02LjA4IDgtMTEuMzAzIDgtNi42MjcgMC0xMi01LjM3My0xMi0xMnM1LjM3My0xMiAxMi0xMmMzLjA1OSAwIDUuODQyIDEuMTU0IDcuOTYxIDMuMDM5bDUuNjU3LTUuNjU3QzM0LjA0NiA2LjA1MyAyOS4yNjggNCAyNCA0QzEyLjk1NSA0IDQgMTIuOTU1IDQgMjRzOC45NTUgMjAgMjAgMjAgMjAtOC45NTUgMjAtMjBjMC0xLjM0MS0uMTM4LTIuNjUtLjM4OS0zLjkxN3oiLz48cGF0aCBmaWxsPSIjRkY2RDAwIiBkPSJNNi4zMDYgMTQuNjkxbDYuNTcxIDQuODE5QzE0LjY1NSAxNS4xMDggMTguOTYxIDEyIDI0IDEyYzMuMDU5IDAgNS44NDIgMS4xNTQgNy45NjEgMy4wMzlsNS42NTctNS42NTdDMzQuMDQ2IDYuMDUzIDI5LjI2OCA0IDI0IDQgMTYuMzE4IDQgOS42NTYgOC4zMzcgNi4zMDYgMTQuNjkxeiIvPjxwYXRoIGZpbGw9IiM0Mjg1RjQiIGQ9Ik0yNCA0NGM1LjE2NiAwIDkuODYtMS45NzcgMTMuNDA5LTUuMTkybC02LjE5LTUuMjM4QTExLjkxIDExLjkxIDAgMCAxIDI0IDM2Yy01LjIwMiAwLTkuNjE5LTMuMzE3LTExLjI4My03Ljk0NmwtNi41MjIgNS4wMjVDOS41MDUgMzkuNTU2IDE2LjIyNyA0NCAyNCA0NHoiLz48cGF0aCBmaWxsPSIjMUJBMzQ1IiBkPSJNNDMuNjExIDIwLjA4M0g0MlYyMEgyNHY4aDExLjMwM2EuOC44IDAgMCAxLS4xMDIuMzY2Yy0uNzIzIDEuODIzLTEuODQgMy40MjEtMy4yODcgNC43MzJsLjAwNC0uMDAzIDYuMTkgNS4yMzhDMzcuNTEyIDM4Ljg3IDQ0IDM0IDQ0IDI0YzAtMS4zNDEtLjEzOC0yLjY1LS4zODktMy45MTd6Ii8+PC9nPjwvc3ZnPg==') no-repeat center !important;
+    background-size: contain !important;
+}
+
+.wpalp-icon-facebook {
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjNDI2N0IyIiBkPSJNMjAgMTBjMC01LjUyMy00LjQ3Ny0xMC0xMC0xMFMwIDQuNDc3IDAgMTBjMCA0Ljk5MSAzLjY1NyA5LjEyOCA4LjQzOCA5Ljg3OHYtNi45ODdoLTIuNTRWMTBoMi41NFY3Ljc5N2MwLTIuNTA2IDEuNDkyLTMuODkgMy43NzctMy44OSAxLjA5NCAwIDIuMjM4LjE5NSAyLjIzOC4xOTV2Mi40NmgtMS4yNmMtMS4yNDMgMC0xLjYzLjc3MS0xLjYzIDEuNTYzVjEwaDIuNzczTDE1Ljg5IDEyLjg5SDEzLjU2MnY2Ljk4OEMxOC4zNDMgMTkuMTI4IDIyIDE0Ljk5MSAyMiAxMHoiLz48L3N2Zz4=') no-repeat center !important;
+    background-size: contain !important;
+}
+
+.wpalp-icon-apple {
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjMDAwIiBkPSJNMTUuNzY5IDUuODM2YS40NjguNDY4IDAgMCAxLS4zOTMtLjQ2MmMwLTEuOTEgMS41NS0yLjc1NCAxLjYyLTIuODA1YTMuNDk3IDMuNDk3IDAgMCAwLTIuNzUtMS43MjNjLTEuMTUyLS4xMjgtMi4zMDUuNjk3LTIuOTA1LjY5Ny0uNjE2IDAtMS41MjUtLjY4LTIuNTE5LS42NjRhMy43MzQgMy43MzQgMCAwIDAtMy4xNDIgMS45MjdjLTEuMzU5IDIuMzYyLS4zNDQgNS44MjQuOTU4IDcuNzMzLjY2NS45MjcgMS40MzYgMS45NzIgMi40NDcgMS45MzggMS0uMDM0IDEuMzc1LS42MjkgMi41ODctLjYyOSAxLjE5NiAwIDEuNTQxLjYyOSAyLjU4NS41OTUgMS4wNzItLjAxNyAxLjczNi0uOTQgMi4zNjktMS44NzJhNy42NTkgNy42NTkgMCAwIDAgMS4wODItMi4xNjdjLS4wMTctLjAxNy0yLjEwNy0uODE3LTIuMTM5LTMuMjQ4LS4wMzQtMi4wMzIgMS42NTUtMy4wMSAxLjczNi0zLjA2YTMuNDk1IDMuNDk1IDAgMCAwLTEuNTU2LTEuMTN6bS0xLjQzNy0yLjE0NGMuNTItLjY0NC43MjQtMS41MzcuNjEzLTIuNDI1LS41OTQuMDM0LTEuMzI1LjQyLTEuNzUzIDEuMDQ2LS4zNzcuNTQzLS43MjMgMS40MzYtLjYyOSAyLjI3NS42NjUuMDUgMS4zNDMtLjMzNiAxLjc2OS0uODk2eiIvPjwvc3ZnPg==') no-repeat center !important;
+    background-size: contain !important;
+}
+
+.wpalp-icon-phone {
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjMjIyIiBkPSJNNi42MiAxMC43OWMxLjQ0IDIuODMgMy43NiA1LjE0IDYuNTkgNi41OWwyLjItMi4yYy4yNy0uMjcuNjctLjM2IDEuMDItLjI0IDEuMTIuMzcgMi4zMy41NyAzLjU3LjU3LjU1IDAgMSAuNDUgMSAxdjMuNDljMCAuNTUtLjQ1IDEtMSAxQzEwLjQ3IDIwIDIgMTEuNTMgMiAyYzAtLjU1LjQ1LTEgMS0xaDMuNWMuNTUgMCAxIC40NSAxIDEgMCAxLjI1LjIgMi40NS41NyAzLjU3LjExLjM1LjAzLjc0LS4yNSAxLjAybC0yLjIgMi4yeiIvPjwvc3ZnPg==') no-repeat center !important;
+    background-size: contain !important;
+}
+
+.wpalp-icon-email {
+    background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBmaWxsPSIjMjIyIiBkPSJNMiA0YTEgMSAwIDAgMC0xIDF2MTBhMSAxIDAgMCAwIDEgMWgxNmExIDEgMCAwIDAgMS0xVjVhMSAxIDAgMCAwLTEtMUgyem0xNC41ODggMkwxMCA5Ljk0MSAzLjQxMiA2SDE2LjU4OHpNMyAxNFY3LjE4M2w2LjU3OCA0LjU2OGEuNzUuNzUgMCAwIDAgLjg0NCAwTDE3IDE3LjE4M1YxNEgzeiIvPjwvc3ZnPg==') no-repeat center !important;
+    background-size: contain !important;
+}
+
+/* Enlaces */
+.wpalp-link {
+    color: var(--wpalp-black) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-decoration: underline !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease !important;
+}
+
+.wpalp-link:hover {
+    color: var(--wpalp-gray-dark) !important;
+}
+
+.wpalp-forgot-password {
+    margin-top: 12px !important;
+    text-align: left !important;
+}
+
+/* Secciones del formulario de registro */
+.wpalp-form-section {
+    padding: 24px 0 !important;
+    border-bottom: 1px solid var(--wpalp-gray-light) !important;
+}
+
+.wpalp-form-section:last-child {
+    border-bottom: none !important;
+}
+
+.wpalp-section-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: var(--wpalp-black) !important;
+    margin-bottom: 16px !important;
+    letter-spacing: -0.01em !important;
+}
+
+.wpalp-help-text {
+    font-size: 12px !important;
+    color: var(--wpalp-gray-dark) !important;
+    line-height: 16px !important;
+    margin-top: 8px !important;
+}
+
+/* Términos y condiciones */
+.wpalp-terms {
+    font-size: 12px !important;
+    color: var(--wpalp-gray-dark) !important;
+    line-height: 16px !important;
+    margin: 16px 0 !important;
+}
+
+.wpalp-terms a {
+    color: var(--wpalp-black) !important;
+    text-decoration: underline !important;
+}
+
+/* Mensajes de error y éxito */
+.wpalp-message {
+    padding: 16px !important;
+    border-radius: var(--wpalp-radius-sm) !important;
+    margin-bottom: 16px !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    animation: wpalp-slideDown 0.3s ease-out !important;
+}
+
+.wpalp-message-error {
+    background-color: #FFF8F6 !important;
+    color: #C13515 !important;
+    border: 1px solid #FDD8D8 !important;
+}
+
+.wpalp-message-success {
+    background-color: #F0FFF4 !important;
+    color: #0A7C42 !important;
+    border: 1px solid #B3E5C8 !important;
+}
+
+/* Código de verificación */
+.wpalp-verification-container {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin: 24px 0 !important;
+}
+
+.wpalp-verification-input {
+    width: 50px !important;
+    height: 56px !important;
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    text-align: center !important;
+    color: var(--wpalp-black) !important;
+    background-color: var(--wpalp-white) !important;
+    border: 1px solid var(--wpalp-gray) !important;
+    border-radius: var(--wpalp-radius-sm) !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+}
+
+.wpalp-verification-input:focus {
+    border-color: var(--wpalp-black) !important;
+    border-width: 2px !important;
+}
+
+.wpalp-resend-container {
+    text-align: center !important;
+    margin-top: 16px !important;
+}
+
+.wpalp-resend-text {
+    font-size: 14px !important;
+    color: var(--wpalp-gray-dark) !important;
+}
+
+/* Spinner de carga */
+.wpalp-loading-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 1000 !important;
+    border-radius: var(--wpalp-radius-md) !important;
+}
+
+.wpalp-spinner {
+    width: 32px !important;
+    height: 32px !important;
+    border: 3px solid var(--wpalp-gray-light) !important;
+    border-top-color: var(--wpalp-primary) !important;
+    border-radius: 50% !important;
+    animation: wpalp-spin 0.8s linear infinite !important;
+}
+
+/* Animaciones */
+@keyframes wpalp-fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes wpalp-slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wpalp-slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes wpalp-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wpalp-modal-wrapper {
+        padding: 0 !important;
+        align-items: center !important;
+    }
+    
+    .wpalp-auth-modal {
+        max-width: 100% !important;
+        height: 100% !important;
+        min-height: 100vh !important;
+        border-radius: 0 !important;
+    }
+    
+    .wpalp-modal-header {
+        position: sticky !important;
+        top: 0 !important;
+        background-color: var(--wpalp-white) !important;
+        z-index: 10 !important;
+    }
+    
+    .wpalp-modal-body {
+        padding: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .wpalp-welcome-title {
+        font-size: 20px !important;
+    }
+    
+    .wpalp-verification-input {
+        width: 45px !important;
+        height: 50px !important;
+        font-size: 20px !important;
+    }
+    
+    .wpalp-btn-primary,
+    .wpalp-btn-social {
+        font-size: 14px !important;
+        padding: 12px 20px !important;
+    }
+}
+
+/* Estados de los campos */
+.wpalp-field-error .wpalp-field-input {
+    border-color: var(--wpalp-primary) !important;
+    background-color: #FFF8F6 !important;
+}
+
+.wpalp-field-success .wpalp-field-input {
+    border-color: #0A7C42 !important;
+}
+
+/* Disabled state */
+.wpalp-field-disabled {
+    opacity: 0.6 !important;
+    pointer-events: none !important;
+}
+
+.wpalp-field-disabled .wpalp-field-input {
+    background-color: var(--wpalp-gray-lighter) !important;
+    color: var(--wpalp-gray-dark) !important;
+}
+
+/* Estilo para select */
+.wpalp-field-select {
+    width: 100% !important;
+    padding: 14px 40px 14px 16px !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: var(--wpalp-black) !important;
+    background-color: var(--wpalp-white) !important;
+    border: 1px solid var(--wpalp-gray) !important;
+    border-radius: var(--wpalp-radius-sm) !important;
+    transition: all 0.2s ease !important;
+    outline: none !important;
+    appearance: none !important;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTYgOEwwIDJsMS40MS0xLjQxTDYgNS4xNyAxMC41OS42TDEyIDJsLTYgNnoiIGZpbGw9IiMyMjIiLz48L3N2Zz4=') !important;
+    background-repeat: no-repeat !important;
+    background-position: right 16px center !important;
+    background-size: 12px !important;
+}
+
+.wpalp-field-select:hover {
+    border-color: var(--wpalp-black) !important;
+}
+
+.wpalp-field-select:focus {
+    border-color: var(--wpalp-black) !important;
+    border-width: 2px !important;
+    padding: 13px 39px 13px 15px !important;
+}
+
+/* Radio buttons y checkboxes personalizados */
+.wpalp-radio-group,
+.wpalp-checkbox-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+.wpalp-radio-item,
+.wpalp-checkbox-item {
+    display: flex !important;
+    align-items: center !important;
+    cursor: pointer !important;
+}
+
+.wpalp-radio-input,
+.wpalp-checkbox-input {
+    position: absolute !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.wpalp-radio-label,
+.wpalp-checkbox-label {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 16px !important;
+    color: var(--wpalp-black) !important;
+    cursor: pointer !important;
+    padding-left: 32px !important;
+    position: relative !important;
+}
+
+.wpalp-radio-label::before,
+.wpalp-checkbox-label::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    border: 2px solid var(--wpalp-gray) !important;
+    background-color: var(--wpalp-white) !important;
+    transition: all 0.2s ease !important;
+}
+
+.wpalp-radio-label::before {
+    border-radius: 50% !important;
+}
+
+.wpalp-checkbox-label::before {
+    border-radius: 4px !important;
+}
+
+.wpalp-radio-input:checked + .wpalp-radio-label::before,
+.wpalp-checkbox-input:checked + .wpalp-checkbox-label::before {
+    border-color: var(--wpalp-black) !important;
+}
+
+.wpalp-radio-label::after,
+.wpalp-checkbox-label::after {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    opacity: 0 !important;
+    transition: opacity 0.2s ease !important;
+}
+
+.wpalp-radio-label::after {
+    left: 6px !important;
+    top: 6px !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background-color: var(--wpalp-black) !important;
+}
+
+.wpalp-checkbox-label::after {
+    left: 7px !important;
+    top: 3px !important;
+    width: 6px !important;
+    height: 10px !important;
+    border: solid var(--wpalp-black) !important;
+    border-width: 0 2px 2px 0 !important;
+    transform: rotate(45deg) !important;
+}
+
+.wpalp-radio-input:checked + .wpalp-radio-label::after,
+.wpalp-checkbox-input:checked + .wpalp-checkbox-label::after {
+    opacity: 1 !important;
+}
+
+/* Focus visible para accesibilidad */
+.wpalp-btn-close:focus-visible,
+.wpalp-btn-back:focus-visible,
+.wpalp-btn-primary:focus-visible,
+.wpalp-btn-social:focus-visible,
+.wpalp-link:focus-visible {
+    outline: 2px solid var(--wpalp-black) !important;
+    outline-offset: 2px !important;
+}
+
+/* Transiciones suaves */
+* {
+    transition-property: none !important;
+}
+
+.wpalp-field-input,
+.wpalp-btn-primary,
+.wpalp-btn-social,
+.wpalp-btn-close,
+.wpalp-btn-back,
+.wpalp-link {
+    transition-property: all !important;
+    transition-duration: 0.2s !important;
+    transition-timing-function: ease !important;
+}

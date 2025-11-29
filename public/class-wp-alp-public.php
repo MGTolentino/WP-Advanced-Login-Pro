@@ -36,7 +36,16 @@ class WP_ALP_Public {
  * Registra los estilos para el lado público.
  */
 public function enqueue_styles() {
-    // Siempre enqueuar los estilos principales
+    // Cargar el nuevo CSS estilo Airbnb con alta especificidad
+    wp_enqueue_style(
+        $this->plugin_name . '-airbnb',
+        plugin_dir_url(__FILE__) . 'css/wp-alp-airbnb-style.css',
+        array(),
+        $this->version,
+        'all'
+    );
+    
+    // CSS principal del plugin (mantener para compatibilidad)
     wp_enqueue_style(
         $this->plugin_name,
         plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
@@ -677,6 +686,16 @@ public function enqueue_styles() {
      * Registra los scripts para el lado público.
      */
     public function enqueue_scripts() {
+        // Cargar el nuevo JavaScript estilo Airbnb
+        wp_enqueue_script(
+            $this->plugin_name . '-airbnb',
+            plugin_dir_url(__FILE__) . 'js/wp-alp-airbnb.js',
+            array('jquery'),
+            $this->version,
+            true
+        );
+        
+        // JavaScript principal del plugin (mantener para compatibilidad)
         wp_enqueue_script(
             $this->plugin_name,
             plugin_dir_url(__FILE__) . 'js/wp-alp-public.js',
@@ -686,15 +705,15 @@ public function enqueue_styles() {
         );
 
         // Si está habilitado Social Login
-if (get_option('wp_alp_enable_social_login', true)) {
-    wp_enqueue_script(
-        $this->plugin_name . '-social',
-        plugin_dir_url(__FILE__) . 'js/social-login.js',
-        array('jquery', $this->plugin_name), // Añadir dependencia al script principal
-        $this->version,
-        true
-    );
-}
+        if (get_option('wp_alp_enable_social_login', true)) {
+            wp_enqueue_script(
+                $this->plugin_name . '-social',
+                plugin_dir_url(__FILE__) . 'js/social-login.js',
+                array('jquery', $this->plugin_name), // Añadir dependencia al script principal
+                $this->version,
+                true
+            );
+        }
         
 wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
     'ajax_url' => admin_url('admin-ajax.php'),

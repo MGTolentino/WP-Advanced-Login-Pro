@@ -15,46 +15,51 @@ class WP_ALP_Forms {
 public static function get_initial_form() {
     ob_start();
     ?>
-    <div class="wp-alp-form-container wp-alp-initial-form">
-        <h3 class="wp-alp-modal-title"><?php _e('Inicia sesión o regístrate', 'wp-alp'); ?></h3>
+    <div class="wpalp-auth-modal">
+        <div class="wpalp-modal-header">
+            <h3 class="wpalp-modal-title"><?php _e('Inicia sesión o regístrate', 'wp-alp'); ?></h3>
+            <button type="button" class="wpalp-btn-close" aria-label="Cerrar">
+                <span class="wpalp-icon-close"></span>
+            </button>
+        </div>
         
-        <div class="wp-alp-modal-content">
-            <h2><?php _e('¡Te damos la bienvenida!', 'wp-alp'); ?></h2>
+        <div class="wpalp-modal-body">
+            <h2 class="wpalp-welcome-title"><?php _e('¡Te damos la bienvenida!', 'wp-alp'); ?></h2>
             
-            <div class="wp-alp-input-group">
-                <label for="wp-alp-identifier"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
-                <input type="text" id="wp-alp-identifier" name="identifier" class="wp-alp-input" placeholder="<?php _e('Correo electrónico o teléfono', 'wp-alp'); ?>" />
-                <div class="wp-alp-input-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
+            <div class="wpalp-field-group">
+                <label for="wpalp-identifier" class="wpalp-field-label"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
+                <input type="text" id="wpalp-identifier" name="identifier" class="wpalp-field-input" placeholder="<?php _e('Correo electrónico o teléfono', 'wp-alp'); ?>" />
+                <div class="wpalp-field-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
             </div>
             
-            <div class="wp-alp-button-group">
-                <button type="button" class="wp-alp-button wp-alp-primary-button" id="wp-alp-continue-btn">
+            <div class="wpalp-field-group">
+                <button type="button" class="wpalp-btn-primary" id="wpalp-continue-btn">
                     <?php _e('Continuar', 'wp-alp'); ?>
                 </button>
             </div>
             
-            <div class="wp-alp-divider">
-                <span><?php _e('o', 'wp-alp'); ?></span>
+            <div class="wpalp-auth-divider">
+                <span class="wpalp-divider-text"><?php _e('o', 'wp-alp'); ?></span>
             </div>
             
-            <div class="wp-alp-social-login">
+            <div class="wpalp-social-buttons">
                 <?php if (!empty(get_option('wp_alp_google_client_id', ''))) : ?>
-                <button type="button" class="wp-alp-social-button" id="wp-alp-google-btn">
-                    <span class="wp-alp-social-icon google-icon"></span>
+                <button type="button" class="wpalp-btn-social" id="wpalp-google-btn">
+                    <span class="wpalp-social-icon wpalp-icon-google"></span>
                     <span><?php _e('Continuar con Google', 'wp-alp'); ?></span>
                 </button>
                 <?php endif; ?>
                 
                 <?php if (!empty(get_option('wp_alp_facebook_app_id', ''))) : ?>
-                <button type="button" class="wp-alp-social-button" id="wp-alp-facebook-btn">
-                    <span class="wp-alp-social-icon facebook-icon"></span>
+                <button type="button" class="wpalp-btn-social" id="wpalp-facebook-btn">
+                    <span class="wpalp-social-icon wpalp-icon-facebook"></span>
                     <span><?php _e('Continuar con Facebook', 'wp-alp'); ?></span>
                 </button>
                 <?php endif; ?>
                 
                 <?php if (!empty(get_option('wp_alp_apple_client_id', ''))) : ?>
-                <button type="button" class="wp-alp-social-button" id="wp-alp-apple-btn">
-                    <span class="wp-alp-social-icon apple-icon"></span>
+                <button type="button" class="wpalp-btn-social" id="wpalp-apple-btn">
+                    <span class="wpalp-social-icon wpalp-icon-apple"></span>
                     <span><?php _e('Continuar con Apple', 'wp-alp'); ?></span>
                 </button>
                 <?php endif; ?>
