@@ -686,11 +686,20 @@ public function enqueue_styles() {
      * Registra los scripts para el lado público.
      */
     public function enqueue_scripts() {
+        // Cargar base de datos de países ANTES del script principal
+        wp_enqueue_script(
+            $this->plugin_name . '-countries',
+            plugin_dir_url(__FILE__) . 'js/countries-data.js',
+            array(),
+            $this->version,
+            true
+        );
+        
         // Cargar el nuevo JavaScript estilo Airbnb
         wp_enqueue_script(
             $this->plugin_name . '-airbnb',
             plugin_dir_url(__FILE__) . 'js/wp-alp-airbnb.js',
-            array('jquery'),
+            array('jquery', $this->plugin_name . '-countries'), // Depende de countries-data
             $this->version,
             true
         );

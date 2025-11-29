@@ -301,14 +301,154 @@ function wp_alp_validate_user_ajax() {
         $user_exists = !empty($users);
     }
 
+    // Si es teléfono y el usuario NO existe, iniciar verificación
+    if (!$is_email && !$user_exists) {
+        // Iniciar proceso de verificación por SMS
+        wp_send_json_success(array(
+            'user_exists' => false,
+            'is_email' => false,
+            'identifier' => $identifier,
+            'needs_verification' => true,
+            'verification_step' => 'send_code'
+        ));
+        return;
+    }
+
     wp_send_json_success(array(
         'user_exists' => $user_exists,
         'is_email' => $is_email,
-        'identifier' => $identifier
+        'identifier' => $identifier,
+        'needs_verification' => false
     ));
 }
 add_action('wp_ajax_wp_alp_validate_user', 'wp_alp_validate_user_ajax');
 add_action('wp_ajax_nopriv_wp_alp_validate_user', 'wp_alp_validate_user_ajax');
+
+/**
+ * Envía código de verificación por SMS/WhatsApp/llamada
+ */
+function wp_alp_send_phone_verification_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $phone_full = sanitize_text_field($_POST['phone_full'] ?? '');
+    $country_code = sanitize_text_field($_POST['country_code'] ?? '');
+    $phone_number = sanitize_text_field($_POST['phone_number'] ?? '');
+    $method = sanitize_text_field($_POST['method'] ?? 'sms');
+
+    if (empty($phone_full)) {
+        wp_send_json_error(array(
+            'message' => __('Número de teléfono requerido.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Validar método
+    if (!in_array($method, ['sms', 'whatsapp', 'call'])) {
+        $method = 'sms';
+    }
+
+    // Instanciar verificador
+    if (!class_exists('WP_ALP_Phone_Verification')) {
+        require_once plugin_dir_path(__FILE__) . 'class-wp-alp-phone-verification.php';
+    }
+
+    $verifier = new WP_ALP_Phone_Verification();
+    $result = $verifier->send_verification_code($phone_full, $country_code, $phone_number, $method);
+
+    if ($result['success']) {
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
+    }
+}
+add_action('wp_ajax_wp_alp_send_phone_verification', 'wp_alp_send_phone_verification_ajax');
+add_action('wp_ajax_nopriv_wp_alp_send_phone_verification', 'wp_alp_send_phone_verification_ajax');
+
+/**
+ * Verifica código de teléfono
+ */
+function wp_alp_verify_phone_code_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $phone_full = sanitize_text_field($_POST['phone_full'] ?? '');
+    $code = sanitize_text_field($_POST['code'] ?? '');
+
+    if (empty($phone_full) || empty($code)) {
+        wp_send_json_error(array(
+            'message' => __('Teléfono y código requeridos.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Instanciar verificador
+    if (!class_exists('WP_ALP_Phone_Verification')) {
+        require_once plugin_dir_path(__FILE__) . 'class-wp-alp-phone-verification.php';
+    }
+
+    $verifier = new WP_ALP_Phone_Verification();
+    $result = $verifier->verify_code($phone_full, $code);
+
+    if ($result['success']) {
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
+    }
+}
+add_action('wp_ajax_wp_alp_verify_phone_code', 'wp_alp_verify_phone_code_ajax');
+add_action('wp_ajax_nopriv_wp_alp_verify_phone_code', 'wp_alp_verify_phone_code_ajax');
+
+/**
+ * Reenvía código de verificación
+ */
+function wp_alp_resend_verification_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $phone_full = sanitize_text_field($_POST['phone_full'] ?? '');
+    $country_code = sanitize_text_field($_POST['country_code'] ?? '');
+    $phone_number = sanitize_text_field($_POST['phone_number'] ?? '');
+    $method = sanitize_text_field($_POST['method'] ?? 'sms');
+
+    if (empty($phone_full)) {
+        wp_send_json_error(array(
+            'message' => __('Número de teléfono requerido.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Instanciar verificador
+    if (!class_exists('WP_ALP_Phone_Verification')) {
+        require_once plugin_dir_path(__FILE__) . 'class-wp-alp-phone-verification.php';
+    }
+
+    $verifier = new WP_ALP_Phone_Verification();
+    $result = $verifier->send_verification_code($phone_full, $country_code, $phone_number, $method);
+
+    if ($result['success']) {
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
+    }
+}
+add_action('wp_ajax_wp_alp_resend_verification', 'wp_alp_resend_verification_ajax');
+add_action('wp_ajax_nopriv_wp_alp_resend_verification', 'wp_alp_resend_verification_ajax');
 
 /**
  * Obtiene el formulario de login

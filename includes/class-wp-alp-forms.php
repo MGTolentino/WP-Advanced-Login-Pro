@@ -24,10 +24,39 @@ public static function get_initial_form() {
         </div>
         
         <div class="wpalp-modal-body">
-            <h2 class="wpalp-welcome-title"><?php _e('¡Te damos la bienvenida!', 'wp-alp'); ?></h2>
+            <h2 class="wpalp-welcome-title"><?php _e('¡Te damos la bienvenida a Reservas Events!', 'wp-alp'); ?></h2>
             
             <div class="wpalp-field-group">
                 <label for="wpalp-identifier" class="wpalp-field-label"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
+                
+                <!-- Input unificado para email o teléfono -->
+                <div class="wpalp-phone-input-container" style="display: none;">
+                    <label class="wpalp-field-label wpalp-country-label"><?php _e('País/región', 'wp-alp'); ?></label>
+                    <div class="wpalp-phone-input-wrapper">
+                        <div class="wpalp-country-selector" id="wpalp-country-selector">
+                            <div class="wpalp-country-display">
+                                <span class="wpalp-country-flag">🇲🇽</span>
+                                <span class="wpalp-country-name">México</span>
+                                <span class="wpalp-country-dial">(+52)</span>
+                                <span class="wpalp-country-arrow">▼</span>
+                            </div>
+                            <div class="wpalp-country-dropdown" id="wpalp-country-dropdown">
+                                <div class="wpalp-country-search">
+                                    <input type="text" id="wpalp-country-search" placeholder="<?php _e('Buscar países...', 'wp-alp'); ?>" />
+                                </div>
+                                <div class="wpalp-country-list" id="wpalp-country-list">
+                                    <!-- Se llena dinámicamente con JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                        <input type="tel" id="wpalp-phone-number" name="phone_number" class="wpalp-field-input wpalp-phone-input" placeholder="555 123 456" />
+                    </div>
+                    <div class="wpalp-phone-disclaimer">
+                        <?php _e('Te vamos a confirmar el número por teléfono o mensaje de texto. Sujeto a tarifas estándar para mensajes y datos.', 'wp-alp'); ?> 
+                        <a href="#" class="wpalp-link"><?php _e('Política de privacidad', 'wp-alp'); ?></a>
+                    </div>
+                </div>
+
                 <input type="text" id="wpalp-identifier" name="identifier" class="wpalp-field-input" placeholder="<?php _e('Correo electrónico o teléfono', 'wp-alp'); ?>" />
                 <div class="wpalp-field-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
             </div>
@@ -43,26 +72,35 @@ public static function get_initial_form() {
             </div>
             
             <div class="wpalp-social-buttons">
-                <?php if (!empty(get_option('wp_alp_google_client_id', ''))) : ?>
                 <button type="button" class="wpalp-btn-social" id="wpalp-google-btn">
-                    <span class="wpalp-social-icon wpalp-icon-google"></span>
+                    <span class="wpalp-social-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                    </span>
                     <span><?php _e('Continuar con Google', 'wp-alp'); ?></span>
                 </button>
-                <?php endif; ?>
                 
-                <?php if (!empty(get_option('wp_alp_facebook_app_id', ''))) : ?>
                 <button type="button" class="wpalp-btn-social" id="wpalp-facebook-btn">
-                    <span class="wpalp-social-icon wpalp-icon-facebook"></span>
+                    <span class="wpalp-social-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </span>
                     <span><?php _e('Continuar con Facebook', 'wp-alp'); ?></span>
                 </button>
-                <?php endif; ?>
                 
-                <?php if (!empty(get_option('wp_alp_apple_client_id', ''))) : ?>
                 <button type="button" class="wpalp-btn-social" id="wpalp-apple-btn">
-                    <span class="wpalp-social-icon wpalp-icon-apple"></span>
+                    <span class="wpalp-social-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                    </span>
                     <span><?php _e('Continuar con Apple', 'wp-alp'); ?></span>
                 </button>
-                <?php endif; ?>
             </div>
         </div>
     </div>
