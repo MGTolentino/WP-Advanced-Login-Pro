@@ -192,56 +192,6 @@ class WP_ALP_JetEngine {
     }
 
     /**
-     * Busca un lead por email.
-     *
-     * @param string $email Email del lead.
-     * @return array|false Datos del lead o false si no se encuentra.
-     */
-    public function find_lead_by_email($email) {
-        if (!class_exists('Jet_Engine_CPT_Manager')) {
-            return false;
-        }
-        
-        // Obtener instancia de CCT
-        $cct_instance = jet_engine()->modules->get_module('custom-content-types')->instance;
-        
-        if (!$cct_instance) {
-            return false;
-        }
-        
-        // Obtener el model manager
-        $model_manager = $cct_instance->manager;
-        
-        // Buscar la colección de leads
-        $lead_cct = false;
-        foreach ($model_manager->get_content_types() as $content_type) {
-            if ($content_type->get_arg('slug') === $this->leads_collection) {
-                $lead_cct = $content_type;
-                break;
-            }
-        }
-        
-        if (!$lead_cct) {
-            return false;
-        }
-        
-        // Buscar por email
-        try {
-            $leads = $lead_cct->db->query(array(
-                'EMAIL' => $email,
-            ));
-            
-            if (!empty($leads)) {
-                return $leads[0];
-            }
-        } catch (Exception $e) {
-            error_log('Error al buscar lead por email: ' . $e->getMessage());
-        }
-        
-        return false;
-    }
-
-    /**
      * Busca un lead por ID de usuario de WordPress.
      *
      * @param int $user_id ID del usuario.
