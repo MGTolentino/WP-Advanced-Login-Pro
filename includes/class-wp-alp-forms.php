@@ -235,4 +235,25 @@ public static function get_initial_form() {
         <?php
         return ob_get_clean();
     }
+
+    /**
+     * Genera el contenedor del modal para el footer
+     *
+     * @return string HTML del contenedor del modal.
+     */
+    public static function get_modal_container() {
+        ob_start();
+        ?>
+        <div id="wpalp-modal-wrapper" class="wpalp-modal-wrapper" style="display: none;">
+            <div id="wpalp-modal-content" class="wpalp-modal-content">
+                <!-- El contenido se cargará aquí dinámicamente -->
+            </div>
+            
+            <div id="wpalp-modal-loader" class="wpalp-loading-overlay" style="display: none;">
+                <div class="wpalp-spinner"></div>
+            </div>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
 }
