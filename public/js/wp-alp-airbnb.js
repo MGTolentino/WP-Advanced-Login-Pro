@@ -790,19 +790,27 @@
      * Envía código de verificación
      */
     function sendVerificationCode(method, callback) {
-        if (!modal.userData.isPhone || !modal.userData.country) {
-            showError('Error: datos de teléfono no válidos');
+        if (!modal.userData.isPhone) {
+            showError('Error: no es un número de teléfono válido');
             return;
         }
 
-        var phoneData = parsePhoneNumber(modal.userData.identifier);
+        // Obtener número completo con código de país
+        var fullPhoneNumber = getFullPhoneNumber();
+        if (!fullPhoneNumber) {
+            showError('Error: número de teléfono incompleto');
+            return;
+        }
+
+        // Parsear para obtener componentes
+        var phoneData = parsePhoneNumber(fullPhoneNumber);
 
         $.ajax({
             url: wp_alp_ajax.ajax_url,
             type: 'POST',
             data: {
                 action: 'wp_alp_send_phone_verification',
-                phone_full: modal.userData.identifier,
+                phone_full: fullPhoneNumber,
                 country_code: phoneData.countryCode,
                 phone_number: phoneData.phoneNumber,
                 method: method,
@@ -810,6 +818,8 @@
             },
             success: function(response) {
                 if (response.success) {
+                    // Actualizar identifier con número completo para futuras referencias
+                    modal.userData.identifier = fullPhoneNumber;
                     modal.userData.verification_message = response.data.message;
                     modal.userData.verification_expires = Date.now() + (response.data.expires_in * 1000);
                     if (callback) callback(true);
