@@ -976,7 +976,7 @@
      * Maneja el login
      */
     function handleLogin() {
-        var email = $('#wpalp-login-email').val();
+        var identifier = $('#wpalp-login-email').val();
         var password = $('#wpalp-login-password').val();
 
         if (!password) {
@@ -984,6 +984,9 @@
             return;
         }
 
+        // Detectar si es email o teléfono
+        var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+        
         showButtonLoader('wpalp-login-btn');
 
         $.ajax({
@@ -991,7 +994,9 @@
             type: 'POST',
             data: {
                 action: 'wp_alp_login',
-                email: email,
+                identifier: identifier,
+                email: isEmail ? identifier : '',
+                phone: !isEmail ? identifier : '',
                 password: password,
                 remember: true,
                 nonce: wp_alp_ajax.nonce
