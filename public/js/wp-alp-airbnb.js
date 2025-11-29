@@ -203,7 +203,10 @@
     function getFullPhoneNumber() {
         if (!modal.phoneMode || !modal.selectedCountry) return null;
         
-        var phoneNumber = $('#wpalp-phone-number').val().trim();
+        var phoneNumberValue = $('#wpalp-identifier').val();
+        if (!phoneNumberValue) return null;
+        
+        var phoneNumber = phoneNumberValue.trim();
         if (!phoneNumber) return null;
         
         // Limpiar número (quitar espacios, guiones, etc)
