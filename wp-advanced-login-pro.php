@@ -78,9 +78,9 @@ function wp_alp_activate() {
         wp_die('Este plugin requiere que JetEngine esté instalado y activado.', 'Plugin Activación Error', array('back_link' => true));
     }
     
-    // Crear tabla para verificación de teléfonos
-    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-phone-verification.php';
-    WP_ALP_Phone_Verification::create_table();
+    // Tabla para verificación de teléfonos comentada
+    // require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-phone-verification.php';
+    // WP_ALP_Phone_Verification::create_table();
     
     // Inicializar configuración de seguridad
     if (!get_option('wp_alp_security_initialized', false)) {

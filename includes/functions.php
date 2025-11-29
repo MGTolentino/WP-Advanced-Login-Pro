@@ -327,9 +327,12 @@ function wp_alp_validate_user_ajax() {
 add_action('wp_ajax_wp_alp_validate_user', 'wp_alp_validate_user_ajax');
 add_action('wp_ajax_nopriv_wp_alp_validate_user', 'wp_alp_validate_user_ajax');
 
-/**
- * Envía código de verificación por SMS/WhatsApp/llamada
+/*
+ * FUNCIONES DE VERIFICACIÓN SMS DESHABILITADAS
+ * Comentado para usar flujo de registro normal
  */
+
+/*
 function wp_alp_send_phone_verification_ajax() {
     // Verificar nonce
     if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
@@ -372,10 +375,9 @@ function wp_alp_send_phone_verification_ajax() {
 }
 add_action('wp_ajax_wp_alp_send_phone_verification', 'wp_alp_send_phone_verification_ajax');
 add_action('wp_ajax_nopriv_wp_alp_send_phone_verification', 'wp_alp_send_phone_verification_ajax');
+*/
 
-/**
- * Verifica código de teléfono
- */
+/*
 function wp_alp_verify_phone_code_ajax() {
     // Verificar nonce
     if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
@@ -412,9 +414,6 @@ function wp_alp_verify_phone_code_ajax() {
 add_action('wp_ajax_wp_alp_verify_phone_code', 'wp_alp_verify_phone_code_ajax');
 add_action('wp_ajax_nopriv_wp_alp_verify_phone_code', 'wp_alp_verify_phone_code_ajax');
 
-/**
- * Reenvía código de verificación
- */
 function wp_alp_resend_verification_ajax() {
     // Verificar nonce
     if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
@@ -452,6 +451,7 @@ function wp_alp_resend_verification_ajax() {
 }
 add_action('wp_ajax_wp_alp_resend_verification', 'wp_alp_resend_verification_ajax');
 add_action('wp_ajax_nopriv_wp_alp_resend_verification', 'wp_alp_resend_verification_ajax');
+*/
 
 /**
  * Obtiene el formulario de login
