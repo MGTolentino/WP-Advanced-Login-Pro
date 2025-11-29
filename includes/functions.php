@@ -534,19 +534,48 @@ function wp_alp_login_ajax() {
         return;
     }
 
+    // Aceptar identifier, email o phone
+    $identifier = sanitize_text_field($_POST['identifier'] ?? '');
     $email = sanitize_email($_POST['email'] ?? '');
+    $phone = sanitize_text_field($_POST['phone'] ?? '');
     $password = $_POST['password'] ?? '';
     $remember = isset($_POST['remember']) && $_POST['remember'];
 
-    if (empty($email) || empty($password)) {
+    // Determinar qué usar para login
+    $login_identifier = '';
+    if (!empty($identifier)) {
+        $login_identifier = $identifier;
+    } elseif (!empty($email)) {
+        $login_identifier = $email;
+    } elseif (!empty($phone)) {
+        $login_identifier = $phone;
+    }
+
+    if (empty($login_identifier) || empty($password)) {
         wp_send_json_error(array(
-            'message' => __('Email y contraseña son requeridos.', 'wp-alp')
+            'message' => __('Credenciales requeridas.', 'wp-alp')
         ));
         return;
     }
 
+    // Si es un teléfono, buscar el usuario por meta campo
+    $user = null;
+    if (!is_email($login_identifier)) {
+        // Es un teléfono, buscar por meta
+        $users = get_users(array(
+            'meta_key' => 'phone',
+            'meta_value' => $login_identifier,
+            'number' => 1
+        ));
+        
+        if (!empty($users)) {
+            $user = $users[0];
+            $login_identifier = $user->user_login; // Usar el username para wp_signon
+        }
+    }
+
     $credentials = array(
-        'user_login' => $email,
+        'user_login' => $login_identifier,
         'user_password' => $password,
         'remember' => $remember
     );
@@ -555,7 +584,7 @@ function wp_alp_login_ajax() {
 
     if (is_wp_error($user)) {
         wp_send_json_error(array(
-            'message' => __('Email o contraseña incorrectos.', 'wp-alp')
+            'message' => __('Credenciales incorrectas.', 'wp-alp')
         ));
         return;
     }
