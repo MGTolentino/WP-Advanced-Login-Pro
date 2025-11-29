@@ -289,31 +289,34 @@ function wp_alp_validate_user_ajax() {
     $user_exists = false;
 
     if ($is_email) {
+        // Buscar por email en usuarios de WordPress
         $user = get_user_by('email', $identifier);
         $user_exists = ($user !== false);
+        
+        // Si no existe en WordPress, buscar en leads de JetEngine
+        if (!$user_exists && class_exists('WP_ALP_JetEngine')) {
+            $jetengine = new WP_ALP_JetEngine();
+            $lead = $jetengine->find_lead_by_email($identifier);
+            $user_exists = ($lead !== false);
+        }
     } else {
-        // Buscar por teléfono en meta_value
+        // Buscar por teléfono en usuarios de WordPress
         $users = get_users(array(
             'meta_key' => 'phone',
             'meta_value' => $identifier,
             'number' => 1
         ));
         $user_exists = !empty($users);
+        
+        // Si no existe en WordPress, buscar en leads de JetEngine
+        if (!$user_exists && class_exists('WP_ALP_JetEngine')) {
+            $jetengine = new WP_ALP_JetEngine();
+            $lead = $jetengine->find_lead_by_phone($identifier);
+            $user_exists = ($lead !== false);
+        }
     }
 
-    // Si es teléfono y el usuario NO existe, iniciar verificación
-    if (!$is_email && !$user_exists) {
-        // Iniciar proceso de verificación por SMS
-        wp_send_json_success(array(
-            'user_exists' => false,
-            'is_email' => false,
-            'identifier' => $identifier,
-            'needs_verification' => true,
-            'verification_step' => 'send_code'
-        ));
-        return;
-    }
-
+    // Flujo simplificado sin verificación SMS
     wp_send_json_success(array(
         'user_exists' => $user_exists,
         'is_email' => $is_email,

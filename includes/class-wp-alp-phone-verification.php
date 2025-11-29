@@ -13,6 +13,11 @@ class WP_ALP_Phone_Verification {
     const TABLE_NAME = 'wp_alp_phone_verifications';
 
     /**
+     * Nombre completo de la tabla con prefijo
+     */
+    private $table_name;
+
+    /**
      * Configuraciones por defecto
      */
     private $settings;
@@ -261,27 +266,58 @@ class WP_ALP_Phone_Verification {
      * Envía SMS usando Twilio
      */
     private function send_sms($phone_full, $code) {
-        // Por ahora simulamos el envío - implementar con Twilio real
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log("SMS a $phone_full: Tu código de verificación es: $code");
-        }
-
-        // TODO: Implementar Twilio real
         $twilio_sid = get_option('wp_alp_twilio_sid', '');
         $twilio_token = get_option('wp_alp_twilio_token', '');
+        $twilio_from = get_option('wp_alp_twilio_from', '');
         
-        if (empty($twilio_sid) || empty($twilio_token)) {
+        if (empty($twilio_sid) || empty($twilio_token) || empty($twilio_from)) {
             return array(
                 'success' => false,
-                'message' => 'Servicio SMS no configurado'
+                'message' => 'Credenciales de Twilio no configuradas'
             );
         }
 
-        // Simulación exitosa por ahora
-        return array(
-            'success' => true,
-            'message' => 'SMS enviado correctamente'
+        $message = "Tu código de verificación es: $code";
+        
+        $url = "https://api.twilio.com/2010-04-01/Accounts/$twilio_sid/Messages.json";
+        
+        $data = array(
+            'From' => $twilio_from,
+            'To' => $phone_full,
+            'Body' => $message
         );
+        
+        $response = wp_remote_post($url, array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode("$twilio_sid:$twilio_token"),
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ),
+            'body' => $data,
+            'timeout' => 30
+        ));
+        
+        if (is_wp_error($response)) {
+            return array(
+                'success' => false,
+                'message' => 'Error de conexión con Twilio: ' . $response->get_error_message()
+            );
+        }
+        
+        $response_code = wp_remote_retrieve_response_code($response);
+        $response_body = json_decode(wp_remote_retrieve_body($response), true);
+        
+        if ($response_code >= 200 && $response_code < 300) {
+            return array(
+                'success' => true,
+                'message' => 'SMS enviado correctamente'
+            );
+        } else {
+            $error_message = isset($response_body['message']) ? $response_body['message'] : 'Error desconocido de Twilio';
+            return array(
+                'success' => false,
+                'message' => 'Error de Twilio: ' . $error_message
+            );
+        }
     }
 
     /**

@@ -753,14 +753,12 @@
             success: function(response) {
                 hideButtonLoader('wpalp-continue-btn');
                 if (response.success) {
-                    if (response.data.needs_verification) {
-                        // Usuario nuevo con teléfono - iniciar verificación SMS
-                        startPhoneVerification();
-                    } else if (response.data.user_exists) {
+                    // Flujo simplificado sin verificación SMS
+                    if (response.data.user_exists) {
                         // Usuario existente - ir a login
                         showFormInstant('login');
                     } else {
-                        // Usuario nuevo con email - ir a registro
+                        // Usuario nuevo - ir a registro
                         showFormInstant('register');
                     }
                 } else {
