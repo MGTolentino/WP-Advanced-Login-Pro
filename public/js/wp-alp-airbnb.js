@@ -495,6 +495,7 @@
         var phoneDisabled = !isEmail ? 'wpalp-field-disabled' : '';
         var emailReadonly = isEmail ? 'readonly' : '';
         var phoneReadonly = !isEmail ? 'readonly' : '';
+        var emailRequired = !isEmail ? ' <span class="wpalp-field-required">*</span>' : '';
         return `
             <div class="wpalp-auth-modal">
                 <div class="wpalp-modal-header">
@@ -529,7 +530,7 @@
                         <h3 class="wpalp-section-title">Información de contacto</h3>
                         
                         <div class="wpalp-field-group ${emailDisabled}">
-                            <label for="wpalp-register-email" class="wpalp-field-label">Correo electrónico</label>
+                            <label for="wpalp-register-email" class="wpalp-field-label">Correo electrónico${emailRequired}</label>
                             <input type="email" id="wpalp-register-email" name="email" class="wpalp-field-input" value="${emailValue}" ${emailReadonly} placeholder="tu@correo.com" />
                         </div>
                         
@@ -580,7 +581,7 @@
                     </div>
                     
                     <div class="wpalp-form-section">
-                        <h3 class="wpalp-section-title">Información del evento (opcional)</h3>
+                        <h3 class="wpalp-section-title">Información del evento</h3>
                         
                         <div class="wpalp-field-group">
                             <label for="wpalp-event-type" class="wpalp-field-label">Tipo de evento</label>

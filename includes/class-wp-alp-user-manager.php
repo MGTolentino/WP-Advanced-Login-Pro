@@ -139,6 +139,7 @@ class WP_ALP_User_Manager {
         
         // Guardar metadatos adicionales
         update_user_meta($user_id, 'wp_alp_phone', $sanitized['phone']);
+        update_user_meta($user_id, 'hp_telefono_movil', $sanitized['phone']); // Para HivePress
         update_user_meta($user_id, 'wp_alp_profile_status', 'incomplete');
         
         // Si el formulario incluye los datos de evento, completar perfil

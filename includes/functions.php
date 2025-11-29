@@ -660,6 +660,7 @@ function wp_alp_register_ajax() {
     update_user_meta($user_id, 'last_name', $last_name);
     if (!empty($phone)) {
         update_user_meta($user_id, 'phone', $phone);
+        update_user_meta($user_id, 'hp_telefono_movil', $phone); // Para HivePress
     }
     if (!empty($birthdate)) {
         update_user_meta($user_id, 'birthdate', $birthdate);
