@@ -186,20 +186,6 @@
     }
 
     /**
-     * Muestra el loader
-     */
-    function showLoader() {
-        modal.loader.addClass('wpalp-loader-active').fadeIn(100);
-    }
-
-    /**
-     * Oculta el loader
-     */
-    function hideLoader() {
-        modal.loader.removeClass('wpalp-loader-active').fadeOut(100);
-    }
-
-    /**
      * Muestra un formulario instantáneamente (sin AJAX)
      */
     function showFormInstant(formType) {
@@ -361,6 +347,20 @@
     }
 
     /**
+     * Muestra el loader
+     */
+    function showLoader() {
+        modal.loader.addClass('wpalp-loader-active').fadeIn(100);
+    }
+
+    /**
+     * Oculta el loader
+     */
+    function hideLoader() {
+        modal.loader.removeClass('wpalp-loader-active').fadeOut(100);
+    }
+
+    /**
      * Maneja el botón continuar
      */
     function handleContinue() {
@@ -420,7 +420,6 @@
             }
         });
     }
-
 
     /**
      * Maneja el login
