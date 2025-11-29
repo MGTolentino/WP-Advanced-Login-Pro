@@ -27,38 +27,38 @@ public static function get_initial_form() {
             <h2 class="wpalp-welcome-title"><?php _e('¡Te damos la bienvenida a Reservas Events!', 'wp-alp'); ?></h2>
             
             <div class="wpalp-field-group">
-                <label for="wpalp-identifier" class="wpalp-field-label"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
+                <!-- Input principal - siempre visible -->
+                <div class="wpalp-input-container">
+                    <label for="wpalp-identifier" class="wpalp-field-label"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
+                    <input type="text" id="wpalp-identifier" name="identifier" class="wpalp-field-input" placeholder="<?php _e('Correo electrónico o teléfono', 'wp-alp'); ?>" />
+                    <div class="wpalp-field-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
+                </div>
                 
-                <!-- Input unificado para email o teléfono -->
-                <div class="wpalp-phone-input-container" style="display: none;">
+                <!-- Selector de país - solo visible cuando se detecta teléfono -->
+                <div class="wpalp-country-selector-container" id="wpalp-country-selector-container" style="display: none;">
                     <label class="wpalp-field-label wpalp-country-label"><?php _e('País/región', 'wp-alp'); ?></label>
-                    <div class="wpalp-phone-input-wrapper">
-                        <div class="wpalp-country-selector" id="wpalp-country-selector">
-                            <div class="wpalp-country-display">
-                                <span class="wpalp-country-flag">🇲🇽</span>
-                                <span class="wpalp-country-name">México</span>
-                                <span class="wpalp-country-dial">(+52)</span>
-                                <span class="wpalp-country-arrow">▼</span>
+                    <div class="wpalp-country-selector" id="wpalp-country-selector">
+                        <div class="wpalp-country-display">
+                            <span class="wpalp-country-flag">🇲🇽</span>
+                            <span class="wpalp-country-name">México</span>
+                            <span class="wpalp-country-dial">(+52)</span>
+                            <span class="wpalp-country-arrow">▼</span>
+                        </div>
+                        <div class="wpalp-country-dropdown" id="wpalp-country-dropdown">
+                            <div class="wpalp-country-search">
+                                <input type="text" id="wpalp-country-search" placeholder="<?php _e('Buscar países...', 'wp-alp'); ?>" />
                             </div>
-                            <div class="wpalp-country-dropdown" id="wpalp-country-dropdown">
-                                <div class="wpalp-country-search">
-                                    <input type="text" id="wpalp-country-search" placeholder="<?php _e('Buscar países...', 'wp-alp'); ?>" />
-                                </div>
-                                <div class="wpalp-country-list" id="wpalp-country-list">
-                                    <!-- Se llena dinámicamente con JavaScript -->
-                                </div>
+                            <div class="wpalp-country-list" id="wpalp-country-list">
+                                <!-- Se llena dinámicamente con JavaScript -->
                             </div>
                         </div>
-                        <input type="tel" id="wpalp-phone-number" name="phone_number" class="wpalp-field-input wpalp-phone-input" placeholder="555 123 456" />
                     </div>
+                    
                     <div class="wpalp-phone-disclaimer">
                         <?php _e('Te vamos a confirmar el número por teléfono o mensaje de texto. Sujeto a tarifas estándar para mensajes y datos.', 'wp-alp'); ?> 
                         <a href="#" class="wpalp-link"><?php _e('Política de privacidad', 'wp-alp'); ?></a>
                     </div>
                 </div>
-
-                <input type="text" id="wpalp-identifier" name="identifier" class="wpalp-field-input" placeholder="<?php _e('Correo electrónico o teléfono', 'wp-alp'); ?>" />
-                <div class="wpalp-field-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
             </div>
             
             <div class="wpalp-field-group">

@@ -114,13 +114,13 @@
      * Alterna entre modo email y modo teléfono
      */
     function togglePhoneMode(enable) {
-        var $container = $('.wpalp-phone-input-container');
+        var $container = $('#wpalp-country-selector-container');
         var $identifier = $('#wpalp-identifier');
         
         if (enable && !modal.phoneMode) {
             modal.phoneMode = true;
             $container.slideDown(200);
-            $identifier.attr('placeholder', 'Correo electrónico');
+            $identifier.attr('placeholder', 'Número de teléfono');
             
             // Inicializar selector si no está inicializado
             if (!modal.selectedCountry) {
