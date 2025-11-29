@@ -37,15 +37,25 @@ function run_wp_advanced_login_pro() {
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-core.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-i18n.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-security.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-security-enhanced.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-encryption.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-security-headers.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-social.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-user-manager.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-jetengine.php';
     require_once plugin_dir_path(__FILE__) . 'includes/class-wp-alp-forms.php';
     require_once plugin_dir_path(__FILE__) . 'redirect-protection.php';
+    require_once plugin_dir_path(__FILE__) . 'includes/functions.php';
 
     // Carga las clases para el admin y parte pública
     require_once plugin_dir_path(__FILE__) . 'admin/class-wp-alp-admin.php';
     require_once plugin_dir_path(__FILE__) . 'public/class-wp-alp-public.php';
+
+    // Inicializar medidas de seguridad
+    WP_ALP_Security_Headers::init();
+    WP_ALP_Security_Headers::secure_upload_headers();
+    WP_ALP_Security_Headers::secure_cookies();
+    WP_ALP_Security_Headers::remove_sensitive_headers();
 
     $plugin = new WP_ALP_Core();
     $plugin->run();
@@ -66,6 +76,24 @@ function wp_alp_activate() {
     if (!class_exists('Jet_Engine')) {
         deactivate_plugins(plugin_basename(__FILE__));
         wp_die('Este plugin requiere que JetEngine esté instalado y activado.', 'Plugin Activación Error', array('back_link' => true));
+    }
+    
+    // Inicializar configuración de seguridad
+    if (!get_option('wp_alp_security_initialized', false)) {
+        // Configurar valores por defecto de seguridad
+        update_option('wp_alp_max_login_attempts', 5);
+        update_option('wp_alp_lockout_time', 300);
+        update_option('wp_alp_enable_captcha', false);
+        update_option('wp_alp_security_initialized', true);
+        
+        // Registrar evento de activación
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'plugin_activated',
+                array('version' => WP_ALP_VERSION),
+                'info'
+            );
+        }
     }
 }
 
@@ -97,6 +125,7 @@ add_filter('theme_page_templates', 'wp_alp_register_templates');
 
 /**
  * Carga la plantilla correcta si se selecciona una del plugin.
+ * Prioridad 20 para ejecutar después de otros filtros pero antes de renderizar.
  */
 function wp_alp_load_template($template) {
     global $post;
@@ -104,38 +133,46 @@ function wp_alp_load_template($template) {
     if ($post && is_page()) {
         $template_name = get_post_meta($post->ID, '_wp_page_template', true);
         
-        error_log('Template solicitada: ' . $template_name);
-        
-        // Verificar si es una de nuestras plantillas
-        if (!empty($template_name) && (
-            strpos($template_name, 'login-page-template.php') !== false ||
-            strpos($template_name, 'vendor-page-template.php') !== false ||
-            strpos($template_name, 'seller-page-template.php') !== false ||
-            strpos($template_name, 'vendor-steps-template.php') !== false ||
-            strpos($template_name, 'vendor-form-step1-template.php') !== false
-        )) {
-            // Determinar qué archivo de plantilla cargar
-            $template_file = '';
+        // Verificar si es una de nuestras plantillas con un mapa optimizado
+        if (!empty($template_name)) {
+            // Mapeo directo de nombres de plantilla a archivos
+            $template_map = [
+                'login-page-template.php' => 'login-page-template.php',
+                'vendor-page-template.php' => 'vendor-page-template.php',
+                'seller-page-template.php' => 'vendor-page-template.php',
+                'vendor-steps-template.php' => 'vendor-steps-template.php',
+                'vendor-form-step1-template.php' => 'vendor-form-step1-template.php'
+            ];
             
-            if (strpos($template_name, 'login-page-template.php') !== false) {
-                $template_file = 'login-page-template.php';
-            } else if (strpos($template_name, 'vendor-page-template.php') !== false || 
-                       strpos($template_name, 'seller-page-template.php') !== false) {
-                $template_file = 'vendor-page-template.php';
-            } else if (strpos($template_name, 'vendor-steps-template.php') !== false) {
-                $template_file = 'vendor-steps-template.php';
-            } else if (strpos($template_name, 'vendor-form-step1-template.php') !== false) {
-                $template_file = 'vendor-form-step1-template.php';
-            }
-            
-            if (!empty($template_file)) {
-                $file = plugin_dir_path(__FILE__) . 'templates/' . $template_file;
-                
-                error_log('Ruta corregida de plantilla: ' . $file);
-                error_log('¿Existe el archivo? ' . (file_exists($file) ? 'SÍ' : 'NO'));
-                
-                if (file_exists($file)) {
-                    return $file;
+            // Buscar coincidencia en nuestro mapa
+            foreach ($template_map as $template_key => $template_file) {
+                if (strpos($template_name, $template_key) !== false) {
+                    $file = plugin_dir_path(__FILE__) . 'templates/' . $template_file;
+                    
+                    if (file_exists($file)) {
+                        // Asegurar que los estilos del plugin se carguen para esta página
+                        add_action('wp_enqueue_scripts', function() {
+                            // Asegurarnos que estos estilos tengan prioridad alta (cargar tarde)
+                            wp_enqueue_style(
+                                'wp-alp-template-styles',
+                                plugin_dir_url(__FILE__) . 'public/css/wp-alp-public.css',
+                                array(),
+                                WP_ALP_VERSION . '.' . time(),
+                                'all'
+                            );
+                            
+                            wp_enqueue_style(
+                                'wp-alp-template-custom',
+                                plugin_dir_url(__FILE__) . 'public/css/custom-alp-styles.css',
+                                array('wp-alp-template-styles'),
+                                WP_ALP_VERSION . '.' . time(),
+                                'all'
+                            );
+                        }, 999); // Prioridad muy alta para cargar después de otros estilos
+                        
+                        return $file;
+                    }
+                    break;
                 }
             }
         }
@@ -143,7 +180,8 @@ function wp_alp_load_template($template) {
     
     return $template;
 }
-add_filter('template_include', 'wp_alp_load_template');
+// Aumentamos la prioridad para asegurarnos que se ejecuta antes que la plantilla genérica
+add_filter('template_include', 'wp_alp_load_template', 20);
 
 /**
  * Shortcode para incluir el formulario de login en cualquier página
@@ -178,52 +216,16 @@ function wp_alp_login_form_shortcode($atts) {
 }
 add_shortcode('wp_alp_login_form', 'wp_alp_login_form_shortcode');
 
-/**
- * Redirigir usuarios no logueados a la página de login
- */
-function wp_alp_redirect_to_login() {
-    // No redirigir en la administración o si ya está logueado
-    if (is_admin() || is_user_logged_in()) {
-        return;
-    }
-    
-    // No redirigir en estas páginas
-    if (is_front_page() || is_home()) {
-        return;
-    }
-    
-    // Obtener la página de login
-    $login_page_id = get_option('wp_alp_login_page_id');
-    
-    if (!$login_page_id) {
-        // Buscar la página con la plantilla de login
-        $login_pages = get_pages(array(
-            'meta_key' => '_wp_page_template',
-            'meta_value' => 'templates/login-page-template.php'
-        ));
-        
-        if (!empty($login_pages)) {
-            $login_page_id = $login_pages[0]->ID;
-            update_option('wp_alp_login_page_id', $login_page_id);
-        }
-    }
-    
-    if ($login_page_id) {
-        $login_url = get_permalink($login_page_id);
-        $current_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        
-        // Redirigir a la página de login con la URL actual como parámetro
-        wp_redirect(add_query_arg('redirect_to', urlencode($current_url), $login_url));
-        exit;
-    }
-}
-add_action('template_redirect', 'wp_alp_redirect_to_login');
 
 // Agregar atributo data-wp-alp-trigger="login" a elementos con clase wp-alp-login-trigger
 function add_login_trigger_attribute($atts, $item, $args) {
     // Verifica si el elemento tiene la clase wp-alp-login-trigger
     if (is_object($item) && isset($item->classes) && in_array('wp-alp-login-trigger', $item->classes)) {
-        $atts['data-wp-alp-trigger'] = 'login';
+        // Solo agregar el atributo si el enlace no tiene un href válido o es un enlace especial (#)
+        $url = isset($item->url) ? $item->url : '';
+        if (empty($url) || $url === '#' || strpos($url, '#login') !== false || strpos($url, '#registro') !== false) {
+            $atts['data-wp-alp-trigger'] = 'login';
+        }
     }
     return $atts;
 }

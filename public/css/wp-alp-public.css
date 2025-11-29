@@ -90,7 +90,7 @@
     height: 40px;
     border: 3px solid rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    border-top-color: #ff385c;
+    border-top-color: var(--wp-alp-primary-color, #cbb881);
     animation: spin 1s ease-in-out infinite;
 }
 
@@ -169,7 +169,7 @@
 }
 
 .wp-alp-input.error {
-    border-color: #FF385C;
+    border-color: var(--wp-alp-primary-color, #cbb881);
 }
 
 .wp-alp-toggle-password {
@@ -209,12 +209,12 @@
 }
 
 .wp-alp-primary-button {
-    background-color: #FF385C;
+    background-color: var(--wp-alp-primary-color, #cbb881);
     color: white;
 }
 
 .wp-alp-primary-button:hover {
-    background-color: #E31C5F;
+    background-color: var(--wp-alp-primary-hover, #a99969);
 }
 
 .wp-alp-secondary-button {

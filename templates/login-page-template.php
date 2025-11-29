@@ -5,11 +5,9 @@
  * Template para mostrar la página de login/registro personalizada.
  */
 
-// Si el usuario ya está logueado, redirigir a la página principal
-if (is_user_logged_in() && !isset($_GET['redirect_to'])) {
-    wp_redirect(home_url());
-    exit;
-}
+// Permitir que los usuarios logueados también puedan ver esta página
+// Solo mostrar un mensaje si están logueados
+$is_logged_in = is_user_logged_in();
 
 get_header();
 ?>
@@ -33,16 +31,13 @@ get_header();
                 ?>
             </div>
             
-            <h1><?php _e('Inicia sesión o regístrate', 'wp-alp'); ?></h1>
+            <h1><?php _e('Bienvenido a nuestro portal', 'wp-alp'); ?></h1>
             
-            <div id="wp-alp-login-form-wrapper">
-    <!-- El formulario se cargará aquí con AJAX -->
-    <?php 
-    // Usar la instancia de la clase en lugar de llamada estática
-    $forms = new WP_ALP_Forms();
-    echo $forms->get_initial_form();
-    ?>
-</div>
+            <div class="wp-alp-login-buttons">
+                <button type="button" class="wpalp-btn-primary wp-alp-login-trigger" style="width: 100%; max-width: 400px; margin: 20px auto; display: block;">
+                    <?php _e('Inicia sesión o regístrate', 'wp-alp'); ?>
+                </button>
+            </div>
         </div>
         
         <div class="wp-alp-login-benefits">
@@ -204,19 +199,13 @@ get_header();
 </style>
 
 <!-- Modal loader y contenedor (escondido por defecto) -->
-<div id="wp-alp-modal-overlay" class="wp-alp-modal-overlay" style="display: none;">
-    <div id="wp-alp-modal-container" class="wp-alp-modal-container">
-        <button type="button" id="wp-alp-close-modal" class="wp-alp-close-modal">
-            <span class="wp-alp-close-icon"></span>
-        </button>
-        
-        <div id="wp-alp-modal-content" class="wp-alp-modal-content">
-            <!-- Aquí se cargarán dinámicamente los formularios -->
-        </div>
-        
-        <div id="wp-alp-modal-loader" class="wp-alp-modal-loader" style="display: none;">
-            <div class="wp-alp-spinner"></div>
-        </div>
+<div id="wpalp-modal-wrapper" class="wpalp-modal-wrapper" style="display: none;">
+    <div id="wpalp-modal-content" class="wpalp-modal-content">
+        <!-- Aquí se cargarán dinámicamente los formularios -->
+    </div>
+    
+    <div id="wpalp-modal-loader" class="wpalp-loading-overlay" style="display: none;">
+        <div class="wpalp-spinner"></div>
     </div>
 </div>
 

@@ -36,6 +36,16 @@ class WP_ALP_Public {
  * Registra los estilos para el lado público.
  */
 public function enqueue_styles() {
+    // Cargar el nuevo CSS estilo Airbnb con alta especificidad
+    wp_enqueue_style(
+        $this->plugin_name . '-airbnb',
+        plugin_dir_url(__FILE__) . 'css/wp-alp-airbnb-style.css',
+        array(),
+        $this->version,
+        'all'
+    );
+    
+    // CSS principal del plugin (mantener para compatibilidad)
     wp_enqueue_style(
         $this->plugin_name,
         plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
@@ -52,32 +62,663 @@ public function enqueue_styles() {
         $this->version,
         'all'
     );
+    
+    // Cargar estilos específicos para el login que se adaptarán al tema
+    wp_enqueue_style(
+        $this->plugin_name . '-login-theme',
+        plugin_dir_url(__FILE__) . 'css/login-theme.css',
+        array($this->plugin_name, $this->plugin_name . '-custom'),
+        $this->version,
+        'all'
+    );
+    
+    // Cargar estilos específicos para las páginas de vendedor
+    wp_enqueue_style(
+        $this->plugin_name . '-vendor-theme',
+        plugin_dir_url(__FILE__) . 'css/vendor-theme.css',
+        array($this->plugin_name, $this->plugin_name . '-custom', $this->plugin_name . '-login-theme'),
+        $this->version,
+        'all'
+    );
+    
+    // Verificar si estamos en una página que usa nuestras templates
+    global $post;
+    if ($post && is_page()) {
+        $template_name = get_post_meta($post->ID, '_wp_page_template', true);
+        
+        // Lista de nuestras templates
+        $our_templates = array(
+            'login-page-template.php',
+            'vendor-page-template.php',
+            'vendor-steps-template.php',
+            'vendor-form-step1-template.php'
+        );
+        
+        // Verificar si es una de nuestras templates
+        $is_our_template = false;
+        foreach ($our_templates as $template) {
+            if (strpos($template_name, $template) !== false) {
+                $is_our_template = true;
+                break;
+            }
+        }
+        
+        // Si es nuestra template, aplicar prioridad alta a los estilos
+        if ($is_our_template) {
+            // Desenqueuar y volver a enqueuar con prioridad alta para evitar conflictos
+            wp_dequeue_style($this->plugin_name);
+            wp_dequeue_style($this->plugin_name . '-custom');
+            wp_dequeue_style($this->plugin_name . '-login-theme');
+            wp_dequeue_style($this->plugin_name . '-vendor-theme');
+            
+            wp_enqueue_style(
+                $this->plugin_name,
+                plugin_dir_url(__FILE__) . 'css/wp-alp-public.css',
+                array(),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            wp_enqueue_style(
+                $this->plugin_name . '-custom',
+                plugin_dir_url(__FILE__) . 'css/custom-alp-styles.css',
+                array($this->plugin_name),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            wp_enqueue_style(
+                $this->plugin_name . '-login-theme',
+                plugin_dir_url(__FILE__) . 'css/login-theme.css',
+                array($this->plugin_name, $this->plugin_name . '-custom'),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            wp_enqueue_style(
+                $this->plugin_name . '-vendor-theme',
+                plugin_dir_url(__FILE__) . 'css/vendor-theme.css',
+                array($this->plugin_name, $this->plugin_name . '-custom', $this->plugin_name . '-login-theme'),
+                $this->version . '.' . time(), // Forzar recarga evitando caché
+                'all'
+            );
+            
+            // Añadir estilos inline con !important para aumentar prioridad
+            $custom_css = "
+                .wp-alp-vendor-form-page {
+                    --wp-alp-spacing-base: 24px !important;
+                    --wp-alp-spacing-large: 48px !important;
+                    --wp-alp-spacing-small: 16px !important;
+                    --wp-alp-border-radius: 12px !important;
+                    --wp-alp-color-primary: #FF385C !important;
+                    --wp-alp-color-text: #222 !important;
+                    --wp-alp-color-background: #fff !important;
+                    --wp-alp-color-border: #e4e4e4 !important;
+                }
+            ";
+            wp_add_inline_style($this->plugin_name . '-custom', $custom_css);
+        }
+    }
+    
+    // Detectar y aplicar los colores del tema actual para el login
+    add_action('wp_head', [$this, 'detect_theme_colors']);
 }
+
+    /**
+     * Verifica si se debe cargar reCAPTCHA en esta página
+     */
+    private function should_load_recaptcha() {
+        // Solo cargar en páginas que usan nuestros formularios
+        global $post;
+        
+        // En páginas con nuestras templates
+        if ($post && is_page()) {
+            $template_name = get_post_meta($post->ID, '_wp_page_template', true);
+            
+            $our_templates = array(
+                'login-page-template.php',
+                'vendor-page-template.php',
+                'vendor-steps-template.php'
+            );
+            
+            foreach ($our_templates as $template) {
+                if (strpos($template_name, $template) !== false) {
+                    return true;
+                }
+            }
+        }
+        
+        // En páginas que contienen nuestros shortcodes
+        if ($post && (
+            has_shortcode($post->post_content, 'wp_alp_login_page') ||
+            has_shortcode($post->post_content, 'wp_alp_login_button')
+        )) {
+            return true;
+        }
+        
+        // No cargar por defecto
+        return false;
+    }
+
+    /**
+     * Detecta y aplica los colores del tema actual para el login.
+     */
+    public function detect_theme_colors() {
+        // Script en línea para detectar y aplicar los colores del tema
+        ?>
+        <script>
+        (function() {
+            // Función para convertir RGB a Hex
+            function rgbToHex(rgb) {
+                // Si ya es hex, devolverlo
+                if (rgb && typeof rgb === 'string' && rgb.startsWith('#')) return rgb;
+                
+                // Obtener los valores RGB
+                if (!rgb || typeof rgb !== 'string') return null;
+                
+                var rgbArr = rgb.match(/\d+/g);
+                if (!rgbArr || rgbArr.length < 3) return null;
+                
+                // Convertir a hex
+                return '#' + ((1 << 24) + (parseInt(rgbArr[0]) << 16) + (parseInt(rgbArr[1]) << 8) + parseInt(rgbArr[2])).toString(16).slice(1);
+            }
+            
+            // Función para calcular el color de hover (más oscuro)
+            function darkenColor(hex, percent) {
+                if (!hex) return '#a99969'; // Color oscuro predeterminado si no hay hex
+                
+                try {
+                    hex = hex.replace('#', '');
+                    var r = parseInt(hex.substring(0, 2), 16);
+                    var g = parseInt(hex.substring(2, 4), 16);
+                    var b = parseInt(hex.substring(4, 6), 16);
+                    
+                    r = Math.max(0, r - percent);
+                    g = Math.max(0, g - percent);
+                    b = Math.max(0, b - percent);
+                    
+                    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                } catch (e) {
+                    console.error('Error al oscurecer color:', e);
+                    return '#d42e4e'; // Color oscuro predeterminado en caso de error
+                }
+            }
+            
+            // Convertir color hex a componentes RGB
+            function hexToRgb(hex) {
+                if (!hex) return {r: 203, g: 184, b: 129}; // Valores predeterminados
+                
+                try {
+                    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                    return result ? {
+                        r: parseInt(result[1], 16),
+                        g: parseInt(result[2], 16),
+                        b: parseInt(result[3], 16)
+                    } : {r: 203, g: 184, b: 129}; // Valores predeterminados si no hay coincidencia
+                } catch (e) {
+                    console.error('Error al convertir hex a RGB:', e);
+                    return {r: 203, g: 184, b: 129}; // Valores predeterminados en caso de error
+                }
+            }
+            
+            // Función para extraer el valor de una variable CSS desde un elemento
+            function getElementComputedVar(element, varName) {
+                try {
+                    var styles = window.getComputedStyle(element);
+                    var value = styles.getPropertyValue(varName).trim();
+                    
+                    // Si el valor es una variable CSS, extraer su valor real
+                    if (value.startsWith('var(')) {
+                        var nestedVar = value.match(/var\((.*?)[,)]/);
+                        if (nestedVar && nestedVar[1]) {
+                            return getElementComputedVar(element, nestedVar[1].trim());
+                        }
+                    }
+                    
+                    return value || null;
+                } catch (e) {
+                    console.error('Error al obtener variable CSS:', e);
+                    return null;
+                }
+            }
+            
+            // Función para obtener el color computado real de un elemento
+            function getComputedColorValue(element, property) {
+                try {
+                    var style = window.getComputedStyle(element);
+                    var value = style[property];
+                    
+                    // Si el valor es 'rgba(0, 0, 0, 0)' o 'transparent', devolver null
+                    if (value === 'rgba(0, 0, 0, 0)' || value === 'transparent') {
+                        return null;
+                    }
+                    
+                    return value;
+                } catch (e) {
+                    console.error('Error al obtener color computado:', e);
+                    return null;
+                }
+            }
+            
+            // Función para detectar el color primario del tema - versión mejorada
+            function detectPrimaryColor() {
+                console.log('Iniciando detección avanzada de colores primarios...');
+                
+                // 1. Lista ampliada de variables CSS para buscar
+                var cssVars = [
+                    '--color-primary',          // Más común
+                    '--primary-color',          // Alternativa común
+                    '--e-global-color-primary', // Elementor
+                    '--global--color-primary',  // WordPress
+                    '--vamtam-accent-color-1',  // Algunos temas
+                    '--accent-color',           // Algunos temas
+                    '--theme-color-primary',    // Otros temas
+                    '--main-color',             // Otros temas
+                    '--brand-color',            // Algunos temas
+                    '--hp-color-primary',       // HivePress
+                    '--color-accent',           // Variante común
+                    '--main-brand-color',       // Variante común
+                    '--theme-primary-color'     // Variante común
+                ];
+                
+                // 2. Buscar en :root, html y body
+                var elements = [document.documentElement, document.body, document.querySelector('html')];
+                for (var e = 0; e < elements.length; e++) {
+                    var element = elements[e];
+                    if (!element) continue;
+                    
+                    for (var i = 0; i < cssVars.length; i++) {
+                        var value = getElementComputedVar(element, cssVars[i]);
+                        if (value && value !== 'transparent' && value !== 'inherit') {
+                            console.log('Detectado color primario desde variable CSS en ' + (e === 0 ? ':root' : (e === 1 ? 'body' : 'html')) + ': ' + cssVars[i] + ' = ' + value);
+                            return value;
+                        }
+                    }
+                }
+                
+                // 3. Buscar elementos que tengan estilos calculados que usen var()
+                console.log('Buscando elementos que usan variables CSS en sus estilos calculados...');
+                
+                // Selectores de elementos que posiblemente usan la variable de color primario
+                var potentialElements = [
+                    'a.button', 'button.primary', '.btn-primary', 
+                    'header', '.site-header', '.navbar', 
+                    '.main-navigation', '.elementor-button',
+                    '.wp-block-button__link', '.site-title',
+                    '.elementor-heading-title', '.logo', '.brand',
+                    '.elementor-icon', '.nav-menu', '.menu-item',
+                    'article h1', 'article h2', '.wp-block-cover',
+                    '.hp-header', '.hp-section', '.hp-button',
+                    '.wp-element-button', '.wp-block-button',
+                    '#masthead', '.elementor-widget', '.elementor-section'
+                ];
+                
+                // Recorrer los selectores e intentar encontrar elementos con color primario
+                var allPotentialElements = [];
+                potentialElements.forEach(function(selector) {
+                    try {
+                        var elements = document.querySelectorAll(selector);
+                        if (elements.length > 0) {
+                            Array.prototype.push.apply(allPotentialElements, Array.from(elements));
+                        }
+                    } catch (e) {
+                        console.error('Error al buscar selector ' + selector, e);
+                    }
+                });
+                
+                // Examinar propiedades de los elementos potenciales
+                if (allPotentialElements.length > 0) {
+                    console.log('Analizando ' + allPotentialElements.length + ' elementos potenciales...');
+                    
+                    for (var j = 0; j < Math.min(allPotentialElements.length, 20); j++) {
+                        var element = allPotentialElements[j];
+                        
+                        // Obtener texto CSS inline
+                        var inlineStyle = element.getAttribute('style');
+                        if (inlineStyle && inlineStyle.includes('var(--color-primary)')) {
+                            console.log('Encontrado elemento con estilo inline usando var(--color-primary)');
+                            
+                            // Obtener el color calculado
+                            var bgColor = getComputedColorValue(element, 'backgroundColor');
+                            if (bgColor) {
+                                var hexBg = rgbToHex(bgColor);
+                                if (hexBg && hexBg !== '#000000' && hexBg !== '#ffffff') {
+                                    console.log('Detectado color primario desde background de elemento con var(): ' + hexBg);
+                                    return hexBg;
+                                }
+                            }
+                            
+                            var color = getComputedColorValue(element, 'color');
+                            if (color) {
+                                var hexColor = rgbToHex(color);
+                                if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                    console.log('Detectado color primario desde color de elemento con var(): ' + hexColor);
+                                    return hexColor;
+                                }
+                            }
+                            
+                            var borderColor = getComputedColorValue(element, 'borderColor');
+                            if (borderColor) {
+                                var hexBorder = rgbToHex(borderColor);
+                                if (hexBorder && hexBorder !== '#000000' && hexBorder !== '#ffffff') {
+                                    console.log('Detectado color primario desde borde de elemento con var(): ' + hexBorder);
+                                    return hexBorder;
+                                }
+                            }
+                        }
+                        
+                        // 4. Buscar cualquier propiedad CSS que pueda indicar color primario
+                        var style = window.getComputedStyle(element);
+                        var properties = ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke'];
+                        
+                        for (var p = 0; p < properties.length; p++) {
+                            var colorValue = style[properties[p]];
+                            if (colorValue && 
+                                colorValue !== 'transparent' && 
+                                colorValue !== 'rgba(0, 0, 0, 0)' &&
+                                colorValue !== 'rgb(0, 0, 0)' && 
+                                colorValue !== 'rgb(255, 255, 255)') {
+                                
+                                var hexValue = rgbToHex(colorValue);
+                                if (hexValue && hexValue !== '#000000' && hexValue !== '#ffffff') {
+                                    console.log('Detectado posible color primario desde ' + properties[p] + ' de elemento ' + element.tagName + ': ' + hexValue);
+                                    return hexValue;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // 5. Análisis específico para botones (los botones suelen usar el color primario)
+                console.log('Buscando botones y elementos de acción primaria...');
+                var buttonSelectors = [
+                    'button.elementor-button', 
+                    'a.elementor-button', 
+                    'button.wp-element-button',
+                    '.btn-primary',
+                    '.button.primary',
+                    '.wp-block-button__link',
+                    'button.btn',
+                    'a.btn-primary',
+                    'input[type="submit"]',
+                    '.hp-button--primary',
+                    '.elementor-button-wrapper .elementor-button',
+                    '.wp-block-button .wp-element-button',
+                    'button:not(.secondary):not(.wp-alp-button)',
+                    '.button:not(.secondary):not(.wp-alp-button)',
+                    '.menu-item.current-menu-item > a'
+                ];
+                
+                var allButtons = [];
+                buttonSelectors.forEach(function(selector) {
+                    try {
+                        var buttons = document.querySelectorAll(selector);
+                        if (buttons.length > 0) {
+                            Array.prototype.push.apply(allButtons, Array.from(buttons));
+                        }
+                    } catch (e) {
+                        console.error('Error al buscar selector de botón ' + selector, e);
+                    }
+                });
+                
+                if (allButtons.length > 0) {
+                    for (var b = 0; b < Math.min(allButtons.length, 10); b++) {
+                        var buttonStyle = window.getComputedStyle(allButtons[b]);
+                        var bgColor = buttonStyle.backgroundColor;
+                        if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+                            var hexColor = rgbToHex(bgColor);
+                            if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                console.log('Detectado color primario desde botón: ' + hexColor);
+                                return hexColor;
+                            }
+                        }
+                        
+                        // Si el fondo es transparente, probar con el color del texto o borde
+                        var textColor = buttonStyle.color;
+                        if (textColor && textColor !== 'rgb(0, 0, 0)' && textColor !== 'rgb(255, 255, 255)') {
+                            var hexText = rgbToHex(textColor);
+                            if (hexText && hexText !== '#000000' && hexText !== '#ffffff') {
+                                console.log('Detectado color primario desde texto de botón: ' + hexText);
+                                return hexText;
+                            }
+                        }
+                        
+                        var borderColor = buttonStyle.borderColor;
+                        if (borderColor && borderColor !== 'transparent' && borderColor !== 'rgba(0, 0, 0, 0)') {
+                            var hexBorder = rgbToHex(borderColor);
+                            if (hexBorder && hexBorder !== '#000000' && hexBorder !== '#ffffff') {
+                                console.log('Detectado color primario desde borde de botón: ' + hexBorder);
+                                return hexBorder;
+                            }
+                        }
+                    }
+                }
+                
+                // 6. Analizar elementos dinámicos que podrían tener colores calculados a partir de variables CSS
+                console.log('Analizando elementos dinámicos en busca de colores calculados...');
+                var dynamicElements = document.querySelectorAll('[class*="primary"], [class*="accent"], [class*="brand"]');
+                
+                if (dynamicElements.length > 0) {
+                    for (var d = 0; d < Math.min(dynamicElements.length, 15); d++) {
+                        var element = dynamicElements[d];
+                        var style = window.getComputedStyle(element);
+                        
+                        // Verificar background-color
+                        var bgColor = style.backgroundColor;
+                        if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+                            var hexBg = rgbToHex(bgColor);
+                            if (hexBg && hexBg !== '#000000' && hexBg !== '#ffffff') {
+                                console.log('Detectado color primario desde fondo de elemento dinámico: ' + hexBg);
+                                return hexBg;
+                            }
+                        }
+                        
+                        // Verificar color
+                        var color = style.color;
+                        if (color && color !== 'rgb(0, 0, 0)' && color !== 'rgb(255, 255, 255)') {
+                            var hexColor = rgbToHex(color);
+                            if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                console.log('Detectado color primario desde texto de elemento dinámico: ' + hexColor);
+                                return hexColor;
+                            }
+                        }
+                    }
+                }
+                
+                // 7. Buscar enlaces que no sean negros ni blancos (suelen usar el color primario)
+                console.log('Analizando enlaces para detectar color consistente...');
+                var links = document.querySelectorAll('a:not(.wp-alp-link):not(.wp-alp-button):not(.button):not(.btn)');
+                
+                if (links.length > 0) {
+                    // Muestrear varios enlaces para encontrar un color consistente
+                    var colorCount = {};
+                    var maxCount = 0;
+                    var dominantColor = null;
+                    
+                    for (var l = 0; l < Math.min(links.length, 30); l++) {
+                        var linkStyle = window.getComputedStyle(links[l]);
+                        var color = linkStyle.color;
+                        
+                        if (color && color !== 'rgb(0, 0, 0)' && color !== 'rgb(255, 255, 255)') {
+                            var hexColor = rgbToHex(color);
+                            if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                if (!colorCount[hexColor]) colorCount[hexColor] = 0;
+                                colorCount[hexColor]++;
+                                
+                                if (colorCount[hexColor] > maxCount) {
+                                    maxCount = colorCount[hexColor];
+                                    dominantColor = hexColor;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (dominantColor) {
+                        console.log('Detectado color primario desde enlaces (color dominante): ' + dominantColor);
+                        return dominantColor;
+                    }
+                }
+                
+                // 8. Buscar elementos específicos del tema que podrían tener el color primario
+                console.log('Buscando elementos específicos del tema con color primario...');
+                var themeSpecificSelectors = [
+                    'header', '.site-header', '.navbar', '.main-navigation',
+                    '.logo', '.brand', '.site-title', '.site-description',
+                    '.elementor-heading-title', '.hp-page__title',
+                    '.elementor-button-wrapper', '.wp-block-buttons',
+                    '.current-menu-item', '.current_page_item'
+                ];
+                
+                for (var t = 0; t < themeSpecificSelectors.length; t++) {
+                    try {
+                        var elements = document.querySelectorAll(themeSpecificSelectors[t]);
+                        for (var i = 0; i < Math.min(elements.length, 5); i++) {
+                            var style = window.getComputedStyle(elements[i]);
+                            
+                            // Verificar background-color
+                            var bgColor = style.backgroundColor;
+                            if (bgColor && bgColor !== 'transparent' && bgColor !== 'rgba(0, 0, 0, 0)') {
+                                var hexBg = rgbToHex(bgColor);
+                                if (hexBg && hexBg !== '#000000' && hexBg !== '#ffffff') {
+                                    console.log('Detectado color primario desde fondo de elemento específico del tema: ' + hexBg);
+                                    return hexBg;
+                                }
+                            }
+                            
+                            // Verificar color de texto
+                            var color = style.color;
+                            if (color && color !== 'rgb(0, 0, 0)' && color !== 'rgb(255, 255, 255)') {
+                                var hexColor = rgbToHex(color);
+                                if (hexColor && hexColor !== '#000000' && hexColor !== '#ffffff') {
+                                    console.log('Detectado color primario desde texto de elemento específico del tema: ' + hexColor);
+                                    return hexColor;
+                                }
+                            }
+                            
+                            // Verificar bordes y otros indicadores de color
+                            ['borderColor', 'borderTopColor', 'borderBottomColor', 'outlineColor'].forEach(function(prop) {
+                                var propValue = style[prop];
+                                if (propValue && propValue !== 'transparent' && propValue !== 'rgba(0, 0, 0, 0)') {
+                                    var hexValue = rgbToHex(propValue);
+                                    if (hexValue && hexValue !== '#000000' && hexValue !== '#ffffff') {
+                                        console.log('Detectado color primario desde ' + prop + ' de elemento específico del tema: ' + hexValue);
+                                        return hexValue;
+                                    }
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error al buscar selector específico del tema ' + themeSpecificSelectors[t], e);
+                    }
+                }
+                
+                // Si no se pudo detectar, devolver el color predeterminado
+                console.log('No se pudo detectar color primario después de análisis exhaustivo, usando predeterminado: #cbb881');
+                return '#cbb881';
+            }
+            
+            try {
+                // Detectar el color primario con el algoritmo mejorado
+                var primaryColor = detectPrimaryColor();
+                var primaryHover = darkenColor(primaryColor, 20);
+                var rgbValues = hexToRgb(primaryColor);
+                var rgbString = rgbValues ? rgbValues.r + ',' + rgbValues.g + ',' + rgbValues.b : '203,184,129';
+                
+                console.log('Color primario detectado: ' + primaryColor);
+                console.log('Color hover calculado: ' + primaryHover);
+                console.log('Valores RGB: ' + rgbString);
+                
+                // Crear el CSS personalizado
+                var customCSS = `
+                    :root {
+                        --wp-alp-primary-color: ${primaryColor};
+                        --wp-alp-primary-hover: ${primaryHover};
+                        --wp-alp-primary-color-rgb: ${rgbString};
+                        
+                        /* Variables para las páginas de vendedor */
+                        --wp-alp-vendor-primary: ${primaryColor};
+                        --wp-alp-vendor-primary-hover: ${primaryHover};
+                        --wp-alp-vendor-text: #222222;
+                    }
+                `;
+                
+                // Insertar el CSS en el head
+                var style = document.createElement('style');
+                style.type = 'text/css';
+                style.appendChild(document.createTextNode(customCSS));
+                document.head.appendChild(style);
+                
+                // También actualizar las variables CSS directamente para mayor compatibilidad
+                document.documentElement.style.setProperty('--wp-alp-primary-color', primaryColor);
+                document.documentElement.style.setProperty('--wp-alp-primary-hover', primaryHover);
+                document.documentElement.style.setProperty('--wp-alp-primary-color-rgb', rgbString);
+                document.documentElement.style.setProperty('--wp-alp-vendor-primary', primaryColor);
+                document.documentElement.style.setProperty('--wp-alp-vendor-primary-hover', primaryHover);
+                
+            } catch (e) {
+                console.error('Error al ejecutar la detección de colores:', e);
+                
+                // En caso de error, establecer valores predeterminados
+                var defaultCSS = `
+                    :root {
+                        --wp-alp-primary-color: #cbb881;
+                        --wp-alp-primary-hover: #a99969;
+                        --wp-alp-primary-color-rgb: 203,184,129;
+                        
+                        /* Variables para las páginas de vendedor */
+                        --wp-alp-vendor-primary: #cbb881;
+                        --wp-alp-vendor-primary-hover: #a99969;
+                        --wp-alp-vendor-text: #222222;
+                    }
+                `;
+                
+                var defaultStyle = document.createElement('style');
+                defaultStyle.type = 'text/css';
+                defaultStyle.appendChild(document.createTextNode(defaultCSS));
+                document.head.appendChild(defaultStyle);
+            }
+        })();
+        </script>
+        <?php
+    }
 
     /**
      * Registra los scripts para el lado público.
      */
     public function enqueue_scripts() {
+        // Cargar el nuevo JavaScript estilo Airbnb
         wp_enqueue_script(
-            $this->plugin_name,
-            plugin_dir_url(__FILE__) . 'js/wp-alp-public.js',
+            $this->plugin_name . '-airbnb',
+            plugin_dir_url(__FILE__) . 'js/wp-alp-airbnb.js',
             array('jquery'),
             $this->version,
-            false
+            true
         );
+        
+        // JavaScript principal del plugin - TEMPORALMENTE COMENTADO para evitar conflictos
+        // wp_enqueue_script(
+        //     $this->plugin_name,
+        //     plugin_dir_url(__FILE__) . 'js/wp-alp-public.js',
+        //     array('jquery'),
+        //     $this->version,
+        //     false
+        // );
+        
+        // Usar el script de Airbnb como principal para wp_localize_script
+        $script_handle = $this->plugin_name . '-airbnb';
 
         // Si está habilitado Social Login
-if (get_option('wp_alp_enable_social_login', true)) {
-    wp_enqueue_script(
-        $this->plugin_name . '-social',
-        plugin_dir_url(__FILE__) . 'js/social-login.js',
-        array('jquery', $this->plugin_name), // Añadir dependencia al script principal
-        $this->version,
-        true
-    );
-}
+        if (get_option('wp_alp_enable_social_login', true)) {
+            wp_enqueue_script(
+                $this->plugin_name . '-social',
+                plugin_dir_url(__FILE__) . 'js/social-login.js',
+                array('jquery', $this->plugin_name), // Añadir dependencia al script principal
+                $this->version,
+                true
+            );
+        }
         
-wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
+wp_localize_script($script_handle, 'wp_alp_ajax', array(
     'ajax_url' => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('wp_alp_nonce'),
     'home_url' => home_url(),
@@ -99,11 +740,20 @@ wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
             ),
         ));
         
-        // Si está habilitado Google reCAPTCHA
+        // Si está habilitado Google reCAPTCHA - Cargar globalmente para todos los formularios
         if (get_option('wp_alp_enable_captcha', false)) {
             $site_key = get_option('wp_alp_recaptcha_site_key', '');
             if (!empty($site_key)) {
-                wp_enqueue_script('google-recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true);
+                // NO cargar reCAPTCHA aquí si ya está cargado por otro plugin
+                if (!wp_script_is('google-recaptcha', 'enqueued')) {
+                    wp_enqueue_script(
+                        'google-recaptcha', 
+                        'https://www.google.com/recaptcha/api.js', 
+                        array(), 
+                        null, 
+                        true
+                    );
+                }
             }
         }
         
@@ -125,33 +775,55 @@ if (get_option('wp_alp_enable_social_login', true)) {
     }
 }
 
-// Añadir script para insertar el botón en el menú principal
-wp_add_inline_script($this->plugin_name, '
-    jQuery(document).ready(function($) {
-        // Eliminar el botón si ya existe en otra posición
-        $(".wp-alp-vendor-button").remove();
-        
-        // URL condicional según el dominio
-        var currentDomain = window.location.hostname;
-        var vendorPageUrl = "";
-        var buttonText = "";
-        
-        if (currentDomain.includes("bookit.events")) {
-            vendorPageUrl = "' . site_url('/become-a-seller/') . '";
-            buttonText = "Become a seller";
-        } else if (currentDomain.includes("reservas.events")) {
-            vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
-            buttonText = "Conviértete en vendedor";
-        } else {
-            // URL predeterminada por si acaso
-            vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
-            buttonText = "Conviértete en vendedor";
+// Añadir script para insertar el botón en el menú principal solo si el usuario está logueado y no es vendor
+if (is_user_logged_in()) {
+    $show_vendor_button = true;
+    $current_user_id = get_current_user_id();
+    
+    // Si no es admin, verificar si ya es vendor
+    if (!current_user_can('administrator')) {
+        if (class_exists('\HivePress\Models\Vendor')) {
+            $vendor = \HivePress\Models\Vendor::query()->filter([
+                'user' => $current_user_id,
+            ])->get_first();
+            
+            // Si el usuario ya tiene un vendor, no mostrar el botón
+            if ($vendor) {
+                $show_vendor_button = false;
+            }
         }
-        
-        // Insertar el botón ANTES del elemento "Official Stores" en el menú con el texto actualizado
-        $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"" + vendorPageUrl + "\" class=\"wp-alp-vendor-button-link\">" + buttonText + "</a></li>");
-    });
-');
+    }
+    
+    // Solo insertar el botón si debe mostrarse
+    if ($show_vendor_button) {
+        wp_add_inline_script($this->plugin_name, '
+            jQuery(document).ready(function($) {
+                // Eliminar el botón si ya existe en otra posición
+                $(".wp-alp-vendor-button").remove();
+                
+                // URL condicional según el dominio
+                var currentDomain = window.location.hostname;
+                var vendorPageUrl = "";
+                var buttonText = "";
+                
+                if (currentDomain.includes("bookit.events")) {
+                    vendorPageUrl = "' . site_url('/become-a-seller/') . '";
+                    buttonText = "Become a seller";
+                } else if (currentDomain.includes("reservas.events")) {
+                    vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
+                    buttonText = "Conviértete en vendedor";
+                } else {
+                    // URL predeterminada por si acaso
+                    vendorPageUrl = "' . site_url('/conviertete-en-vendedor/') . '";
+                    buttonText = "Conviértete en vendedor";
+                }
+                
+                // Insertar el botón ANTES del elemento "Official Stores" en el menú con el texto actualizado
+                $("#menu-item-55968").before("<li id=\"menu-item-vendor\" class=\"menu-item\"><a href=\"" + vendorPageUrl + "\" class=\"wp-alp-vendor-button-link\">" + buttonText + "</a></li>");
+            });
+        ');
+    }
+}
     }
 
     /**
@@ -188,15 +860,9 @@ public function login_page_shortcode($atts) {
             return ob_get_clean();
         }
         
-        // Si hay redirect_to, redirigir allí
-        if (isset($_GET['redirect_to']) && !empty($_GET['redirect_to'])) {
-            $redirect_url = esc_url_raw($_GET['redirect_to']);
-            echo '<script>window.location.href = "' . $redirect_url . '";</script>';
-            return '<p>' . __('Redirigiendo...', 'wp-alp') . '</p>';
-        }
-        
-        // Si no hay redirect, mostrar mensaje
-        return '<p>' . __('Ya has iniciado sesión.', 'wp-alp') . ' <a href="' . esc_url(home_url()) . '">' . __('Ir a la página principal', 'wp-alp') . '</a></p>';
+        // Permitir que usuarios logueados vean el contenido
+        // Solo mostrar un mensaje informativo
+        return '<div class="wp-alp-logged-in-message"><p>' . __('Ya has iniciado sesión.', 'wp-alp') . '</p></div>';
     }
     
     // Cargar la plantilla de página de login
@@ -226,13 +892,15 @@ public function login_page_shortcode($atts) {
     }
 
     /**
- * Outputea el script de inicialización social en el footer.
+ * Inicializa scripts sociales en el footer
  */
 public function initialize_social_scripts() {
     if (get_option('wp_alp_enable_social_login', true)) {
         ?>
         <script>
+            // Evento de apertura modal
             jQuery(document).ready(function($) {
+                // Evento de apertura modal
                 $(document).on('wp_alp_modal_opened', function() {
                     if (typeof window.socialLoginModalOpened === 'function') {
                         window.socialLoginModalOpened();
@@ -255,7 +923,24 @@ public function initialize_social_scripts() {
      * Valida la existencia de un usuario vía AJAX.
      */
     public function validate_user_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación estricta de nonce
+        if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+            wp_send_json_error(array(
+                'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+                'code' => 'invalid_nonce'
+            ));
+            return;
+        }
+        
+        // Verificar rate limiting
+        $identifier = isset($_POST['identifier']) ? sanitize_text_field($_POST['identifier']) : '';
+        if (WP_ALP_Security::is_rate_limited($identifier, 'validate_user', 10, 300)) {
+            wp_send_json_error(array(
+                'message' => __('Demasiados intentos. Por favor, espera unos minutos.', 'wp-alp'),
+                'code' => 'rate_limited'
+            ));
+            return;
+        }
         
         if (!isset($_POST['identifier']) || empty($_POST['identifier'])) {
             wp_send_json_error(array(
@@ -267,15 +952,17 @@ public function initialize_social_scripts() {
         $result = WP_ALP_Forms::process_check_user($identifier);
         
         if ($result['exists']) {
-            // El usuario existe
+            // El usuario existe - NO revelar detalles específicos para prevenir enumeración
             $data = array(
                 'exists' => true,
-                'user_id' => $result['user_id'],
-                'user_type' => $result['user_type'],
-                'profile_status' => $result['profile_status'],
-                'found_by' => $result['found_by'],
                 'html' => WP_ALP_Forms::get_login_form($identifier),
             );
+            
+            // Solo incluir datos adicionales si es necesario para el flujo
+            if (isset($result['user_id'])) {
+                // NO incluir el user_id real, usar un hash temporal
+                $data['temp_id'] = wp_hash($result['user_id'] . wp_salt('auth'));
+            }
             
             // Obtener el usuario de WordPress
             $user = get_user_by('ID', $result['user_id']);
@@ -307,7 +994,14 @@ public function initialize_social_scripts() {
      * Registra un nuevo usuario vía AJAX.
      */
     public function register_user_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación estricta de nonce
+        if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+            wp_send_json_error(array(
+                'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+                'code' => 'invalid_nonce'
+            ));
+            return;
+        }
         
         $required_fields = array('first_name', 'last_name', 'email', 'password', 'phone', 'event_type', 'event_date');
         
@@ -350,7 +1044,33 @@ public function initialize_social_scripts() {
      * Autentica a un usuario vía AJAX.
      */
     public function login_user_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación estricta de nonce
+        if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+            wp_send_json_error(array(
+                'message' => __('Sesión expirada. Por favor, recarga la página.', 'wp-alp'),
+                'code' => 'invalid_nonce'
+            ));
+            return;
+        }
+        
+        // Verificar rate limiting por email
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+        if (WP_ALP_Security::is_rate_limited($email, 'login', 5, 300)) {
+            // Registrar evento de seguridad
+            if (class_exists('WP_ALP_Security_Enhanced')) {
+                WP_ALP_Security_Enhanced::log_security_event(
+                    'login_rate_limited',
+                    array('email' => $email),
+                    'warning'
+                );
+            }
+            
+            wp_send_json_error(array(
+                'message' => __('Demasiados intentos de inicio de sesión. Por favor, espera unos minutos.', 'wp-alp'),
+                'code' => 'rate_limited'
+            ));
+            return;
+        }
         
         if (!isset($_POST['email']) || empty($_POST['email']) || !isset($_POST['password']) || empty($_POST['password'])) {
             wp_send_json_error(array(
@@ -401,16 +1121,28 @@ public function initialize_social_scripts() {
      * Verifica un código de verificación vía AJAX.
      */
     public function verify_code_ajax() {
-        check_ajax_referer('wp_alp_nonce', 'nonce');
+        // Verificación de nonce con opción de fallar silenciosamente (no terminar ejecución)
+        $nonce_valid = check_ajax_referer('wp_alp_nonce', 'nonce', false);
+        
+        // Log para depuración (sin información sensible)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Verificando código, nonce válido: ' . ($nonce_valid ? 'Sí' : 'No'));
+        }
         
         if (!isset($_POST['code']) || empty($_POST['code']) || !isset($_POST['user_id']) || empty($_POST['user_id'])) {
             wp_send_json_error(array(
                 'message' => __('El código de verificación y el ID de usuario son obligatorios.', 'wp-alp'),
             ));
+            return;
         }
         
         $code = sanitize_text_field($_POST['code']);
         $user_id = intval($_POST['user_id']);
+        
+        // Log para depuración (sin código sensible)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Verificando código para usuario ' . $user_id);
+        }
         
         $result = WP_ALP_Forms::process_verification_code($user_id, $code);
         
@@ -419,9 +1151,13 @@ public function initialize_social_scripts() {
             $user_type = get_user_meta($user_id, 'wp_alp_user_type', true);
             $profile_status = get_user_meta($user_id, 'wp_alp_profile_status', true);
             
+            // Generar un nuevo nonce válido para el usuario actual
+            $new_nonce = wp_create_nonce('wp_alp_nonce');
+            
             $response = array(
                 'success' => true,
                 'message' => $result['message'],
+                'new_nonce' => $new_nonce
             );
             
             if ($user_type === '' || $profile_status === 'incomplete') {
@@ -431,8 +1167,14 @@ public function initialize_social_scripts() {
                 $response['redirect'] = get_option('wp_alp_redirect_after_login', home_url());
             }
             
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('WP_ALP: Verificación exitosa, enviando respuesta');
+            }
             wp_send_json_success($response);
         } else {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                error_log('WP_ALP: Verificación fallida');
+            }
             wp_send_json_error(array(
                 'message' => $result['message'],
             ));
@@ -470,15 +1212,31 @@ public function initialize_social_scripts() {
  * Completa el perfil de un usuario vía AJAX.
  */
 public function complete_profile_ajax() {
-    // Intentar verificar el nonce
-    $nonce_verified = check_ajax_referer('wp_alp_nonce', 'nonce', false);
-    
-    // Si el nonce falla pero el usuario está logueado, permitir la acción
-    if (!$nonce_verified && !is_user_logged_in()) {
+    // Verificación estricta: el usuario DEBE estar logueado
+    if (!is_user_logged_in()) {
         wp_send_json_error(array(
-            'message' => __('Error de seguridad. Actualiza la página e intenta nuevamente.', 'wp-alp'),
+            'message' => __('Debes iniciar sesión para completar tu perfil.', 'wp-alp'),
+            'code' => 'not_logged_in'
         ));
         return;
+    }
+    
+    // Verificar nonce con tolerancia para usuarios recién autenticados
+    $nonce_verified = check_ajax_referer('wp_alp_nonce', 'nonce', false);
+    if (!$nonce_verified) {
+        // Generar nuevo nonce para el usuario actual
+        $new_nonce = wp_create_nonce('wp_alp_nonce');
+        
+        // Log de seguridad
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'profile_completion_nonce_refresh',
+                array('user_id' => get_current_user_id()),
+                'info'
+            );
+        }
+        
+        // Continuar con nuevo nonce
     }
     
     $required_fields = array('user_id', 'event_type', 'event_date', 'event_address', 'guests');
@@ -501,11 +1259,12 @@ public function complete_profile_ajax() {
     $result = $user_manager->complete_user_profile($data['user_id'], $data);
     
     if ($result['success']) {
-        // Actualizar el rol del usuario a 'lead'
-        $user = get_user_by('ID', $data['user_id']);
-        if ($user) {
-            $user->set_role('lead'); // Cambiar el rol a 'lead'
+        // Definir contexto de sistema para cambio de rol autorizado
+        if (!defined('WP_ALP_SYSTEM_ROLE_ASSIGNMENT')) {
+            define('WP_ALP_SYSTEM_ROLE_ASSIGNMENT', true);
         }
+        
+        // El cambio de rol se manejará dentro de complete_user_profile con verificaciones de seguridad
         
         wp_send_json_success(array(
             'success' => true,
@@ -514,8 +1273,10 @@ public function complete_profile_ajax() {
         ));
     }
     else {
-        // Registrar el error para debugging
-        error_log('Error al completar perfil: ' . json_encode($result));
+        // Registrar el error para debugging (sin datos sensibles)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('Error al completar perfil: ' . ($result['message'] ?? 'Error desconocido'));
+        }
         
         wp_send_json_error(array(
             'message' => $result['message'],
@@ -527,7 +1288,10 @@ public function complete_profile_ajax() {
  * Maneja el login social vía AJAX.
  */
 public function social_login_ajax() {
-    error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $_POST['provider']);
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        $provider = isset($_POST['provider']) ? sanitize_text_field($_POST['provider']) : 'unknown';
+        error_log('WP_ALP: Procesando social_login_ajax con proveedor: ' . $provider);
+    }
 
     check_ajax_referer('wp_alp_nonce', 'nonce');
     
@@ -584,7 +1348,9 @@ public function social_login_ajax() {
         wp_send_json_error(array(
             'message' => $result['message'],
         ));
-        error_log('WP_ALP: Error en social_login_ajax: ' . $result['message']);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Error en social_login_ajax');
+        }
     }
 }
 
@@ -592,13 +1358,18 @@ public function social_login_ajax() {
  * Devuelve el HTML del formulario solicitado vía AJAX.
  */
 public function get_form_ajax() {
-    // Añadir información de debugging
-    error_log('WP_ALP: Solicitud get_form_ajax - ' . json_encode($_POST));
+    // Log de debugging sin datos sensibles
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        $form_type = isset($_POST['form']) ? sanitize_text_field($_POST['form']) : 'unknown';
+        error_log('WP_ALP: Solicitud get_form_ajax para formulario: ' . $form_type);
+    }
     
     // Verificar nonce con mensaje detallado
     $nonce_result = wp_verify_nonce($_POST['nonce'], 'wp_alp_nonce');
     if (!$nonce_result) {
-        error_log('WP_ALP: Fallo en verificación de nonce: ' . $_POST['nonce']);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('WP_ALP: Fallo en verificación de nonce');
+        }
         
         // Para solicitudes de formulario de perfil después de social login, 
         // intentaremos ser más permisivos
@@ -608,7 +1379,9 @@ public function get_form_ajax() {
             $user = get_user_by('ID', $user_id);
             
             if ($user) {
-                error_log('WP_ALP: Permitiendo carga de formulario a pesar de nonce inválido para user_id: ' . $user_id);
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    error_log('WP_ALP: Permitiendo carga de formulario a pesar de nonce inválido para user_id: ' . $user_id);
+                }
                 // Continuar el proceso
             } else {
                 wp_send_json_error(array(
@@ -824,8 +1597,10 @@ public function refresh_nonce_ajax() {
     // Generar un nuevo nonce
     $new_nonce = wp_create_nonce('wp_alp_nonce');
     
-    // Registrar para debugging
-    error_log('WP_ALP: Nonce refrescado: ' . $new_nonce);
+    // Log de debugging
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        error_log('WP_ALP: Nonce refrescado exitosamente');
+    }
     
     // Enviar respuesta
     wp_send_json_success(array('nonce' => $new_nonce));

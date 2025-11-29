@@ -13,22 +13,27 @@ class WP_ALP_Social {
      * Constructor de la clase.
      */
     public function __construct() {
+        // Incluir clase de encriptación si no está disponible
+        if (!class_exists('WP_ALP_Encryption')) {
+            require_once plugin_dir_path(__FILE__) . 'class-wp-alp-encryption.php';
+        }
+        
         $this->providers = array(
             'google' => array(
                 'client_id' => get_option('wp_alp_google_client_id', ''),
-                'client_secret' => get_option('wp_alp_google_client_secret', ''),
+                'client_secret' => WP_ALP_Encryption::get_encrypted_option('wp_alp_google_client_secret', ''),
                 'redirect_uri' => home_url('/wp-json/wp-alp/v1/auth/google'),
             ),
             'facebook' => array(
                 'app_id' => get_option('wp_alp_facebook_app_id', ''),
-                'app_secret' => get_option('wp_alp_facebook_app_secret', ''),
+                'app_secret' => WP_ALP_Encryption::get_encrypted_option('wp_alp_facebook_app_secret', ''),
                 'redirect_uri' => home_url('/wp-json/wp-alp/v1/auth/facebook'),
             ),
             'apple' => array(
                 'client_id' => get_option('wp_alp_apple_client_id', ''),
                 'team_id' => get_option('wp_alp_apple_team_id', ''),
                 'key_id' => get_option('wp_alp_apple_key_id', ''),
-                'private_key' => get_option('wp_alp_apple_private_key', ''),
+                'private_key' => WP_ALP_Encryption::get_encrypted_option('wp_alp_apple_private_key', ''),
                 'redirect_uri' => home_url('/wp-json/wp-alp/v1/auth/apple'),
             ),
         );
@@ -108,28 +113,24 @@ class WP_ALP_Social {
      * @return WP_REST_Response La respuesta REST.
      */
     public function handle_google_callback($request) {
-        // Agregar log para diagnosticar
-        error_log('Google Auth Callback recibido: ' . json_encode($_GET));
+        // Procesar callback de Google
         
         $code = $request->get_param('code');
         $state = $request->get_param('state');
         
         if (empty($code)) {
-            error_log('Google Auth: Código faltante');
             return new WP_REST_Response(array('error' => 'Falta código de autorización'), 400);
         }
         
         // Intercambiar código por token
         $token_data = $this->get_google_token($code);
         if (isset($token_data['error'])) {
-            error_log('Google Auth: Error al obtener token: ' . json_encode($token_data));
             return new WP_REST_Response($token_data, 400);
         }
         
         // Obtener datos del usuario
         $user_data = $this->get_google_user_data($token_data['access_token']);
         if (isset($user_data['error'])) {
-            error_log('Google Auth: Error al obtener datos de usuario: ' . json_encode($user_data));
             return new WP_REST_Response($user_data, 400);
         }
         
@@ -174,7 +175,7 @@ class WP_ALP_Social {
             'grant_type' => 'authorization_code',
         );
         
-        error_log('Google Auth: Solicitando token con parámetros: ' . json_encode($params));
+        // Solicitar token con parámetros
         
         $response = wp_remote_post('https://oauth2.googleapis.com/token', array(
             'body' => $params,
@@ -182,12 +183,10 @@ class WP_ALP_Social {
         ));
         
         if (is_wp_error($response)) {
-            error_log('Google Auth: Error en solicitud: ' . $response->get_error_message());
             return array('error' => $response->get_error_message());
         }
         
         $body = json_decode(wp_remote_retrieve_body($response), true);
-        error_log('Google Auth: Respuesta de token: ' . json_encode($body));
         
         if (isset($body['error'])) {
             return array('error' => $body['error_description'] ?? $body['error']);
@@ -477,40 +476,68 @@ public function process_social_data_ajax($data) {
     $provider = sanitize_text_field($data['provider']);
     $token = sanitize_text_field($data['token']);
     
-    // Registrar datos para debugging
-    error_log('WP_ALP: Procesando datos sociales para proveedor: ' . $provider);
+    // Verificar rate limiting
+    $identifier = $provider . '_social_login';
+    if (WP_ALP_Security::is_rate_limited($identifier, 'social_login', 10, 300)) {
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'social_login_rate_limited',
+                array('provider' => $provider),
+                'warning'
+            );
+        }
+        return array(
+            'success' => false,
+            'message' => __('Demasiados intentos de inicio de sesión. Por favor, espera unos minutos.', 'wp-alp'),
+        );
+    }
     
     switch ($provider) {
         case 'google':
-            // Para Google, estamos recibiendo un JWT (token ID) en lugar de un token de acceso
+            // Para Google, verificar JWT con seguridad mejorada
             if (strpos($token, '.') !== false) {
-                // Es un token JWT, decodificar la parte del payload
-                $parts = explode('.', $token);
-                if (count($parts) >= 2) {
-                    $payload = json_decode($this->base64url_decode($parts[1]), true);
-                    
-                    if ($payload && isset($payload['email']) && isset($payload['sub'])) {
-                        $user_data = array(
-                            'email' => $payload['email'],
-                            'id' => $payload['sub'],
-                            'verified' => isset($payload['email_verified']) ? $payload['email_verified'] : true,
-                            'first_name' => isset($payload['given_name']) ? $payload['given_name'] : '',
-                            'last_name' => isset($payload['family_name']) ? $payload['family_name'] : '',
-                            'picture' => isset($payload['picture']) ? $payload['picture'] : '',
+                // Verificar JWT usando nuestra clase de seguridad
+                if (class_exists('WP_ALP_Security_Enhanced')) {
+                    $jwt_result = $this->verify_google_jwt($token);
+                    if (!$jwt_result['valid']) {
+                        WP_ALP_Security_Enhanced::log_security_event(
+                            'invalid_google_jwt',
+                            array('error' => $jwt_result['error']),
+                            'warning'
                         );
+                        return array(
+                            'success' => false,
+                            'message' => __('Token de Google inválido o expirado', 'wp-alp'),
+                        );
+                    }
+                    $user_data = $jwt_result['data'];
+                } else {
+                    // Fallback al método anterior si la clase no existe
+                    $parts = explode('.', $token);
+                    if (count($parts) >= 2) {
+                        $payload = json_decode($this->base64url_decode($parts[1]), true);
                         
-                        error_log('WP_ALP: Datos de usuario de Google JWT: ' . json_encode($user_data));
+                        if ($payload && isset($payload['email']) && isset($payload['sub'])) {
+                            $user_data = array(
+                                'email' => $payload['email'],
+                                'id' => $payload['sub'],
+                                'verified' => isset($payload['email_verified']) ? $payload['email_verified'] : true,
+                                'first_name' => isset($payload['given_name']) ? $payload['given_name'] : '',
+                                'last_name' => isset($payload['family_name']) ? $payload['family_name'] : '',
+                                'picture' => isset($payload['picture']) ? $payload['picture'] : '',
+                            );
+                        } else {
+                            return array(
+                                'success' => false,
+                                'message' => __('Token JWT de Google inválido o incompleto', 'wp-alp'),
+                            );
+                        }
                     } else {
                         return array(
                             'success' => false,
-                            'message' => __('Token JWT de Google inválido o incompleto', 'wp-alp'),
+                            'message' => __('Formato de token JWT inválido', 'wp-alp'),
                         );
                     }
-                } else {
-                    return array(
-                        'success' => false,
-                        'message' => __('Formato de token JWT inválido', 'wp-alp'),
-                    );
                 }
             } else {
                 // Usar el método tradicional para tokens de acceso
@@ -521,23 +548,43 @@ public function process_social_data_ajax($data) {
             $user_data = $this->get_facebook_user_data($token);
             break;
         case 'apple':
-            // Decodificar token JWT
-            $token_parts = explode('.', $token);
-            if (count($token_parts) >= 2) {
-                $payload = json_decode($this->base64url_decode($token_parts[1]), true);
-                
-                $user_data = array(
-                    'email' => $payload['email'],
-                    'id' => $payload['sub'],
-                    'verified' => $payload['email_verified'] === 'true',
-                    'first_name' => $data['first_name'] ?? '',
-                    'last_name' => $data['last_name'] ?? '',
-                );
+            // Verificar token JWT de Apple con validación mejorada
+            if (class_exists('WP_ALP_Security_Enhanced')) {
+                $jwt_result = $this->verify_apple_jwt($token);
+                if (!$jwt_result['valid']) {
+                    WP_ALP_Security_Enhanced::log_security_event(
+                        'invalid_apple_jwt',
+                        array('error' => $jwt_result['error']),
+                        'warning'
+                    );
+                    return array(
+                        'success' => false,
+                        'message' => __('Token de Apple inválido o expirado', 'wp-alp'),
+                    );
+                }
+                $user_data = $jwt_result['data'];
+                // Agregar nombres si se proporcionaron
+                $user_data['first_name'] = $data['first_name'] ?? $user_data['first_name'] ?? '';
+                $user_data['last_name'] = $data['last_name'] ?? $user_data['last_name'] ?? '';
             } else {
-                return array(
-                    'success' => false,
-                    'message' => __('Token de Apple inválido', 'wp-alp'),
-                );
+                // Fallback al método anterior
+                $token_parts = explode('.', $token);
+                if (count($token_parts) >= 2) {
+                    $payload = json_decode($this->base64url_decode($token_parts[1]), true);
+                    
+                    $user_data = array(
+                        'email' => $payload['email'],
+                        'id' => $payload['sub'],
+                        'verified' => $payload['email_verified'] === 'true',
+                        'first_name' => $data['first_name'] ?? '',
+                        'last_name' => $data['last_name'] ?? '',
+                    );
+                } else {
+                    return array(
+                        'success' => false,
+                        'message' => __('Token de Apple inválido', 'wp-alp'),
+                    );
+                }
             }
             break;
         default:
@@ -548,7 +595,17 @@ public function process_social_data_ajax($data) {
     }
     
     if (isset($user_data['error'])) {
-        error_log('WP_ALP: Error obteniendo datos de usuario: ' . json_encode($user_data));
+        // No registrar datos sensibles del usuario
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            WP_ALP_Security_Enhanced::log_security_event(
+                'social_login_error',
+                array(
+                    'provider' => $provider,
+                    'error_type' => 'user_data_error'
+                ),
+                'warning'
+            );
+        }
         return array(
             'success' => false,
             'message' => $user_data['error'],
@@ -579,5 +636,124 @@ public function process_social_data_ajax($data) {
  */
 private function base64url_decode($data) {
     return base64_decode(str_replace(array('-', '_'), array('+', '/'), $data));
+}
+
+/**
+ * Verifica un JWT de Google con validación completa
+ * 
+ * @param string $token
+ * @return array ['valid' => bool, 'data' => array, 'error' => string]
+ */
+private function verify_google_jwt($token) {
+    try {
+        $parts = explode('.', $token);
+        if (count($parts) !== 3) {
+            return array('valid' => false, 'error' => 'Invalid JWT format');
+        }
+        
+        // Decodificar header y payload
+        $header = json_decode($this->base64url_decode($parts[0]), true);
+        $payload = json_decode($this->base64url_decode($parts[1]), true);
+        
+        if (!$header || !$payload) {
+            return array('valid' => false, 'error' => 'Invalid JWT encoding');
+        }
+        
+        // Verificar claims requeridos
+        if (!isset($payload['iss']) || !in_array($payload['iss'], ['accounts.google.com', 'https://accounts.google.com'])) {
+            return array('valid' => false, 'error' => 'Invalid issuer');
+        }
+        
+        // Verificar audience (debe ser nuestro client ID)
+        $google_client_id = $this->providers['google']['client_id'];
+        if (!isset($payload['aud']) || $payload['aud'] !== $google_client_id) {
+            return array('valid' => false, 'error' => 'Invalid audience');
+        }
+        
+        // Verificar expiración
+        if (!isset($payload['exp']) || $payload['exp'] < time()) {
+            return array('valid' => false, 'error' => 'Token expired');
+        }
+        
+        // Verificar issued at time
+        if (!isset($payload['iat']) || $payload['iat'] > time() + 60) {
+            return array('valid' => false, 'error' => 'Invalid issued time');
+        }
+        
+        // Extraer datos del usuario
+        $user_data = array(
+            'email' => $payload['email'] ?? '',
+            'id' => $payload['sub'] ?? '',
+            'verified' => $payload['email_verified'] ?? false,
+            'first_name' => $payload['given_name'] ?? '',
+            'last_name' => $payload['family_name'] ?? '',
+            'picture' => $payload['picture'] ?? '',
+        );
+        
+        // Verificar que tenemos email e ID
+        if (empty($user_data['email']) || empty($user_data['id'])) {
+            return array('valid' => false, 'error' => 'Missing required user data');
+        }
+        
+        return array('valid' => true, 'data' => $user_data);
+        
+    } catch (Exception $e) {
+        return array('valid' => false, 'error' => 'JWT verification failed: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Verifica un JWT de Apple
+ * 
+ * @param string $token
+ * @return array ['valid' => bool, 'data' => array, 'error' => string]
+ */
+private function verify_apple_jwt($token) {
+    try {
+        $parts = explode('.', $token);
+        if (count($parts) !== 3) {
+            return array('valid' => false, 'error' => 'Invalid JWT format');
+        }
+        
+        // Decodificar payload
+        $payload = json_decode($this->base64url_decode($parts[1]), true);
+        
+        if (!$payload) {
+            return array('valid' => false, 'error' => 'Invalid JWT encoding');
+        }
+        
+        // Verificar issuer
+        if (!isset($payload['iss']) || $payload['iss'] !== 'https://appleid.apple.com') {
+            return array('valid' => false, 'error' => 'Invalid issuer');
+        }
+        
+        // Verificar audience
+        $apple_client_id = $this->providers['apple']['client_id'];
+        if (!isset($payload['aud']) || $payload['aud'] !== $apple_client_id) {
+            return array('valid' => false, 'error' => 'Invalid audience');
+        }
+        
+        // Verificar expiración
+        if (!isset($payload['exp']) || $payload['exp'] < time()) {
+            return array('valid' => false, 'error' => 'Token expired');
+        }
+        
+        // Extraer datos del usuario
+        $user_data = array(
+            'email' => $payload['email'] ?? '',
+            'id' => $payload['sub'] ?? '',
+            'verified' => ($payload['email_verified'] ?? 'false') === 'true',
+        );
+        
+        // Verificar que tenemos email e ID
+        if (empty($user_data['email']) || empty($user_data['id'])) {
+            return array('valid' => false, 'error' => 'Missing required user data');
+        }
+        
+        return array('valid' => true, 'data' => $user_data);
+        
+    } catch (Exception $e) {
+        return array('valid' => false, 'error' => 'JWT verification failed: ' . $e->getMessage());
+    }
 }
 }

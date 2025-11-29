@@ -5,23 +5,20 @@
  * Esta clase contiene métodos para proteger el plugin contra
  * ataques comunes y vulnerabilidades.
  */
-class WP_ALP_Security {
+
+// Incluir clase de seguridad mejorada
+require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-wp-alp-security-enhanced.php';
+
+class WP_ALP_Security extends WP_ALP_Security_Enhanced {
 
     /**
-     * Genera un token CSRF.
+     * Genera un token CSRF usando WordPress nonces.
      *
      * @return string El token CSRF.
      */
     public static function generate_csrf_token() {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-        
-        if (!isset($_SESSION['wp_alp_csrf_token'])) {
-            $_SESSION['wp_alp_csrf_token'] = bin2hex(random_bytes(32));
-        }
-        
-        return $_SESSION['wp_alp_csrf_token'];
+        // Usar WordPress nonces en lugar de sesiones PHP
+        return wp_create_nonce('wp_alp_csrf_token');
     }
 
     /**
@@ -31,15 +28,8 @@ class WP_ALP_Security {
      * @return bool True si el token es válido, false en caso contrario.
      */
     public static function verify_csrf_token($token) {
-        if (!isset($_SESSION)) {
-            session_start();
-        }
-        
-        if (!isset($_SESSION['wp_alp_csrf_token'])) {
-            return false;
-        }
-        
-        return hash_equals($_SESSION['wp_alp_csrf_token'], $token);
+        // Usar WordPress nonces para verificación
+        return wp_verify_nonce($token, 'wp_alp_csrf_token') !== false;
     }
 
     /**
@@ -74,6 +64,7 @@ class WP_ALP_Security {
 
     /**
      * Verifica si una dirección IP está haciendo demasiadas solicitudes.
+     * Usa el método mejorado de la clase padre.
      *
      * @param string $ip La dirección IP a verificar.
      * @param string $action La acción que se está realizando.
@@ -82,24 +73,12 @@ class WP_ALP_Security {
      * @return bool True si está limitado, false si no.
      */
     public static function is_rate_limited($ip, $action, $max_attempts = 5, $timeframe = 300) {
-        $transient_name = 'wp_alp_rate_limit_' . md5($ip . '_' . $action);
-        $attempts = get_transient($transient_name);
-        
-        if (false === $attempts) {
-            set_transient($transient_name, 1, $timeframe);
-            return false;
-        }
-        
-        if ($attempts >= $max_attempts) {
-            return true;
-        }
-        
-        set_transient($transient_name, $attempts + 1, $timeframe);
-        return false;
+        // Usar el método mejorado que incluye protección por cuenta
+        return parent::is_rate_limited_enhanced($ip, $action, $max_attempts, $timeframe);
     }
 
     /**
-     * Sanitiza un array de datos de entrada.
+     * Sanitiza un array de datos de entrada con validación adicional.
      *
      * @param array $data Los datos a sanitizar.
      * @return array Los datos sanitizados.
@@ -113,7 +92,14 @@ class WP_ALP_Security {
             } else {
                 switch ($key) {
                     case 'email':
-                        $sanitized[$key] = sanitize_email($value);
+                        $email = sanitize_email($value);
+                        // Validación adicional de email
+                        $validation = parent::validate_email_input($email);
+                        if ($validation['valid']) {
+                            $sanitized[$key] = $email;
+                        } else {
+                            $sanitized[$key] = ''; // Email inválido
+                        }
                         break;
                     case 'phone':
                     case 'telefono':
@@ -123,8 +109,13 @@ class WP_ALP_Security {
                     case 'url':
                         $sanitized[$key] = esc_url_raw($value);
                         break;
+                    case 'password':
+                        // No sanitizar contraseñas, pero validar fortaleza
+                        $sanitized[$key] = $value;
+                        break;
                     default:
-                        $sanitized[$key] = sanitize_text_field($value);
+                        // Usar sanitización mejorada con contexto
+                        $sanitized[$key] = parent::sanitize_output($value, 'html');
                         break;
                 }
             }

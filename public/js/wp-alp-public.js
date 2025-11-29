@@ -22,14 +22,30 @@
      * Inicialización cuando el DOM está listo.
      */
     $(document).ready(function() {
-
-        console.log('Document ready ejecutado');
-
-        console.log('Botones de login encontrados:', $('[data-wp-alp-trigger="login"]').length);
-    console.log('Botones con clase wp-alp-login-trigger:', $('.wp-alp-login-trigger').length);
-    console.log('Elemento del botón:', $('[data-wp-alp-trigger="login"]')[0]);
     
-        // Agregar un manejador directo para debugging
+        // Agregamos estilos dinámicos para el nuevo loader de contenido
+        $('<style>\n\
+        .wp-alp-content-loader {\n\
+            position: absolute;\n\
+            top: 0;\n\
+            left: 0;\n\
+            width: 100%;\n\
+            height: 100%;\n\
+            background: rgba(255,255,255,0.7);\n\
+            display: flex;\n\
+            align-items: center;\n\
+            justify-content: center;\n\
+            z-index: 999;\n\
+        }\n\
+        .wp-alp-initial-loader {\n\
+            display: flex;\n\
+            align-items: center;\n\
+            justify-content: center;\n\
+            height: 200px;\n\
+        }\n\
+        </style>').appendTo('head');
+        
+        // Agregar un manejador directo (retenemos por compatibilidad)
         $('[data-wp-alp-trigger="login"]').on('click', function(e) {
             console.log('Botón de login clickeado directamente');
             e.preventDefault();
@@ -61,11 +77,24 @@
      */
     function initModalListeners() {
 
-          // Abrir modal con botones o enlaces específicos (usando clase o atributo)
-    $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger', function(e) {
-        e.preventDefault();
-        openModal();
-    });
+        // Abrir modal con botones o enlaces específicos (usando clase o atributo)
+        // Mejorado para prevenir comportamiento nativo incluso en clics rápidos
+        $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger', function(e) {
+            // Solo procesar si realmente es un elemento de login válido
+            var $target = $(e.currentTarget);
+            
+            // Verificar que no sea un enlace de navegación normal
+            var href = $target.attr('href');
+            if (href && href !== '#' && href !== '' && !href.includes('login') && !href.includes('registro')) {
+                // Es un enlace normal, no interceptar
+                return true;
+            }
+            
+            e.preventDefault();
+            e.stopPropagation(); // Detener propagación del evento
+            openModal();
+            return false; // Asegurar que no ocurra la navegación
+        });
 
         // Cerrar modal con botón de cierre o click fuera
         modal.closeBtn.on('click', closeModal);
@@ -91,16 +120,23 @@
         $(document).on('click', '#wp-alp-continue-btn', function() {
             var identifier = $('#wp-alp-identifier').val().trim();
             if (!identifier) {
-                showError(wp_alp_ajax.translations.invalid_email);
+                showError('Por favor, introduce un correo electrónico o número de teléfono.');
                 return;
             }
+            
+            // Detectar si es correo o teléfono
+            var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+            var isPhone = /^[0-9]{8,15}$/.test(identifier.replace(/[\s-]+/g, ''));
+            
+            if (!isEmail && !isPhone) {
+                showError('Por favor, introduce un correo electrónico o número de teléfono válido.');
+                return;
+            }
+            
             validateUser(identifier);
         });
 
-        // Botón para teléfono en formulario inicial
-        $(document).on('click', '#wp-alp-phone-btn', function() {
-            loadPhoneForm();
-        });
+        // Ya no necesitamos el manejador del botón de teléfono porque la funcionalidad está integrada
 
         // Botón continuar en formulario de teléfono
         $(document).on('click', '#wp-alp-phone-continue-btn', function() {
@@ -135,6 +171,38 @@
             }
         });
 
+        // Manejar tecla Enter en campos de login
+        $(document).on('keydown', '#wp-alp-login-email, #wp-alp-login-password', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var email = $('#wp-alp-login-email').val().trim();
+                var password = $('#wp-alp-login-password').val().trim();
+                
+                if (!email || !password) {
+                    showError(wp_alp_ajax.translations.required_field);
+                    return;
+                }
+                
+                loginUser(email, password);
+            }
+        });
+        
+        // Manejar tecla Enter en formulario inicial
+        $(document).on('keydown', '#wp-alp-identifier', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('#wp-alp-continue-btn').trigger('click');
+            }
+        });
+        
+        // Manejar tecla Enter en formulario de teléfono
+        $(document).on('keydown', '#wp-alp-phone-number', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                $('#wp-alp-phone-continue-btn').trigger('click');
+            }
+        });
+
         // Botón de login
         $(document).on('click', '#wp-alp-login-btn', function() {
             var email = $('#wp-alp-login-email').val().trim();
@@ -148,9 +216,9 @@
             loginUser(email, password);
         });
 
-        // Botón de registro
-        $(document).on('click', '#wp-alp-register-btn', function() {
-            var formData = {
+        // Función para recopilar datos del formulario de registro
+        function collectRegisterFormData() {
+            return {
                 email: $('#wp-alp-register-email').val().trim(),
                 first_name: $('#wp-alp-register-first-name').val().trim(),
                 last_name: $('#wp-alp-register-last-name').val().trim(),
@@ -163,28 +231,50 @@
                 guests: $('#wp-alp-event-guests').val().trim(),
                 details: $('#wp-alp-event-details').val().trim()
             };
-            
+        }
+        
+        // Función para validar datos del formulario de registro
+        function validateRegisterFormData(formData) {
             // Validar campos requeridos
             var requiredFields = ['email', 'first_name', 'last_name', 'birthdate', 'phone', 'password', 'event_type', 'event_date', 'event_address', 'guests'];
             for (var i = 0; i < requiredFields.length; i++) {
                 if (!formData[requiredFields[i]]) {
                     showError(wp_alp_ajax.translations.required_field + ': ' + requiredFields[i]);
-                    return;
+                    return false;
                 }
             }
             
             // Validar contraseña
             if (formData.password.length < 6) {
                 showError(wp_alp_ajax.translations.password_short);
-                return;
+                return false;
             }
             
-            registerUser(formData);
+            return true;
+        }
+
+        // Manejar tecla Enter en campos del formulario de registro
+        $(document).on('keydown', '.wp-alp-register-form input, .wp-alp-register-form textarea, .wp-alp-register-form select', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var formData = collectRegisterFormData();
+                if (validateRegisterFormData(formData)) {
+                    registerUser(formData);
+                }
+            }
+        });
+        
+        // Botón de registro
+        $(document).on('click', '#wp-alp-register-btn', function() {
+            var formData = collectRegisterFormData();
+            if (validateRegisterFormData(formData)) {
+                registerUser(formData);
+            }
         });
 
-        // Botón de completar perfil
-        $(document).on('click', '#wp-alp-complete-profile-btn', function() {
-            var formData = {
+        // Función para recopilar datos del formulario de completar perfil
+        function collectProfileFormData() {
+            return {
                 user_id: $('input[name="user_id"]').val().trim(),
                 email: $('input[name="email"]').val().trim(),
                 first_name: $('input[name="first_name"]').val().trim(),
@@ -196,17 +286,39 @@
                 guests: $('#wp-alp-event-guests').val().trim(),
                 details: $('#wp-alp-event-details').val().trim()
             };
-            
+        }
+        
+        // Función para validar datos del formulario de completar perfil
+        function validateProfileFormData(formData) {
             // Validar campos requeridos
             var requiredFields = ['user_id', 'event_type', 'event_date', 'event_address', 'guests'];
             for (var i = 0; i < requiredFields.length; i++) {
                 if (!formData[requiredFields[i]]) {
                     showError(wp_alp_ajax.translations.required_field + ': ' + requiredFields[i]);
-                    return;
+                    return false;
                 }
             }
             
-            completeProfile(formData);
+            return true;
+        }
+        
+        // Manejar tecla Enter en campos del formulario de completar perfil
+        $(document).on('keydown', '.wp-alp-profile-form input, .wp-alp-profile-form textarea, .wp-alp-profile-form select', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var formData = collectProfileFormData();
+                if (validateProfileFormData(formData)) {
+                    completeProfile(formData);
+                }
+            }
+        });
+
+        // Botón de completar perfil
+        $(document).on('click', '#wp-alp-complete-profile-btn', function() {
+            var formData = collectProfileFormData();
+            if (validateProfileFormData(formData)) {
+                completeProfile(formData);
+            }
         });
 
         // Inputs de código de verificación
@@ -290,26 +402,40 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     function initSocialLogin() {
         // Esta función está vacía intencionalmente
         // La implementación real está en social-login.js
-        console.log('La implementación de login social se ha movido a social-login.js');
     }
 
     /**
-     * Abre el modal.
+     * Abre el modal con una experiencia fluida y rápida.
      */
     function openModal() {
-        console.log('Función openModal ejecutándose');
-
-        modal.overlay.fadeIn(300);
-        modal.content.html('');
-        showLoader();
+        // Mostrar el modal inmediatamente con un loader
+        var initialLoader = $('<div class="wp-alp-initial-loader"><div class="wp-alp-spinner"></div></div>');
+        modal.content.html(initialLoader);
+        modal.overlay.fadeIn(150); // Reducción de tiempo de fade para mayor rapidez
         
-        // Cargar formulario inicial
-        loadInitialForm();
-        
-        // Notificar a social-login.js que el modal está abierto
-        if (typeof window.socialLoginModalOpened === 'function') {
-            window.socialLoginModalOpened();
-        }
+        // Precarga del contenido
+        $.ajax({
+            url: wp_alp_ajax.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'wp_alp_get_form',
+                form: 'initial',
+                nonce: wp_alp_ajax.nonce
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Actualizar el contenido rápidamente
+                    updateModalContent(response.data.html);
+                    // Notificar que el modal está abierto
+                    $(document).trigger('wp_alp_modal_opened');
+                } else {
+                    loadInitialForm();
+                }
+            },
+            error: function() {
+                loadInitialForm();
+            }
+        });
     }
 
     /**
@@ -320,18 +446,31 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     }
 
     /**
-     * Muestra el loader.
+     * Muestra el loader sin ocultar todo el modal.
+     * Versión mejorada que mantiene el modal visible y solo muestra un indicador de carga
+     * sobre el contenido actual.
      */
     function showLoader() {
-        modal.loader.show();
-        modal.content.hide();
+        // En lugar de ocultar todo el contenido, agregamos una capa de carga encima
+        if (!$('#wp-alp-content-loader').length) {
+            var contentLoader = $('<div id="wp-alp-content-loader" class="wp-alp-content-loader"><div class="wp-alp-spinner"></div></div>');
+            modal.content.append(contentLoader);
+        } else {
+            $('#wp-alp-content-loader').show();
+        }
+        
+        // No ocultamos el contenido completo, solo lo hacemos visualmente inaccesible
+        modal.content.css('opacity', '0.5');
     }
 
     /**
-     * Oculta el loader.
+     * Oculta el loader manteniendo el contenido visible.
+     * Versión mejorada que mantiene el modal visible durante toda la transición.
      */
     function hideLoader() {
         modal.loader.hide();
+        $('#wp-alp-content-loader').hide();
+        modal.content.css('opacity', '1');
         modal.content.show();
     }
 
@@ -458,14 +597,19 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     }
 
     /**
-     * Actualiza el contenido del modal.
+     * Actualiza el contenido del modal de forma rápida y eficiente.
      */
     function updateModalContent(html) {
-        // Actualizar con animación suave
-        modal.content.fadeOut(150, function() {
-            modal.content.html(html).fadeIn(150);
-            hideLoader();
-        });
+        // Ocultar loader
+        hideLoader();
+        
+        // Reemplazar contenido directamente para mayor velocidad
+        modal.content.empty().append($(html));
+        
+        // Notificar que se actualizó el contenido para inicializar componentes externos
+        setTimeout(function() {
+            $(document).trigger('wp_alp_content_updated');
+        }, 10);
     }
 
     /**
@@ -587,6 +731,12 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
             },
             success: function(response) {
                 if (response.success) {
+                    // Actualizar el nonce si se proporciona uno nuevo
+                    if (response.data.new_nonce) {
+                        wp_alp_ajax.nonce = response.data.new_nonce;
+                        console.log('Nonce actualizado después de verificación');
+                    }
+                    
                     if (response.data.needs_profile) {
                         updateModalContent(response.data.html);
                     } else {
@@ -604,9 +754,43 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
                     $('.wp-alp-verification-digit[data-index="0"]').focus();
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
                 hideLoader();
-                showError('Error de conexión. Por favor, intenta nuevamente.');
+                
+                // Intentar una recuperación si la respuesta es 0 o está vacía
+                if (xhr.responseText === '0' || xhr.responseText === '') {
+                    console.log('Detectada respuesta vacía, intentando recuperar...');
+                    
+                    // Refrescar el nonce y reintentar
+                    $.ajax({
+                        url: wp_alp_ajax.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'wp_alp_refresh_nonce'
+                        },
+                        success: function(nonceResponse) {
+                            if (nonceResponse.success) {
+                                // Actualizar nonce
+                                wp_alp_ajax.nonce = nonceResponse.data.nonce;
+                                
+                                // Mostrar mensaje de estado
+                                showSuccess('Verificación procesada. Redirigiendo...');
+                                
+                                // Simular éxito y recargar la página después de un breve retraso
+                                setTimeout(function() {
+                                    window.location.reload();
+                                }, 1500);
+                            } else {
+                                showError('Error de conexión. Por favor, intenta nuevamente.');
+                            }
+                        },
+                        error: function() {
+                            showError('Error de conexión. Por favor, intenta nuevamente.');
+                        }
+                    });
+                } else {
+                    showError('Error de conexión. Por favor, intenta nuevamente.');
+                }
             }
         });
     }

@@ -5,7 +5,140 @@
  * Template para la página "Conviértete en vendedor"
  */
 
-get_header(); ?>
+get_header();
+
+// Asegurar que los estilos se carguen explícitamente en esta página
+wp_enqueue_style('wp-advanced-login-pro', plugin_dir_url(dirname(__FILE__)) . 'public/css/wp-alp-public.css', array(), '1.0.0', 'all');
+wp_enqueue_style('wp-advanced-login-pro-custom', plugin_dir_url(dirname(__FILE__)) . 'public/css/custom-alp-styles.css', array('wp-advanced-login-pro'), '1.0.0', 'all');
+wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__)) . 'public/css/vendor-theme.css', array('wp-advanced-login-pro', 'wp-advanced-login-pro-custom'), '1.0.0', 'all');
+?>
+
+<!-- Estilos críticos inline para asegurar apariencia correcta -->
+<style>
+    .wp-alp-vendor-page {
+        --wp-alp-spacing-base: 24px;
+        --wp-alp-spacing-large: 48px;
+        --wp-alp-spacing-small: 16px;
+        --wp-alp-border-radius: 12px;
+        --wp-alp-color-primary: #cbb881;
+        --wp-alp-color-text: #222;
+        --wp-alp-color-background: #fff;
+        --wp-alp-color-border: #e4e4e4;
+    }
+    .wp-alp-container {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    .wp-alp-vendor-hero {
+        text-align: center;
+        padding: 60px 20px;
+        background-color: #F7F7F7;
+        margin-bottom: 48px;
+    }
+    .wp-alp-vendor-hero h1 {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #222;
+    }
+    .wp-alp-hero-subtitle {
+        font-size: 18px;
+        margin-bottom: 30px;
+        color: #666;
+    }
+    .wp-alp-cta-button {
+        background-color: #cbb881;
+        color: white !important;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 12px 24px;
+        border-radius: 8px;
+        display: inline-block;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+    .wp-alp-cta-button:hover {
+        background-color: #a99969;
+        color: white !important;
+        text-decoration: none;
+    }
+    .wp-alp-process-steps {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 40px 0;
+    }
+    .wp-alp-process-step {
+        flex: 1;
+        min-width: 200px;
+        text-align: center;
+        padding: 20px;
+    }
+    .wp-alp-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+        margin: 30px 0;
+    }
+    .wp-alp-gallery-item {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .wp-alp-gallery-image {
+        height: 200px;
+        overflow: hidden;
+    }
+    .wp-alp-gallery-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    @media (max-width: 992px) {
+        .wp-alp-gallery-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    @media (max-width: 767px) {
+        .wp-alp-gallery-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    .wp-alp-gallery-caption {
+        padding: 16px;
+        background: white;
+    }
+    .wp-alp-mobile-flex {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    .wp-alp-mobile-text, .wp-alp-mobile-image {
+        flex: 1;
+        min-width: 300px;
+        padding: 20px;
+    }
+    .wp-alp-mobile-image img {
+        max-width: 100%;
+        height: auto;
+    }
+    /* Estilos responsive */
+    @media (max-width: 768px) {
+        .wp-alp-process-steps {
+            flex-direction: column;
+        }
+        .wp-alp-mobile-flex {
+            flex-direction: column;
+        }
+        .wp-alp-vendor-hero h1 {
+            font-size: 28px;
+        }
+    }
+</style>
 
 <div class="wp-alp-vendor-page">
     <!-- Hero Section -->
@@ -73,11 +206,10 @@ get_header(); ?>
                     </div>
                 </div>
                 <div class="wp-alp-mobile-image">
-                    <!-- Espacio para la imagen del móvil que añadirás tú -->
-                    <div class="wp-alp-mobile-placeholder">
-                        <!-- Aquí puedes insertar tu imagen del móvil -->
-                    </div>
-                </div>
+    <div class="wp-alp-mobile-placeholder">
+    <img src="<?php echo esc_url(plugins_url('images/mobile-app.png', dirname(__FILE__))); ?>" alt="...">
+    </div>
+</div>
             </div>
         </div>
     </section>
@@ -121,35 +253,34 @@ get_header(); ?>
         <div class="wp-alp-container">
             <h2>Servicios destacados en nuestra plataforma</h2>
             <div class="wp-alp-gallery-grid">
-                <!-- Las imágenes serán reemplazadas con tus propias imágenes -->
-                <div class="wp-alp-gallery-item">
-                    <div class="wp-alp-gallery-image">
-                        <!-- Placeholder para imagen de evento 1 -->
-                    </div>
-                    <div class="wp-alp-gallery-caption">
-                        <h4>Grupos musicales</h4>
-                        <p>Servicios de entretenimiento para todo tipo de eventos</p>
-                    </div>
-                </div>
-                <div class="wp-alp-gallery-item">
-                    <div class="wp-alp-gallery-image">
-                        <!-- Placeholder para imagen de evento 2 -->
-                    </div>
-                    <div class="wp-alp-gallery-caption">
-                        <h4>Recintos para eventos</h4>
-                        <p>Espacios exclusivos para celebraciones inolvidables</p>
-                    </div>
-                </div>
-                <div class="wp-alp-gallery-item">
-                    <div class="wp-alp-gallery-image">
-                        <!-- Placeholder para imagen de evento 3 -->
-                    </div>
-                    <div class="wp-alp-gallery-caption">
-                        <h4>Servicios de catering</h4>
-                        <p>Experiencias gastronómicas únicas para tus invitados</p>
-                    </div>
-                </div>
-            </div>
+    <div class="wp-alp-gallery-item">
+        <div class="wp-alp-gallery-image">
+            <img src="<?php echo esc_url(plugins_url('images/gallery-music.png', dirname(__FILE__))); ?>" alt="Grupos musicales">
+        </div>
+        <div class="wp-alp-gallery-caption">
+            <h4>Grupos musicales</h4>
+            <p>Servicios de entretenimiento para todo tipo de eventos</p>
+        </div>
+    </div>
+    <div class="wp-alp-gallery-item">
+        <div class="wp-alp-gallery-image">
+            <img src="<?php echo esc_url(plugins_url('images/gallery-venue.png', dirname(__FILE__))); ?>" alt="Recintos para eventos">
+        </div>
+        <div class="wp-alp-gallery-caption">
+            <h4>Recintos para eventos</h4>
+            <p>Espacios exclusivos para celebraciones inolvidables</p>
+        </div>
+    </div>
+    <div class="wp-alp-gallery-item">
+        <div class="wp-alp-gallery-image">
+            <img src="<?php echo esc_url(plugins_url('images/gallery-catering.png', dirname(__FILE__))); ?>" alt="Servicios de catering">
+        </div>
+        <div class="wp-alp-gallery-caption">
+            <h4>Servicios de catering</h4>
+            <p>Experiencias gastronómicas únicas para tus invitados</p>
+        </div>
+    </div>
+</div>
         </div>
     </section>
 
@@ -229,25 +360,6 @@ get_header(); ?>
         </div>
     </div>
 </section>
-</div>
-
-<!-- Progress Bar Section -->
-<div class="wp-alp-progress-bar">
-    <div class="wp-alp-container">
-        <div class="wp-alp-progress-inner">
-            <div class="wp-alp-progress-line">
-                <div class="wp-alp-progress-indicator" style="width: 33%;"></div>
-            </div>
-            <div class="wp-alp-progress-buttons">
-                <a href="<?php echo esc_url(get_permalink(get_page_by_path('conviertete-en-vendedor'))); ?>" class="wp-alp-back-button">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
-                </a>
-                <a href="#" class="wp-alp-next-button">
-                    <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 <?php get_footer(); ?>

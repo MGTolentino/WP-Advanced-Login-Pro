@@ -5,7 +5,7 @@
     background-color: #f9f9f9;
     padding: 20px;
     margin-bottom: 20px;
-    border-left: 4px solid #ff385c;
+    border-left: 4px solid var(--wp-alp-primary-color, #cbb881);
 }
 
 .wp-alp-admin-header h1 {

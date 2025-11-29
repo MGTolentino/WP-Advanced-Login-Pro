@@ -3,76 +3,4079 @@
  * Template Name: Pasos para Vendedores WP-ALP
  * 
  * Template para la página de pasos del proceso de convertirse en vendedor
+ * Adaptado al estilo de Airbnb
  */
 
-get_header(); ?>
+get_header();
 
-<div class="wp-alp-vendor-steps-page">
-    <div class="wp-alp-steps-container">
-        <div class="wp-alp-steps-left">
-            <h1 class="wp-alp-steps-heading">
-                <?php echo esc_html(get_locale() == 'en_US' ? 'Starting to offer your services is very simple' : 'Empezar a ofrecer tus servicios es muy sencillo'); ?>
-            </h1>
-        </div>
-        
-        <div class="wp-alp-steps-right">
-            <div class="wp-alp-steps-list">
-                <!-- Step 1 -->
-                <div class="wp-alp-step-item">
-                    <div class="wp-alp-step-content">
-                        <span class="wp-alp-step-number">1</span>
-                        <h2 class="wp-alp-step-title">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service' : 'Describe tu servicio'); ?>
-                        </h2>
-                        <p class="wp-alp-step-description">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic information, like what kind of service you offer and your capacity.' : 'Agrega información básica, como qué tipo de servicio ofreces y tu capacidad.'); ?>
-                        </p>
+// Asegurar que los estilos se carguen explícitamente en esta página
+wp_enqueue_style('wp-advanced-login-pro', plugin_dir_url(dirname(__FILE__)) . 'public/css/wp-alp-public.css', array(), '1.0.0', 'all');
+wp_enqueue_style('wp-advanced-login-pro-custom', plugin_dir_url(dirname(__FILE__)) . 'public/css/custom-alp-styles.css', array('wp-advanced-login-pro'), '1.0.0', 'all');
+wp_enqueue_style('wp-advanced-login-pro-vendor', plugin_dir_url(dirname(__FILE__)) . 'public/css/vendor-theme.css', array('wp-advanced-login-pro', 'wp-advanced-login-pro-custom'), '1.0.0', 'all');
+?>
+
+<!-- Los estilos están ahora en los archivos CSS correspondientes -->
+
+<div class="wp-alp-vendor-form-page">
+    <!-- Contenedor principal para la página inicial y los pasos -->
+    <div class="wp-alp-form-content">
+        <div class="wp-alp-container">
+            <!-- Paso Inicial: Información sobre los pasos -->
+            <div class="wp-alp-form-step" id="step-0" data-step="0">
+                <!-- Estructura de dos columnas -->
+                <div class="wp-alp-two-column-layout">
+                    <!-- Columna izquierda: título principal -->
+                    <div class="wp-alp-column-left">
+                        <h1 class="wp-alp-steps-heading">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Start offering your event services in just a few steps' : 'Comienza a ofrecer tus servicios para eventos en pocos pasos'); ?>
+                        </h1>
                     </div>
-                    <div class="wp-alp-step-image">
-                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step1.png'); ?>" alt="Step 1">
+                    
+                    <!-- Columna derecha: lista de pasos -->
+                    <div class="wp-alp-column-right">
+                        <div class="wp-alp-steps-list">
+                            <!-- Step 1 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">1</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your event service' : 'Describe tu servicio para eventos'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Add basic information about your service, equipment, or venue for events and your availability.' : 'Agrega información básica sobre tu servicio, equipo o local para eventos y tu disponibilidad.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-step1.png'); ?>" alt="Step 1">
+                                </div>
+                            </div>
+                            
+                            <!-- Step 2 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">2</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Showcase your offering' : 'Muestra lo que ofreces'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Upload high-quality photos, create a compelling title, and write a detailed description of your event service.' : 'Sube fotos de alta calidad, crea un título atractivo y redacta una descripción detallada de tu servicio para eventos.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-step2.png'); ?>" alt="Step 2">
+                                </div>
+                            </div>
+                            
+                            <!-- Step 3 -->
+                            <div class="wp-alp-step-item">
+                                <div class="wp-alp-step-content">
+                                    <span class="wp-alp-step-number">3</span>
+                                    <h2 class="wp-alp-step-title">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Set your prices and publish' : 'Establece tus precios y publica'); ?>
+                                    </h2>
+                                    <p class="wp-alp-step-description">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Define your pricing structure, rental conditions, and publish your service to start receiving event bookings.' : 'Define tu estructura de precios, condiciones de renta y publica tu servicio para comenzar a recibir reservas para eventos.'); ?>
+                                    </p>
+                                </div>
+                                <div class="wp-alp-step-image">
+                                    <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-step3.png'); ?>" alt="Step 3">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Step 2 -->
-                <div class="wp-alp-step-item">
-                    <div class="wp-alp-step-content">
-                        <span class="wp-alp-step-number">2</span>
-                        <h2 class="wp-alp-step-title">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
-                        </h2>
-                        <p class="wp-alp-step-description">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Add at least five photos, a title, and a description. Well help you.' : 'Agrega al menos cinco fotos, un título y una descripción. Nosotros te ayudamos.'); ?>
+                <!-- Barra de progreso a ancho completo DESPUÉS de two-column-layout -->
+                <div class="wp-alp-full-width-progress">
+                    <div class="wp-alp-progress-line"></div>
+                </div>
+                
+                <!-- Botón de acción -->
+                <div class="wp-alp-steps-action">
+                    <button type="button" class="wp-alp-steps-button" id="start-registration">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'GET STARTED' : 'EMPEZAR'); ?>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 1: "Describe tu espacio" con dos columnas -->
+            <div class="wp-alp-form-step" id="step-1" data-step="1" style="display: none;">
+                <div class="wp-alp-dual-column-container">
+                    <!-- Columna izquierda con texto -->
+                    <div class="wp-alp-dual-column-left">
+                        <!-- Etiqueta del paso -->
+                        <div class="wp-alp-step-label">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Step 1' : 'Paso 1'); ?>
+                        </div>
+                        
+                        <!-- Título del paso -->
+                        <h1 class="wp-alp-step-heading">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your space' : 'Describe tu espacio'); ?>
+                        </h1>
+                        
+                        <!-- Descripción del paso -->
+                        <p class="wp-alp-step-description-large">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask you what type of service you offer and how many people you can accommodate.' : 'En este paso, te preguntaremos qué tipo de servicio ofreces y cuántas personas puedes atender.'); ?>
                         </p>
                     </div>
-                    <div class="wp-alp-step-image">
-                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step2.png'); ?>" alt="Step 2">
+                    
+                    <!-- Columna derecha con imagen -->
+                    <div class="wp-alp-dual-column-right">
+                        <div class="wp-alp-step-illustration">
+                            <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-form-step1.png'); ?>" alt="Describe your service">
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Step 3 -->
-                <div class="wp-alp-step-item">
-                    <div class="wp-alp-step-content">
-                        <span class="wp-alp-step-number">3</span>
-                        <h2 class="wp-alp-step-title">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
-                        </h2>
-                        <p class="wp-alp-step-description">
-                            <?php echo esc_html(get_locale() == 'en_US' ? 'Set an initial price, check some details and publish your listing.' : 'Establece un precio inicial, verifica algunos detalles y publica tu anuncio.'); ?>
-                        </p>
+                <!-- Barra de progreso y navegación en la parte inferior -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso sin avance (toda gris) -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <!-- No progreso, solo barra gris -->
                     </div>
-                    <div class="wp-alp-step-image">
-                        <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'public/img/vendor-step3.png'); ?>" alt="Step 3">
+                    
+                    <!-- Navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-overview-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back to overview' : 'Volver a la visión general'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="go-to-categories-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
                     </div>
                 </div>
             </div>
             
-            <div class="wp-alp-steps-action">
-    <a href="<?php echo esc_url(get_permalink(get_page_by_path(get_locale() == 'en_US' ? 'vendor-form-step-1' : 'formulario-vendedor-paso-1'))); ?>" class="wp-alp-steps-button">
-        <?php echo esc_html(get_locale() == 'en_US' ? 'Get Started' : 'Empieza'); ?>
-    </a>
+            <!-- Paso 1.1: Vista de categorías de alojamiento (subpaso de Paso 1) -->
+            <div class="wp-alp-form-step" id="step-1-categories" data-step="1.1" style="display: none;">
+                <!-- Header con opciones de ayuda -->
+                <div class="wp-alp-airbnb-help-header">
+                    <div class="wp-alp-airbnb-help-links">
+                        <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+                        <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+                    </div>
+                </div>
+                
+                <!-- Título de la página -->
+                <div class="wp-alp-airbnb-category-content">
+                    <h1 class="wp-alp-airbnb-category-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Which of these best describes your place?' : '¿Cuál de estas opciones describe mejor tu alojamiento?'); ?>
+                    </h1>
+                    
+                    <!-- Grid de categorías -->
+                    <div class="wp-alp-airbnb-category-grid">
+                        <?php
+                        // Obtener categorías de HivePress si está disponible
+                        $categories = array();
+                        if (taxonomy_exists('hp_listing_category')) {
+                            $categories = get_terms(array(
+                                'taxonomy' => 'hp_listing_category',
+                                'hide_empty' => false,
+                            ));
+                        }
+                        
+                        // Si no hay categorías o HivePress no está activo, usar opciones de ejemplo
+                        if (!empty($categories)) {
+                            $sample_options = array();
+                            foreach ($categories as $category) {
+                                $icon_id = get_term_meta($category->term_id, 'icono_categoria', true);
+                                
+                                // Verificar si es un ID de imagen y obtener la URL o HTML de la imagen
+                                if (!empty($icon_id) && is_numeric($icon_id)) {
+                                    // Opción 1: Obtener la URL de la imagen y usarla en un tag img
+                                    $icon_url = wp_get_attachment_url($icon_id);
+                                    if ($icon_url) {
+                                        $icon = '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr($category->name) . '" style="height: 24px; width: 24px;">';
+                                    } else {
+                                        // Si no se encuentra la imagen, usar ícono predeterminado
+                                        $icon = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;"><path d="M28 2a2 2 0 0 1 2 2v24a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h24zm0 2H4v15.499l3.5-3.5 3.5 3.5 8.5-8.5 8.5 8.5V4zm0 24v-2.961l-10-10-8.5 8.5-3.5-3.5-2 2V28h24zM18 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"></path></svg>';
+                                    }
+                                } else if (!empty($icon_id) && is_string($icon_id) && strpos($icon_id, '<svg') !== false) {
+                                    // Si ya es un SVG, usarlo directamente
+                                    $icon = $icon_id;
+                                } else {
+                                    // Ícono predeterminado
+                                    $icon = '<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;"><path d="M28 2a2 2 0 0 1 2 2v24a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h24zm0 2H4v15.499l3.5-3.5 3.5 3.5 8.5-8.5 8.5 8.5V4zm0 24v-2.961l-10-10-8.5 8.5-3.5-3.5-2 2V28h24zM18 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"></path></svg>';
+                                }
+                                
+                                $sample_options[] = array(
+                                    'name' => $category->name,
+                                    'icon' => $icon,
+                                    'term_id' => $category->term_id
+                                );
+                            }
+                        }
+                        
+                        // Mostrar las opciones
+                        foreach ($sample_options as $index => $option) {
+                            $selected = ($index === 8) ? 'selected' : ''; // Supongamos que Castillo (índice 8) está seleccionado
+                            ?>
+                            <div class="wp-alp-airbnb-category-item <?php echo esc_attr($selected); ?>" data-term-id="<?php echo isset($option['term_id']) ? esc_attr($option['term_id']) : ''; ?>" data-name="<?php echo esc_attr($option['name']); ?>">
+                                <div class="wp-alp-airbnb-category-icon">
+                                    <?php echo $option['icon']; ?>
+                                </div>
+                                <div class="wp-alp-airbnb-category-name">
+                                    <?php echo esc_html($option['name']); ?>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                        ?>
+                    </div>
+                </div>
+                
+                <!-- Barra de navegación fija -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 20%;"></div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step1-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-categories-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 1.2: Tipo de servicio (subpaso de Paso 1) -->
+            <div class="wp-alp-form-step" id="step-1-service-type" data-step="1.2" style="display: none;">
+                <!-- Header con opciones de ayuda -->
+                <div class="wp-alp-airbnb-help-header">
+                    <div class="wp-alp-airbnb-help-links">
+                        <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+                        <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+                    </div>
+                </div>
+                
+                <!-- Título de la página -->
+                <div class="wp-alp-airbnb-category-content">
+                    <h1 class="wp-alp-airbnb-category-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'What type of service do you offer to guests?' : '¿Qué tipo de servicio ofreces a los clientes?'); ?>
+                    </h1>
+                    
+                    <!-- Grid de tipos de servicio -->
+                    <div class="wp-alp-airbnb-service-grid">
+                        <!-- Opción 1: Servicio por Día -->
+                        <div class="wp-alp-airbnb-service-option" data-value="day">
+                            <div class="wp-alp-airbnb-service-info">
+                                <h2 class="wp-alp-airbnb-service-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Day' : 'Servicio por Día'); ?>
+                                </h2>
+                                <p class="wp-alp-airbnb-service-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service for one or more full days.' : 'Los clientes contratan tu servicio por uno o más días completos.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-airbnb-service-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                                    <path d="M12 0v2h8V0h2v2h6a2 2 0 0 1 1.995 1.85L30 4v24a2 2 0 0 1-1.85 1.995L28 30H4a2 2 0 0 1-1.995-1.85L2 28V4a2 2 0 0 1 1.85-1.995L4 2h6V0h2zm16 10H4v18h24V10zm-8 2v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8zm12 6v2h2v-2h-2zm-6 0v2h2v-2h-2zm-6 0v2h2v-2H8z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Opción 2: Servicio por Hora -->
+                        <div class="wp-alp-airbnb-service-option" data-value="hour">
+                            <div class="wp-alp-airbnb-service-info">
+                                <h2 class="wp-alp-airbnb-service-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Service per Hour' : 'Servicio por Hora'); ?>
+                                </h2>
+                                <p class="wp-alp-airbnb-service-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clients hire your service by the hour, ideal for shorter events.' : 'Los clientes contratan tu servicio por hora, ideal para eventos más cortos.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-airbnb-service-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                                    <path d="M16 0a16 16 0 1 1 0 32 16 16 0 0 1 0-32zm0 2C8.268 2 2 8.268 2 16s6.268 14 14 14 14-6.268 14-14S23.732 2 16 2zm0 6a2 2 0 0 1 1.985 1.75L18 10l-.001 5.584.25.25a2 2 0 0 1 .565 1.32l-.009.131-.016.116-.012.09a2 2 0 0 1-.244.578l-.067.109-.08.115-.09.1-.067.074-.115.109-.12.1-.094.07-.124.08-.098.054-.136.065-.11.044-.133.044-.11.03-.134.03-.136.022-.13.013-.134.008L17 19l-.127-.007-.134-.008-.131-.013-.135-.022-.134-.029-.138-.044-.113-.043-.134-.065-.1-.054-.122-.08-.095-.07-.12-.1-.115-.109-.066-.074-.09-.1-.082-.115-.068-.11a2 2 0 0 1-.242-.577l-.039-.2-.008-.122L15 17.165 15 10a2 2 0 0 1 1-1.732V8a1 1 0 0 0-1.993.117L14 8.225v.613a3.984 3.984 0 0 0-2.997 3.745L11 12.771V14H9v-1.23a6.002 6.002 0 0 1 4.088-5.69l.237-.078A3.001 3.001 0 0 1 16 8zm-4 14v2H8v-2h4zm8 0v2h-4v-2h4zm4 0v2h-1v-2h1z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Opción 3: Servicio Completo para Evento -->
+                        <div class="wp-alp-airbnb-service-option" data-value="complete">
+                            <div class="wp-alp-airbnb-service-info">
+                                <h2 class="wp-alp-airbnb-service-title">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Complete Event Service' : 'Servicio Completo para Evento'); ?>
+                                </h2>
+                                <p class="wp-alp-airbnb-service-description">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Clients receive all necessary elements for their event, including setup and breakdown.' : 'Los clientes reciben todos los elementos necesarios para su evento, incluyendo montaje y desmontaje.'); ?>
+                                </p>
+                            </div>
+                            <div class="wp-alp-airbnb-service-icon">
+                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: currentcolor;">
+                                    <path d="M22.999 18V13.5A12 12 0 0 0 15 2.292a15 15 0 0 0-4.000 1.333A12 12 0 0 0 2.998 1.811L2.999 2v15.5C2.999 25.5 11 29 11 29s8-3.5 8-11.5V13l5 4.997L25.503 15l-2.504-2 2.504-2-1.504-2-5 4zM11 26c-4.693-1.97-6-6.678-6-8.5v-12c0-.745 3-2 6-2s6 1.255 6 2v12c0 1.822-1.307 6.53-6 8.5zm.691-6.051a.929.929 0 0 0 1.312 0l6.969-6.97a.93.93 0 0 0-1.312-1.313L12 18.327l-2.659-2.66a.93.93 0 1 0-1.312 1.313l3.315 3.317a.91.91 0 0 0 .657.272.9.9 0 0 0 .657-.272z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje de validación (inicialmente oculto) -->
+                    <div class="wp-alp-airbnb-service-validation" style="display: none;">
+                        <p>Por favor, selecciona un tipo de servicio para continuar.</p>
+                    </div>
+                </div>
+                
+                <!-- Barra de navegación fija -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 40%;"></div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-categories-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-service-type-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paso 1.3: Ubicación del servicio (subpaso de Paso 1) -->
+            <div class="wp-alp-form-step" id="step-1-location" data-step="1.3" style="display: none;">
+                <!-- Header con opciones de ayuda -->
+                <div class="wp-alp-airbnb-help-header">
+                    <div class="wp-alp-airbnb-help-links">
+                        <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+                        <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+                    </div>
+                </div>
+                
+                <!-- Título y subtítulo de la página -->
+                <div class="wp-alp-airbnb-category-content">
+                    <h1 class="wp-alp-airbnb-category-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Where do you provide your service?' : '¿Dónde das el servicio?'); ?>
+                    </h1>
+                    <p class="wp-alp-airbnb-category-subtitle">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'This location will be shown in your listing so customers can find you easily.' : 'Esta ubicación se mostrará en tu anuncio para que los clientes puedan encontrarte fácilmente.'); ?>
+                    </p>
+                    
+                    <!-- Opciones de ubicación -->
+                    <div class="wp-alp-location-options">
+                        <!-- Contenedor para opciones de ubicación con nueva estructura -->
+                        <div class="wp-alp-location-options-wrapper">
+                            <!-- Opción 1: Ubicación específica -->
+                            <div class="wp-alp-location-section">
+                                <div class="wp-alp-location-option" data-option="specific">
+                                    <div class="wp-alp-location-option-header">
+                                        <h3 class="wp-alp-location-option-title">
+                                            <?php echo esc_html(get_locale() == 'en_US' ? 'Specific location' : 'Ubicación específica'); ?>
+                                        </h3>
+                                        <p class="wp-alp-location-option-subtitle">
+                                            <?php echo esc_html(get_locale() == 'en_US' ? 'Select the exact location where you offer your service.' : 'Selecciona la ubicación exacta donde ofreces tu servicio.'); ?>
+                                        </p>
+                                    </div>
+                                    <div class="wp-alp-location-option-radio">
+                                        <input type="radio" name="location-type" id="location-specific" value="specific">
+                                    </div>
+                                </div>
+                                
+                                <!-- Contenedor para el mapa (estará oculto inicialmente, pero justo después de la opción) -->
+                                <div class="wp-alp-location-specific-container wp-alp-specific-section" style="display: none;">
+                                    <!-- Toggle para mostrar ubicación exacta -->
+                                    <div class="wp-alp-location-toggle">
+                                        <div class="wp-alp-toggle-text">
+                                            <span><?php echo esc_html(get_locale() == 'en_US' ? 'Show your exact location' : 'Mostrar tu ubicación exacta'); ?></span>
+                                            <p class="wp-alp-toggle-description">
+                                                <?php echo esc_html(get_locale() == 'en_US' ? 'Clearly indicate to guests where your place is located. We will only provide your address when the reservation is confirmed.' : 'Indica claramente a los huéspedes dónde se encuentra tu alojamiento. Solo les facilitaremos tu dirección cuando su reservación esté confirmada.'); ?>
+                                                <a href="javascript:void(0);" class="wp-alp-more-info" id="location-more-info"><?php echo esc_html(get_locale() == 'en_US' ? 'More information' : 'Más información'); ?></a>
+                                            </p>
+                                        </div>
+                                        <div class="wp-alp-toggle-switch">
+                                            <label class="wp-alp-switch">
+                                                <input type="checkbox" id="exact-location-toggle">
+                                                <span class="wp-alp-slider round"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Contenedor del mapa con texto de prueba visible -->
+                                    <div class="wp-alp-map-container">
+                                        <div id="wp-alp-location-map" class="wp-alp-map-wrapper" style="height: 400px; width: 100%; background-color: #e0e0e0; position: relative;">
+                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 10;">
+                                                <p style="margin: 0; font-weight: bold; color: #222;">Contenedor del Mapa</p>
+                                                <p style="margin: 5px 0 0; color: #555;">Si puedes ver este texto, el contenedor es visible.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Tooltip de ubicación aproximada (inicialmente visible) -->
+                                        <div class="wp-alp-approximate-tooltip" id="approximate-tooltip">
+                                            <p><?php echo esc_html(get_locale() == 'en_US' ? 'We will share your approximate location.' : 'Compartiremos tu ubicación aproximada.'); ?></p>
+                                        </div>
+                                        
+                                        <!-- Marcador de casa (se moverá con el mapa) -->
+                                        <div class="wp-alp-house-marker" id="house-marker" style="display: none;">
+                                            <div class="wp-alp-marker-icon">
+                                                <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 24px; width: 24px; fill: white;">
+                                                    <path d="M17.954 2.781l.175.164 13.072 12.842-1.402 1.426-1.8-1.768L28 29a2 2 0 0 1-1.85 1.994L26 31H6a2 2 0 0 1-1.995-1.85L4 29V15.446l-1.8 1.767-1.4-1.426L13.856 2.958a3 3 0 0 1 4.098-.177zM16 17a5 5 0 0 0-5 5v7h14v-7a5 5 0 0 0-4.783-4.995L20 17h-4z"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Barra de búsqueda de dirección -->
+                                    <div class="wp-alp-map-search">
+                                        <div class="wp-alp-search-icon">
+                                            <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false" style="height: 18px; width: 18px; fill: currentcolor;">
+                                                <path d="M13 0c7.18 0 13 5.82 13 13 0 2.868-.929 5.519-2.502 7.669l7.916 7.917-2.122 2.121-7.916-7.916A12.942 12.942 0 0 1 13 26C5.82 26 0 20.18 0 13S5.82 0 13 0zm0 2a11 11 0 1 0 0 22 11 11 0 0 0 0-22z"></path>
+                                            </svg>
+                                        </div>
+                                        <input type="text" id="wp-alp-address-input" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Enter your address' : 'Ingresa tu dirección'); ?>" class="wp-alp-address-input">
+                                    </div>
+                                    
+                                    <!-- Botón para confirmación de dirección detallada (inicialmente oculto) -->
+                                    <div class="wp-alp-confirm-address-btn" style="display: none;">
+                                        <button type="button" id="confirm-address-btn" class="wp-alp-btn wp-alp-btn-secondary">
+                                            <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm address' : 'Confirmar dirección'); ?>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Opción 2: Múltiples ubicaciones -->
+                            <div class="wp-alp-location-section">
+                                <div class="wp-alp-location-option" data-option="multiple">
+                                    <div class="wp-alp-location-option-header">
+                                        <h3 class="wp-alp-location-option-title">
+                                            <?php echo esc_html(get_locale() == 'en_US' ? 'Multiple locations or service areas' : 'Múltiples ubicaciones o áreas de servicio'); ?>
+                                        </h3>
+                                        <p class="wp-alp-location-option-subtitle">
+                                            <?php echo esc_html(get_locale() == 'en_US' ? 'Select all areas where you offer your services.' : 'Selecciona todas las áreas donde ofreces tus servicios.'); ?>
+                                        </p>
+                                    </div>
+                                    <div class="wp-alp-location-option-radio">
+                                        <input type="radio" name="location-type" id="location-multiple" value="multiple">
+                                    </div>
+                                </div>
+                                
+                                <!-- El contenedor de ubicaciones múltiples irá aquí (en la sección de la opción) -->
+                                <div class="wp-alp-location-multiple-container wp-alp-multiple-section" style="display: none;">
+                                    <div class="wp-alp-locations-list">
+                                        <?php
+                                        // Intentar obtener las ubicaciones de hp_listing_location o hp_listing_ubicacion
+                                        $taxonomy = taxonomy_exists('hp_listing_location') ? 'hp_listing_location' : 
+                                                  (taxonomy_exists('hp_listing_ubicacion') ? 'hp_listing_ubicacion' : '');
+                                        
+                                        if (!empty($taxonomy)) {
+                                            $locations = get_terms(array(
+                                                'taxonomy' => $taxonomy,
+                                                'hide_empty' => false,
+                                            ));
+                                            
+                                            if (!empty($locations) && !is_wp_error($locations)) {
+                                                echo '<div class="wp-alp-locations-checkboxes">';
+                                                foreach ($locations as $location) {
+                                                    ?>
+                                                    <div class="wp-alp-location-checkbox-item">
+                                                        <input type="checkbox" id="location-<?php echo esc_attr($location->term_id); ?>" 
+                                                              name="locations[]" value="<?php echo esc_attr($location->term_id); ?>">
+                                                        <label for="location-<?php echo esc_attr($location->term_id); ?>">
+                                                            <?php echo esc_html($location->name); ?>
+                                                        </label>
+                                                    </div>
+                                                    <?php
+                                                }
+                                                echo '</div>';
+                                            }
+                                        } else {
+                                            // Ubicaciones de ejemplo si no hay taxonomías disponibles
+                                            ?>
+                                            <div class="wp-alp-locations-checkboxes">
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-1" name="locations[]" value="1">
+                                                    <label for="location-1">Ciudad de México</label>
+                                                </div>
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-2" name="locations[]" value="2">
+                                                    <label for="location-2">Monterrey</label>
+                                                </div>
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-3" name="locations[]" value="3">
+                                                    <label for="location-3">Guadalajara</label>
+                                                </div>
+                                                <div class="wp-alp-location-checkbox-item">
+                                                    <input type="checkbox" id="location-4" name="locations[]" value="4">
+                                                    <label for="location-4">Cancún</label>
+                                                </div>
+                                            </div>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal de información sobre compartir ubicación -->
+                    <div id="location-info-modal" class="wp-alp-info-modal" style="display: none;">
+                        <div class="wp-alp-info-modal-content">
+                            <span class="wp-alp-info-modal-close">&times;</span>
+                            <h3><?php echo get_locale() == 'en_US' ? 'About Location Sharing' : 'Sobre compartir tu ubicación'; ?></h3>
+                            <div class="wp-alp-info-modal-body">
+                                <?php if (get_locale() == 'en_US'): ?>
+                                    <p>By sharing your location, you help potential clients find services near them. You can choose to share either:</p>
+                                    <ul>
+                                        <li><strong>Exact location:</strong> Your precise address will be shown on the map.</li>
+                                        <li><strong>Approximate location:</strong> Only the general area will be displayed, protecting your exact address.</li>
+                                    </ul>
+                                    <p>You can change this setting at any time from your profile settings.</p>
+                                <?php else: ?>
+                                    <p>Al compartir tu ubicación, ayudas a que los clientes potenciales encuentren servicios cerca de ellos. Puedes elegir compartir:</p>
+                                    <ul>
+                                        <li><strong>Ubicación exacta:</strong> Tu dirección precisa se mostrará en el mapa.</li>
+                                        <li><strong>Ubicación aproximada:</strong> Solo se mostrará el área general, protegiendo tu dirección exacta.</li>
+                                    </ul>
+                                    <p>Puedes cambiar esta configuración en cualquier momento desde los ajustes de tu perfil.</p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario detallado de dirección (inicialmente oculto) -->
+                    <div class="wp-alp-address-form-container" id="address-form-container" style="display: none;">
+                        <h2 class="wp-alp-address-form-title">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm your address' : 'Confirma tu dirección'); ?>
+                        </h2>
+                        <p class="wp-alp-address-form-subtitle">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'We will only share the address with guests after they have made the reservation.' : 'Solo compartiremos la dirección con los huéspedes después de que hayan hecho la reservación.'); ?>
+                        </p>
+                        
+                        <form id="wp-alp-detailed-address" class="wp-alp-address-form">
+                            <!-- País -->
+                            <div class="wp-alp-form-group">
+                                <label for="country" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Country/Region' : 'País o región'); ?>
+                                </label>
+                                <select id="country" name="country" class="wp-alp-form-select">
+                                    <option value="MX" selected>México - MX</option>
+                                    <option value="US">Estados Unidos - US</option>
+                                    <option value="CA">Canadá - CA</option>
+                                    <!-- Agrega más países según sea necesario -->
+                                </select>
+                            </div>
+                            
+                            <!-- Dirección principal -->
+                            <div class="wp-alp-form-group">
+                                <label for="street" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Address' : 'Dirección'); ?>
+                                </label>
+                                <input type="text" id="street" name="street" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Apartamento, habitación, etc. -->
+                            <div class="wp-alp-form-group">
+                                <label for="apt" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Apt, suite, etc. (if applicable)' : 'Departamento, habitación, etc. (si corresponde)'); ?>
+                                </label>
+                                <input type="text" id="apt" name="apt" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Zona o barrio -->
+                            <div class="wp-alp-form-group">
+                                <label for="neighborhood" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Area (if applicable)' : 'Zona (si corresponde)'); ?>
+                                </label>
+                                <input type="text" id="neighborhood" name="neighborhood" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Código postal -->
+                            <div class="wp-alp-form-group">
+                                <label for="zipcode" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Postal code' : 'Código postal'); ?>
+                                </label>
+                                <input type="text" id="zipcode" name="zipcode" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Ciudad -->
+                            <div class="wp-alp-form-group">
+                                <label for="city" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'City/town' : 'Ciudad / municipio'); ?>
+                                </label>
+                                <input type="text" id="city" name="city" class="wp-alp-form-input">
+                            </div>
+                            
+                            <!-- Estado -->
+                            <div class="wp-alp-form-group">
+                                <label for="state" class="wp-alp-form-label">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'State' : 'Estado'); ?>
+                                </label>
+                                <select id="state" name="state" class="wp-alp-form-select">
+                                    <option value="NL" selected>Nuevo León</option>
+                                    <option value="CDMX">Ciudad de México</option>
+                                    <option value="JAL">Jalisco</option>
+                                    <!-- Agrega más estados según sea necesario -->
+                                </select>
+                            </div>
+                            
+                            <!-- Botones de navegación -->
+                            <div class="wp-alp-address-form-buttons">
+                                <button type="button" id="back-to-map-btn" class="wp-alp-btn wp-alp-btn-text">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                                </button>
+                                <button type="button" id="save-address-btn" class="wp-alp-btn wp-alp-btn-primary">
+                                    <?php echo esc_html(get_locale() == 'en_US' ? 'Confirm' : 'Confirmar'); ?>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Contenedor para múltiples ubicaciones - inicialmente oculto -->
+                    <!-- El contenedor de ubicaciones múltiples se ha movido a la estructura de opciones -->
+                            <!-- Opción "Otro" con campo de texto -->
+                            <div class="wp-alp-location-other">
+                                <div class="wp-alp-location-checkbox-item">
+                                    <input type="checkbox" id="location-other" name="locations[]" value="other">
+                                    <label for="location-other">
+                                        <?php echo esc_html(get_locale() == 'en_US' ? 'Other location' : 'Otra ubicación'); ?>
+                                    </label>
+                                </div>
+                                <div class="wp-alp-location-other-input" style="display: none;">
+                                    <input type="text" id="wp-alp-other-location" placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 'Specify the location' : 'Especifica la ubicación'); ?>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje de validación (inicialmente oculto) -->
+                    <div class="wp-alp-location-validation" style="display: none;">
+                        <p><?php echo esc_html(get_locale() == 'en_US' ? 'Please select a location to continue.' : 'Por favor, selecciona una ubicación para continuar.'); ?></p>
+                    </div>
+                </div>
+                
+                <!-- Barra de navegación fija -->
+                <div class="wp-alp-airbnb-footer">
+                    <!-- Barra de progreso con avance -->
+                    <div class="wp-alp-airbnb-progress-bar">
+                        <div class="wp-alp-airbnb-progress-completed" style="width: 60%;"></div>
+                    </div>
+                    
+                    <!-- Botones de navegación -->
+                    <div class="wp-alp-airbnb-nav">
+                        <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-service-type-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+                        </a>
+                        <a href="#" class="wp-alp-airbnb-next-btn" id="next-from-location-btn">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+           <!-- Paso 1.4: Datos básicos (subpaso de Paso 1) -->
+<div class="wp-alp-form-step" id="step-1-basic-info" data-step="1.4" style="display: none;">
+    <!-- Header con opciones de ayuda -->
+    <div class="wp-alp-airbnb-help-header">
+        <div class="wp-alp-airbnb-help-links">
+            <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+            <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+        </div>
+    </div>
+    
+    <!-- Título y subtítulo de la página -->
+    <div class="wp-alp-airbnb-category-content">
+        <h1 class="wp-alp-airbnb-category-title">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Add some basic data about your space' : 'Agrega algunos datos básicos de tu espacio'); ?>
+        </h1>
+        <p class="wp-alp-airbnb-category-subtitle">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Later, you can add more details, like the types of amenities.' : 'Más adelante, podrás incluir otros detalles, como los tipos de servicios.'); ?>
+        </p>
+        
+        <!-- Contenedor de tarjetas de campos -->
+        <div class="wp-alp-basic-info-card-container">
+            <!-- Primera tarjeta: Capacidad -->
+            <div class="wp-alp-basic-info-card">
+                <div class="wp-alp-card-header">
+                    <div class="wp-alp-card-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M22.5 17.25a.75.75 0 0 1-.75.75H2.25a.75.75 0 0 1 0-1.5h19.5a.75.75 0 0 1 .75.75zm0 4.5a.75.75 0 0 1-.75.75H2.25a.75.75 0 0 1 0-1.5h19.5a.75.75 0 0 1 .75.75zm-18-10.5a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5a.75.75 0 0 1 .75.75zM4.5 6a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 4.5 6zM22.5 6a.75.75 0 0 1-.75.75h-15a.75.75 0 0 1 0-1.5h15a.75.75 0 0 1 .75.75zm0 4.5a.75.75 0 0 1-.75.75h-15a.75.75 0 0 1 0-1.5h15a.75.75 0 0 1 .75.75z"></path></svg>
+                    </div>
+                    <h3 class="wp-alp-card-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Capacity Information' : 'Información de capacidad'); ?>
+                    </h3>
+                </div>
+                <div class="wp-alp-card-content">
+                    <!-- Campo: Capacidad máxima -->
+                    <div class="wp-alp-number-field-improved">
+                        <label for="max_capacity" class="wp-alp-field-label">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Maximum Guest Capacity' : 'Capacidad Máxima de Invitados'); ?>
+                        </label>
+                        <div class="wp-alp-field-hint">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'How many guests can your venue accommodate?' : '¿Cuántos invitados puede acomodar tu espacio?'); ?>
+                        </div>
+                        <div class="wp-alp-number-control-improved">
+                            <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                                <span>−</span>
+                            </button>
+                            <input type="number" id="max_capacity" name="max_capacity" min="1" value="100" class="wp-alp-number-input-improved">
+                            <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                                <span>+</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Campo: Capacidad mínima -->
+                    <div class="wp-alp-number-field-improved event-venue-field">
+                        <label for="min_capacity" class="wp-alp-field-label">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Minimum Capacity' : 'Capacidad Mínima'); ?>
+                        </label>
+                        <div class="wp-alp-field-hint">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Minimum number of guests required to book your venue' : 'Número mínimo de invitados necesarios para reservar tu espacio'); ?>
+                        </div>
+                        <div class="wp-alp-number-control-improved">
+                            <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                                <span>−</span>
+                            </button>
+                            <input type="number" id="min_capacity" name="min_capacity" min="1" value="10" class="wp-alp-number-input-improved">
+                            <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                                <span>+</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Segunda tarjeta: Instalaciones -->
+            <div class="wp-alp-basic-info-card">
+                <div class="wp-alp-card-header">
+                    <div class="wp-alp-card-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M22.31 14.76a.4.4 0 0 1-.4.4H2.09a.4.4 0 0 1-.4-.4v-5.48a.4.4 0 0 1 .4-.4h19.83a.4.4 0 0 1 .4.4zM6.47 11.93a1.2 1.2 0 1 0-2.4 0 1.2 1.2 0 0 0 2.4 0zm3.32 0a1.2 1.2 0 1 0-2.4 0 1.2 1.2 0 0 0 2.4 0z"></path></svg>
+                    </div>
+                    <h3 class="wp-alp-card-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Facilities Information' : 'Información de instalaciones'); ?>
+                    </h3>
+                </div>
+                <div class="wp-alp-card-content">
+                    <!-- Campo: Número de baños -->
+                    <div class="wp-alp-number-field-improved event-venue-field">
+                        <label for="restrooms" class="wp-alp-field-label">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Restrooms' : 'Baños'); ?>
+                        </label>
+                        <div class="wp-alp-field-hint">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Number of restrooms available at your venue' : 'Número de baños disponibles en tu espacio'); ?>
+                        </div>
+                        <div class="wp-alp-number-control-improved">
+                            <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                                <span>−</span>
+                            </button>
+                            <input type="number" id="restrooms" name="restrooms" min="1" value="2" class="wp-alp-number-input-improved">
+                            <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                                <span>+</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Campo: Horas de servicio (solo se muestra si el tipo de servicio es por hora) -->
+                    <div class="wp-alp-number-field-improved hour-service-field" style="display: none;">
+                        <label for="hours" class="wp-alp-field-label">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Service Hours' : 'Horas de Servicio'); ?>
+                        </label>
+                        <div class="wp-alp-field-hint">
+                            <?php echo esc_html(get_locale() == 'en_US' ? 'Service hours included in your basic package' : 'Horas de servicio incluidas en tu paquete básico'); ?>
+                        </div>
+                        <div class="wp-alp-number-control-improved">
+                            <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                                <span>−</span>
+                            </button>
+                            <input type="number" id="hours" name="hours" min="1" max="24" value="4" class="wp-alp-number-input-improved">
+                            <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                                <span>+</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tercera tarjeta: Disponibilidad -->
+            <div class="wp-alp-basic-info-card">
+                <div class="wp-alp-card-header">
+                    <div class="wp-alp-card-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" focusable="false"><path d="M22.5 2.25h-5.47V1a.75.75 0 0 0-1.5 0v1.25H8.47V1a.75.75 0 0 0-1.5 0v1.25H1.5A1.5 1.5 0 0 0 0 3.75v18.75a1.5 1.5 0 0 0 1.5 1.5h21a1.5 1.5 0 0 0 1.5-1.5V3.75a1.5 1.5 0 0 0-1.5-1.5zM1.5 3.75h5.47V5a.75.75 0 0 0 1.5 0V3.75h7.06V5a.75.75 0 0 0 1.5 0V3.75H22.5v4.5h-21zM22.5 22.5h-21V9.75h21z"></path></svg>
+                    </div>
+                    <h3 class="wp-alp-card-title">
+                        <?php echo esc_html(get_locale() == 'en_US' ? 'Availability Options' : 'Opciones de disponibilidad'); ?>
+                    </h3>
+                </div>
+                <div class="wp-alp-card-content">
+                    <!-- Campo: Eventos simultáneos (toggle) -->
+                    <div class="wp-alp-toggle-field-improved">
+                        <div class="wp-alp-toggle-text-improved">
+                            <span class="wp-alp-toggle-label">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'Multiple events per day' : 'Eventos múltiples por día'); ?>
+                            </span>
+                            <p class="wp-alp-toggle-description-improved">
+                                <?php echo esc_html(get_locale() == 'en_US' ? 'Can your venue host multiple events on the same day?' : '¿Tu espacio puede albergar varios eventos en el mismo día?'); ?>
+                            </p>
+                        </div>
+                        <div class="wp-alp-toggle-switch-improved">
+                            <label class="wp-alp-switch-improved">
+                                <input type="checkbox" id="host_more_than_one_ev" name="host_more_than_one_ev">
+                                <span class="wp-alp-slider-improved round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Barra de navegación fija -->
+    <div class="wp-alp-airbnb-footer">
+        <!-- Barra de progreso con avance -->
+        <div class="wp-alp-airbnb-progress-bar">
+            <div class="wp-alp-airbnb-progress-completed" style="width: 80%;"></div>
+        </div>
+        
+        <!-- Botones de navegación -->
+        <div class="wp-alp-airbnb-nav">
+            <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-location-btn">
+                <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+            </a>
+            <a href="#" class="wp-alp-airbnb-next-btn" id="finish-step-1-btn">
+            <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
 </div>
+
+           <!-- Paso 2: Inicio de información del listing - HivePress Formulario Oculto -->
+<div class="wp-alp-form-step" id="step-2-intro" data-step="2" style="display: none;">
+   <div class="wp-alp-dual-column-container">
+       <!-- Columna izquierda con texto -->
+       <div class="wp-alp-dual-column-left">
+           <!-- Etiqueta del paso -->
+           <div class="wp-alp-step-label">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Step 2' : 'Paso 2'); ?>
+           </div>
+           
+           <!-- Título del paso -->
+           <h1 class="wp-alp-step-heading">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Make it stand out' : 'Haz que destaque'); ?>
+           </h1>
+           
+           <!-- Descripción del paso -->
+           <p class="wp-alp-step-description-large">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'In this step, we\'ll ask for photos, a title, and a description of your space. These details will help customers find and choose your listing.' : 'En este paso, te pediremos fotos, un título y una descripción de tu espacio. Estos detalles ayudarán a que los clientes encuentren y elijan tu anuncio.'); ?>
+           </p>
+       </div>
+       
+       <!-- Columna derecha con imagen -->
+       <div class="wp-alp-dual-column-right">
+           <div class="wp-alp-step-illustration">
+               <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-form-step2.png'); ?>" alt="Make it stand out">
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de progreso y navegación en la parte inferior -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 100%;"></div>
+       </div>
+       
+       <!-- Navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step-1-last-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="go-to-step-2-listing-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 2.1: Información Básica del Listing -->
+<div class="wp-alp-form-step" id="step-2-basic" data-step="2.1" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de formulario personalizado -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Tell us about your listing' : 'Cuéntanos sobre tu anuncio'); ?>
+       </h1>
+       
+       <!-- Contenedor para el formulario de HivePress oculto -->
+       <div id="wp-alp-hidden-hivepress-form" style="display: none;">
+           <?php
+           // Verificar si HivePress está activo
+           if (class_exists('HivePress\Core')) {
+               // Verificar si el usuario está loggeado
+               if (is_user_logged_in()) {
+                   // Crear modelo de listing (nuevo o existente)
+                   $listing_id = isset($_GET['listing_id']) ? absint($_GET['listing_id']) : null;
+                   
+                   if ($listing_id) {
+                       // Cargar listing existente
+                       $listing = \HivePress\Models\Listing::query()->get_by_id($listing_id);
+                   } else {
+                       // Crear nuevo listing
+                       $listing = new \HivePress\Models\Listing([
+                           'status' => 'draft',
+                           'user' => get_current_user_id(),
+                       ]);
+                       
+                       // Guardar para obtener ID
+                       $listing->save();
+                   }
+                   
+                   if ($listing) {
+                       // Crear el formulario de HivePress
+                       $form = \HivePress\Helpers\create_class_instance('\HivePress\Forms\Listing_Submit', [['model' => $listing, 'redirect' => false]]);
+                       
+                       // Renderizar el formulario
+                       if ($form) {
+                           echo $form->render();
+                       }
+                   }
+               }
+           }
+           ?>
+       </div>
+       
+       <!-- Formulario personalizado visible -->
+       <div class="wp-alp-basic-info-card-container">
+           <!-- Tarjeta 1: Información esencial -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 3H4.5A1.5 1.5 0 0 0 3 4.5v15A1.5 1.5 0 0 0 4.5 21h15a1.5 1.5 0 0 0 1.5-1.5v-15A1.5 1.5 0 0 0 19.5 3zM4.5 4.5h15v3.75h-15zm0 15v-10.5h15v10.5z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Essential Information' : 'Información Esencial'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Título del listing -->
+                   <div class="wp-alp-form-group">
+                       <label for="listing-title" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Listing Title' : 'Título del Anuncio'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Create a catchy title that describes your service' : 'Crea un título atractivo que describa tu servicio'); ?>
+                       </div>
+                       <input type="text" id="listing-title" name="title" class="wp-alp-form-input" maxlength="256" >
+                   </div>
+                   
+                   <!-- Precio base -->
+                   <div class="wp-alp-form-group">
+                       <label for="listing-price" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Base Price' : 'Precio Base'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Set your starting price' : 'Establece tu precio inicial'); ?>
+                       </div>
+                       <input type="number" id="listing-price" name="price" step="0.01" min="0" class="wp-alp-form-input" >
+                   </div>
+               </div>
+           </div>
+           
+           <!-- Tarjeta 2: Descripción -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6zm2-9h8v2H8zm0 4h8v2H8z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Description' : 'Descripción'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <div class="wp-alp-form-group">
+                       <label for="listing-description" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Listing Description' : 'Descripción del Anuncio'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Describe your service in detail. Highlight what makes it unique.' : 'Describe tu servicio en detalle. Destaca lo que lo hace único.'); ?>
+                       </div>
+                       <textarea id="listing-description" name="description" rows="8" class="wp-alp-form-input" maxlength="10240"></textarea>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso con avance -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 14%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step-2-intro-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="next-to-photos-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 2.2: Fotos y Media -->
+<div class="wp-alp-form-step" id="step-2-photos" data-step="2.2" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de fotos -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Add photos of your space' : 'Agrega fotos de tu espacio'); ?>
+       </h1>
+       <p class="wp-alp-airbnb-category-subtitle">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Upload at least 5 photos. You can add more later.' : 'Sube al menos 5 fotos. Puedes agregar más después.'); ?>
+       </p>
+       
+       <!-- Zona de carga de fotos personalizada -->
+       <div class="wp-alp-photo-upload-container">
+           <div class="wp-alp-photo-upload-zone" id="photo-upload-zone">
+               <svg viewBox="0 0 64 64" style="height: 64px; width: 64px; fill: currentcolor;">
+                   <path d="M56 2H8a6 6 0 0 0-6 6v48a6 6 0 0 0 6 6h48a6 6 0 0 0 6-6V8a6 6 0 0 0-6-6zM8 6h48a2 2 0 0 1 2 2v29.894L41.117 21.01a2 2 0 0 0-2.824 0l-16 16-4.586-4.586a2 2 0 0 0-2.828 0L6 41.303V8a2 2 0 0 1 2-2zm0 52a2 2 0 0 1-2-2V46.697l10.293-10.293 4.586 4.586a2 2 0 0 0 2.828 0l16-16L58 41.284V56a2 2 0 0 1-2 2H8z"/>
+                   <circle cx="18" cy="18" r="6"/>
+               </svg>
+               <h2><?php echo esc_html(get_locale() == 'en_US' ? 'Drag your photos here' : 'Arrastra tus fotos aquí'); ?></h2>
+               <p><?php echo esc_html(get_locale() == 'en_US' ? 'Choose at least 5 photos' : 'Elige al menos 5 fotos'); ?></p>
+               <button type="button" class="wp-alp-upload-button" id="select-photos-btn">
+                   <?php echo esc_html(get_locale() == 'en_US' ? 'Upload from your device' : 'Subir desde tu dispositivo'); ?>
+               </button>
+               <input type="file" id="photo-input" multiple accept="image/*" style="display: none;">
+           </div>
+           
+           <!-- Vista previa de fotos cargadas -->
+           <div class="wp-alp-photos-preview" id="photos-preview">
+               <!-- Las fotos cargadas se mostrarán aquí dinámicamente -->
+           </div>
+       </div>
+       
+       <!-- Video URL (opcional) -->
+       <div class="wp-alp-video-section">
+           <h3><?php echo esc_html(get_locale() == 'en_US' ? 'Add a video (optional)' : 'Agrega un video (opcional)'); ?></h3>
+           <div class="wp-alp-form-group">
+               <label for="video-url" class="wp-alp-field-label">
+                   <?php echo esc_html(get_locale() == 'en_US' ? 'Video URL' : 'URL del Video'); ?>
+               </label>
+               <div class="wp-alp-field-hint">
+                   <?php echo esc_html(get_locale() == 'en_US' ? 'Add a YouTube or Vimeo link' : 'Agrega un enlace de YouTube o Vimeo'); ?>
+               </div>
+               <input type="url" id="video-url" name="video" class="wp-alp-form-input" placeholder="https://www.youtube.com/watch?v=...">
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso con avance -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 28%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-basic-info-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="next-to-pricing-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 2.3: Precios y Disponibilidad -->
+<div class="wp-alp-form-step" id="step-2-pricing" data-step="2.3" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de precios -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Set up your pricing' : 'Configura tus precios'); ?>
+       </h1>
+       
+       <div class="wp-alp-basic-info-card-container">
+           <!-- Tarjeta 1: Precios variables -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13v4H8v2h3v2h2v-2h2a2 2 0 0 0 0-4h-2V7h4V5h-3a2 2 0 0 0-3 2zm2 4h2v2h-2v-2z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Variable Pricing' : 'Precios Variables'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Precios por día de la semana -->
+                   <div class="wp-alp-form-group">
+                       <label class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Daily Prices' : 'Precios Diarios'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Set different prices for specific days' : 'Establece precios diferentes para días específicos'); ?>
+                       </div>
+                       <div id="daily-prices-container" class="wp-alp-repeater-container">
+                           <!-- Botón para agregar precio diario -->
+                           <button type="button" class="wp-alp-add-item-btn" id="add-daily-price">
+                               <?php echo esc_html(get_locale() == 'en_US' ? '+ Add Daily Price' : '+ Agregar Precio Diario'); ?>
+                           </button>
+                       </div>
+                   </div>
+                   
+                   <!-- Niveles de precio -->
+                   <div class="wp-alp-form-group">
+                       <label class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Price Tiers' : 'Niveles de Precio'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Create different pricing tiers' : 'Crea diferentes niveles de precio'); ?>
+                       </div>
+                       <div id="price-tiers-container" class="wp-alp-repeater-container">
+                           <button type="button" class="wp-alp-add-item-btn" id="add-price-tier">
+                               <?php echo esc_html(get_locale() == 'en_US' ? '+ Add Price Tier' : '+ Agregar Nivel de Precio'); ?>
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+           
+           <!-- Tarjeta 2: Extras y Descuentos -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Extras & Discounts' : 'Extras y Descuentos'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Extras -->
+                   <div class="wp-alp-form-group">
+                       <label class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Extra Services' : 'Servicios Adicionales'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Add optional services with additional costs' : 'Agrega servicios opcionales con costos adicionales'); ?>
+                       </div>
+                       <div id="extras-container" class="wp-alp-repeater-container">
+                           <button type="button" class="wp-alp-add-item-btn" id="add-extra">
+                               <?php echo esc_html(get_locale() == 'en_US' ? '+ Add Extra' : '+ Agregar Extra'); ?>
+                           </button>
+                       </div>
+                   </div>
+                   
+                   <!-- Descuentos -->
+                   <div class="wp-alp-form-group">
+                       <label class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Discounts' : 'Descuentos'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Offer discounts for bulk bookings' : 'Ofrece descuentos por reservas múltiples'); ?>
+                       </div>
+                       <div id="discounts-container" class="wp-alp-repeater-container">
+                           <button type="button" class="wp-alp-add-item-btn" id="add-discount">
+                               <?php echo esc_html(get_locale() == 'en_US' ? '+ Add Discount' : '+ Agregar Descuento'); ?>
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso con avance -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 42%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-photos-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="next-to-availability-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 2.4: Disponibilidad y Configuración de Reservas -->
+<div class="wp-alp-form-step" id="step-2-availability" data-step="2.4" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de disponibilidad -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Set your availability' : 'Configura tu disponibilidad'); ?>
+       </h1>
+       
+       <div class="wp-alp-basic-info-card-container">
+           <!-- Tarjeta 1: Configuración de tiempos -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm-.22-13h-.06c-.4 0-.72.32-.72.72v4.72c0 .35.18.68.49.86l4.15 2.49c.34.2.78.1.98-.24.21-.34.1-.79-.25-.99l-3.87-2.3V7.72c0-.4-.32-.72-.72-.72z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Booking Schedule' : 'Horario de Reservas'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Horario de disponibilidad -->
+                   <div class="wp-alp-form-group">
+                       <label for="booking-min-time" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Available From' : 'Disponible Desde'); ?>
+                       </label>
+                    <input type="time" id="booking-min-time" name="booking_min_time" class="wp-alp-form-input">
+                    </div>
+                   
+                   <div class="wp-alp-form-group">
+                       <label for="booking-max-time" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Available To' : 'Disponible Hasta'); ?>
+                       </label>
+                       <input type="time" id="booking-max-time" name="booking_max_time" class="wp-alp-form-input">
+                   </div>
+                   
+                   <!-- Duración del slot -->
+                   <div class="wp-alp-number-field-improved">
+                       <label for="booking-slot-duration" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Booking Slot Duration' : 'Duración del Slot de Reserva'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Set the time slot duration in minutes' : 'Establece la duración del slot en minutos'); ?>
+                       </div>
+                       <div class="wp-alp-number-control-improved">
+                           <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                               <span>−</span>
+                           </button>
+                           <input type="number" id="booking-slot-duration" name="booking_slot_duration" min="5" max="720" value="60" class="wp-alp-number-input-improved">
+                           <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                               <span>+</span>
+                           </button>
+                       </div>
+                   </div>
+               </div>
+           </div>
+           
+           <!-- Tarjeta 2: Políticas de reserva -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 6V4h-4v2h4zM4 8v11h16V8H4zm16-2c1.11 0 2 .89 2 2v11c0 1.11-.89 2-2 2H4c-1.11 0-2-.89-2-2l.01-11c0-1.11.88-2 1.99-2h4V4c0-1.11.89-2 2-2h4c1.11 0 2 .89 2 2v2h4z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Booking Policies' : 'Políticas de Reserva'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Offset de reserva -->
+                   <div class="wp-alp-number-field-improved">
+                       <label for="booking-offset" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Advance Notice' : 'Aviso Previo'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Days required before booking' : 'Días requeridos antes de la reserva'); ?>
+                       </div>
+                       <div class="wp-alp-number-control-improved">
+                           <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                               <span>−</span>
+                           </button>
+                           <input type="number" id="booking-offset" name="booking_offset" min="0" value="1" class="wp-alp-number-input-improved">
+                           <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                               <span>+</span>
+                           </button>
+                       </div>
+                   </div>
+                   
+                   <!-- Ventana de reserva -->
+                   <div class="wp-alp-number-field-improved">
+                       <label for="booking-window" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Booking Window' : 'Ventana de Reserva'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'How far in advance can bookings be made' : 'Con cuánta anticipación se pueden hacer reservas'); ?>
+                       </div>
+                       <div class="wp-alp-number-control-improved">
+                           <button type="button" class="wp-alp-number-decrease-improved" aria-label="Decrease">
+                               <span>−</span>
+                           </button>
+                           <input type="number" id="booking-window" name="booking_window" min="1" value="90" class="wp-alp-number-input-improved">
+                           <button type="button" class="wp-alp-number-increase-improved" aria-label="Increase">
+                               <span>+</span>
+                           </button>
+                       </div>
+                   </div>
+                   
+                   <!-- Aceptación manual -->
+                   <div class="wp-alp-toggle-field-improved">
+                       <div class="wp-alp-toggle-text-improved">
+                           <span class="wp-alp-toggle-label">
+                               <?php echo esc_html(get_locale() == 'en_US' ? 'Manual Acceptance' : 'Aceptación Manual'); ?>
+                           </span>
+                           <p class="wp-alp-toggle-description-improved">
+                               <?php echo esc_html(get_locale() == 'en_US' ? 'Manually accept new bookings' : 'Acepta manualmente las nuevas reservas'); ?>
+                           </p>
+                       </div>
+                       <div class="wp-alp-toggle-switch-improved">
+                           <label class="wp-alp-switch-improved">
+                               <input type="checkbox" id="booking-moderated" name="booking_moderated">
+                               <span class="wp-alp-slider-improved round"></span>
+                           </label>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso con avance -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 56%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-pricing-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="next-to-features-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 2.5: Características y Servicios -->
+<div class="wp-alp-form-step" id="step-2-features" data-step="2.5" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de características -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Tell us what you offer' : 'Cuéntanos qué ofreces'); ?>
+       </h1>
+       
+       <div class="wp-alp-basic-info-card-container">
+           <!-- Tarjeta 1: Servicios incluidos -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Included Services' : 'Servicios Incluidos'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <div class="wp-alp-checkbox-grid">
+                       <label class="wp-alp-checkbox-item">
+                           <input type="checkbox" name="service_features_even[]" value="70">
+                           <span><?php echo esc_html(get_locale() == 'en_US' ? 'All-Inclusive' : 'Todo Incluido'); ?></span>
+                       </label>
+                       <label class="wp-alp-checkbox-item">
+                           <input type="checkbox" name="service_features_even[]" value="69">
+                           <span><?php echo esc_html(get_locale() == 'en_US' ? 'Venue Rental Only' : 'Solo Renta del Lugar'); ?></span>
+                       </label>
+                       <label class="wp-alp-checkbox-item">
+                           <input type="checkbox" name="service_features_even[]" value="65">
+                           <span><?php echo esc_html(get_locale() == 'en_US' ? 'With Banquet Service' : 'Con Servicio de Banquete'); ?></span>
+                       </label>
+                       <label class="wp-alp-checkbox-item">
+                           <input type="checkbox" name="service_features_even[]" value="66">
+                           <span><?php echo esc_html(get_locale() == 'en_US' ? 'With Decoration' : 'Con Decoración'); ?></span>
+                       </label>
+                       <label class="wp-alp-checkbox-item">
+                           <input type="checkbox" name="service_features_even[]" value="67">
+                           <span><?php echo esc_html(get_locale() == 'en_US' ? 'With Furniture' : 'Con Mobiliario'); ?></span>
+                       </label>
+                       <label class="wp-alp-checkbox-item">
+                           <input type="checkbox" name="service_features_even[]" value="68">
+                           <span><?php echo esc_html(get_locale() == 'en_US' ? 'With Music' : 'Con Música'); ?></span>
+                       </label>
+                   </div>
+               </div>
+           </div>
+           
+           <!-- Tarjeta 2: Etiquetas y Tags -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Tags' : 'Etiquetas'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <div class="wp-alp-form-group">
+                       <label class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Event Types' : 'Tipos de Eventos'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Select all that apply' : 'Selecciona todos los que apliquen'); ?>
+                       </div>
+                       <div class="wp-alp-tags-select">
+                           <select id="tags-select" name="tags[]" multiple class="wp-alp-form-select">
+                               <option value="86"><?php echo esc_html(get_locale() == 'en_US' ? 'Weddings' : 'Bodas'); ?></option>
+                               <option value="87"><?php echo esc_html(get_locale() == 'en_US' ? 'Social Events' : 'Eventos Sociales'); ?></option>
+                               <option value="88"><?php echo esc_html(get_locale() == 'en_US' ? 'Parties' : 'Fiestas'); ?></option>
+                               <option value="89"><?php echo esc_html(get_locale() == 'en_US' ? 'Anniversaries' : 'Aniversarios'); ?></option>
+                               <option value="90"><?php echo esc_html(get_locale() == 'en_US' ? 'Birthdays' : 'Cumpleaños'); ?></option>
+                               <option value="95"><?php echo esc_html(get_locale() == 'en_US' ? 'Quinceañera' : 'Quinceañera'); ?></option>
+                               <option value="109"><?php echo esc_html(get_locale() == 'en_US' ? 'Conferences' : 'Conferencias'); ?></option>
+                               <option value="110"><?php echo esc_html(get_locale() == 'en_US' ? 'Networking Events' : 'Eventos de Networking'); ?></option>
+                           </select>
+                       </div>
+                   </div>
+               </div>
+           </div>
+           
+           <!-- Tarjeta 3: Información Adicional -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Additional Information' : 'Información Adicional'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Nota de reserva -->
+                   <div class="wp-alp-form-group">
+                       <label for="purchase-note" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Booking Note' : 'Nota de Reserva'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Add a note that will be revealed to the customer upon booking' : 'Agrega una nota que se revelará al cliente al reservar'); ?>
+                       </div>
+                       <textarea id="purchase-note" name="purchase_note" rows="4" class="wp-alp-form-input" maxlength="10240"></textarea>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso con avance -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 70%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-availability-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="next-to-contact-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 2.6: Información de Contacto -->
+<div class="wp-alp-form-step" id="step-2-contact" data-step="2.6" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de información de contacto -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Contact Information' : 'Información de Contacto'); ?>
+       </h1>
+       
+       <div class="wp-alp-basic-info-card-container">
+           <!-- Tarjeta única para información de contacto -->
+           <div class="wp-alp-basic-info-card">
+               <div class="wp-alp-card-header">
+                   <div class="wp-alp-card-icon">
+                       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                   </div>
+                   <h3 class="wp-alp-card-title">
+                       <?php echo esc_html(get_locale() == 'en_US' ? 'Provider Details' : 'Detalles del Proveedor'); ?>
+                   </h3>
+               </div>
+               <div class="wp-alp-card-content">
+                   <!-- Información de contacto del proveedor -->
+                   <div class="wp-alp-form-group">
+                       <label for="contact-information" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Service Provider Contact Information' : 'Información de Contacto del Proveedor'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'Enter your contact details' : 'Ingresa tus datos de contacto'); ?>
+                       </div>
+                       <textarea id="contact-information" name="contact_information_provider" rows="6" class="wp-alp-form-input" 
+                                 placeholder="<?php echo esc_attr(get_locale() == 'en_US' ? 
+                                     "Company Name:\nContact Name:\nPhone:\nEmail:\nAddress:" : 
+                                     "Nombre de la Empresa:\nNombre de Contacto:\nTeléfono:\nCorreo:\nDirección:"); ?>"></textarea>
+                   </div>
+                   
+                   <!-- WhatsApp URL -->
+                   <div class="wp-alp-form-group">
+                       <label for="whatsapp-url" class="wp-alp-field-label">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'WhatsApp URL' : 'URL de WhatsApp'); ?>
+                       </label>
+                       <div class="wp-alp-field-hint">
+                           <?php echo esc_html(get_locale() == 'en_US' ? 'https://wa.me/52(10-digit cell phone number without spaces)' : 'https://wa.me/52(número de celular de 10 dígitos sin espacios)'); ?>
+                       </div>
+                       <input type="url" id="whatsapp-url" name="whatsapp_url_provider" 
+                              class="wp-alp-form-input" 
+                              placeholder="https://wa.me/521111111111"
+                              maxlength="2048">
+                   </div>
+               </div>
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso con avance -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 85%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-features-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="go-to-step-3-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 3: Finalizar y Publicar -->
+<div class="wp-alp-form-step" id="step-3" data-step="3" style="display: none;">
+   <div class="wp-alp-dual-column-container">
+       <!-- Columna izquierda con texto -->
+       <div class="wp-alp-dual-column-left">
+           <!-- Etiqueta del paso -->
+           <div class="wp-alp-step-label">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Step 3' : 'Paso 3'); ?>
+           </div>
+           
+           <!-- Título del paso -->
+           <h1 class="wp-alp-step-heading">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Finish and publish' : 'Terminar y publicar'); ?>
+           </h1>
+           
+           <!-- Descripción del paso -->
+           <p class="wp-alp-step-description-large">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Review your listing and accept the terms to publish it.' : 'Revisa tu anuncio y acepta los términos para publicarlo.'); ?>
+           </p>
+       </div>
+       
+       <!-- Columna derecha con imagen -->
+       <div class="wp-alp-dual-column-right">
+           <div class="wp-alp-step-illustration">
+               <img src="<?php echo esc_url(plugin_dir_url(dirname(__FILE__)) . 'images/vendor-form-step3.png'); ?>" alt="Finish and publish">
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de progreso y navegación en la parte inferior -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso completa -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 0%;"></div>
+       </div>
+       
+       <!-- Navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step-2-last-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <a href="#" class="wp-alp-airbnb-next-btn" id="go-to-review-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Next' : 'Siguiente'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+<!-- Paso 3.1: Revisión Final -->
+<div class="wp-alp-form-step" id="step-3-review" data-step="3.1" style="display: none;">
+   <!-- Header con opciones de ayuda -->
+   <div class="wp-alp-airbnb-help-header">
+       <div class="wp-alp-airbnb-help-links">
+           <a href="#" class="wp-alp-airbnb-help-link">¿Tienes alguna duda?</a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-airbnb-save-link">Guardar y salir</a>
+       </div>
+   </div>
+   
+   <!-- Contenedor de revisión final -->
+   <div class="wp-alp-airbnb-category-content">
+       <h1 class="wp-alp-airbnb-category-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Review your listing' : 'Revisa tu anuncio'); ?>
+       </h1>
+       
+       <!-- Resumen de la información -->
+       <div class="wp-alp-review-container">
+           <!-- Aquí se mostrará el resumen de toda la información ingresada -->
+           <div id="listing-review-summary" class="wp-alp-review-summary">
+               <!-- El contenido se generará dinámicamente con JavaScript -->
+           </div>
+           
+           <!-- Términos y condiciones -->
+           <div class="wp-alp-terms-section">
+               <label class="wp-alp-checkbox-item">
+                   <input type="checkbox" id="terms-checkbox" name="_terms" value="1" >
+                   <span>
+                       <?php echo sprintf(
+                           esc_html(get_locale() == 'en_US' ? 
+                               'I agree to the %sterms and conditions%s' : 
+                               'Acepto los %stérminos y condiciones%s'),
+                           '<a href="' . esc_url(home_url('/terms-and-conditions/')) . '" target="_blank">',
+                           '</a>'
+                       ); ?>
+                   </span>
+               </label>
+           </div>
+       </div>
+   </div>
+   
+   <!-- Barra de navegación fija -->
+   <div class="wp-alp-airbnb-footer">
+       <!-- Barra de progreso completa -->
+       <div class="wp-alp-airbnb-progress-bar">
+           <div class="wp-alp-airbnb-progress-completed" style="width: 100%;"></div>
+       </div>
+       
+       <!-- Botones de navegación -->
+       <div class="wp-alp-airbnb-nav">
+           <a href="#" class="wp-alp-airbnb-back-btn" id="back-to-step-3-intro-btn">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Back' : 'Atrás'); ?>
+           </a>
+           <button type="button" class="wp-alp-airbnb-next-btn" id="submit-listing-btn" disabled>
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio'); ?>
+           </button>
+       </div>
+   </div>
+</div>
+
+<!-- Paso Final: Confirmación -->
+<div class="wp-alp-form-step" id="step-success" data-step="success" style="display: none;">
+   <div class="wp-alp-success-container">
+       <div class="wp-alp-success-icon">
+           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width: 80px; height: 80px; fill: #00a699;">
+               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+           </svg>
+       </div>
+       <h1 class="wp-alp-success-title">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Congratulations!' : '¡Felicidades!'); ?>
+       </h1>
+       <p class="wp-alp-success-message">
+           <?php echo esc_html(get_locale() == 'en_US' ? 'Your listing has been successfully created and published.' : 'Tu anuncio ha sido creado y publicado exitosamente.'); ?>
+       </p>
+       <div class="wp-alp-success-actions">
+           <a href="#" id="view-listing-btn" class="wp-alp-btn wp-alp-btn-primary">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'View Listing' : 'Ver Anuncio'); ?>
+           </a>
+           <a href="<?php echo esc_url(home_url()); ?>" class="wp-alp-btn wp-alp-btn-secondary">
+               <?php echo esc_html(get_locale() == 'en_US' ? 'Go to Homepage' : 'Ir al Inicio'); ?>
+           </a>
+       </div>
+   </div>
+</div>
+
+           <!-- Aquí podrían ir más pasos... -->
+       </div>
+   </div>
+</div>
+
+<!-- Estilos adicionales para los nuevos elementos -->
+<style>
+.wp-alp-photo-upload-container {
+   margin: 40px auto;
+   max-width: 800px;
+}
+
+.wp-alp-photo-upload-zone {
+   border: 2px dashed #ddd;
+   border-radius: 12px;
+   padding: 60px 40px;
+   text-align: center;
+   transition: all 0.3s ease;
+   cursor: pointer;
+}
+
+.wp-alp-photo-upload-zone:hover {
+   border-color: #222;
+   background-color: #f7f7f7;
+}
+
+.wp-alp-photo-upload-zone h2 {
+   font-size: 24px;
+   font-weight: 600;
+   color: #222;
+   margin: 16px 0 8px;
+}
+
+.wp-alp-photo-upload-zone p {
+   color: #717171;
+   margin-bottom: 24px;
+}
+
+.wp-alp-upload-button {
+   display: inline-block;
+   background-color: #fff;
+   color: #222;
+   border: 1px solid #222;
+   padding: 14px 24px;
+   border-radius: 8px;
+   font-size: 16px;
+   font-weight: 600;
+   cursor: pointer;
+   transition: all 0.2s ease;
+}
+
+.wp-alp-upload-button:hover {
+   background-color: #222;
+   color: #fff;
+}
+
+.wp-alp-photos-preview {
+   display: grid;
+   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+   gap: 16px;
+   margin-top: 40px;
+}
+
+.wp-alp-photo-preview-item {
+   position: relative;
+   border-radius: 8px;
+   overflow: hidden;
+}
+
+.wp-alp-photo-preview-item img {
+   width: 100%;
+   height: 200px;
+   object-fit: cover;
+}
+
+.wp-alp-photo-remove-btn {
+   position: absolute;
+   top: 8px;
+   right: 8px;
+   background: white;
+   border: none;
+   border-radius: 50%;
+   width: 28px;
+   height: 28px;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wp-alp-repeater-container {
+   margin-top: 16px;
+}
+
+.wp-alp-repeater-item {
+   background: #f7f7f7;
+   border-radius: 8px;
+   padding: 16px;
+   margin-bottom: 12px;
+   position: relative;
+}
+
+.wp-alp-repeater-item .wp-alp-remove-item {
+   position: absolute;
+   top: 8px;
+   right: 8px;
+   background: none;
+   border: none;
+   color: #222;
+   cursor: pointer;
+   font-size: 18px;
+}
+
+.wp-alp-add-item-btn {
+   background: none;
+   border: 1px dashed #222;
+   color: #222;
+   padding: 12px 24px;
+   border-radius: 8px;
+   cursor: pointer;
+   font-weight: 600;
+   transition: all 0.2s ease;
+}
+
+.wp-alp-add-item-btn:hover {
+   background: #f7f7f7;
+}
+
+.wp-alp-checkbox-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+   gap: 16px;
+}
+
+.wp-alp-checkbox-item {
+   display: flex;
+   align-items: center;
+   cursor: pointer;
+}
+
+.wp-alp-checkbox-item input[type="checkbox"] {
+   margin-right: 12px;
+   width: 20px;
+   height: 20px;
+}
+
+.wp-alp-tags-select {
+   margin-top: 12px;
+}
+
+.wp-alp-success-container {
+   text-align: center;
+   padding: 60px 20px;
+   max-width: 600px;
+   margin: 0 auto;
+}
+
+.wp-alp-success-icon {
+   margin-bottom: 24px;
+}
+
+.wp-alp-success-title {
+   font-size: 36px;
+   font-weight: 600;
+   color: #222;
+   margin-bottom: 16px;
+}
+
+.wp-alp-success-message {
+   font-size: 18px;
+   color: #717171;
+   margin-bottom: 40px;
+}
+
+.wp-alp-success-actions {
+   display: flex;
+   gap: 16px;
+   justify-content: center;
+}
+
+.wp-alp-review-container {
+   max-width: 800px;
+   margin: 0 auto;
+}
+
+.wp-alp-review-summary {
+   background: #f7f7f7;
+   border-radius: 12px;
+   padding: 24px;
+   margin-bottom: 32px;
+}
+
+.wp-alp-terms-section {
+   margin-top: 24px;
+   padding-top: 24px;
+   border-top: 1px solid #ddd;
+}
+
+.wp-alp-video-section {
+   margin-top: 60px;
+   padding-top: 40px;
+   border-top: 1px solid #ddd;
+}
+
+.wp-alp-video-section h3 {
+   font-size: 24px;
+   font-weight: 600;
+   color: #222;
+   margin-bottom: 24px;
+}
+
+/* Estilos para el modal de información */
+.wp-alp-info-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.wp-alp-info-modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+}
+
+.wp-alp-info-modal-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+}
+
+.wp-alp-info-modal-close:hover {
+    color: #000;
+}
+
+.wp-alp-info-modal h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.4em;
+    color: #333;
+}
+
+.wp-alp-info-modal-body p {
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.wp-alp-info-modal-body ul {
+    margin-left: 20px;
+    margin-bottom: 16px;
+}
+
+.wp-alp-info-modal-body li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* Estilos para mejorar la estructura de la página */
+.wp-alp-location-section {
+    margin-bottom: 20px;
+}
+
+.wp-alp-specific-section,
+.wp-alp-multiple-section {
+    margin-top: 15px;
+    padding-left: 15px;
+    border-left: 3px solid #cbb881;
+}
+
+/* Ocultar sugerencias de Google Places cuando no están en foco */
+.pac-container {
+    z-index: 1051 !important; /* Mayor z-index para asegurar que aparezca encima de otros elementos */
+}
+
+#wp-alp-address-input:not(:focus) + .pac-container {
+    display: none !important;
+}
+
+/* Manejar el input de dirección */
+.wp-alp-address-input:focus ~ .pac-container {
+    display: block !important;
+}
+</style>
+
+<!-- JavaScript para la navegación mejorada -->
+<script>
+// Cargar directamente el script de Google Maps
+// Cargar Google Maps
+
+// Script de Google Maps con Places autocomplete
+// Función para llenar todos los campos de dirección disponibles en el formulario
+window.fillAddressFields = function(place) {
+    console.log('Llenando campos de dirección con:', place);
+    
+    if (!place) {
+        console.error('No hay datos de lugar para llenar los campos');
+        return;
+    }
+    
+    // Obtener todos los campos de dirección disponibles en el formulario
+    var formFields = {};
+    $('#address-form-container input, #address-form-container select').each(function() {
+        var $field = $(this);
+        var id = $field.attr('id') || '';
+        var name = $field.attr('name') || '';
+        
+        // Agregar al objeto de campos si tiene id o name
+        if (id || name) {
+            formFields[id || name] = {
+                element: $field,
+                type: $field.prop('tagName').toLowerCase(),
+                id: id,
+                name: name
+            };
+        }
+    });
+    
+    console.log('Campos de formulario encontrados:', formFields);
+    
+    // Componentes de dirección extraídos
+    var addressComponents = {};
+    
+    // Extraer componentes de la dirección si están disponibles
+    if (place.address_components && place.address_components.length > 0) {
+        place.address_components.forEach(function(component) {
+            var types = component.types;
+            
+            // Mostrar cada componente para depuración
+            console.log('Componente:', component.long_name, 'Tipos:', types.join(', '));
+            
+            // Guardar todos los tipos de componentes para su uso posterior
+            types.forEach(function(type) {
+                addressComponents[type] = addressComponents[type] || { 
+                    long_name: component.long_name,
+                    short_name: component.short_name
+                };
+            });
+        });
+    }
+    
+    console.log('Componentes procesados:', addressComponents);
+    
+    // Intentar llenar la dirección principal (street_address, route, street_number)
+    var streetAddress = '';
+    
+    if (addressComponents.street_number && addressComponents.route) {
+        streetAddress = addressComponents.street_number.long_name + ' ' + addressComponents.route.long_name;
+    } else if (addressComponents.route) {
+        streetAddress = addressComponents.route.long_name;
+    } else if (place.formatted_address) {
+        // Si no hay componentes detallados, usar la primera parte de la dirección formateada
+        var parts = place.formatted_address.split(',');
+        if (parts.length > 0) {
+            streetAddress = parts[0].trim();
+        }
+    }
+    
+    // Aplicar la dirección a todos los posibles campos de dirección
+    ['street', 'address', 'address1', 'street_address', 'route'].forEach(function(fieldKey) {
+        if (formFields[fieldKey]) {
+            formFields[fieldKey].element.val(streetAddress).trigger('change');
+        }
+    });
+    
+    // También buscar campos por name="address"
+    $('input[name="address"]').val(streetAddress).trigger('change');
+    
+    // Llenar campos específicos basados en tipos de componentes
+    var componentMapping = {
+        // Ciudad
+        'locality': ['city', 'locality', 'administrative_area_level_2'],
+        // Estado/Provincia
+        'administrative_area_level_1': ['state', 'region', 'province', 'administrative_area_level_1'],
+        // Código postal
+        'postal_code': ['zipcode', 'postal_code', 'postcode', 'zip'],
+        // País
+        'country': ['country'],
+        // Barrio
+        'sublocality_level_1': ['neighborhood', 'sublocality', 'district'],
+        // Condado
+        'administrative_area_level_2': ['county']
+    };
+    
+    // Aplicar cada tipo de componente a los campos correspondientes
+    Object.keys(componentMapping).forEach(function(componentType) {
+        if (addressComponents[componentType]) {
+            var value = addressComponents[componentType].long_name;
+            var shortValue = addressComponents[componentType].short_name;
+            
+            componentMapping[componentType].forEach(function(fieldKey) {
+                // Buscar por ID
+                if (formFields[fieldKey]) {
+                    var $field = formFields[fieldKey].element;
+                    
+                    // Si es un select, intentar encontrar la opción correcta
+                    if ($field.is('select')) {
+                        var optionFound = false;
+                        
+                        $field.find('option').each(function() {
+                            var $option = $(this);
+                            var optionText = $option.text().toLowerCase();
+                            var optionValue = $option.val().toLowerCase();
+                            
+                            // Intentar diferentes variaciones para la coincidencia
+                            if (optionText === value.toLowerCase() || 
+                                optionValue === value.toLowerCase() || 
+                                optionText === shortValue.toLowerCase() || 
+                                optionValue === shortValue.toLowerCase() ||
+                                optionText.includes(value.toLowerCase()) ||
+                                value.toLowerCase().includes(optionText)) {
+                                
+                                $field.val($option.val()).trigger('change');
+                                optionFound = true;
+                                console.log('Opción encontrada para', fieldKey, ':', $option.val());
+                                return false; // break
+                            }
+                        });
+                        
+                        // Si no se encontró ninguna opción, establecer el valor directamente
+                        if (!optionFound) {
+                            console.log('No se encontró opción para', fieldKey, ', estableciendo valor directamente:', value);
+                            $field.val(value).trigger('change');
+                        }
+                    } else {
+                        // Para campos de texto, simplemente establecer el valor
+                        $field.val(value).trigger('change');
+                        console.log('Campo', fieldKey, 'establecido a', value);
+                    }
+                }
+                
+                // También buscar por name attribute
+                $('[name="' + fieldKey + '"]').each(function() {
+                    var $field = $(this);
+                    
+                    // El mismo proceso que arriba para selects vs inputs
+                    if ($field.is('select')) {
+                        var optionFound = false;
+                        
+                        $field.find('option').each(function() {
+                            var $option = $(this);
+                            var optionText = $option.text().toLowerCase();
+                            var optionValue = $option.val().toLowerCase();
+                            
+                            if (optionText === value.toLowerCase() || 
+                                optionValue === value.toLowerCase() || 
+                                optionText === shortValue.toLowerCase() || 
+                                optionValue === shortValue.toLowerCase() ||
+                                optionText.includes(value.toLowerCase()) ||
+                                value.toLowerCase().includes(optionText)) {
+                                
+                                $field.val($option.val()).trigger('change');
+                                optionFound = true;
+                                return false; // break
+                            }
+                        });
+                        
+                        if (!optionFound) {
+                            $field.val(value).trigger('change');
+                        }
+                    } else {
+                        $field.val(value).trigger('change');
+                    }
+                });
+            });
+        }
+    });
+    
+    // Si no se pudo llenar algún campo importante con componentes, intentar con la dirección formateada
+    if (place.formatted_address && (!addressComponents.locality || !addressComponents.administrative_area_level_1)) {
+        var parts = place.formatted_address.split(',');
+        console.log('Partes de la dirección formateada:', parts);
+        
+        if (parts.length >= 3) {
+            // Si no se llenó la ciudad y tenemos suficientes partes
+            if (!addressComponents.locality && parts.length > 2) {
+                var cityPart = parts[parts.length - 3].trim();
+                $('[id="city"], [name="city"]').val(cityPart).trigger('change');
+            }
+            
+            // Si no se llenó el estado/provincia
+            if (!addressComponents.administrative_area_level_1) {
+                var statePart = parts[parts.length - 2].trim();
+                
+                // Intentar extraer el código postal
+                var zipMatch = statePart.match(/\b\d{5}(-\d{4})?\b/);
+                if (zipMatch) {
+                    // Si encontramos un código postal, llenar ese campo también
+                    $('[id="zipcode"], [id="postal_code"], [name="zipcode"], [name="postal_code"]').val(zipMatch[0]).trigger('change');
+                    
+                    // Y quitar el código postal de la parte del estado
+                    statePart = statePart.replace(zipMatch[0], '').trim();
+                }
+                
+                $('[id="state"], [id="region"], [name="state"]').val(statePart).trigger('change');
+            }
+        }
+    }
+};
+
+window.initMap = function() {
+    // Inicializar Google Maps
+    var mapElement = document.getElementById('wp-alp-location-map');
+    var addressInput = document.getElementById('wp-alp-address-input');
+    
+    if (!mapElement) {
+        // Elemento del mapa no encontrado
+        return;
+    }
+    
+    // Crear mapa
+    
+    try {
+        // Variables globales para compartir entre funciones
+        window.vendorMapObj = {
+            map: null,
+            marker: null,
+            geocoder: null
+        };
+        
+        // Crear el mapa
+        var map = new google.maps.Map(mapElement, {
+            center: { lat: 20.6534, lng: -103.3276 }, // Guadalajara, México
+            zoom: 15,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false
+        });
+        window.vendorMapObj.map = map;
+        
+        // Crear el marcador
+        var marker = new google.maps.Marker({
+            position: { lat: 20.6534, lng: -103.3276 },
+            map: map,
+            draggable: true
+        });
+        window.vendorMapObj.marker = marker;
+        
+        // Crear el geocoder
+        var geocoder = new google.maps.Geocoder();
+        window.vendorMapObj.geocoder = geocoder;
+        
+        // Actualizar posición del marcador cuando se arrastra
+        marker.addListener('dragend', function() {
+            updateAddressFromMarker(marker, geocoder, addressInput);
+        });
+        
+        // También actualizar cuando el mapa cambia de centro
+        map.addListener('dragend', function() {
+            marker.setPosition(map.getCenter());
+            updateAddressFromMarker(marker, geocoder, addressInput);
+        });
+        
+        // Función para actualizar la dirección desde el marcador
+        function updateAddressFromMarker(marker, geocoder, addressInput) {
+            if (!marker || !geocoder || !addressInput) {
+                // Faltan elementos necesarios
+                return;
+            }
+            
+            var position = marker.getPosition();
+            if (!position) {
+                // No se pudo obtener la posición
+                return;
+            }
+            
+            // Mostrar el botón de confirmar
+            var confirmBtn = document.getElementById('confirm-address-btn');
+            if (confirmBtn) {
+                confirmBtn.style.display = 'block';
+            }
+            
+            // Geocodificar inverso para obtener la dirección
+            try {
+                geocoder.geocode({ 'location': position }, function(results, status) {
+                    // Resultado de geocodificación
+                    
+                    if (status === 'OK' && results && results.length > 0) {
+                        // Actualizar el input con la dirección
+                        addressInput.value = results[0].formatted_address || '';
+                        
+                        // Disparar un evento de cambio para actualizar cualquier validación
+                        var event = new Event('input', { bubbles: true });
+                        addressInput.dispatchEvent(event);
+                        
+                        // Dirección actualizada
+                        
+                        // Quitar el mensaje de error si existe
+                        var errorMsg = document.querySelector('.wp-alp-location-error');
+                        if (errorMsg) {
+                            errorMsg.style.display = 'none';
+                        }
+                    } else {
+                        // Error de geocodificación
+                    }
+                });
+            } catch (e) {
+                // Error al geocodificar
+            }
+        }
+        
+        // Inicializar Places Autocomplete en el input de dirección
+        if (addressInput) {
+            // Inicializar Places autocomplete
+            var autocomplete = new google.maps.places.Autocomplete(addressInput, {
+                types: ['address']
+            });
+            
+            // Cuando se selecciona una dirección
+            autocomplete.addListener('place_changed', function() {
+                var place = autocomplete.getPlace();
+                
+                if (!place || !place.geometry || !place.geometry.location) {
+                    // No se encontraron detalles
+                    return;
+                }
+                
+                // Actualizar el mapa y el marcador con la nueva ubicación
+                if (map && marker) {
+                    map.setCenter(place.geometry.location);
+                    marker.setPosition(place.geometry.location);
+                
+                    // Mostrar el botón de confirmar
+                    var confirmBtn = document.getElementById('confirm-address-btn');
+                    if (confirmBtn) {
+                        confirmBtn.style.display = 'block';
+                    }
+                    
+                    // Quitar el mensaje de error si existe
+                    var errorMsg = document.querySelector('.wp-alp-location-error');
+                    if (errorMsg) {
+                        errorMsg.style.display = 'none';
+                    }
+                    
+                    // Almacenar la ubicación seleccionada para uso posterior
+                    window.selectedLocation = place;
+                    console.log('Ubicación seleccionada guardada:', window.selectedLocation);
+                    
+                    // Opcionalmente, pre-llenar los campos de dirección si el usuario lo confirma
+                    if (window.fillAddressFields && typeof window.fillAddressFields === 'function' && confirm('¿Deseas llenar automáticamente los campos de dirección?')) {
+                        // Ocultar la vista del mapa
+                        $('.wp-alp-specific-section').hide();
+                        
+                        // Mostrar el formulario de dirección detallada
+                        $('#address-form-container').show();
+                        
+                        // Llenar los campos con la información
+                        window.fillAddressFields(place);
+                        
+                        // Añadir mensaje de confirmación
+                        var isEnglish = $('html').attr('lang') === 'en-US' || 
+                                       document.documentElement.lang === 'en-US' || 
+                                       $('body').hasClass('en-US');
+                        var confirmMessage = $('<div class="wp-alp-address-confirmed">' + 
+                            (isEnglish ? 'Address verified successfully!' : '¡Dirección verificada correctamente!') + 
+                            '</div>');
+                        
+                        // Remover cualquier mensaje anterior
+                        $('.wp-alp-address-confirmed').remove();
+                        
+                        // Añadir el mensaje al inicio del formulario
+                        $('#address-form-container').prepend(confirmMessage);
+                        
+                        // Animar el mensaje para que desaparezca después de 5 segundos
+                        setTimeout(function() {
+                            confirmMessage.fadeOut(500, function() {
+                                $(this).remove();
+                            });
+                        }, 5000);
+                        
+                        // Desplazarse al inicio del contenedor
+                        $('html, body').animate({
+                            scrollTop: $('#address-form-container').offset().top - 100
+                        }, 300);
+                    }
+                    
+                    // Limpiar el campo y restaurar el valor para ocultar las sugerencias
+                    var tempValue = addressInput.value;
+                    addressInput.value = '';
+                    setTimeout(function() {
+                        addressInput.value = tempValue;
+                        addressInput.blur(); // Quitar el foco para cerrar el dropdown
+                    }, 10);
+                    
+                    // Ubicación seleccionada
+                } else {
+                    // Mapa o marcador no disponible
+                }
+            });
+        } else {
+            // Input de dirección no encontrado
+        }
+        
+        // Mostrar elementos visuales
+        var houseMarker = document.querySelector('.wp-alp-house-marker');
+        var tooltip = document.querySelector('.wp-alp-approximate-tooltip');
+        
+        if (houseMarker) houseMarker.style.display = 'block';
+        if (tooltip) tooltip.style.display = 'block';
+        
+        // Mapa inicializado correctamente
+        
+    } catch (error) {
+        // Error al crear el mapa
+    }
+};
+
+// Evitamos cargar la API de Google Maps varias veces
+if (!window.googleMapsLoaded) {
+    window.googleMapsLoaded = true;
+    // Verificamos si ya existe Google Maps en la página
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        var googleMapsScript = document.createElement('script');
+        googleMapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=<?php echo defined("GOOGLE_MAPS_API_KEY") ? GOOGLE_MAPS_API_KEY : ""; ?>&libraries=places&callback=initMap';
+        googleMapsScript.async = true;
+        googleMapsScript.defer = true;
+        document.head.appendChild(googleMapsScript);
+    } else {
+        // Si ya existe, inicializar directamente
+        // Google Maps ya está cargado
+        initMap();
+    }
+}
+
+// Configurar el botón de confirmación de dirección
+document.addEventListener('DOMContentLoaded', function() {
+    var confirmBtn = document.getElementById('confirm-address-btn');
+    var addressInput = document.getElementById('wp-alp-address-input');
+    
+    // Mostrar el botón de confirmar si ya hay una dirección
+    if (confirmBtn && addressInput) {
+        // Verificar si hay una dirección al cargar la página
+        if (addressInput.value && addressInput.value.trim() !== '') {
+            confirmBtn.style.display = 'block';
+        } else {
+            confirmBtn.style.display = 'none';
+        }
+        
+        // Mostrar/ocultar el botón según si hay dirección
+        addressInput.addEventListener('input', function() {
+            if (this.value && this.value.trim() !== '') {
+                confirmBtn.style.display = 'block';
+            } else {
+                confirmBtn.style.display = 'none';
+            }
+        });
+        
+        // Manejar el clic en el botón de confirmar
+        confirmBtn.addEventListener('click', function() {
+            // Verificar que hay una dirección
+            if (!addressInput.value || addressInput.value.trim() === '') {
+                var errorMsg = document.querySelector('.wp-alp-location-error');
+                if (errorMsg) {
+                    errorMsg.textContent = '<?php echo esc_js(get_locale() == 'en_US' ? 'Please select a location to continue.' : 'Por favor, selecciona una ubicación para continuar.'); ?>';
+                    errorMsg.style.display = 'block';
+                }
+                return;
+            }
+            
+            // Ocultar la vista del mapa
+            var mapContainer = document.querySelector('.wp-alp-specific-section');
+            if (mapContainer) {
+                mapContainer.style.display = 'none';
+            }
+            
+            // Mostrar el formulario de dirección detallada
+            var addressForm = document.getElementById('address-form-container');
+            if (addressForm) {
+                addressForm.style.display = 'block';
+                
+                // Desplazarse al inicio del contenedor
+                addressForm.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }
+        });
+    }
+    
+    // Configurar el toggle de ubicación exacta
+    var exactLocationToggle = document.getElementById('exact-location-toggle');
+    if (exactLocationToggle) {
+        exactLocationToggle.addEventListener('change', function() {
+            var isExactLocation = this.checked;
+            var tooltipElement = document.getElementById('approximate-tooltip');
+            
+            if (isExactLocation) {
+                // Cambiar a ubicación exacta
+                if (tooltipElement) tooltipElement.style.display = 'none';
+            } else {
+                // Cambiar a ubicación aproximada
+                if (tooltipElement) tooltipElement.style.display = 'block';
+            }
+        });
+    }
+});
+
+console.log('VENDOR-STEPS: Script de Google Maps insertado');
+console.log('VENDOR-STEPS: API Key: <?php echo defined("GOOGLE_MAPS_API_KEY") ? substr(GOOGLE_MAPS_API_KEY, 0, 10) . "..." : "No definida"; ?>');
+
+jQuery(document).ready(function($) {
+
+    // Variables globales para AJAX
+var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+var vendor_nonce = '<?php echo wp_create_nonce('create_vendor_nonce'); ?>';
+
+// Prevenir múltiples event listeners
+$.fn.singleClick = function(callback) {
+    return this.each(function() {
+        var element = this;
+        var $element = $(element);
+        
+        // Remover cualquier handler previo
+        $element.off('click.singleClick');
+        
+        // Añadir el nuevo handler
+        $element.on('click.singleClick', callback);
+    });
+};
+
+   // Variables para la navegación
+   var currentStep = 0;
+   var totalSteps = 3; // Total de pasos implementados
+   // Utilizamos window.selectedLocation en lugar de una variable local para evitar problemas de ámbito
+   // Inicializamos la variable global para tipo de ubicación seleccionado
+   window.selectedLocationType = null;
+   var isExactLocation = false;
+   var map, marker, circle, geocoder, placesService;
+   var selectedCategory = null;
+   var selectedServiceType = null;
+   var listingId = null;
+   var uploadedImages = [];
+   
+   // Elementos del DOM
+   var $steps = $('.wp-alp-form-step');
+   var $hiddenForm = $('#wp-alp-hidden-hivepress-form');
+
+   // Función para actualizar la URL sin recargar la página
+   function updateUrl(step) {
+        var newUrl = window.location.pathname;
+        if (step > 0) {
+            newUrl += '?step=' + step;
+        }
+        history.pushState({step: step}, '', newUrl);
+    }
+    
+    // Función para mostrar un paso específico
+    function goToStep(step) {
+        // Validar límites
+        if (step < 0) step = 0;
+        if (step > totalSteps) step = totalSteps;
+        
+        // Guardar el paso actual
+        currentStep = step;
+        
+        // Ocultar todos los pasos
+        $steps.hide();
+        
+        // Mostrar el paso seleccionado
+        $('#step-' + step).show();
+        
+        // Actualizar la URL
+        updateUrl(step);
+        
+        // Desplazarse al inicio de la página
+        $('html, body').scrollTop(0);
+    }
+    
+    // Manejo de navegación del historial del navegador
+    window.onpopstate = function(event) {
+        if (event.state) {
+            if (event.state.substep === 'categories') {
+                // Mostrar el subpaso de categorías
+                $steps.hide();
+                $('#step-1-categories').show();
+            } else if (event.state.substep === 'service-type') {
+                // Mostrar el subpaso de tipo de servicio
+                $steps.hide();
+                $('#step-1-service-type').show();
+            } else if (event.state.substep === 'location') {
+                // Mostrar el subpaso de ubicación
+                $steps.hide();
+                $('#step-1-location').show();
+            } else if (event.state.substep === 'basic-info') {
+                // Mostrar el subpaso de datos básicos
+                $steps.hide();
+                $('#step-1-basic-info').show();
+                
+                // Actualizar campos según la categoría y tipo de servicio
+                updateBasicInfoFields();
+            } else if (typeof event.state.step !== 'undefined') {
+                goToStep(event.state.step);
+            }
+        } else {
+            goToStep(0);
+        }
+    };
+   
+   // Función para actualizar campos del formulario oculto
+   function updateHiddenFormField(fieldName, value) {
+       var $field = $hiddenForm.find('[name="' + fieldName + '"]');
+       if ($field.length) {
+           if ($field.is(':checkbox')) {
+               $field.prop('checked', value);
+           } else if ($field.is('select')) {
+               $field.val(value).trigger('change');
+           } else {
+               $field.val(value);
+           }
+       }
+   }
+   
+   // Función para sincronizar campos múltiples (checkboxes)
+   function updateMultipleCheckboxes(fieldName, values) {
+       $hiddenForm.find('[name="' + fieldName + '"]').each(function() {
+           var $checkbox = $(this);
+           var checkboxValue = $checkbox.val();
+           $checkbox.prop('checked', values.includes(checkboxValue));
+       });
+   }
+   
+   // Manejadores de cambio para sincronizar con el formulario oculto
+   
+   // Paso 2.1: Información básica
+   $('#listing-title').on('change blur', function() {
+       updateHiddenFormField('title', $(this).val());
+   });
+   
+   $('#listing-price').on('change blur', function() {
+       updateHiddenFormField('price', $(this).val());
+   });
+   
+   $('#listing-description').on('change blur', function() {
+       updateHiddenFormField('description', $(this).val());
+   });
+   
+   // Paso 2.2: Fotos
+$('#photo-input').on('change', function(e) {
+    e.stopPropagation(); // Añadir esta línea
+    var files = e.target.files;
+    if (files.length > 0) {
+        // Aquí manejarías la carga de archivos
+        // Por ahora, solo mostramos una vista previa
+        Array.from(files).forEach(function(file) {
+            if (file.type.startsWith('image/')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var preview = $('<div class="wp-alp-photo-preview-item">' +
+                        '<img src="' + e.target.result + '" alt="Preview">' +
+                        '<button type="button" class="wp-alp-photo-remove-btn">×</button>' +
+                        '</div>');
+                    $('#photos-preview').append(preview);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Actualizar el campo de imágenes del formulario oculto
+        // Esto requeriría implementación adicional para manejar archivos
+    }
+});
+   
+   $('#video-url').on('change blur', function() {
+       updateHiddenFormField('video', $(this).val());
+   });
+   
+   // Paso 2.3: Precios
+$('#add-daily-price').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<select name="daily_days[]" class="wp-alp-form-select" style="margin-bottom: 12px;">' +
+            '<option value="0">' + (get_locale() == 'en_US' ? 'Sunday' : 'Domingo') + '</option>' +
+            '<option value="1">' + (get_locale() == 'en_US' ? 'Monday' : 'Lunes') + '</option>' +
+            '<option value="2">' + (get_locale() == 'en_US' ? 'Tuesday' : 'Martes') + '</option>' +
+            '<option value="3">' + (get_locale() == 'en_US' ? 'Wednesday' : 'Miércoles') + '</option>' +
+            '<option value="4">' + (get_locale() == 'en_US' ? 'Thursday' : 'Jueves') + '</option>' +
+            '<option value="5">' + (get_locale() == 'en_US' ? 'Friday' : 'Viernes') + '</option>' +
+            '<option value="6">' + (get_locale() == 'en_US' ? 'Saturday' : 'Sábado') + '</option>' +
+        '</select>' +
+        '<input type="number" name="daily_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0">' +
+        '</div>';
+    $(this).before(template);
+});
+
+// AGREGA ESTOS EVENT LISTENERS AQUÍ:
+
+// Price Tiers
+$('#add-price-tier').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<input type="text" name="tier_name[]" placeholder="' + (get_locale() == 'en_US' ? 'Title' : 'Título') + '" class="wp-alp-form-input" style="margin-bottom: 12px;">' +
+        '<input type="number" name="tier_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0" style="margin-bottom: 12px;">' +
+        '<input type="text" name="tier_description[]" placeholder="' + (get_locale() == 'en_US' ? 'Description' : 'Descripción') + '" class="wp-alp-form-input">' +
+        '</div>';
+    $(this).before(template);
+});
+
+// Extras
+$('#add-extra').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<input type="text" name="extra_name[]" placeholder="' + (get_locale() == 'en_US' ? 'Title' : 'Título') + '" class="wp-alp-form-input" style="margin-bottom: 12px;">' +
+        '<input type="number" name="extra_price[]" placeholder="' + (get_locale() == 'en_US' ? 'Price' : 'Precio') + '" class="wp-alp-form-input" step="0.01" min="0" style="margin-bottom: 12px;">' +
+        '<textarea name="extra_description[]" placeholder="' + (get_locale() == 'en_US' ? 'Description' : 'Descripción') + '" class="wp-alp-form-input" rows="3" style="margin-bottom: 12px;"></textarea>' +
+        '<label class="wp-alp-checkbox-item">' +
+            '<input type="checkbox" name="extra_required[]" value="1">' +
+            '<span>' + (get_locale() == 'en_US' ? 'Required' : 'Requerido') + '</span>' +
+        '</label>' +
+        '</div>';
+    $(this).before(template);
+});
+
+// Discounts
+$('#add-discount').on('click', function() {
+    var template = '<div class="wp-alp-repeater-item">' +
+        '<button type="button" class="wp-alp-remove-item">×</button>' +
+        '<input type="number" name="discount_quantity[]" placeholder="' + (get_locale() == 'en_US' ? 'Quantity' : 'Cantidad') + '" class="wp-alp-form-input" min="1" max="1000" style="margin-bottom: 12px;">' +
+        '<input type="number" name="discount_percentage[]" placeholder="' + (get_locale() == 'en_US' ? 'Percentage' : 'Porcentaje') + '" class="wp-alp-form-input" min="1" max="100" style="margin-bottom: 12px;">' +
+        '</div>';
+    $(this).before(template);
+});
+
+// Delegación de eventos para remover items dinámicos
+$(document).on('click', '.wp-alp-remove-item', function() {
+    $(this).closest('.wp-alp-repeater-item').remove();
+});
+   
+   // Paso 2.4: Disponibilidad
+   $('#booking-min-time').on('change blur', function() {
+       updateHiddenFormField('booking_min_time', $(this).val());
+   });
+   
+   $('#booking-max-time').on('change blur', function() {
+       updateHiddenFormField('booking_max_time', $(this).val());
+   });
+   
+   $('#booking-slot-duration').on('change blur', function() {
+       updateHiddenFormField('booking_slot_duration', $(this).val());
+   });
+   
+   $('#booking-offset').on('change blur', function() {
+       updateHiddenFormField('booking_offset', $(this).val());
+   });
+   
+   $('#booking-window').on('change blur', function() {
+       updateHiddenFormField('booking_window', $(this).val());
+   });
+   
+   $('#booking-moderated').on('change', function() {
+       updateHiddenFormField('booking_moderated', $(this).is(':checked') ? 1 : 0);
+   });
+   
+   // Paso 2.5: Características
+   $('input[name="service_features_even[]"]').on('change', function() {
+       var checkedValues = [];
+       $('input[name="service_features_even[]"]:checked').each(function() {
+           checkedValues.push($(this).val());
+       });
+       updateMultipleCheckboxes('service_features_even[]', checkedValues);
+   });
+   
+   $('#tags-select').on('change', function() {
+       updateHiddenFormField('tags[]', $(this).val());
+   });
+   
+   $('#purchase-note').on('change blur', function() {
+       updateHiddenFormField('purchase_note', $(this).val());
+   });
+   
+   // Paso 2.6: Contacto
+   $('#contact-information').on('change blur', function() {
+       updateHiddenFormField('contact_information_provider', $(this).val());
+   });
+   
+   $('#whatsapp-url').on('change blur', function() {
+       updateHiddenFormField('whatsapp_url_provider', $(this).val());
+   });
+   
+   // Navegación del paso 1 (código existente)
+   // Botón de inicio de registro (página principal -> paso 1)
+   $('#start-registration').on('click', function() {
+       goToStep(1); // Va a "Describe tu espacio"
+   });
+   
+   // Botón de siguiente en paso 1 (lleva a categorías)
+   $('#go-to-categories-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1').hide();
+       $('#step-1-categories').show();
+       
+       // Actualizar URL sin cambiar el número de paso principal
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=categories';
+       history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+
+   // Botón de volver desde categorías a paso 1
+   $('#back-to-step1-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-categories').hide();
+       $('#step-1').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1';
+       history.pushState({step: 1}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón de volver desde paso 1 a visión general
+   $('#back-to-overview-btn').on('click', function(e) {
+       e.preventDefault();
+       goToStep(0); // Volver a la visión general
+   });
+   
+   // Botón de siguiente desde categorías
+   $('#next-from-categories-btn').on('click', function(e) {
+       e.preventDefault();
+       // Verificar si hay una categoría seleccionada
+       if ($('.wp-alp-airbnb-category-item.selected').length > 0) {
+           selectedCategory = $('.wp-alp-airbnb-category-item.selected');
+           var selectedName = selectedCategory.data('name');
+           console.log('Categoría seleccionada: ' + selectedName);
+           
+           // En lugar de mostrar alert, ocultamos paso actual y mostramos el siguiente
+           $('#step-1-categories').hide();
+           $('#step-1-service-type').show();
+           
+           // Actualizar URL
+           var currentUrl = window.location.pathname;
+           var newUrl = currentUrl + '?step=1&substep=service-type';
+           history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
+           
+           // Desplazarse al inicio de la página
+           $('html, body').scrollTop(0);
+       } else {
+           // Si no hay categoría seleccionada, mostrar mensaje pero no alert
+           $('.wp-alp-airbnb-category-validation').fadeIn();
+       }
+   });
+   
+   // Selección de categorías
+   $('.wp-alp-airbnb-category-item').on('click', function() {
+       $('.wp-alp-airbnb-category-item').removeClass('selected');
+       $(this).addClass('selected');
+   });
+   
+   // Selección de tipo de servicio
+   $('.wp-alp-airbnb-service-option').on('click', function() {
+       $('.wp-alp-airbnb-service-option').removeClass('selected');
+       $(this).addClass('selected');
+       selectedServiceType = $(this).data('value');
+       // Ocultar mensaje de validación si estaba visible
+       $('.wp-alp-airbnb-service-validation').hide();
+   });
+   
+   // Botón de volver desde tipo de servicio a categorías
+   $('#back-to-categories-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-service-type').hide();
+       $('#step-1-categories').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=categories';
+       history.pushState({step: 1, substep: 'categories'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón para ir a la ubicación desde el tipo de servicio
+   $('#next-from-service-type-btn').on('click', function(e) {
+       e.preventDefault();
+       // Verificar si hay un tipo de servicio seleccionado
+       if ($('.wp-alp-airbnb-service-option.selected').length > 0) {
+           var selectedService = $('.wp-alp-airbnb-service-option.selected');
+           selectedServiceType = selectedService.data('value');
+           console.log('Tipo de servicio seleccionado: ' + selectedServiceType);
+           
+           // Ocultar paso actual y mostrar paso de ubicación
+           $('#step-1-service-type').hide();
+           $('#step-1-location').show();
+           
+           // Actualizar URL
+           var currentUrl = window.location.pathname;
+           var newUrl = currentUrl + '?step=1&substep=location';
+           history.pushState({step: 1, substep: 'location'}, '', newUrl);
+           
+           // Desplazarse al inicio de la página
+           $('html, body').scrollTop(0);
+       } else {
+           // Mostrar mensaje de validación
+           $('.wp-alp-airbnb-service-validation').fadeIn();
+       }
+   });
+   
+   // Botón para volver al tipo de servicio desde la ubicación
+   $('#back-to-service-type-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-location').hide();
+       $('#step-1-service-type').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=service-type';
+       history.pushState({step: 1, substep: 'service-type'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Selección de tipo de ubicación
+   $('.wp-alp-location-option').on('click', function() {
+       var $this = $(this);
+       var option = $this.data('option');
+       
+       // Actualizar selección visual
+       $('.wp-alp-location-option').removeClass('selected');
+       $this.addClass('selected');
+       
+       // Marcar el radio button explícitamente
+       if (option === 'specific') {
+           $('#location-specific').prop('checked', true);
+       } else if (option === 'multiple') {
+           $('#location-multiple').prop('checked', true);
+       }
+       
+       // Guardar la selección en una variable global para asegurar consistencia
+       window.selectedLocationType = option;
+       
+       console.log('Tipo de ubicación seleccionado: ' + option);
+       console.log('Radio button checked: ' + $('#location-' + option).is(':checked'));
+       
+       // Mostrar el contenedor correspondiente
+       if (option === 'specific') {
+           $('.wp-alp-specific-section').show();
+           $('.wp-alp-multiple-section').hide();
+           
+           // Inicializar el mapa si existe la función
+           if (typeof initMap === 'function') {
+               setTimeout(function() {
+                   initMap();
+                   
+                   // Crear el elemento de círculo rojo si no existe
+                   if ($('.wp-alp-location-circle').length === 0) {
+                       $('.wp-alp-map-container').append('<div class="wp-alp-location-circle"></div>');
+                   }
+                   
+                   // Mostrar elementos correctos
+                   $('.wp-alp-house-marker, .wp-alp-approximate-tooltip').show();
+               }, 100);
+           }
+       } else if (option === 'multiple') {
+           $('.wp-alp-specific-section').hide();
+           $('.wp-alp-multiple-section').show();
+       }
+       
+       // Ocultar mensaje de validación si estaba visible
+       $('.wp-alp-location-validation').hide();
+   });
+   
+   // Manejar la opción "Otro"
+   $('#location-other').on('change', function() {
+       if ($(this).is(':checked')) {
+           $('.wp-alp-location-other-input').show();
+       } else {
+           $('.wp-alp-location-other-input').hide();
+       }
+   });
+   
+   // Manejar el toggle de ubicación exacta
+   $('#exact-location-toggle').on('change', function() {
+       isExactLocation = $(this).is(':checked');
+       
+       if (isExactLocation) {
+           // Cambiar a ubicación exacta
+           $('#approximate-tooltip').fadeOut(200);
+           if (window.selectedLocation && window.selectedLocation.geometry) {
+               updateLocationDisplay(window.selectedLocation.geometry.location);
+           } else if (map) {
+               updateLocationDisplay(map.getCenter());
+           }
+       } else {
+           // Cambiar a ubicación aproximada
+           $('#approximate-tooltip').fadeIn(200);
+           if (window.selectedLocation && window.selectedLocation.geometry) {
+               updateLocationDisplay(window.selectedLocation.geometry.location);
+           } else if (map) {
+               updateLocationDisplay(map.getCenter());
+           }
+       }
+   });
+   
+   // Botón para confirmar dirección y mostrar el formulario detallado
+   $('#confirm-address-btn').on('click', function() {
+       // Ocultar la vista del mapa
+       $('.wp-alp-specific-section').hide();
+       
+       // Obtener la dirección ingresada o seleccionada
+       var addressInput = $('#wp-alp-address-input').val().trim();
+       
+       // Verificar que tenemos una dirección para procesar
+       if (!addressInput) {
+           // Si no hay dirección, mostrar un mensaje y retornar
+           // Detectar idioma según contenido de la página
+           var isEnglish = $('html').attr('lang') === 'en-US' || 
+                          document.documentElement.lang === 'en-US' || 
+                          $('body').hasClass('en-US');
+           alert(isEnglish ? 'Please enter an address first' : 'Por favor ingresa una dirección primero');
+           $('.wp-alp-specific-section').show();
+           return;
+       }
+       
+       // Asegurarnos de que window.selectedLocation existe
+       if (!window.selectedLocation && addressInput) {
+           window.selectedLocation = { formatted_address: addressInput };
+       }
+       
+       // Depuración: Mostrar todos los campos del formulario
+       console.log('Campos del formulario de dirección:');
+       $('#address-form-container input, #address-form-container select').each(function() {
+           console.log('Campo:', $(this).attr('id'), 'Tipo:', this.tagName, 'Nombre:', $(this).attr('name'));
+       });
+       
+       // Usar la función de llenado de campos de dirección
+       if (window.fillAddressFields && typeof window.fillAddressFields === 'function') {
+           console.log('Usando la función fillAddressFields para rellenar el formulario');
+           window.fillAddressFields(window.selectedLocation);
+       } else {
+           console.error('La función fillAddressFields no está disponible');
+           
+           // Fallback: Establecer al menos la dirección principal
+           $('#street, #address, #address1, input[name="address"]').val(addressInput).trigger('change');
+           
+           if (window.selectedLocation && window.selectedLocation.formatted_address) {
+               // Usar la dirección formateada para mostrarla
+               $('#street, #address, #address1, input[name="address"]').val(window.selectedLocation.formatted_address).trigger('change');
+           }
+       }
+       
+       // Mostrar el formulario de dirección detallada
+       $('#address-form-container').show();
+       
+       // Añadir mensaje de confirmación
+       // Detectar idioma según contenido de la página
+       var isEnglish = $('html').attr('lang') === 'en-US' || 
+                      document.documentElement.lang === 'en-US' || 
+                      $('body').hasClass('en-US');
+       var confirmMessage = $('<div class="wp-alp-address-confirmed">' + 
+           (isEnglish ? 'Address verified successfully!' : '¡Dirección verificada correctamente!') + 
+           '</div>');
+       
+       // Remover cualquier mensaje anterior
+       $('.wp-alp-address-confirmed').remove();
+       
+       // Añadir el mensaje al inicio del formulario
+       $('#address-form-container').prepend(confirmMessage);
+       
+       // Animar el mensaje para que desaparezca después de 5 segundos
+       setTimeout(function() {
+           confirmMessage.fadeOut(500, function() {
+               $(this).remove();
+           });
+       }, 5000);
+       
+       // Desplazarse al inicio del contenedor
+       $('html, body').animate({
+           scrollTop: $('#address-form-container').offset().top - 100
+       }, 300);
+   });
+   
+   // Botón para volver al mapa desde el formulario detallado
+   $('#back-to-map-btn').on('click', function() {
+       // Ocultar el formulario
+       $('#address-form-container').hide();
+       
+       // Mostrar la vista del mapa
+       $('.wp-alp-specific-section').show();
+       
+       // Desplazarse al inicio del contenedor
+       $('html, body').animate({
+           scrollTop: $('.wp-alp-specific-section').offset().top - 100
+       }, 300);
+   });
+   
+   // Botón para guardar la dirección y continuar hacia datos básicos
+   $('#save-address-btn').on('click', function() {
+       // Ocultar formulario y pasar a datos básicos
+       $('#address-form-container').hide();
+       $('#step-1-location').hide();
+       $('#step-1-basic-info').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=basic-info';
+       history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+       
+       // Mostrar u ocultar campos según la categoría y tipo de servicio
+       updateBasicInfoFields();
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón de siguiente desde la ubicación hacia datos básicos
+   $('#next-from-location-btn').on('click', function(e) {
+       e.preventDefault();
+       
+       // Verificar qué tipo de ubicación se ha seleccionado
+       var isSpecificLocation = $('#location-specific').is(':checked') || window.selectedLocationType === 'specific';
+       var isMultipleLocation = $('#location-multiple').is(':checked') || window.selectedLocationType === 'multiple';
+       
+       console.log('Verificando ubicación - isSpecificLocation:', isSpecificLocation);
+       console.log('Verificando ubicación - isMultipleLocation:', isMultipleLocation);
+       console.log('Estado del radio button location-specific:', $('#location-specific').is(':checked'));
+       console.log('Estado del radio button location-multiple:', $('#location-multiple').is(':checked'));
+       console.log('Valor de window.selectedLocationType:', window.selectedLocationType);
+       
+       if (!isSpecificLocation && !isMultipleLocation) {
+           // No se ha seleccionado un tipo de ubicación
+           $('.wp-alp-location-validation').fadeIn();
+           return;
+       }
+       
+       // Si se seleccionó ubicación específica
+       if (isSpecificLocation) {
+           // Verificar si se completó el formulario detallado
+           if ($('#address-form-container').is(':visible')) {
+               // Ir directamente a datos básicos
+               $('#address-form-container').hide();
+               $('#step-1-location').hide();
+               $('#step-1-basic-info').show();
+               
+               // Actualizar URL
+               var currentUrl = window.location.pathname;
+               var newUrl = currentUrl + '?step=1&substep=basic-info';
+               history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+               
+               // Mostrar u ocultar campos según la categoría y tipo de servicio
+               updateBasicInfoFields();
+               
+               // Desplazarse al inicio de la página
+               $('html, body').scrollTop(0);
+           } else {
+               // Verificar si se ha ingresado una dirección
+               var address = $('#wp-alp-address-input').val().trim();
+               
+               if (!address) {
+                   console.log('Error: Dirección no ingresada');
+                   $('.wp-alp-location-validation').fadeIn();
+                   return;
+               }
+               
+               console.log('Dirección verificada:', address);
+               
+               // Si hay dirección, continuamos aunque no haya selectedLocation
+               // Esto soluciona el problema de validación cuando se ha ingresado una dirección
+               // pero por alguna razón window.selectedLocation no está definido
+               if (!window.selectedLocation) {
+                   console.log('Advertencia: dirección presente pero selectedLocation no definido');
+                   // Creamos un objeto selectedLocation mínimo para evitar errores
+                   window.selectedLocation = { formatted_address: address };
+               }
+               
+               // Mostrar formulario detallado de dirección
+               $('.wp-alp-specific-section').hide();
+               $('#address-form-container').show();
+               
+               // Desplazarse al inicio del contenedor
+               $('html, body').animate({
+                   scrollTop: $('#address-form-container').offset().top - 100
+               }, 300);
+           }
+       } else if (isMultipleLocation) {
+           // Verificar selección para ubicaciones múltiples
+           var hasChecked = $('.wp-alp-locations-checkboxes input:checked').length > 0 || $('#location-other').is(':checked');
+           if (!hasChecked) {
+               $('.wp-alp-location-validation').fadeIn();
+               return;
+           }
+           
+           // Si "Otro" está marcado, verificar que se haya ingresado texto
+           if ($('#location-other').is(':checked')) {
+               var otherLocation = $('#wp-alp-other-location').val().trim();
+               if (!otherLocation) {
+                   $('.wp-alp-location-validation').fadeIn();
+                   return;
+               }
+           }
+           
+           // Ir a datos básicos
+           $('#step-1-location').hide();
+           $('#step-1-basic-info').show();
+           
+           // Actualizar URL
+           var currentUrl = window.location.pathname;
+           var newUrl = currentUrl + '?step=1&substep=basic-info';
+           history.pushState({step: 1, substep: 'basic-info'}, '', newUrl);
+           
+           // Mostrar u ocultar campos según la categoría y tipo de servicio
+           updateBasicInfoFields();
+           
+           // Desplazarse al inicio de la página
+           $('html, body').scrollTop(0);
+       }
+   });
+   
+   // Botón para volver a ubicación desde datos básicos
+   $('#back-to-location-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-1-basic-info').hide();
+       $('#step-1-location').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=1&substep=location';
+       history.pushState({step: 1, substep: 'location'}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Botón para finalizar paso 1 (datos básicos) y continuar al paso 2
+   $('#finish-step-1-btn').on('click', function(e) {
+       e.preventDefault();
+       
+       // Recopilar todos los datos del paso 1
+       var step1Data = {
+           category: selectedCategory ? selectedCategory.data('term-id') : null,
+           service_type: selectedServiceType,
+           location_type: $('input[name="location-type"]:checked').val(),
+           max_capacity: $('#max_capacity').val(),
+           min_capacity: $('#min_capacity').val(),
+           restrooms: $('#restrooms').val(),
+           hours: $('#hours').val(),
+           host_more_than_one_ev: $('#host_more_than_one_ev').is(':checked')
+       };
+       
+       // Guardar datos en sessionStorage para usarlos después
+       sessionStorage.setItem('step1Data', JSON.stringify(step1Data));
+       
+       // Ir al paso 2 intro
+       $('#step-1-basic-info').hide();
+       $('#step-2-intro').show();
+       
+       // Actualizar URL
+       var currentUrl = window.location.pathname;
+       var newUrl = currentUrl + '?step=2';
+       history.pushState({step: 2}, '', newUrl);
+       
+       // Desplazarse al inicio de la página
+       $('html, body').scrollTop(0);
+   });
+   
+   // Navegación del paso 2
+   $('#go-to-step-2-listing-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-intro').hide();
+       $('#step-2-basic').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-step-1-last-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-intro').hide();
+       $('#step-1-basic-info').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#next-to-photos-btn').on('click', function(e) {
+       e.preventDefault();
+       
+       // Validar campos requeridos
+       var title = $('#listing-title').val().trim();
+       var price = $('#listing-price').val();
+       var description = $('#listing-description').val().trim();
+       
+       if (!title || !price || !description) {
+           alert(get_locale() == 'en_US' ? 'Please fill in all required fields.' : 'Por favor, completa todos los campos requeridos.');
+           return;
+       }
+       
+       $('#step-2-basic').hide();
+       $('#step-2-photos').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-step-2-intro-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-basic').hide();
+       $('#step-2-intro').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#next-to-pricing-btn').on('click', function(e) {
+       e.preventDefault();
+       
+       // Validar que haya al menos 5 fotos
+       var photoCount = $('#photos-preview .wp-alp-photo-preview-item').length;
+       if (photoCount < 5) {
+           alert(get_locale() == 'en_US' ? 'Please upload at least 5 photos.' : 'Por favor, sube al menos 5 fotos.');
+           return;
+       }
+       
+       $('#step-2-photos').hide();
+       $('#step-2-pricing').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-basic-info-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-photos').hide();
+       $('#step-2-basic').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#next-to-availability-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-pricing').hide();
+       $('#step-2-availability').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-photos-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-pricing').hide();
+       $('#step-2-photos').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#next-to-features-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    // Solo validar booking_slot_duration que es requerido
+    var slotDuration = $('#booking-slot-duration').val();
+    
+    if (!slotDuration) {
+        alert(get_locale() == 'en_US' ? 'Please set the booking slot duration.' : 'Por favor, establece la duración del slot de reserva.');
+        return;
+    }
+    
+    $('#step-2-availability').hide();
+    $('#step-2-features').show();
+    $('html, body').scrollTop(0);
+});
+   
+   $('#back-to-pricing-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-availability').hide();
+       $('#step-2-pricing').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#next-to-contact-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-features').hide();
+       $('#step-2-contact').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-availability-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-features').hide();
+       $('#step-2-availability').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#go-to-step-3-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-contact').hide();
+       $('#step-3').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-features-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-2-contact').hide();
+       $('#step-2-features').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   // Navegación del paso 3
+   $('#go-to-review-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-3').hide();
+       $('#step-3-review').show();
+       generateReviewSummary();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-step-2-last-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-3').hide();
+       $('#step-2-contact').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   $('#back-to-step-3-intro-btn').on('click', function(e) {
+       e.preventDefault();
+       $('#step-3-review').hide();
+       $('#step-3').show();
+       $('html, body').scrollTop(0);
+   });
+   
+   // Habilitar botón de publicar cuando se aceptan términos
+   $('#terms-checkbox').on('change', function() {
+       $('#submit-listing-btn').prop('disabled', !$(this).is(':checked'));
+   });
+   
+   // Enviar el formulario
+$('#submit-listing-btn').on('click', function(e) {
+    e.preventDefault();
+    
+    // Mostrar indicador de carga (opcional)
+    var $button = $(this);
+    $button.prop('disabled', true);
+    $button.text(get_locale() == 'en_US' ? 'Publishing...' : 'Publicando...');
+    
+    // Primero, verificar si necesitamos crear un hp_vendor
+    $.ajax({
+        url: ajaxurl, // Define esta variable globalmente al inicio
+        type: 'POST',
+        data: {
+            action: 'check_create_vendor', // Debes crear esta acción en el archivo functions.php
+            nonce: vendor_nonce, // Define esta variable globalmente al inicio
+        },
+        success: function(vendorResponse) {
+            // Ahora que tenemos el vendor (existente o nuevo), enviamos el listing
+            var $form = $hiddenForm.find('form');
+            if ($form.length) {
+                $.ajax({
+                    url: $form.attr('action') || ajaxurl,
+                    type: 'POST',
+                    data: $form.serialize(),
+                    success: function(response) {
+                        // Guardar el ID del listing creado/actualizado
+                        try {
+                            var result = JSON.parse(response);
+                            if (result && result.redirect) {
+                                listingId = result.redirect.match(/(\d+)/)[0];
+                                // Actualizar URL del botón "View Listing"
+                                $('#view-listing-btn').attr('href', result.redirect);
+                            }
+                        } catch (e) {
+                            // Si no se puede parsear, ignoramos
+                        }
+                        
+                        // Mostrar pantalla de éxito
+                        $('#step-3-review').hide();
+                        $('#step-success').show();
+                        $('html, body').scrollTop(0);
+                    },
+                    error: function(xhr, status, error) {
+                        $button.prop('disabled', false);
+                        $button.text(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio');
+                        alert(get_locale() == 'en_US' ? 'An error occurred while publishing your listing.' : 'Ocurrió un error al publicar tu anuncio.');
+                    }
+                });
+            } else {
+                $button.prop('disabled', false);
+                $button.text(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio');
+                alert(get_locale() == 'en_US' ? 'Form not found.' : 'Formulario no encontrado.');
+            }
+        },
+        error: function(xhr, status, error) {
+            $button.prop('disabled', false);
+            $button.text(get_locale() == 'en_US' ? 'Publish Listing' : 'Publicar Anuncio');
+            alert(get_locale() == 'en_US' ? 'An error occurred while creating your vendor account.' : 'Ocurrió un error al crear tu cuenta de vendedor.');
+        }
+    });
+});
+   // Función para generar el resumen de revisión
+function generateReviewSummary() {
+    var summary = '<div class="wp-alp-review-sections">';
+    
+    // Información básica
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Basic Information' : 'Información Básica') + '</h3>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Title:' : 'Título:') + '</strong> ' + escapeHtml($('#listing-title').val()) + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Price:' : 'Precio:') + '</strong> $' + escapeHtml($('#listing-price').val()) + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Category:' : 'Categoría:') + '</strong> ' + (selectedCategory ? escapeHtml(selectedCategory.data('name')) : '') + '</p>';
+    
+    // Descripción
+    var description = $('#listing-description').val();
+    if (description) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Description:' : 'Descripción:') + '</strong></p>';
+        summary += '<p class="wp-alp-review-description">' + escapeHtml(description.substring(0, 150)) + (description.length > 150 ? '...' : '') + '</p>';
+    }
+    summary += '</div>';
+    
+    // Fotos
+    var photoCount = $('#photos-preview .wp-alp-photo-preview-item').length;
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Media' : 'Multimedia') + '</h3>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Photos:' : 'Fotos:') + '</strong> ' + photoCount + '</p>';
+    
+    var videoUrl = $('#video-url').val();
+    if (videoUrl) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Video URL:' : 'URL de video:') + '</strong> ' + escapeHtml(videoUrl) + '</p>';
+    }
+    summary += '</div>';
+    
+    // Precios adicionales
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Pricing Options' : 'Opciones de Precio') + '</h3>';
+    
+    // Contar elementos de cada tipo
+    var dailyPriceCount = $('#daily-prices-container .wp-alp-repeater-item').length;
+    var tierCount = $('#price-tiers-container .wp-alp-repeater-item').length;
+    var extraCount = $('#extras-container .wp-alp-repeater-item').length;
+    var discountCount = $('#discounts-container .wp-alp-repeater-item').length;
+    
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Daily Prices:' : 'Precios Diarios:') + '</strong> ' + dailyPriceCount + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Price Tiers:' : 'Niveles de Precio:') + '</strong> ' + tierCount + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Extra Services:' : 'Servicios Adicionales:') + '</strong> ' + extraCount + '</p>';
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Discounts:' : 'Descuentos:') + '</strong> ' + discountCount + '</p>';
+    summary += '</div>';
+    
+    // Disponibilidad
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Availability' : 'Disponibilidad') + '</h3>';
+    
+    var minTime = $('#booking-min-time').val();
+    var maxTime = $('#booking-max-time').val();
+    var slotDuration = $('#booking-slot-duration').val();
+    
+    if (minTime) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Available From:' : 'Disponible Desde:') + '</strong> ' + formatTime(minTime) + '</p>';
+    }
+    if (maxTime) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Available To:' : 'Disponible Hasta:') + '</strong> ' + formatTime(maxTime) + '</p>';
+    }
+    if (slotDuration) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Slot Duration:' : 'Duración del Slot:') + '</strong> ' + slotDuration + (get_locale() == 'en_US' ? ' minutes' : ' minutos') + '</p>';
+    }
+    
+    var bookingModerated = $('#booking-moderated').is(':checked');
+    summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Manual Approval:' : 'Aprobación Manual:') + '</strong> ' + 
+        (bookingModerated ? (get_locale() == 'en_US' ? 'Yes' : 'Sí') : (get_locale() == 'en_US' ? 'No' : 'No')) + '</p>';
+    summary += '</div>';
+    
+    // Características
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Features & Services' : 'Características y Servicios') + '</h3>';
+    
+    // Obtener características seleccionadas
+    var features = [];
+    $('input[name="service_features_even[]"]:checked').each(function() {
+        features.push($(this).siblings('span').text());
+    });
+    
+    if (features.length > 0) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Features:' : 'Características:') + '</strong> ' + escapeHtml(features.join(', ')) + '</p>';
+    }
+    
+    // Obtener tags seleccionados
+    var tags = [];
+    $('#tags-select option:selected').each(function() {
+        tags.push($(this).text());
+    });
+    
+    if (tags.length > 0) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Tags:' : 'Etiquetas:') + '</strong> ' + escapeHtml(tags.join(', ')) + '</p>';
+    }
+    
+    // Nota de reserva
+    var purchaseNote = $('#purchase-note').val();
+    if (purchaseNote) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Booking Note:' : 'Nota de Reserva:') + '</strong></p>';
+        summary += '<p class="wp-alp-review-description">' + escapeHtml(purchaseNote.substring(0, 100)) + (purchaseNote.length > 100 ? '...' : '') + '</p>';
+    }
+    summary += '</div>';
+    
+    // Contacto
+    summary += '<div class="wp-alp-review-section">';
+    summary += '<h3>' + (get_locale() == 'en_US' ? 'Contact Information' : 'Información de Contacto') + '</h3>';
+    
+    var contactInfo = $('#contact-information').val();
+    if (contactInfo) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'Provider Details:' : 'Detalles del Proveedor:') + '</strong></p>';
+        summary += '<p class="wp-alp-review-description">' + escapeHtml(contactInfo).replace(/\n/g, '<br>') + '</p>';
+    }
+    
+    var whatsappUrl = $('#whatsapp-url').val();
+    if (whatsappUrl) {
+        summary += '<p><strong>' + (get_locale() == 'en_US' ? 'WhatsApp URL:' : 'URL de WhatsApp:') + '</strong> ' + escapeHtml(whatsappUrl) + '</p>';
+    }
+    summary += '</div>';
+    
+    summary += '</div>';
+    
+    $('#listing-review-summary').html(summary);
+}
+
+// Función auxiliar para escapar HTML
+function escapeHtml(text) {
+    if (!text) return '';
+    var map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+// Función auxiliar para formatear tiempo
+function formatTime(timeString) {
+    if (!timeString) return '';
+    try {
+        var timeParts = timeString.split(':');
+        var hour = parseInt(timeParts[0]);
+        var minute = timeParts[1];
+        var period = hour >= 12 ? 'PM' : 'AM';
+        
+        // Convertir a formato 12 horas
+        hour = hour % 12;
+        hour = hour ? hour : 12; // 0 = 12
+        
+        return hour + ':' + minute + ' ' + period;
+    } catch (e) {
+        return timeString;
+    }
+}
+
+   // Función para actualizar la función updateBasicInfoFields
+   function updateBasicInfoFields() {
+        // Si es servicio por hora, mostrar campo de horas
+        if (selectedServiceType === 'hour') {
+            $('.hour-service-field').show();
+        } else {
+            $('.hour-service-field').hide();
+        }
+    }
+   
+   // Zona de arrastre para fotos
+    // Manejadores de arrastre y soltar
+$('#photo-upload-zone').on('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#222');
+    $(this).css('background-color', '#f9f9f9');
+});
+
+$('#photo-upload-zone').on('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#ddd');
+    $(this).css('background-color', 'transparent');
+});
+
+$('#photo-upload-zone').on('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $(this).css('border-color', '#ddd');
+    $(this).css('background-color', 'transparent');
+    
+    var files = e.originalEvent.dataTransfer.files;
+    if (files.length > 0) {
+        // Crear un DataTransfer para poder asignar archivos al input
+        var dataTransfer = new DataTransfer();
+        Array.from(files).forEach(file => dataTransfer.items.add(file));
+        $('#photo-input')[0].files = dataTransfer.files;
+        $('#photo-input').trigger('change');
+    }
+});
+
+   // Manejador específico para el botón de upload
+$('#select-photos-btn').on('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    $('#photo-input').click();
+});
+
+// Prevenir que los clics en el input file se propaguen al contenedor
+$('#photo-input').on('click', function(e) {
+    e.stopPropagation();
+});
+
+// Manejador para el área de arrastre (solo para el arrastre, no para clics)
+$('#photo-upload-zone').on('click', function(e) {
+    // Solo responder al clic si no fue en el botón o en un elemento hijo
+    if (e.target === this) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#photo-input').click();
+    }
+});
+   
+   // Remover fotos
+   $(document).on('click', '.wp-alp-photo-remove-btn', function() {
+       $(this).closest('.wp-alp-photo-preview-item').remove();
+   });
+   
+   // Controles numéricos mejorados (ya existentes)
+   $('.wp-alp-number-increase-improved').on('click', function() {
+       var $input = $(this).siblings('input');
+       var max = parseInt($input.attr('max')) || 9999;
+       var currentVal = parseInt($input.val()) || 0;
+       
+       if (currentVal < max) {
+           $input.val(currentVal + 1);
+           $input.trigger('change');
+       }
+   });
+   
+   $('.wp-alp-number-decrease-improved').on('click', function() {
+       var $input = $(this).siblings('input');
+       var min = parseInt($input.attr('min')) || 0;
+       var currentVal = parseInt($input.val()) || 0;
+       
+       if (currentVal > min) {
+           $input.val(currentVal - 1);
+           $input.trigger('change');
+       }
+   });
+   
+   // Función auxiliar para detectar el idioma
+   function get_locale() {
+       return $('html').attr('lang') || 'es_ES';
+   }
+   
+   // Inicialización
+   init();
+   
+   function init() {
+       // Configurar el formulario oculto
+       if ($hiddenForm.find('form').length) {
+           // Prevenir el envío normal del formulario
+           $hiddenForm.find('form').on('submit', function(e) {
+               e.preventDefault();
+           });
+       }
+       
+       // Otras inicializaciones...
+   }
+
+   // Inicialización: verificar si hay un paso en la URL
+   var urlParams = new URLSearchParams(window.location.search);
+    var stepParam = urlParams.get('step');
+    var substepParam = urlParams.get('substep');
+    
+    // Si hay un paso en la URL y es válido, ir a ese paso
+    if (stepParam !== null && !isNaN(parseInt(stepParam))) {
+        var stepNum = parseInt(stepParam);
+        
+        // Verificar si hay un subpaso especificado
+        if (substepParam === 'categories' && stepNum === 1) {
+            // Mostrar el subpaso de categorías
+            $steps.hide();
+            $('#step-1-categories').show();
+        } else if (substepParam === 'service-type' && stepNum === 1) {
+            // Mostrar el subpaso de tipo de servicio
+            $steps.hide();
+            $('#step-1-service-type').show();
+        } else if (substepParam === 'location' && stepNum === 1) {
+            // Mostrar el subpaso de ubicación
+            $steps.hide();
+            $('#step-1-location').show();
+        } else if (substepParam === 'basic-info' && stepNum === 1) {
+            // Mostrar el subpaso de datos básicos
+            $steps.hide();
+            $('#step-1-basic-info').show();
+            // Actualizar campos según la categoría y tipo de servicio
+            updateBasicInfoFields();
+        } else {
+            goToStep(stepNum);
+        }
+    } else {
+        // Si no hay parámetro de paso, iniciar en el paso 0 (visión general)
+        goToStep(0);
+    }
+});
+</script>
+
+<!-- Modal de información sobre ubicación -->
+<div class="wp-alp-info-modal" id="location-info-modal" style="display: none;">
+    <div class="wp-alp-info-modal-content">
+        <button type="button" class="wp-alp-info-modal-close">×</button>
+        <h3><?php echo esc_html(get_locale() == 'en_US' ? 'About Location Sharing' : 'Sobre compartir tu ubicación'); ?></h3>
+        <div class="wp-alp-info-modal-body">
+            <p><strong><?php echo esc_html(get_locale() == 'en_US' ? 'Exact location' : 'Ubicación exacta'); ?></strong></p>
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'When you select to show your exact location, clients will see the precise address of your service after booking is confirmed. This is useful for venue services or specific location-based services.' : 'Cuando seleccionas mostrar tu ubicación exacta, los clientes verán la dirección precisa de tu servicio después de que se confirme la reserva. Esto es útil para servicios de locales o servicios basados en ubicaciones específicas.'); ?></p>
+            
+            <p><strong><?php echo esc_html(get_locale() == 'en_US' ? 'Approximate location' : 'Ubicación aproximada'); ?></strong></p>
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'If you prefer not to share your exact address, we\'ll only show an approximate location on the map (about 200m radius area). This option is good for privacy while still giving clients a general idea of your service area.' : 'Si prefieres no compartir tu dirección exacta, solo mostraremos una ubicación aproximada en el mapa (un área de radio de aproximadamente 200 m). Esta opción es buena para la privacidad y al mismo tiempo proporciona a los clientes una idea general de tu área de servicio.'); ?></p>
+            
+            <p><?php echo esc_html(get_locale() == 'en_US' ? 'In both cases, your full address will never be publicly visible on the search results or listing preview.' : 'En ambos casos, tu dirección completa nunca será visible públicamente en los resultados de búsqueda o en la vista previa del anuncio.'); ?></p>
         </div>
     </div>
 </div>
+
+<!-- La funcionalidad del mapa ahora se maneja desde el archivo vendor-location.js -->
+<!-- No se requiere script adicional aquí para la funcionalidad de Google Maps -->
+
+<style>
+/* Estilos para el mapa y contenedores relacionados */
+.wp-alp-map-container {
+    position: relative;
+    margin: 20px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.wp-alp-map-wrapper {
+    height: 400px;
+    width: 100%;
+    background-color: #f5f5f5;
+}
+
+.wp-alp-map-search {
+    padding: 15px;
+    background-color: white;
+    border-bottom: 1px solid #e4e4e4;
+}
+
+.wp-alp-approximate-tooltip {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 100;
+    max-width: 90%;
+    text-align: center;
+}
+
+.wp-alp-house-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+    pointer-events: none;
+}
+
+.wp-alp-marker-icon {
+    background-color: #FF385C;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+
+/* Estilos para el modal de información */
+.wp-alp-info-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.wp-alp-info-modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from {transform: translateY(-20px); opacity: 0;}
+    to {transform: translateY(0); opacity: 1;}
+}
+
+.wp-alp-info-modal-close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #666;
+}
+
+.wp-alp-info-modal-close:hover {
+    color: #222;
+}
+
+.wp-alp-info-modal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 22px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.wp-alp-info-modal-body p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Estilos para mejorar la integración con Google Maps */
+.wp-alp-address-input-container {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.wp-alp-address-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.wp-alp-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+}
+
+.wp-alp-confirm-address-btn {
+    text-align: center;
+    margin-top: 15px;
+    display: none;
+}
+
+.wp-alp-address-confirmed {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    border-left: 4px solid #28a745;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.wp-alp-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.wp-alp-btn-secondary {
+    background-color: #fff;
+    color: #222;
+    border: 1px solid #ddd;
+}
+
+.wp-alp-btn-secondary:hover {
+    background-color: #f5f5f5;
+    border-color: #aaa;
+}
+
+/* Mejorar el contenedor del mapa para mejor visualización */
+.wp-alp-map-wrapper {
+    height: 300px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Mejorar estilos de servicios */
+.wp-alp-airbnb-service-option {
+    position: relative;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.wp-alp-airbnb-service-option:hover {
+    border-color: #999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.wp-alp-airbnb-service-option.selected {
+    border-color: var(--wp-alp-color-primary, #cbb881);
+    box-shadow: 0 0 0 2px var(--wp-alp-color-primary, #cbb881);
+}
+
+.wp-alp-airbnb-service-option h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.wp-alp-airbnb-service-option p {
+    margin-bottom: 0;
+    color: #666;
+}
+
+.wp-alp-airbnb-service-validation {
+    color: #e4002b;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+.wp-alp-location-validation {
+    color: #e4002b;
+    font-size: 14px;
+    margin-top: 5px;
+    padding: 8px;
+    background-color: rgba(228, 0, 43, 0.1);
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+}
+</style>
 
 <?php get_footer(); ?>

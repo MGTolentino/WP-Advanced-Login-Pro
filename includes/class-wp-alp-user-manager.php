@@ -88,6 +88,15 @@ class WP_ALP_User_Manager {
      * @return array Resultado del registro.
      */
     public function register_user($user_data) {
+        // Verificar rate limiting
+        $identifier = $user_data['email'] ?? '';
+        if (WP_ALP_Security::is_rate_limited($identifier, 'register', 3, 600)) {
+            return array(
+                'success' => false,
+                'message' => __('Demasiados intentos de registro. Por favor, espera unos minutos.', 'wp-alp'),
+            );
+        }
+        
         // Sanitizar datos
         $sanitized = WP_ALP_Security::sanitize_input_data($user_data);
         
@@ -99,7 +108,18 @@ class WP_ALP_User_Manager {
             );
         }
         
-        // Crear usuario
+        // Validar fortaleza de contraseña
+        if (class_exists('WP_ALP_Security_Enhanced')) {
+            $password_validation = WP_ALP_Security_Enhanced::validate_password_strength($sanitized['password']);
+            if (!$password_validation['valid']) {
+                return array(
+                    'success' => false,
+                    'message' => $password_validation['message'],
+                );
+            }
+        }
+        
+        // Crear usuario - SIEMPRE con rol subscriber inicialmente
         $user_id = wp_insert_user(array(
             'user_login' => $sanitized['email'],
             'user_email' => $sanitized['email'],
@@ -107,7 +127,7 @@ class WP_ALP_User_Manager {
             'first_name' => $sanitized['first_name'],
             'last_name' => $sanitized['last_name'],
             'display_name' => $sanitized['first_name'] . ' ' . $sanitized['last_name'],
-            'role' => 'subscriber',
+            'role' => 'subscriber', // SIEMPRE subscriber al inicio
         ));
         
         if (is_wp_error($user_id)) {
@@ -178,13 +198,25 @@ $lead_data = array(
     'cct_author_id' => $user_id,
 );
 
-// Crear lead directamente en la tabla
-global $wpdb;
-$inserted = $wpdb->insert(
-    $wpdb->prefix . 'jet_cct_leads',
-    $lead_data,
-    array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d')
-);
+        // Crear lead con prepared statement
+        global $wpdb;
+        
+        // Usar prepared statement para mayor seguridad
+        $table_name = $wpdb->prefix . 'jet_cct_leads';
+        
+        // Verificar que la tabla existe
+        if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table_name)) != $table_name) {
+            return array(
+                'success' => false,
+                'message' => __('Error de configuración de la base de datos.', 'wp-alp'),
+            );
+        }
+        
+        $inserted = $wpdb->insert(
+            $table_name,
+            $lead_data,
+            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d')
+        );
 
 if (!$inserted) {
     return array(
@@ -225,12 +257,22 @@ $event_data = array(
     'cct_modified' => current_time('mysql'),
 );
 
-// Crear evento directamente en la tabla
-$event_inserted = $wpdb->insert(
-    $wpdb->prefix . 'jet_cct_eventos',
-    $event_data,
-    array('%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s')
-);
+        // Crear evento con verificación de tabla
+        $event_table_name = $wpdb->prefix . 'jet_cct_eventos';
+        
+        // Verificar que la tabla existe
+        if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $event_table_name)) != $event_table_name) {
+            return array(
+                'success' => false,
+                'message' => __('Error de configuración de la base de datos para eventos.', 'wp-alp'),
+            );
+        }
+        
+        $event_inserted = $wpdb->insert(
+            $event_table_name,
+            $event_data,
+            array('%d', '%s', '%d', '%s', '%d', '%s', '%s', '%s', '%s', '%s')
+        );
 
 $event_id = $event_inserted ? $wpdb->insert_id : 0;
         
@@ -239,11 +281,48 @@ $event_id = $event_inserted ? $wpdb->insert_id : 0;
         update_user_meta($user_id, 'wp_alp_profile_status', 'complete');
         update_user_meta($user_id, 'wp_alp_lead_id', $lead_id);
 
-        // Actualizar el rol de WordPress del usuario a 'lead'
-$user = get_user_by('ID', $user_id);
-if ($user) {
-    $user->set_role('lead');
-}
+        // Actualizar el rol de WordPress del usuario a 'lead' con verificación de seguridad
+        $user = get_user_by('ID', $user_id);
+        if ($user) {
+            // Verificar que el sistema (no un usuario) está haciendo esta asignación
+            // Para asignaciones automáticas del sistema, usamos un contexto especial
+            $is_system_assignment = defined('WP_ALP_SYSTEM_ROLE_ASSIGNMENT') && WP_ALP_SYSTEM_ROLE_ASSIGNMENT === true;
+            
+            if ($is_system_assignment || current_user_can('manage_options')) {
+                $user->set_role('lead');
+                
+                // Registrar evento de seguridad
+                if (class_exists('WP_ALP_Security_Enhanced')) {
+                    WP_ALP_Security_Enhanced::log_security_event(
+                        'role_assigned',
+                        array(
+                            'user_id' => $user_id,
+                            'new_role' => 'lead',
+                            'context' => $is_system_assignment ? 'system' : 'admin'
+                        ),
+                        'info'
+                    );
+                }
+            } else {
+                // Intento no autorizado de cambiar rol
+                if (class_exists('WP_ALP_Security_Enhanced')) {
+                    WP_ALP_Security_Enhanced::log_security_event(
+                        'unauthorized_role_change_attempt',
+                        array(
+                            'target_user_id' => $user_id,
+                            'attempted_role' => 'lead',
+                            'current_user_id' => get_current_user_id()
+                        ),
+                        'critical'
+                    );
+                }
+                
+                return array(
+                    'success' => false,
+                    'message' => __('No tienes permisos para cambiar roles de usuario.', 'wp-alp'),
+                );
+            }
+        }
         
         if (!empty($sanitized['first_name'])) {
             wp_update_user(array(
