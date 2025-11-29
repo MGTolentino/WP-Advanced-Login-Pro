@@ -538,6 +538,48 @@
                             </div>
                             <div class="wpalp-help-text">Mínimo 6 caracteres.</div>
                         </div>
+                        
+                        <div class="wpalp-field-group">
+                            <label for="wpalp-register-confirm-password" class="wpalp-field-label">Confirmar contraseña</label>
+                            <div class="wpalp-password-wrapper">
+                                <input type="password" id="wpalp-register-confirm-password" name="confirm_password" class="wpalp-field-input" placeholder="Confirmar contraseña" />
+                                <button type="button" class="wpalp-password-toggle" data-target="wpalp-register-confirm-password">
+                                    <span class="wpalp-show-text">Mostrar</span>
+                                    <span class="wpalp-hide-text" style="display: none;">Ocultar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="wpalp-form-section">
+                        <h3 class="wpalp-section-title">Información del evento (opcional)</h3>
+                        
+                        <div class="wpalp-field-group">
+                            <label for="wpalp-event-type" class="wpalp-field-label">Tipo de evento</label>
+                            <select id="wpalp-event-type" name="event_type" class="wpalp-field-input">
+                                <option value="">Selecciona un tipo de evento</option>
+                                <option value="Bodas">Bodas</option>
+                                <option value="Cumpleaños">Cumpleaños</option>
+                                <option value="Corporativo">Corporativo</option>
+                                <option value="Graduación">Graduación</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="wpalp-field-group">
+                            <label for="wpalp-event-date" class="wpalp-field-label">Fecha del evento</label>
+                            <input type="date" id="wpalp-event-date" name="event_date" class="wpalp-field-input" />
+                        </div>
+                        
+                        <div class="wpalp-field-group">
+                            <label for="wpalp-event-address" class="wpalp-field-label">Dirección del evento</label>
+                            <input type="text" id="wpalp-event-address" name="event_address" class="wpalp-field-input" placeholder="Dirección del evento" />
+                        </div>
+                        
+                        <div class="wpalp-field-group">
+                            <label for="wpalp-event-guests" class="wpalp-field-label">Número de invitados</label>
+                            <input type="number" id="wpalp-event-guests" name="guests" class="wpalp-field-input" min="1" placeholder="Número de invitados" />
+                        </div>
                     </div>
                     
                     <div class="wpalp-terms">
