@@ -471,7 +471,15 @@
     /**
      * Genera formulario de registro dinámicamente
      */
-    function generateRegisterForm(email) {
+    function generateRegisterForm(identifier) {
+        // Detectar si es email o teléfono
+        var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+        var emailValue = isEmail ? identifier : '';
+        var phoneValue = !isEmail ? identifier : '';
+        var emailDisabled = isEmail ? 'wpalp-field-disabled' : '';
+        var phoneDisabled = !isEmail ? 'wpalp-field-disabled' : '';
+        var emailReadonly = isEmail ? 'readonly' : '';
+        var phoneReadonly = !isEmail ? 'readonly' : '';
         return `
             <div class="wpalp-auth-modal">
                 <div class="wpalp-modal-header">
@@ -505,14 +513,14 @@
                     <div class="wpalp-form-section">
                         <h3 class="wpalp-section-title">Información de contacto</h3>
                         
-                        <div class="wpalp-field-group wpalp-field-disabled">
+                        <div class="wpalp-field-group ${emailDisabled}">
                             <label for="wpalp-register-email" class="wpalp-field-label">Correo electrónico</label>
-                            <input type="email" id="wpalp-register-email" name="email" class="wpalp-field-input" value="${email}" readonly />
+                            <input type="email" id="wpalp-register-email" name="email" class="wpalp-field-input" value="${emailValue}" ${emailReadonly} placeholder="tu@correo.com" />
                         </div>
                         
-                        <div class="wpalp-field-group">
+                        <div class="wpalp-field-group ${phoneDisabled}">
                             <label for="wpalp-register-phone" class="wpalp-field-label">Número de teléfono</label>
-                            <input type="tel" id="wpalp-register-phone" name="phone" class="wpalp-field-input" placeholder="Número de teléfono" />
+                            <input type="tel" id="wpalp-register-phone" name="phone" class="wpalp-field-input" value="${phoneValue}" ${phoneReadonly} placeholder="Número de teléfono" />
                         </div>
                     </div>
                     
