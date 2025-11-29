@@ -67,13 +67,13 @@
             });
         }
         
-        // Event handlers específicos del selector de países
-        attachCountryEventHandlers();
+        // Event handlers específicos del selector de países comentados
+        // attachCountryEventHandlers();
     }
 
-    /**
-     * Adjunta event handlers para el selector de países
-     */
+    /*
+     * Event handlers para países comentados
+     *
     function attachCountryEventHandlers() {
         // Detectar cuando se está escribiendo un teléfono
         $(document).on('input', '#wpalp-identifier', function() {
@@ -109,10 +109,11 @@
             closeCountryDropdown();
         });
     }
+    */
 
-    /**
-     * Alterna entre modo email y modo teléfono
-     */
+    /*
+     * FUNCIONES DE PAÍSES COMENTADAS (para implementar después)
+     *
     function togglePhoneMode(enable) {
         var $container = $('#wpalp-country-selector-container');
         var $identifier = $('#wpalp-identifier');
@@ -135,6 +136,7 @@
             $identifier.attr('placeholder', 'Correo electrónico o teléfono');
         }
     }
+    */
 
     /**
      * Abre/cierra dropdown de países
@@ -197,9 +199,9 @@
         });
     }
 
-    /**
-     * Obtiene el número de teléfono completo
-     */
+    /*
+     * Función de número completo comentada (no se usa selector países)
+     *
     function getFullPhoneNumber() {
         if (!modal.phoneMode || !modal.selectedCountry) return null;
         
@@ -215,6 +217,7 @@
         // Combinar código de país + número
         return modal.selectedCountry.dial + cleanNumber;
     }
+    */
 
     /**
      * Inicializa las referencias al modal
@@ -701,26 +704,14 @@
      */
     function handleContinue() {
         var identifier = $('#wpalp-identifier').val().trim();
-        var finalIdentifier = identifier;
         
-        // Si está en modo teléfono, usar el número completo
-        if (modal.phoneMode) {
-            var fullPhone = getFullPhoneNumber();
-            if (fullPhone) {
-                finalIdentifier = fullPhone;
-            } else {
-                showError('Por favor, introduce un número de teléfono válido');
-                return;
-            }
-        }
-        
-        if (!finalIdentifier) {
+        if (!identifier) {
             showError('Por favor, introduce tu correo o teléfono');
             return;
         }
 
-        var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(finalIdentifier);
-        var isPhone = /^[+][0-9]{1,4}[0-9]{8,12}$/.test(finalIdentifier) || modal.phoneMode;
+        var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+        var isPhone = /^[+0-9]/.test(identifier) && identifier.length >= 8;
 
         if (!isEmail && !isPhone) {
             showError('Por favor, introduce un correo o teléfono válido');
@@ -728,12 +719,11 @@
         }
 
         // Guardar datos del usuario para uso posterior
-        modal.userData.identifier = finalIdentifier;
+        modal.userData.identifier = identifier;
         modal.userData.isEmail = isEmail;
         modal.userData.isPhone = isPhone;
-        modal.userData.country = modal.selectedCountry;
 
-        validateUser(finalIdentifier);
+        validateUser(identifier);
     }
 
     /**

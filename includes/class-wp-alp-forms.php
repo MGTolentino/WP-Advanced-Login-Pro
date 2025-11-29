@@ -34,7 +34,7 @@ public static function get_initial_form() {
                     <div class="wpalp-field-info"><?php _e('Puedes usar tu correo o número de teléfono para continuar', 'wp-alp'); ?></div>
                 </div>
                 
-                <!-- Selector de país - solo visible cuando se detecta teléfono -->
+                <!-- SELECTOR DE PAÍSES COMENTADO (para implementar después)
                 <div class="wpalp-country-selector-container" id="wpalp-country-selector-container" style="display: none;">
                     <label class="wpalp-field-label wpalp-country-label"><?php _e('País/región', 'wp-alp'); ?></label>
                     <div class="wpalp-country-selector" id="wpalp-country-selector">
@@ -49,7 +49,6 @@ public static function get_initial_form() {
                                 <input type="text" id="wpalp-country-search" placeholder="<?php _e('Buscar países...', 'wp-alp'); ?>" />
                             </div>
                             <div class="wpalp-country-list" id="wpalp-country-list">
-                                <!-- Se llena dinámicamente con JavaScript -->
                             </div>
                         </div>
                     </div>
@@ -59,6 +58,7 @@ public static function get_initial_form() {
                         <a href="#" class="wpalp-link"><?php _e('Política de privacidad', 'wp-alp'); ?></a>
                     </div>
                 </div>
+                -->
             </div>
             
             <div class="wpalp-field-group">
@@ -160,10 +160,15 @@ public static function get_initial_form() {
     /**
      * Genera el HTML para el formulario de registro.
      *
-     * @param string $email Email del usuario.
+     * @param string $identifier Email o teléfono del usuario.
      * @return string HTML del formulario.
      */
-    public static function get_register_form($email) {
+    public static function get_register_form($identifier) {
+        // Determinar si es email o teléfono
+        $is_email = is_email($identifier);
+        $email_value = $is_email ? $identifier : '';
+        $phone_value = !$is_email ? $identifier : '';
+        $email_required = !$is_email; // Email obligatorio si se registra con teléfono
         ob_start();
         ?>
         <div class="wpalp-auth-modal">
@@ -198,14 +203,25 @@ public static function get_initial_form() {
                 <div class="wpalp-form-section">
                     <h3 class="wpalp-section-title"><?php _e('Información de contacto', 'wp-alp'); ?></h3>
                     
-                    <div class="wpalp-field-group wpalp-field-disabled">
-                        <label for="wpalp-register-email" class="wpalp-field-label"><?php _e('Correo electrónico', 'wp-alp'); ?></label>
-                        <input type="email" id="wpalp-register-email" name="email" class="wpalp-field-input" value="<?php echo esc_attr($email); ?>" readonly />
+                    <div class="wpalp-field-group <?php echo !$email_required ? 'wpalp-field-disabled' : ''; ?>">
+                        <label for="wpalp-register-email" class="wpalp-field-label">
+                            <?php _e('Correo electrónico', 'wp-alp'); ?>
+                            <?php if ($email_required): ?>
+                                <span class="wpalp-field-required">*</span>
+                            <?php endif; ?>
+                        </label>
+                        <input type="email" id="wpalp-register-email" name="email" class="wpalp-field-input" 
+                               value="<?php echo esc_attr($email_value); ?>" 
+                               placeholder="<?php _e('tu@correo.com', 'wp-alp'); ?>"
+                               <?php echo !$email_required ? 'readonly' : 'required'; ?> />
                     </div>
                     
-                    <div class="wpalp-field-group">
+                    <div class="wpalp-field-group <?php echo $email_required ? 'wpalp-field-disabled' : ''; ?>">
                         <label for="wpalp-register-phone" class="wpalp-field-label"><?php _e('Número de teléfono', 'wp-alp'); ?></label>
-                        <input type="tel" id="wpalp-register-phone" name="phone" class="wpalp-field-input" placeholder="<?php _e('Número de teléfono', 'wp-alp'); ?>" />
+                        <input type="tel" id="wpalp-register-phone" name="phone" class="wpalp-field-input" 
+                               value="<?php echo esc_attr($phone_value); ?>"
+                               placeholder="<?php _e('Número de teléfono', 'wp-alp'); ?>"
+                               <?php echo $email_required ? 'readonly' : ''; ?> />
                     </div>
                 </div>
                 
