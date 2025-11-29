@@ -1146,16 +1146,16 @@ button[class*="wpalp"] {
 
 /* === AJUSTE ANCHO MODAL LOGIN === */
 
-/* Modal más ancho para login */
-.wpalp-auth-modal {
-    max-width: 568px !important; /* Más ancho que antes */
+/* Modal más ancho para login - CLASE CORRECTA */
+.wp-alp-modal-container {
+    max-width: 650px !important; /* Más ancho que los 568px originales */
     width: 100% !important;
     margin: 0 auto !important;
 }
 
 /* En pantallas pequeñas mantener responsive */
-@media (max-width: 600px) {
-    .wpalp-auth-modal {
+@media (max-width: 680px) {
+    .wp-alp-modal-container {
         max-width: calc(100vw - 32px) !important;
         margin: 0 16px !important;
     }

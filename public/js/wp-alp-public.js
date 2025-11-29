@@ -395,6 +395,58 @@ $(document).on('click', '#wp-alp-vendor-register-btn', function() {
     }
 
     /**
+     * Función para mostrar formularios de manera instantánea sin AJAX
+     * Conecta el nuevo JavaScript airbnb.js con el sistema existente
+     */
+    function showFormInstant(form, identifier) {
+        if (form === 'login') {
+            showLoader();
+            
+            $.ajax({
+                url: wp_alp_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'wp_alp_get_login_form_ajax',
+                    identifier: identifier,
+                    nonce: wp_alp_ajax.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        updateModalContent(response.data.html);
+                    } else {
+                        showError(response.data.message);
+                    }
+                },
+                error: function() {
+                    showError('Error de conexión. Por favor, intenta nuevamente.');
+                }
+            });
+        } else if (form === 'register') {
+            showLoader();
+            
+            $.ajax({
+                url: wp_alp_ajax.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'wp_alp_get_register_form_ajax',
+                    identifier: identifier,
+                    nonce: wp_alp_ajax.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        updateModalContent(response.data.html);
+                    } else {
+                        showError(response.data.message);
+                    }
+                },
+                error: function() {
+                    showError('Error de conexión. Por favor, intenta nuevamente.');
+                }
+            });
+        }
+    }
+
+    /**
      * Inicializa los botones de login social.
      * Esta función se mantiene por compatibilidad pero 
      * la implementación real ahora está en social-login.js
@@ -858,7 +910,8 @@ window.wpAlp = {
     hideLoader: hideLoader,
     showError: showError,
     showSuccess: showSuccess,
-    updateModalContent: updateModalContent
+    updateModalContent: updateModalContent,
+    showFormInstant: showFormInstant
 };
 
 // Pasos del móvil para mostrar dinámicamente
