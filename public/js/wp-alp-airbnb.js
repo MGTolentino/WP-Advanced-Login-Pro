@@ -292,6 +292,16 @@
             showFormInstant('initial');
         });
 
+        // Validación en tiempo real de contraseña
+        $(document).on('input', '#wpalp-register-password', function() {
+            validatePasswordStrength($(this).val());
+        });
+
+        // Validación de confirmación de contraseña
+        $(document).on('input', '#wpalp-register-confirm-password', function() {
+            validatePasswordMatch();
+        });
+
         // Toggle de contraseña
         $(document).on('click', '.wpalp-password-toggle', function() {
             var targetId = $(this).data('target');
@@ -427,7 +437,12 @@
     /**
      * Genera formulario de login dinámicamente
      */
-    function generateLoginForm(email) {
+    function generateLoginForm(identifier) {
+        // Detectar si es email o teléfono
+        var isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier);
+        var fieldLabel = isEmail ? 'Correo electrónico' : 'Teléfono';
+        var fieldType = isEmail ? 'email' : 'tel';
+        var fieldPlaceholder = isEmail ? 'tu@correo.com' : 'Número de teléfono';
         return `
             <div class="wpalp-auth-modal">
                 <div class="wpalp-modal-header">
@@ -439,8 +454,8 @@
                 
                 <div class="wpalp-modal-body">
                     <div class="wpalp-field-group wpalp-field-disabled">
-                        <label for="wpalp-login-email" class="wpalp-field-label">Correo electrónico</label>
-                        <input type="email" id="wpalp-login-email" name="email" class="wpalp-field-input" value="${email}" readonly />
+                        <label for="wpalp-login-email" class="wpalp-field-label">${fieldLabel}</label>
+                        <input type="${fieldType}" id="wpalp-login-email" name="email" class="wpalp-field-input" value="${identifier}" readonly placeholder="${fieldPlaceholder}" />
                     </div>
                     
                     <div class="wpalp-field-group">
@@ -536,7 +551,20 @@
                                     <span class="wpalp-hide-text" style="display: none;">Ocultar</span>
                                 </button>
                             </div>
-                            <div class="wpalp-help-text">Mínimo 6 caracteres.</div>
+                            <div class="wpalp-password-requirements">
+                                <div class="wpalp-requirement" id="req-length">
+                                    <span class="req-icon">✗</span> Al menos 8 caracteres
+                                </div>
+                                <div class="wpalp-requirement" id="req-uppercase">
+                                    <span class="req-icon">✗</span> Una letra mayúscula
+                                </div>
+                                <div class="wpalp-requirement" id="req-lowercase">
+                                    <span class="req-icon">✗</span> Una letra minúscula
+                                </div>
+                                <div class="wpalp-requirement" id="req-number">
+                                    <span class="req-icon">✗</span> Un número
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="wpalp-field-group">
@@ -998,6 +1026,11 @@
             birthdate: $('#wpalp-register-birthdate').val(),
             phone: $('#wpalp-register-phone').val(),
             password: $('#wpalp-register-password').val(),
+            confirm_password: $('#wpalp-register-confirm-password').val(),
+            event_type: $('#wpalp-event-type').val(),
+            event_date: $('#wpalp-event-date').val(),
+            event_address: $('#wpalp-event-address').val(),
+            guests: $('#wpalp-event-guests').val(),
             nonce: wp_alp_ajax.nonce
         };
 
@@ -1007,8 +1040,15 @@
             return;
         }
 
-        if (!formData.password || formData.password.length < 6) {
-            showError('La contraseña debe tener al menos 6 caracteres');
+        // Validar contraseña con nuevos estándares
+        if (!validatePasswordStrength(formData.password)) {
+            showError('La contraseña debe cumplir con todos los requisitos de seguridad');
+            return;
+        }
+
+        // Validar confirmación de contraseña
+        if (!validatePasswordMatch()) {
+            showError('Las contraseñas no coinciden');
             return;
         }
 
@@ -1061,6 +1101,65 @@
     /**
      * Muestra un mensaje de error
      */
+    /**
+     * Valida la fortaleza de la contraseña en tiempo real
+     */
+    function validatePasswordStrength(password) {
+        var requirements = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /[0-9]/.test(password)
+        };
+
+        // Actualizar visual de cada requisito
+        updateRequirement('req-length', requirements.length);
+        updateRequirement('req-uppercase', requirements.uppercase);
+        updateRequirement('req-lowercase', requirements.lowercase);
+        updateRequirement('req-number', requirements.number);
+
+        // Retornar si la contraseña es válida
+        return Object.values(requirements).every(req => req === true);
+    }
+
+    /**
+     * Actualiza el estado visual de un requisito
+     */
+    function updateRequirement(reqId, isMet) {
+        var element = $('#' + reqId);
+        var icon = element.find('.req-icon');
+        
+        if (isMet) {
+            element.addClass('req-met').removeClass('req-not-met');
+            icon.text('✓').css('color', '#28a745');
+        } else {
+            element.addClass('req-not-met').removeClass('req-met');
+            icon.text('✗').css('color', '#dc3545');
+        }
+    }
+
+    /**
+     * Valida que las contraseñas coincidan
+     */
+    function validatePasswordMatch() {
+        var password = $('#wpalp-register-password').val();
+        var confirmPassword = $('#wpalp-register-confirm-password').val();
+        var confirmField = $('#wpalp-register-confirm-password');
+        
+        if (confirmPassword && password !== confirmPassword) {
+            confirmField.addClass('wpalp-field-error');
+            // Agregar mensaje de error si no existe
+            if (!confirmField.siblings('.wpalp-match-error').length) {
+                confirmField.after('<div class="wpalp-match-error" style="color: #dc3545; font-size: 0.875rem; margin-top: 4px;">Las contraseñas no coinciden</div>');
+            }
+            return false;
+        } else {
+            confirmField.removeClass('wpalp-field-error');
+            confirmField.siblings('.wpalp-match-error').remove();
+            return true;
+        }
+    }
+
     function showError(message) {
         removeMessages();
         var errorHtml = '<div class="wpalp-message wpalp-message-error">' + message + '</div>';
