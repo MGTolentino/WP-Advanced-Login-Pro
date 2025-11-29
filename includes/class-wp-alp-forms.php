@@ -169,6 +169,14 @@ public static function get_initial_form() {
         $email_value = $is_email ? $identifier : '';
         $phone_value = !$is_email ? $identifier : '';
         $email_required = !$is_email; // Email obligatorio si se registra con teléfono
+        
+        // DEBUG LOGS
+        error_log("=== DEBUG REGISTER FORM ===");
+        error_log("Identifier recibido: " . $identifier);
+        error_log("Es email: " . ($is_email ? 'SI' : 'NO'));
+        error_log("Email value: '" . $email_value . "'");
+        error_log("Phone value: '" . $phone_value . "'");
+        error_log("Email required: " . ($email_required ? 'SI' : 'NO'));
         ob_start();
         ?>
         <div class="wpalp-auth-modal">

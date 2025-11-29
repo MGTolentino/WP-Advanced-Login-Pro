@@ -499,6 +499,11 @@ function wp_alp_get_register_form_ajax() {
 
     $identifier = sanitize_text_field($_POST['identifier'] ?? '');
     
+    // DEBUG LOG EN AJAX
+    error_log("=== AJAX GET_REGISTER_FORM ===");
+    error_log("POST identifier: " . ($_POST['identifier'] ?? 'NO_ENVIADO'));
+    error_log("Identifier sanitizado: " . $identifier);
+    
     if (empty($identifier)) {
         wp_send_json_error(array(
             'message' => __('Email o teléfono requerido.', 'wp-alp')
