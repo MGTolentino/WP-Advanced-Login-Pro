@@ -139,7 +139,7 @@
      * Abre el modal
      */
     function openModal() {
-        modal.wrapper.fadeIn(200);
+        modal.wrapper.addClass('wpalp-modal-active').fadeIn(200);
         $('body').addClass('wpalp-modal-open').css('overflow', 'hidden');
         loadInitialForm();
     }
@@ -148,7 +148,7 @@
      * Cierra el modal
      */
     function closeModal() {
-        modal.wrapper.fadeOut(200);
+        modal.wrapper.removeClass('wpalp-modal-active').fadeOut(200);
         $('body').removeClass('wpalp-modal-open').css('overflow', '');
         modal.currentForm = 'initial';
     }
@@ -157,14 +157,14 @@
      * Muestra el loader
      */
     function showLoader() {
-        modal.loader.fadeIn(100);
+        modal.loader.addClass('wpalp-loader-active').fadeIn(100);
     }
 
     /**
      * Oculta el loader
      */
     function hideLoader() {
-        modal.loader.fadeOut(100);
+        modal.loader.removeClass('wpalp-loader-active').fadeOut(100);
     }
 
     /**

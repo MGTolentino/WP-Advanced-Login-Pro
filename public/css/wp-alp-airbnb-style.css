@@ -43,11 +43,16 @@
     bottom: 0 !important;
     background-color: rgba(0, 0, 0, 0.6) !important;
     z-index: 2147483647 !important;
-    display: flex !important;
+    display: none; /* Por defecto oculto, se mostrará con JS */
     justify-content: center !important;
     align-items: flex-start !important;
     padding: 40px 20px !important;
     overflow-y: auto !important;
+}
+
+/* Cuando el modal está activo */
+.wpalp-modal-wrapper.wpalp-modal-active {
+    display: flex !important;
     animation: wpalp-fadeIn 0.2s ease-out !important;
 }
 
@@ -493,11 +498,16 @@
     right: 0 !important;
     bottom: 0 !important;
     background-color: rgba(255, 255, 255, 0.9) !important;
-    display: flex !important;
+    display: none; /* Por defecto oculto */
     align-items: center !important;
     justify-content: center !important;
     z-index: 1000 !important;
     border-radius: var(--wpalp-radius-md) !important;
+}
+
+/* Cuando el loader está activo */
+.wpalp-loading-overlay.wpalp-loader-active {
+    display: flex !important;
 }
 
 .wpalp-spinner {
