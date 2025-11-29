@@ -1143,3 +1143,20 @@ button[class*="wpalp"] {
         transform: translateY(0);
     }
 }
+
+/* === AJUSTE ANCHO MODAL LOGIN === */
+
+/* Modal más ancho para login */
+.wpalp-auth-modal {
+    max-width: 568px !important; /* Más ancho que antes */
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* En pantallas pequeñas mantener responsive */
+@media (max-width: 600px) {
+    .wpalp-auth-modal {
+        max-width: calc(100vw - 32px) !important;
+        margin: 0 16px !important;
+    }
+}

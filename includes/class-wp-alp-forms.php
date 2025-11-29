@@ -111,10 +111,10 @@ public static function get_initial_form() {
     /**
      * Genera el HTML para el formulario de login.
      *
-     * @param string $email Email del usuario.
+     * @param string $identifier Email o teléfono del usuario.
      * @return string HTML del formulario.
      */
-    public static function get_login_form($email) {
+    public static function get_login_form($identifier) {
         ob_start();
         ?>
         <div class="wpalp-auth-modal">
@@ -127,8 +127,8 @@ public static function get_initial_form() {
             
             <div class="wpalp-modal-body">
                 <div class="wpalp-field-group wpalp-field-disabled">
-                    <label for="wpalp-login-email" class="wpalp-field-label"><?php _e('Correo electrónico', 'wp-alp'); ?></label>
-                    <input type="email" id="wpalp-login-email" name="email" class="wpalp-field-input" value="<?php echo esc_attr($email); ?>" readonly />
+                    <label for="wpalp-login-email" class="wpalp-field-label"><?php _e('Correo electrónico o teléfono', 'wp-alp'); ?></label>
+                    <input type="text" id="wpalp-login-email" name="email" class="wpalp-field-input" value="<?php echo esc_attr($identifier); ?>" readonly />
                 </div>
                 
                 <div class="wpalp-field-group">

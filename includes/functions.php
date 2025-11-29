@@ -465,18 +465,18 @@ function wp_alp_get_login_form_ajax() {
         return;
     }
 
-    $email = sanitize_email($_POST['email'] ?? '');
+    $identifier = sanitize_text_field($_POST['identifier'] ?? '');
     
-    if (empty($email)) {
+    if (empty($identifier)) {
         wp_send_json_error(array(
-            'message' => __('Email requerido.', 'wp-alp')
+            'message' => __('Email o teléfono requerido.', 'wp-alp')
         ));
         return;
     }
 
-    // Crear instancia de la clase de formularios
+    // Para login solo se necesita el identifier
     $forms = new WP_ALP_Forms();
-    $html = $forms->get_login_form($email);
+    $html = $forms->get_login_form($identifier);
 
     wp_send_json_success(array(
         'html' => $html
@@ -497,18 +497,18 @@ function wp_alp_get_register_form_ajax() {
         return;
     }
 
-    $email = sanitize_email($_POST['email'] ?? '');
+    $identifier = sanitize_text_field($_POST['identifier'] ?? '');
     
-    if (empty($email)) {
+    if (empty($identifier)) {
         wp_send_json_error(array(
-            'message' => __('Email requerido.', 'wp-alp')
+            'message' => __('Email o teléfono requerido.', 'wp-alp')
         ));
         return;
     }
 
     // Crear instancia de la clase de formularios
     $forms = new WP_ALP_Forms();
-    $html = $forms->get_register_form($email);
+    $html = $forms->get_register_form($identifier);
 
     wp_send_json_success(array(
         'html' => $html
