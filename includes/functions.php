@@ -235,3 +235,301 @@ function wp_alp_enqueue_vendor_styles() {
     }
 }
 add_action('wp_enqueue_scripts', 'wp_alp_enqueue_vendor_styles', 999); // Prioridad alta para sobrescribir otros estilos
+
+/**
+ * AJAX Endpoints para el sistema de login estilo Airbnb
+ */
+
+/**
+ * Obtiene el formulario inicial de login
+ */
+function wp_alp_get_initial_form_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Crear instancia de la clase de formularios
+    $forms = new WP_ALP_Forms();
+    $html = $forms->get_initial_form();
+
+    wp_send_json_success(array(
+        'html' => $html
+    ));
+}
+add_action('wp_ajax_wp_alp_get_initial_form', 'wp_alp_get_initial_form_ajax');
+add_action('wp_ajax_nopriv_wp_alp_get_initial_form', 'wp_alp_get_initial_form_ajax');
+
+/**
+ * Valida si existe un usuario con el email/teléfono proporcionado
+ */
+function wp_alp_validate_user_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $identifier = sanitize_text_field($_POST['identifier'] ?? '');
+    
+    if (empty($identifier)) {
+        wp_send_json_error(array(
+            'message' => __('Email o teléfono requerido.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Verificar si es email o teléfono
+    $is_email = is_email($identifier);
+    $user_exists = false;
+
+    if ($is_email) {
+        $user = get_user_by('email', $identifier);
+        $user_exists = ($user !== false);
+    } else {
+        // Buscar por teléfono en meta_value
+        $users = get_users(array(
+            'meta_key' => 'phone',
+            'meta_value' => $identifier,
+            'number' => 1
+        ));
+        $user_exists = !empty($users);
+    }
+
+    wp_send_json_success(array(
+        'user_exists' => $user_exists,
+        'is_email' => $is_email,
+        'identifier' => $identifier
+    ));
+}
+add_action('wp_ajax_wp_alp_validate_user', 'wp_alp_validate_user_ajax');
+add_action('wp_ajax_nopriv_wp_alp_validate_user', 'wp_alp_validate_user_ajax');
+
+/**
+ * Obtiene el formulario de login
+ */
+function wp_alp_get_login_form_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $email = sanitize_email($_POST['email'] ?? '');
+    
+    if (empty($email)) {
+        wp_send_json_error(array(
+            'message' => __('Email requerido.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Crear instancia de la clase de formularios
+    $forms = new WP_ALP_Forms();
+    $html = $forms->get_login_form($email);
+
+    wp_send_json_success(array(
+        'html' => $html
+    ));
+}
+add_action('wp_ajax_wp_alp_get_login_form', 'wp_alp_get_login_form_ajax');
+add_action('wp_ajax_nopriv_wp_alp_get_login_form', 'wp_alp_get_login_form_ajax');
+
+/**
+ * Obtiene el formulario de registro
+ */
+function wp_alp_get_register_form_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $email = sanitize_email($_POST['email'] ?? '');
+    
+    if (empty($email)) {
+        wp_send_json_error(array(
+            'message' => __('Email requerido.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Crear instancia de la clase de formularios
+    $forms = new WP_ALP_Forms();
+    $html = $forms->get_register_form($email);
+
+    wp_send_json_success(array(
+        'html' => $html
+    ));
+}
+add_action('wp_ajax_wp_alp_get_register_form', 'wp_alp_get_register_form_ajax');
+add_action('wp_ajax_nopriv_wp_alp_get_register_form', 'wp_alp_get_register_form_ajax');
+
+/**
+ * Procesa el login de usuario
+ */
+function wp_alp_login_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $email = sanitize_email($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $remember = isset($_POST['remember']) && $_POST['remember'];
+
+    if (empty($email) || empty($password)) {
+        wp_send_json_error(array(
+            'message' => __('Email y contraseña son requeridos.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $credentials = array(
+        'user_login' => $email,
+        'user_password' => $password,
+        'remember' => $remember
+    );
+
+    $user = wp_signon($credentials, false);
+
+    if (is_wp_error($user)) {
+        wp_send_json_error(array(
+            'message' => __('Email o contraseña incorrectos.', 'wp-alp')
+        ));
+        return;
+    }
+
+    wp_send_json_success(array(
+        'message' => __('¡Bienvenido! Redirigiendo...', 'wp-alp'),
+        'redirect' => home_url()
+    ));
+}
+add_action('wp_ajax_wp_alp_login', 'wp_alp_login_ajax');
+add_action('wp_ajax_nopriv_wp_alp_login', 'wp_alp_login_ajax');
+
+/**
+ * Procesa el registro de usuario
+ */
+function wp_alp_register_ajax() {
+    // Verificar nonce
+    if (!check_ajax_referer('wp_alp_nonce', 'nonce', false)) {
+        wp_send_json_error(array(
+            'message' => __('Error de seguridad. Recarga la página.', 'wp-alp')
+        ));
+        return;
+    }
+
+    $email = sanitize_email($_POST['email'] ?? '');
+    $first_name = sanitize_text_field($_POST['first_name'] ?? '');
+    $last_name = sanitize_text_field($_POST['last_name'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $phone = sanitize_text_field($_POST['phone'] ?? '');
+    $birthdate = sanitize_text_field($_POST['birthdate'] ?? '');
+
+    // Validaciones
+    if (empty($email) || empty($first_name) || empty($last_name) || empty($password)) {
+        wp_send_json_error(array(
+            'message' => __('Todos los campos obligatorios deben ser completados.', 'wp-alp')
+        ));
+        return;
+    }
+
+    if (!is_email($email)) {
+        wp_send_json_error(array(
+            'message' => __('Email no válido.', 'wp-alp')
+        ));
+        return;
+    }
+
+    if (username_exists($email) || email_exists($email)) {
+        wp_send_json_error(array(
+            'message' => __('Este email ya está registrado.', 'wp-alp')
+        ));
+        return;
+    }
+
+    if (strlen($password) < 6) {
+        wp_send_json_error(array(
+            'message' => __('La contraseña debe tener al menos 6 caracteres.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Crear usuario
+    $user_id = wp_create_user($email, $password, $email);
+
+    if (is_wp_error($user_id)) {
+        wp_send_json_error(array(
+            'message' => __('Error al crear la cuenta. Inténtalo de nuevo.', 'wp-alp')
+        ));
+        return;
+    }
+
+    // Agregar meta datos del usuario
+    update_user_meta($user_id, 'first_name', $first_name);
+    update_user_meta($user_id, 'last_name', $last_name);
+    if (!empty($phone)) {
+        update_user_meta($user_id, 'phone', $phone);
+    }
+    if (!empty($birthdate)) {
+        update_user_meta($user_id, 'birthdate', $birthdate);
+    }
+
+    // Datos del evento si están presentes
+    $event_data = array();
+    if (!empty($_POST['event_type'])) {
+        $event_data['event_type'] = sanitize_text_field($_POST['event_type']);
+    }
+    if (!empty($_POST['event_date'])) {
+        $event_data['event_date'] = sanitize_text_field($_POST['event_date']);
+    }
+    if (!empty($_POST['event_address'])) {
+        $event_data['event_address'] = sanitize_text_field($_POST['event_address']);
+    }
+    if (!empty($_POST['guests'])) {
+        $event_data['guests'] = intval($_POST['guests']);
+    }
+    if (!empty($_POST['details'])) {
+        $event_data['details'] = sanitize_textarea_field($_POST['details']);
+    }
+
+    if (!empty($event_data)) {
+        update_user_meta($user_id, 'event_info', $event_data);
+    }
+
+    // Login automático después del registro
+    $credentials = array(
+        'user_login' => $email,
+        'user_password' => $password,
+        'remember' => true
+    );
+
+    $user = wp_signon($credentials, false);
+
+    if (is_wp_error($user)) {
+        wp_send_json_error(array(
+            'message' => __('Cuenta creada, pero error al iniciar sesión. Por favor, inicia sesión manualmente.', 'wp-alp')
+        ));
+        return;
+    }
+
+    wp_send_json_success(array(
+        'message' => __('¡Cuenta creada exitosamente! Redirigiendo...', 'wp-alp'),
+        'redirect' => home_url()
+    ));
+}
+add_action('wp_ajax_wp_alp_register', 'wp_alp_register_ajax');
+add_action('wp_ajax_nopriv_wp_alp_register', 'wp_alp_register_ajax');
