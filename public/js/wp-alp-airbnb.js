@@ -16,6 +16,7 @@
 
     // Inicialización cuando el DOM está listo
     $(document).ready(function() {
+        // Solo inicializar, no abrir el modal automáticamente
         initializeModal();
         attachEventHandlers();
     });
@@ -60,8 +61,8 @@
      * Adjunta los manejadores de eventos
      */
     function attachEventHandlers() {
-        // Abrir modal con botones de login
-        $(document).on('click', '[data-wp-alp-trigger="login"], .wpalp-login-trigger', function(e) {
+        // Abrir modal con botones de login - soporta ambas clases para compatibilidad
+        $(document).on('click', '[data-wp-alp-trigger="login"], .wp-alp-login-trigger, .wpalp-login-trigger', function(e) {
             e.preventDefault();
             e.stopPropagation();
             openModal();

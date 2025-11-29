@@ -695,14 +695,17 @@ public function enqueue_styles() {
             true
         );
         
-        // JavaScript principal del plugin (mantener para compatibilidad)
-        wp_enqueue_script(
-            $this->plugin_name,
-            plugin_dir_url(__FILE__) . 'js/wp-alp-public.js',
-            array('jquery'),
-            $this->version,
-            false
-        );
+        // JavaScript principal del plugin - TEMPORALMENTE COMENTADO para evitar conflictos
+        // wp_enqueue_script(
+        //     $this->plugin_name,
+        //     plugin_dir_url(__FILE__) . 'js/wp-alp-public.js',
+        //     array('jquery'),
+        //     $this->version,
+        //     false
+        // );
+        
+        // Usar el script de Airbnb como principal para wp_localize_script
+        $script_handle = $this->plugin_name . '-airbnb';
 
         // Si está habilitado Social Login
         if (get_option('wp_alp_enable_social_login', true)) {
@@ -715,7 +718,7 @@ public function enqueue_styles() {
             );
         }
         
-wp_localize_script($this->plugin_name, 'wp_alp_ajax', array(
+wp_localize_script($script_handle, 'wp_alp_ajax', array(
     'ajax_url' => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('wp_alp_nonce'),
     'home_url' => home_url(),
