@@ -16,9 +16,9 @@
 
 /* Variables del tema */
 .wpalp-modal-wrapper {
-    --wpalp-primary: #FF385C !important;
-    --wpalp-primary-hover: #E31C5F !important;
-    --wpalp-primary-dark: #D50027 !important;
+    --wpalp-primary: #cbb781 !important;
+    --wpalp-primary-hover: #a99969 !important;
+    --wpalp-primary-dark: #8b7c4e !important;
     --wpalp-black: #222222 !important;
     --wpalp-gray-dark: #717171 !important;
     --wpalp-gray: #B0B0B0 !important;
@@ -256,7 +256,7 @@
     font-size: 16px !important;
     font-weight: 600 !important;
     color: var(--wpalp-white) !important;
-    background: linear-gradient(to right, #E61E4D 0%, #E31C5F 27.5%, #D70466 40%, #BD1E59 57.5%, #BD1E59 75%, #BD1E59 100%) !important;
+    background: linear-gradient(to right, #cbb781 0%, #b8a572 27.5%, #a99969 40%, #9b8b60 57.5%, #8d7d57 75%, #7f6f4e 100%) !important;
     border-radius: var(--wpalp-radius-sm) !important;
     cursor: pointer !important;
     transition: all 0.2s ease !important;
@@ -266,7 +266,7 @@
 }
 
 .wpalp-btn-primary:hover {
-    background: linear-gradient(to right, #D70466 0%, #BD1E59 100%) !important;
+    background: linear-gradient(to right, #a99969 0%, #8b7c4e 100%) !important;
     transform: scale(0.98) !important;
 }
 

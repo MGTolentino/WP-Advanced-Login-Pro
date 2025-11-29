@@ -430,7 +430,13 @@
     function showError(message) {
         removeMessages();
         var errorHtml = '<div class="wpalp-message wpalp-message-error">' + message + '</div>';
-        modal.content.find('.wpalp-modal-body').prepend(errorHtml);
+        
+        // Buscar .wpalp-modal-body, si no existe, usar modal.content directamente
+        var targetContainer = modal.content.find('.wpalp-modal-body');
+        if (targetContainer.length === 0) {
+            targetContainer = modal.content;
+        }
+        targetContainer.prepend(errorHtml);
         
         // Auto-remover después de 5 segundos
         setTimeout(removeMessages, 5000);
@@ -442,7 +448,13 @@
     function showSuccess(message) {
         removeMessages();
         var successHtml = '<div class="wpalp-message wpalp-message-success">' + message + '</div>';
-        modal.content.find('.wpalp-modal-body').prepend(successHtml);
+        
+        // Buscar .wpalp-modal-body, si no existe, usar modal.content directamente
+        var targetContainer = modal.content.find('.wpalp-modal-body');
+        if (targetContainer.length === 0) {
+            targetContainer = modal.content;
+        }
+        targetContainer.prepend(successHtml);
     }
 
     /**
