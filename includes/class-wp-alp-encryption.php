@@ -138,7 +138,12 @@ class WP_ALP_Encryption {
             $decrypted = openssl_decrypt($encrypted, self::$cipher, $key, 0, $iv);
             
             if ($decrypted === false) {
-                error_log('WP_ALP Encryption: Error decrypting data');
+                // Solo logear errores de desencriptación si se llama directamente,
+                // no desde get_encrypted_option para evitar spam
+                $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+                if (!isset($backtrace[1]) || $backtrace[1]['function'] !== 'get_encrypted_option') {
+                    error_log('WP_ALP Encryption: Error decrypting data');
+                }
                 return false;
             }
             
@@ -188,9 +193,17 @@ class WP_ALP_Encryption {
             return $default;
         }
         
+        // Verificar si el valor parece estar encriptado
+        if (!self::is_encrypted($encrypted)) {
+            // Si no parece encriptado, devolverlo tal como está (puede ser texto plano legacy)
+            return $encrypted;
+        }
+        
         $decrypted = self::decrypt($encrypted);
         if ($decrypted === false) {
-            return $default;
+            // Si falla la desencriptación de datos que parecían encriptados,
+            // devolver el valor original sin log para evitar spam
+            return $encrypted;
         }
         
         return $decrypted;
